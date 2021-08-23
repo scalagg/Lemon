@@ -31,10 +31,10 @@ class Lemon : JavaPlugin() {
 
         databaseConfig = Config("database", this)
 
-        mongoHandler = MongoHandler()
-        playerHandler = PlayerHandler()
-        rankHandler = RankHandler()
-        shutdownHandler = ShutdownHandler()
+        mongoHandler = MongoHandler
+        playerHandler = PlayerHandler
+        rankHandler = RankHandler
+        shutdownHandler = ShutdownHandler
     }
 
     override fun onDisable() {

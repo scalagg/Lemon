@@ -8,7 +8,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class PlayerHandler {
+object PlayerHandler {
 
     var players: Map<UUID, LemonPlayer> = mapOf()
 //    var networkPlayers: Map<UUID, NetworkPlayer> = mapOf()

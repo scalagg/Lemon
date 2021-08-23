@@ -3,7 +3,7 @@ package com.solexgames.lemon.handler
 import com.solexgames.lemon.player.rank.Rank
 import java.util.*
 
-class RankHandler {
+object RankHandler {
 
     var ranks: Map<UUID, Rank> = mapOf()
 

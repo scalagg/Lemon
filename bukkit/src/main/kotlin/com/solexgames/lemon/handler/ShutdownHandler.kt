@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
  * @author puugz
  * @since 23/08/2021 19:14
  */
-class ShutdownHandler {
+object ShutdownHandler {
 
     private var shutdownTask: ShutdownTask? = null
 

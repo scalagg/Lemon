@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase
 import com.solexgames.lemon.Lemon
 import org.bson.Document
 
-class MongoHandler {
+object MongoHandler {
 
     var isConnected = false
 
