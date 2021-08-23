@@ -1,0 +1,4 @@
+allprojects {
+    group 'com.solexgames.lemon'
+    version '1.0.0'
+}
