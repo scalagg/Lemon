@@ -1,10 +1,16 @@
 package com.solexgames.lemon.player.rank
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.model.Persistent
 import net.evilblock.cubed.util.CC
+import org.bson.Document
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
-class Rank(uuid: UUID = UUID.randomUUID(), name: String) {
+class Rank(
+    uuid: UUID = UUID.randomUUID(),
+    name: String
+) : Persistent<Document> {
 
     constructor(name: String) : this(UUID.randomUUID(), name)
 
@@ -43,13 +49,17 @@ class Rank(uuid: UUID = UUID.randomUUID(), name: String) {
         inheritances.forEach {
             val rank = Lemon.instance.rankHandler.getRank(it).orElse(null)
 
-            rank?.permissions?.forEach { otherPermission ->
-                if (!compoundedPermissions.contains(otherPermission)) {
-                    compoundedPermissions.add(otherPermission)
-                }
-            }
+            compoundedPermissions.addAll(rank.getCompoundedPermissions())
         }
 
         return compoundedPermissions
+    }
+
+    override fun load(future: CompletableFuture<Document>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun save(): CompletableFuture<Void> {
+        TODO("Not yet implemented")
     }
 }

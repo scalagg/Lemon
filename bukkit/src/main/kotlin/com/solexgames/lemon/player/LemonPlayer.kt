@@ -5,6 +5,7 @@ import com.solexgames.lemon.model.Persistent
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
+import com.solexgames.lemon.util.Cooldown
 import com.solexgames.lemon.util.GrantRecalculationUtil
 import net.evilblock.cubed.util.CC
 import org.bson.Document
@@ -28,6 +29,11 @@ class LemonPlayer(
     var uniqueId = uuid
     var username = name
     var ipAddress = address
+
+    var commandCooldown: Cooldown = Cooldown(0L)
+    var helpOpCooldown: Cooldown = Cooldown(0L)
+    var reportCooldown: Cooldown = Cooldown(0L)
+    var chatCooldown: Cooldown = Cooldown(0L)
 
     var activeGrant: Grant? = null
 
@@ -68,6 +74,20 @@ class LemonPlayer(
 
             Lemon.instance.grantHandler.registerGrant(uniqueId, grant)
         }
+    }
+
+    fun hasPermission(permission: String, ignorePlayer: Boolean = false): Boolean {
+        var boolean = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
+
+        if (!ignorePlayer) {
+            getPlayer().ifPresent { if (it.isOp || it.hasPermission(permission.lowercase())) boolean = true }
+        }
+
+        return boolean
+    }
+
+    fun isStaff(): Boolean {
+        return hasPermission("lemon.staff", true)
     }
 
     fun getPlayer(): Optional<Player> {

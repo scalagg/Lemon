@@ -34,6 +34,7 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
     lateinit var rankHandler: RankHandler
     lateinit var shutdownHandler: ShutdownHandler
     lateinit var grantHandler: GrantHandler
+    lateinit var serverHandler: ServerHandler
 
     lateinit var redisConfig: RedisConfigProcessor
     lateinit var mongoConfig: MongoDBConfigProcessor
@@ -62,6 +63,7 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
         rankHandler = RankHandler
         shutdownHandler = ShutdownHandler
         grantHandler = GrantHandler
+        serverHandler = ServerHandler
 
         setupRedisHandler()
 

@@ -20,7 +20,7 @@ object RankHandler {
     }
 
     fun getDefaultRank(): Rank {
-        val optionalRank = Lemon.instance.rankHandler.getRank("Default")
+        val optionalRank = getRank("Default")
 
         if (optionalRank.isPresent) {
             return optionalRank.get()
