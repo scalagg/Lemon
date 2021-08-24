@@ -4,12 +4,10 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.LemonPlayer
 import net.evilblock.cubed.scoreboard.ScoreboardOverride
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.Color
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-object ModmodeBoardProvider : ScoreboardOverride() {
+object ModModeBoardProvider : ScoreboardOverride() {
 
     override fun getTitle(player: Player): String {
         return CC.B_PRI + "Staff Mode"
@@ -34,7 +32,11 @@ object ModmodeBoardProvider : ScoreboardOverride() {
         val lemonPlayer = Lemon.instance.playerHandler.getPlayer(player)
         var shouldOverride = false
 
-        lemonPlayer.ifPresent { shouldOverride = it.isStaffMode }
+        lemonPlayer.ifPresent {
+            val modMode = it.getMetaData("mod-mode")
+
+            shouldOverride = modMode != null && modMode.asBoolean()
+        }
 
         return shouldOverride
     }
@@ -54,8 +56,13 @@ object ModmodeBoardProvider : ScoreboardOverride() {
 //    }
 
     private fun getVanishStatus(lemonPlayer: LemonPlayer): String {
-        val status = if (lemonPlayer.isVanished) CC.RED + "Hidden" else CC.GREEN + "Visible"
-//        status += if (lemonPlayer.isHidingStaff) " (Hiding Staff)" else " (Showing Staff)"
+        val vanished = lemonPlayer.getMetaData("vanished")
+        val hidingStaff = lemonPlayer.getMetaData("hiding-staff")
+
+        var status = if (vanished != null && vanished.asBoolean())
+            CC.RED + "Hidden" else CC.GREEN + "Visible"
+        status += if (hidingStaff != null && hidingStaff.asBoolean()) " (Hiding Staff)" else " (Showing Staff)"
+
         return status
     }
 }

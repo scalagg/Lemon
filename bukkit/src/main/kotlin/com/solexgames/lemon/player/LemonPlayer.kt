@@ -31,6 +31,10 @@ class LemonPlayer(
         metaData[id] = data
     }
 
+    fun getMetaData(id: String): MetaData? {
+        return this.metaData.getOrDefault(id, null)
+    }
+
     override fun save(): CompletableFuture<Void> {
         TODO("Not yet implemented")
     }
