@@ -19,7 +19,6 @@ import com.solexgames.redis.JedisBuilder
 import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
 import me.lucko.helper.Schedulers
-import net.evilblock.cubed.util.Color
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.mkotb.configapi.ConfigFactory
 
@@ -40,22 +39,23 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
     lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
 
-    lateinit var configApi: ConfigFactory
+    lateinit var configFactory: ConfigFactory
 
     lateinit var jedisManager: JedisManager
     lateinit var jedisSettings: JedisSettings
 
+    private lateinit var consoleLogger: BetterConsoleLogger
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
 
     override fun onEnable() {
         instance = this
 
-        configApi = ConfigFactory.newFactory(this)
+        configFactory = ConfigFactory.newFactory(this)
 
-        redisConfig = this.configApi.fromFile("redis", RedisConfigProcessor.javaClass)
-        mongoConfig = this.configApi.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
-        settings = this.configApi.fromFile("settings", SettingsConfigProcessor.javaClass)
+        redisConfig = configFactory.fromFile("redis", RedisConfigProcessor.javaClass)
+        mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
+        settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
 
         mongoHandler = MongoHandler
         playerHandler = PlayerHandler
@@ -73,7 +73,7 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
         val listener = PlayerListener(this)
         listener.registerHelperEvents()
 
-        this.server.pluginManager.registerEvents(listener, this)
+        server.pluginManager.registerEvents(listener, this)
     }
 
     private fun setupRedisHandler() {
@@ -117,7 +117,7 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
     override var layer: RedisStorageLayer<ServerInstance>? = null
 
     override fun getConsoleLogger(): ConsoleLogger {
-        return BetterConsoleLogger()
+        return consoleLogger
     }
 
     override fun getLocalServerInstance(): ServerInstance {

@@ -1,6 +1,5 @@
 package com.solexgames.lemon.util
 
-import com.solexgames.lemon.LemonConstants
 import net.evilblock.cubed.util.time.TimeUtil
 import java.util.*
 
@@ -11,14 +10,10 @@ import java.util.*
 
 open class Expireable(addedAt: Long, duration: Long) {
 
-    val addedAt: Long = 0
-    val duration: Long = 0
+    val addedAt: Long = addedAt
+    val duration: Long = duration
 
-    var expireDate: Date
-
-    init {
-        expireDate = Date(addedAt + duration)
-    }
+    var expireDate: Date = Date(addedAt + duration)
 
     fun isPermanent(): Boolean {
         return duration == Long.MAX_VALUE
@@ -28,7 +23,7 @@ open class Expireable(addedAt: Long, duration: Long) {
         return if (isPermanent()) {
             "Never"
         } else {
-            LemonConstants.FORMAT.format(expireDate)
+            TimeUtil.formatIntoDateString(expireDate)
         }
     }
 

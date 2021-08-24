@@ -1,6 +1,6 @@
 package com.solexgames.lemon.player.metadata
 
-class MetaData(private var value: Any) {
+class Metadata(private var value: Any) {
 
     fun asInt(): Int {
         return value as Int
@@ -17,6 +17,7 @@ class MetaData(private var value: Any) {
     fun asLong(): Long {
         return value as Long
     }
+
     fun asDouble(): Double {
         return value as Double
     }

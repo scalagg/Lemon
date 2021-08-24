@@ -33,7 +33,7 @@ object ModModeBoardProvider : ScoreboardOverride() {
         var shouldOverride = false
 
         lemonPlayer.ifPresent {
-            val modMode = it.getMetaData("mod-mode")
+            val modMode = it.getMetadata("mod-mode")
 
             shouldOverride = modMode != null && modMode.asBoolean()
         }
@@ -56,8 +56,8 @@ object ModModeBoardProvider : ScoreboardOverride() {
 //    }
 
     private fun getVanishStatus(lemonPlayer: LemonPlayer): String {
-        val vanished = lemonPlayer.getMetaData("vanished")
-        val hidingStaff = lemonPlayer.getMetaData("hiding-staff")
+        val vanished = lemonPlayer.getMetadata("vanished")
+        val hidingStaff = lemonPlayer.getMetadata("hiding-staff")
 
         var status = if (vanished != null && vanished.asBoolean())
             CC.RED + "Hidden" else CC.GREEN + "Visible"

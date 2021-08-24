@@ -11,7 +11,7 @@ class Grant(
     @SerializedName("_id") val uuid: UUID,
     target: UUID,
     rankId: UUID,
-    addedBy: UUID,
+    addedBy: UUID?,
     addedAt: Long,
     addedOn: String,
     addedReason: String,
@@ -20,12 +20,12 @@ class Grant(
 
     var target: UUID = target
 
-    var rankId = rankId
+    var rankId: UUID = rankId
     var scopes: MutableList<String> = mutableListOf("global")
 
-    var addedBy = addedBy
-    var addedOn = addedOn
-    var addedReason = addedReason
+    var addedBy: UUID? = addedBy
+    var addedOn: String = addedOn
+    var addedReason: String = addedReason
 
     var removedBy: UUID? = null
     var removedAt: Long = -1

@@ -8,17 +8,17 @@ class Rank(uuid: UUID = UUID.randomUUID(), name: String) {
 
     constructor(name: String) : this(UUID.randomUUID(), name)
 
-    var uuid = uuid
-    var weight = 0
+    var uuid: UUID = uuid
+    var weight: Int = 0
 
-    var name = name
-    var prefix = CC.GRAY
-    var suffix = ""
-    var color = CC.GRAY
+    var name: String = name
+    var prefix: String = CC.GRAY
+    var suffix: String = ""
+    var color: String = CC.GRAY
 
-    var italic = false
-    var hidden = false
-    var defaultRank = false
+    var italic: Boolean = false
+    var hidden: Boolean = false
+    var defaultRank: Boolean = false
 
     val inheritances: List<UUID> = listOf()
     val permissions: List<String> = listOf()
@@ -34,13 +34,13 @@ class Rank(uuid: UUID = UUID.randomUUID(), name: String) {
     fun getCompoundedPermissions(): MutableList<String> {
         val compoundedPermissions = mutableListOf<String>()
 
-        this.permissions.forEach {
+        permissions.forEach {
             if (!compoundedPermissions.contains(it)) {
                 compoundedPermissions.add(it)
             }
         }
 
-        this.inheritances.forEach {
+        inheritances.forEach {
             val rank = Lemon.instance.rankHandler.getRank(it).orElse(null)
 
             rank?.permissions?.forEach { otherPermission ->

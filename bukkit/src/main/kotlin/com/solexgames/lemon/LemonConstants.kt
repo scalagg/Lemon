@@ -13,13 +13,4 @@ object LemonConstants {
     @JvmStatic
     val GSON: Gson = Serializers.gson
 
-    @JvmStatic
-    val FORMAT: SimpleDateFormat = SimpleDateFormat("MM/dd/yyyy HH:mma")
-
-    @JvmStatic
-    val PRI: ChatColor = Lemon.instance.settings.primaryColor
-
-    @JvmStatic
-    val SEC: ChatColor = Lemon.instance.settings.secondaryColor
-
 }

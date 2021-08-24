@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.LemonPlayer
 import me.lucko.helper.Events
+import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -19,7 +20,7 @@ class PlayerListener(private val plugin: Lemon) : Listener {
             )
 
             val completableFuture = CompletableFuture.supplyAsync {
-                this.plugin.mongoHandler.playerCollection.find(
+                plugin.mongoHandler.playerCollection.find(
                     Filters.eq(
                         "uuid",
                         it.uniqueId.toString()
@@ -29,11 +30,11 @@ class PlayerListener(private val plugin: Lemon) : Listener {
 
             lemonPlayer.load(completableFuture)
 
-            this.plugin.playerHandler.players[it.uniqueId] = lemonPlayer
+            plugin.playerHandler.players[it.uniqueId] = lemonPlayer
         }
 
         Events.subscribe(PlayerQuitEvent::class.java).handler {
-            val lemonPlayer = this.plugin.playerHandler.getPlayer(it.player)
+            val lemonPlayer = plugin.playerHandler.getPlayer(it.player)
 
             lemonPlayer.ifPresent { player ->
                 player.save().whenComplete { _, u ->
