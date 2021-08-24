@@ -8,21 +8,6 @@ class Rank(uuid: UUID = UUID.randomUUID(), name: String) {
 
     constructor(name: String) : this(UUID.randomUUID(), name)
 
-    companion object {
-        fun getDefaultRank(): Rank {
-            val optionalRank = Lemon.instance.rankHandler.getRank("Default")
-
-            if (optionalRank.isPresent) {
-                return optionalRank.get()
-            }
-
-            val rank = Rank("Default")
-            rank.defaultRank = true
-
-            return rank
-        }
-    }
-
     var uuid = uuid
     var weight = 0
 
@@ -34,23 +19,37 @@ class Rank(uuid: UUID = UUID.randomUUID(), name: String) {
     var italic = false
     var hidden = false
     var defaultRank = false
-    var purchasable = false
 
     val inheritances: List<UUID> = listOf()
     val permissions: List<String> = listOf()
 
     fun getColoredName(): String {
-        return getItalic() + color + name
+        return color + name
     }
 
-    fun getItalic(): String {
-        return if (italic) { CC.I } else { "" }
-    }
+    /**
+     * Returns a mutable list with permissions from
+     * all inherited ranks as well as the current rank
+     */
+    fun getCompoundedPermissions(): MutableList<String> {
+        val compoundedPermissions = mutableListOf<String>()
 
-    fun hasPermission(permission: String): Boolean {
-        if (permissions.contains(permission.toLowerCase())) {
-            return true
+        this.permissions.forEach {
+            if (!compoundedPermissions.contains(it)) {
+                compoundedPermissions.add(it)
+            }
         }
-        TODO("loop through inheritances and see if they have the permission")
+
+        this.inheritances.forEach {
+            val rank = Lemon.instance.rankHandler.getRank(it).orElse(null)
+
+            rank?.permissions?.forEach { otherPermission ->
+                if (!compoundedPermissions.contains(otherPermission)) {
+                    compoundedPermissions.add(otherPermission)
+                }
+            }
+        }
+
+        return compoundedPermissions
     }
 }

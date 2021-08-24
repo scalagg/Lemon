@@ -1,17 +1,18 @@
-package com.solexgames.lemon.task
+package com.solexgames.lemon.task.impl
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.task.LemonRunnable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 
-class ShutdownTask(seconds: Int) : LemonRunnable(seconds) {
+class ShutdownRunnable(seconds: Int) : LemonRunnable(seconds) {
 
     init {
         runTaskTimerAsynchronously(Lemon.instance, 20L, 20L)
     }
 
-    override fun execute() {
+    override fun onRun() {
         if (seconds == 2) {
             Bukkit.getOnlinePlayers().forEach { player ->
                 player.kickPlayer("${CC.RED}The server is currently rebooting...\n${CC.RED}Please reconnect in a few minutes.")
@@ -21,7 +22,7 @@ class ShutdownTask(seconds: Int) : LemonRunnable(seconds) {
         }
     }
 
-    override fun executeEnd() {
+    override fun onEnd() {
         Lemon.instance.server.shutdown()
     }
 

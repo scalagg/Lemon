@@ -1,55 +1,42 @@
 package com.solexgames.lemon.player
 
+import com.solexgames.lemon.model.Persistent
 import com.solexgames.lemon.player.grant.Grant
-import java.net.InetAddress
+import com.solexgames.lemon.player.metadata.MetaData
+import com.solexgames.lemon.player.note.Note
+import org.bson.Document
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
-class LemonPlayer(uuid: UUID, name: String, address: InetAddress?) {
+class LemonPlayer(
+    uuid: UUID,
+    name: String,
+    address: String?
+): Persistent<Document> {
 
-//    var punishments: List<Punishment>
-    var grants: List<Grant> = listOf()
-    var notes: List<Grant> = listOf()
-    var prefixes: List<String> = listOf()
-    var ignoring: List<String> = listOf()
-    var permissions: List<String> = listOf()
-    var bungeePermissions: List<String> = listOf()
+    var grants: List<Grant> = mutableListOf()
+    var notes: List<Note> = mutableListOf()
+    var prefixes: List<String> = mutableListOf()
+    var ignoring: List<String> = mutableListOf()
+    var permissions: List<String> = mutableListOf()
+    var bungeePermissions: List<String> = mutableListOf()
 
-    var uuid = uuid
-    var name = name
-    var ipAddress = if (address != null) { address.hostAddress } else { "" }
-//    var encryptedIpAdress: String
+    var uniqueId = uuid
+    var username = name
+    var ipAddress = address
 
-    var canSeeStaffMessages = true
-    var canSeeGlobalChat = true
-    var canReceiveDms = true
-    var canReceiveDmsSounds = true
-    var canSeeFiltered = true
-    var canSeeTips = true
-    var canReport = true
-    var canRequest = true
+    private var metaData: MutableMap<String, MetaData> = mutableMapOf()
 
-    var hasVoted = false
-    var hasActiveWarning = false
-    var hasSetup2FA = false
+    fun updateOrAddMetaData(id: String, data: MetaData) {
+        metaData[id] = data
+    }
 
-    var isVanished = false
-    var isStaffMode = false
-    var isFrozen = false
-    var isSynced = false
-    var isLoaded = false
-    var isSocialSpy = false
-    var isAutoVanish = false
-    var isAutoModMode = false
-    var isDisguised = false
-    var hidingStaff = false
+    override fun save(): CompletableFuture<Void> {
+        TODO("Not yet implemented")
+    }
 
-    var requiredToAuth = false
-    var authBypassed = false
-
-    fun checkGrants() {
-        // check for any grants that are expired but not yet removed
-        //
-        // apply default grant if no active grant
+    override fun load(future: CompletableFuture<Document>) {
+        TODO("Not yet implemented")
     }
 
 }

@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.solexgames.lemon.Lemon
 import org.bson.Document
+import java.util.logging.Logger
 
 object MongoHandler {
 
@@ -22,8 +23,8 @@ object MongoHandler {
 
     init {
         try {
-            client = MongoClient(MongoClientURI(Lemon.instance.databaseConfig.getString("mongodb.url")))
-            database = client.getDatabase(Lemon.instance.databaseConfig.getString("mongodb.database", "SGSoftware"))
+            client = MongoClient(MongoClientURI(Lemon.instance.mongoConfig.uri))
+            database = client.getDatabase(Lemon.instance.mongoConfig.database)
 
             playerCollection = database.getCollection("coreprofiles")
             prefixCollection = database.getCollection("prefix")
@@ -32,12 +33,10 @@ object MongoHandler {
             disguiseCollection = database.getCollection("disguises")
 
             isConnected = true
-            Lemon.instance.logConsole("&a[Mongo] &eConnected to MongoDB!")
         } catch (e: Exception) {
             e.printStackTrace()
 
             isConnected = false
-            Lemon.instance.logConsole("&c[Mongo] &eCouldn't connect to MongoDB.")
         }
     }
 

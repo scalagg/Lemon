@@ -10,16 +10,7 @@ import java.util.concurrent.CompletableFuture
 
 object PlayerHandler {
 
-    var players: Map<UUID, LemonPlayer> = mapOf()
-//    var networkPlayers: Map<UUID, NetworkPlayer> = mapOf()
-
-    fun setupPlayer(event: AsyncPlayerPreLoginEvent) {
-        LemonPlayer(event.uniqueId, event.name, event.address)
-    }
-
-//    fun fetchNetworkPlayer(): CompletableFuture<NetworkPlayer> {
-//
-//    }
+    var players: MutableMap<UUID, LemonPlayer> = mutableMapOf()
 
     fun getPlayer(uuid: UUID): Optional<LemonPlayer> {
         if (players.containsKey(uuid)) {

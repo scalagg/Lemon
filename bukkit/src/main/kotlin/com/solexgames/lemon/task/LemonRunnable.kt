@@ -1,6 +1,5 @@
 package com.solexgames.lemon.task
 
-import com.solexgames.lemon.Lemon
 import net.evilblock.cubed.util.Color
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
@@ -9,16 +8,14 @@ import org.bukkit.scheduler.BukkitRunnable
  * @author puugz
  * @since 23/08/2021 19:19
  */
-abstract class LemonRunnable(seconds: Int) : BukkitRunnable() {
-
-    var seconds = seconds
+abstract class LemonRunnable(var seconds: Int) : BukkitRunnable() {
 
     override fun run() {
         if (getSeconds().contains(seconds)) {
-            execute()
+            onRun()
             seconds++
         } else {
-            executeEnd()
+            onEnd()
             cancel()
         }
     }
@@ -31,9 +28,9 @@ abstract class LemonRunnable(seconds: Int) : BukkitRunnable() {
         Bukkit.broadcast(message, permission)
     }
 
-    abstract fun execute()
+    abstract fun onRun()
 
-    abstract fun executeEnd()
+    abstract fun onEnd()
 
     abstract fun getSeconds(): List<Int>
 
