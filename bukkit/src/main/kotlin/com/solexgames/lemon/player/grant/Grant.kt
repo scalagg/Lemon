@@ -1,14 +1,25 @@
 package com.solexgames.lemon.player.grant
 
+import com.google.gson.annotations.SerializedName
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.Expireable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class Grant(uuid: UUID, rankId: UUID, addedBy: UUID, addedAt: Long, addedOn: String, addedReason: String, duration: Long) : Expireable(addedAt, duration) {
+class Grant(
+    @SerializedName("_id") val uuid: UUID,
+    target: UUID,
+    rankId: UUID,
+    addedBy: UUID,
+    addedAt: Long,
+    addedOn: String,
+    addedReason: String,
+    duration: Long
+) : Expireable(addedAt, duration) {
 
-    var uuid = uuid
+    var target: UUID = target
+
     var rankId = rankId
     var scopes: MutableList<String> = mutableListOf("global")
 

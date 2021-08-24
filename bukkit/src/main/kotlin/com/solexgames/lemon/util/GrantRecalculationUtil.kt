@@ -3,14 +3,15 @@ package com.solexgames.lemon.util
 import com.solexgames.lemon.player.grant.Grant
 import java.util.stream.Collectors
 
-class GrantRecalculationUtil {
+object GrantRecalculationUtil {
 
     /**
      * Retrieves the prominent grant out
      * of a mutable list with grants
      */
-    fun getProminentGrant(grants: MutableList<Grant>) {
-        grants.stream()
+    @JvmStatic
+    fun getProminentGrant(grants: MutableList<Grant>): Grant {
+        return grants.stream()
             .sorted(Comparator.comparingLong(Grant::addedAt).reversed())
             .collect(Collectors.toList()).stream()
             .filter { grant ->

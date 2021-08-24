@@ -20,17 +20,19 @@ object MongoHandler {
     lateinit var punishmentCollection: MongoCollection<Document>
     lateinit var rankCollection: MongoCollection<Document>
     lateinit var disguiseCollection: MongoCollection<Document>
+    lateinit var grantCollection: MongoCollection<Document>
 
     init {
         try {
             client = MongoClient(MongoClientURI(Lemon.instance.mongoConfig.uri))
             database = client.getDatabase(Lemon.instance.mongoConfig.database)
 
-            playerCollection = database.getCollection("coreprofiles")
-            prefixCollection = database.getCollection("prefix")
+            playerCollection = database.getCollection("lemon_players")
+            prefixCollection = database.getCollection("chat_tags")
             rankCollection = database.getCollection("ranks")
-            punishmentCollection = database.getCollection("punishment")
+            punishmentCollection = database.getCollection("punishments")
             disguiseCollection = database.getCollection("disguises")
+            grantCollection = database.getCollection("grants")
 
             isConnected = true
         } catch (e: Exception) {
