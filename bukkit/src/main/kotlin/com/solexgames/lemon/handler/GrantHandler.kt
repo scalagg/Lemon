@@ -40,7 +40,7 @@ object GrantHandler {
      * @param uuid the unique identifier of the user to find it by
      * @return the collection of the grants
      */
-    fun findGrants(uuid: UUID): MutableList<Grant> {
+    fun findGrants(uuid: UUID): List<Grant> {
         return grants.values.stream()
             .filter { it.target == uuid }
             .sorted(Comparator.comparingInt {

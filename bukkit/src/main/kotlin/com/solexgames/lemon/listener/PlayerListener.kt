@@ -26,6 +26,8 @@ class PlayerListener(private val plugin: Lemon) : Listener {
                 event.isCancelled = true
                 player.sendMessage("${CC.RED}Global chat is currently muted.")
             }
+
+
 //            else if (player is muted) {
 //                event.isCancelled = true
 //                player.sendMessage("${CC.RED}You're muted for ...")

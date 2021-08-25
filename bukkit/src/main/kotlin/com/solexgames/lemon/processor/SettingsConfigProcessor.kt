@@ -11,10 +11,14 @@ object SettingsConfigProcessor {
     @Comment("What should the server group for this instance be?")
     val group: String = "hub"
 
+    @Comment("What's the password to your network details?")
+    val serverPassword: String = "sg-lool"
+
     @Comment("What should the primary color be?")
-    val primaryColor: ChatColor = ChatColor.AQUA
+    val primaryColor: ChatColor = ChatColor.YELLOW
 
     @Comment("What should the secondary color be?")
-    val secondaryColor: ChatColor = ChatColor.DARK_AQUA
+    val secondaryColor: ChatColor = ChatColor.GREEN
+
 
 }

@@ -10,7 +10,7 @@ object GrantRecalculationUtil {
      * of a mutable list with grants
      */
     @JvmStatic
-    fun getProminentGrant(grants: MutableList<Grant>): Grant {
+    fun getProminentGrant(grants: List<Grant>): Grant {
         return grants.stream()
             .sorted(Comparator.comparingLong(Grant::addedAt).reversed())
             .collect(Collectors.toList()).stream()

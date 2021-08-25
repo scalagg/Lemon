@@ -9,8 +9,10 @@ import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnectio
 import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
+import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.listener.PlayerListener
+import com.solexgames.lemon.player.cached.CachedLemonPlayer
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
@@ -19,10 +21,12 @@ import com.solexgames.redis.JedisBuilder
 import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
 import me.lucko.helper.Schedulers
-import org.bukkit.plugin.java.JavaPlugin
+import me.lucko.helper.plugin.ExtendedJavaPlugin
+import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.ConfigFactory
 
-class Lemon : JavaPlugin(), DaddySharkPlatform {
+
+class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
 
     companion object {
         @JvmStatic
@@ -45,11 +49,13 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
     lateinit var jedisManager: JedisManager
     lateinit var jedisSettings: JedisSettings
 
+    lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
+
     private lateinit var consoleLogger: BetterConsoleLogger
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
 
-    override fun onEnable() {
+    override fun enable() {
         instance = this
 
         configFactory = ConfigFactory.newFactory(this)
@@ -66,6 +72,7 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
         serverHandler = ServerHandler
 
         setupRedisHandler()
+        setupCosmetic()
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable(this),
@@ -76,6 +83,21 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
         listener.registerHelperEvents()
 
         server.pluginManager.registerEvents(listener, this)
+    }
+
+    private fun setupCosmetic() {
+        CC.setup(
+            settings.primaryColor.toString(),
+            settings.secondaryColor.toString()
+        )
+
+//        val nameTagHandler = NametagHandler
+//        nameTagHandler.registerProvider(DefaultNametagProvider())
+//        nameTagHandler.registerProvider(VanishNametagProvider())
+//        nameTagHandler.registerProvider(StaffModeNametagProvider())
+//
+//        registerAdapter("Staff", StaffVisibilityHandler())
+//        registerOverride("Staff", StaffVisibilityOverrideHandler())
     }
 
     private fun setupRedisHandler() {
@@ -97,6 +119,14 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
             )
         }
 
+        val layerBuilder = RedisStorageBuilder<CachedLemonPlayer>()
+
+        layerBuilder.setType(CachedLemonPlayer::class.java)
+        layerBuilder.setSection("lemon:players")
+        layerBuilder.setConnection(redisConnection)
+
+        playerLayer = layerBuilder.build()
+
         jedisSettings = JedisSettings(
             redisConfig.address,
             redisConfig.port,
@@ -112,7 +142,7 @@ class Lemon : JavaPlugin(), DaddySharkPlatform {
         setupDataStore()
     }
 
-    override fun onDisable() {
+    override fun disable() {
         mongoHandler.close()
     }
 

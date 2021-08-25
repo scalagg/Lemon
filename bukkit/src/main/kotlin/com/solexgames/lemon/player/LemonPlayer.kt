@@ -80,7 +80,9 @@ class LemonPlayer(
         var boolean = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
 
         if (!ignorePlayer) {
-            getPlayer().ifPresent { if (it.isOp || it.hasPermission(permission.lowercase())) boolean = true }
+            getPlayer().ifPresent {
+                if (it.isOp || it.hasPermission(permission.lowercase())) boolean = true
+            }
         }
 
         return boolean
@@ -91,7 +93,7 @@ class LemonPlayer(
     }
 
     fun getPlayer(): Optional<Player> {
-        return Optional.ofNullable(Bukkit.getPlayer(uniqueId))
+        return Optional.of(Bukkit.getPlayer(uniqueId))
     }
 
     override fun save(): CompletableFuture<Void> {
