@@ -15,9 +15,9 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LemonPlayer(
-    uuid: UUID,
-    name: String,
-    address: String?
+    var uniqueId: UUID,
+    var name: String,
+    var ipAddress: String?
 ): Persistent<Document> {
 
     var notes: MutableList<Note> = mutableListOf()
@@ -26,9 +26,7 @@ class LemonPlayer(
     var permissions: MutableList<String> = mutableListOf()
     var bungeePermissions: MutableList<String> = mutableListOf()
 
-    var uniqueId = uuid
-    var username = name
-    var ipAddress = address
+    var loaded: Boolean = false
 
     var commandCooldown: Cooldown = Cooldown(0L)
     var helpOpCooldown: Cooldown = Cooldown(0L)
@@ -38,18 +36,6 @@ class LemonPlayer(
     var activeGrant: Grant? = null
 
     private var metaData: MutableMap<String, Metadata> = mutableMapOf()
-
-    fun updateOrAddMetadata(id: String, data: Metadata) {
-        metaData[id] = data
-    }
-
-    fun removeMetadata(id: String): Metadata? {
-        return metaData.remove(id)
-    }
-
-    fun getMetadata(id: String): Metadata? {
-        return metaData.getOrDefault(id, null)
-    }
 
     fun recalculateGrants() {
         Lemon.instance.grantHandler.findGrants(uniqueId).forEach { grant ->
@@ -86,6 +72,22 @@ class LemonPlayer(
         }
 
         return boolean
+    }
+
+    fun updateOrAddMetadata(id: String, data: Metadata) {
+        metaData[id] = data
+    }
+
+    fun removeMetadata(id: String): Metadata? {
+        return metaData.remove(id)
+    }
+
+    fun hasMetadata(id: String): Boolean {
+        return metaData.containsKey(id)
+    }
+
+    fun getMetadata(id: String): Metadata? {
+        return metaData.getOrDefault(id, null)
     }
 
     fun isStaff(): Boolean {

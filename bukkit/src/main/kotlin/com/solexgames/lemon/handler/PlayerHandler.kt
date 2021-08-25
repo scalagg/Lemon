@@ -2,17 +2,26 @@ package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.player.LemonPlayer
 import net.evilblock.cubed.Cubed
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 object PlayerHandler {
 
     var players: MutableMap<UUID, LemonPlayer> = mutableMapOf()
 
-    fun getPlayer(uuid: UUID): Optional<LemonPlayer> {
+    init {
+        Tasks.asyncTimer(20L * 60L, 20L * 60L) {
+            players.values.stream().filter {
+                !it.getPlayer().isPresent
+            }.forEach {
+                players.remove(it.uniqueId)?.save()
+            }
+        }
+    }
+
+    fun findPlayer(uuid: UUID): Optional<LemonPlayer> {
         if (players.containsKey(uuid)) {
             return Optional.ofNullable(players[uuid])
         }
@@ -20,14 +29,25 @@ object PlayerHandler {
         val offline = Bukkit.getOfflinePlayer(uuid)
         val name = Cubed.instance.uuidCache.name(uuid)
 
-        return Optional.ofNullable(if (offline.hasPlayedBefore()) { LemonPlayer(uuid, offline.name, null) } else { LemonPlayer(uuid, name, null) } )
+        return Optional.ofNullable(
+            if (offline.hasPlayedBefore()) {
+                LemonPlayer(uuid, offline.name, null)
+            } else {
+                LemonPlayer(uuid, name, null)
+            }
+        )
     }
 
-    fun getPlayer(name: String): Optional<LemonPlayer> {
+    fun findPlayer(name: String): Optional<LemonPlayer> {
         val player = Bukkit.getPlayer(name)
 
         if (player != null) {
-            return Optional.ofNullable(players.getOrDefault(player.uniqueId, LemonPlayer(player.uniqueId, player.name, null)))
+            return Optional.ofNullable(
+                players.getOrDefault(
+                    player.uniqueId,
+                    LemonPlayer(player.uniqueId, player.name, null)
+                )
+            )
         }
 
         val offline = Bukkit.getOfflinePlayer(name)
@@ -41,7 +61,7 @@ object PlayerHandler {
         return Optional.ofNullable(LemonPlayer(uuid!!, name, null))
     }
 
-    fun getPlayer(player: Player): Optional<LemonPlayer> {
-        return getPlayer(player.uniqueId)
+    fun findPlayer(player: Player): Optional<LemonPlayer> {
+        return findPlayer(player.uniqueId)
     }
 }

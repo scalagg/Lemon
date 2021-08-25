@@ -1,39 +1,37 @@
 package com.solexgames.lemon.player.grant
 
 import com.google.gson.annotations.SerializedName
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.ReplaceOptions
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonConstants
+import com.solexgames.lemon.model.Saveable
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.Expireable
+import org.bson.Document
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.CompletableFuture
 
 class Grant(
     @SerializedName("_id") val uuid: UUID,
-    target: UUID,
-    rankId: UUID,
-    addedBy: UUID?,
+    var target: UUID,
+    var rankId: UUID,
+    var addedBy: UUID?,
     addedAt: Long,
-    addedOn: String,
-    addedReason: String,
+    var addedOn: String,
+    var addedReason: String,
     duration: Long
-) : Expireable(addedAt, duration) {
+) : Expireable(addedAt, duration), Saveable {
 
-    var target: UUID = target
-
-    var rankId: UUID = rankId
     var scopes: MutableList<String> = mutableListOf("global")
 
-    var addedBy: UUID? = addedBy
-    var addedOn: String = addedOn
-    var addedReason: String = addedReason
-
+    var removedReason: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
-    var removedReason: String? = null
-    var removed = false
+    var removed: Boolean = false
 
     fun getRank(): Rank {
-        return Lemon.instance.rankHandler.getRank(rankId).orElse(Lemon.instance.rankHandler.getDefaultRank())
+        return Lemon.instance.rankHandler.findRank(rankId).orElse(Lemon.instance.rankHandler.getDefaultRank())
     }
 
     /**
@@ -55,5 +53,15 @@ class Grant(
         }
 
         return boolean
+    }
+
+    override fun save(): CompletableFuture<Void> {
+        return CompletableFuture.runAsync {
+            Lemon.instance.mongoHandler.grantCollection.replaceOne(
+                Filters.eq("_id", uuid),
+                Document.parse(LemonConstants.GSON.toJson(this)),
+                ReplaceOptions().upsert(true)
+            )
+        }
     }
 }

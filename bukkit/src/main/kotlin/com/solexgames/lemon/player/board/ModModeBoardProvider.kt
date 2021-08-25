@@ -1,4 +1,4 @@
-package com.solexgames.lemon.board
+package com.solexgames.lemon.player.board
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.LemonPlayer
@@ -14,7 +14,7 @@ object ModModeBoardProvider : ScoreboardOverride() {
     }
 
     override fun getLines(board: LinkedList<String>, player: Player) {
-        val lemonPlayer = Lemon.instance.playerHandler.getPlayer(player)
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
 //            board.add("${CC.GRAY}${CC.S}--------------------")
@@ -29,7 +29,7 @@ object ModModeBoardProvider : ScoreboardOverride() {
     }
 
     override fun shouldOverride(player: Player): Boolean {
-        val lemonPlayer = Lemon.instance.playerHandler.getPlayer(player)
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
         var shouldOverride = false
 
         lemonPlayer.ifPresent {

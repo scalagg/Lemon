@@ -27,11 +27,35 @@ object GrantHandler {
     }
 
     fun wipeGrant(uuid: UUID) {
-        // TODO: 8/24/2021 add Collection#deleteOne stuff
+        val grant = findGrantById(uuid)
+
+        grant.ifPresent {
+            it.removedReason = "Removed"
+            it.removedAt = System.currentTimeMillis()
+            it.removed = true
+            it.save()
+        }
     }
 
     fun wipeAllGrantsFor(uuid: UUID) {
-        // TODO: 8/24/2021 wipe all grants from GrantHandler#findGrants
+        val grants = findGrants(uuid)
+
+        grants.forEach {
+            it.removedReason = "Removed"
+            it.removedAt = System.currentTimeMillis()
+            it.removed = true
+            it.save()
+        }
+    }
+
+    /**
+     * Find a grant by it's id
+     *
+     * @param uuid the unique identifier of the grant
+     * @return the grant if found
+    */
+    fun findGrantById(uuid: UUID): Optional<Grant> {
+        return Optional.ofNullable(grants.getOrDefault(uuid, null))
     }
 
     /**

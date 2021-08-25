@@ -8,10 +8,10 @@ import java.util.*
  * @since 23/08/2021 18:32
  */
 
-open class Expireable(addedAt: Long, duration: Long) {
-
-    open val addedAt: Long = addedAt
-    open val duration: Long = duration
+open class Expireable(
+    val addedAt: Long,
+    val duration: Long
+) {
 
     var expireDate: Date = Date(addedAt + duration)
 
@@ -19,7 +19,7 @@ open class Expireable(addedAt: Long, duration: Long) {
         return duration == Long.MAX_VALUE
     }
 
-    fun getExpirationFancy(): String {
+    fun getExpirationString(): String {
         return if (isPermanent()) {
             "Never"
         } else {

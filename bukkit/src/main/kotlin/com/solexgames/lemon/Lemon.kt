@@ -12,7 +12,9 @@ import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.listener.PlayerListener
+import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.cached.CachedLemonPlayer
+import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
@@ -22,9 +24,10 @@ import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
+import net.evilblock.cubed.acf.ConditionFailedException
+import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.ConfigFactory
-
 
 class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
 
@@ -36,7 +39,6 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var mongoHandler: MongoHandler
     lateinit var playerHandler: PlayerHandler
     lateinit var rankHandler: RankHandler
-    lateinit var shutdownHandler: ShutdownHandler
     lateinit var grantHandler: GrantHandler
     lateinit var serverHandler: ServerHandler
 
@@ -49,7 +51,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var jedisManager: JedisManager
     lateinit var jedisSettings: JedisSettings
 
-    lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
+    private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
 
     private lateinit var consoleLogger: BetterConsoleLogger
     private lateinit var localInstance: ServerInstance
@@ -58,49 +60,101 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
     override fun enable() {
         instance = this
 
-        configFactory = ConfigFactory.newFactory(this)
-
-        redisConfig = configFactory.fromFile("redis", RedisConfigProcessor.javaClass)
-        mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
-        settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
-
-        mongoHandler = MongoHandler
-        playerHandler = PlayerHandler
-        rankHandler = RankHandler
-        shutdownHandler = ShutdownHandler
-        grantHandler = GrantHandler
-        serverHandler = ServerHandler
-
-        setupRedisHandler()
-        setupCosmetic()
+        loadConfigurations()
+        loadCosmetics()
+        loadListeners()
+        loadHandlers()
+        loadCommands()
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable(this),
             0L, DaddySharkConstants.UPDATE_DELAY_MILLI
         )
 
-        val listener = PlayerListener(this)
-        listener.registerHelperEvents()
-
-        server.pluginManager.registerEvents(listener, this)
+        logger.info("Loaded Lemon")
     }
 
-    private fun setupCosmetic() {
+    override fun disable() {
+        mongoHandler.close()
+    }
+
+    private fun loadCommands() {
+        val commandManager = CubedCommandManager(this)
+
+//        commandManager.commandCompletions.registerAsyncCompletion("tags") {
+//
+//        }
+        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
+            return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
+        }
+//        commandManager.commandContexts.registerContext(ServerInstance::class.java) {
+//            var server = serverHandler.findServer(it.firstArg)
+//
+//            if (!server.isPresent) {
+//                throw ConditionFailedException("That server does not exist.")
+//            }
+//            return@registerContext server
+//        }
+        commandManager.commandContexts.registerContext(Rank::class.java) {
+            val rank = rankHandler.findRank(it.firstArg)
+
+            if (!rank.isPresent) {
+                throw ConditionFailedException("That rank does not exist.")
+            }
+            return@registerContext rank.get()
+        }
+        // prefix commandContext
+        commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
+            val lemonPlayer = playerHandler.findPlayer(it.firstArg)
+
+            if (!lemonPlayer.isPresent) {
+                throw ConditionFailedException("Could not find that player.")
+            }
+            return@registerContext lemonPlayer.get()
+        }
+
+        logger.info("Loaded command manager")
+    }
+
+    private fun loadCosmetics() {
         CC.setup(
             settings.primaryColor.toString(),
             settings.secondaryColor.toString()
         )
 
-//        val nameTagHandler = NametagHandler
-//        nameTagHandler.registerProvider(DefaultNametagProvider())
-//        nameTagHandler.registerProvider(VanishNametagProvider())
-//        nameTagHandler.registerProvider(StaffModeNametagProvider())
+//        NameTagHandler.registerProvider(DefaultNametagProvider())
+//        NameTagHandler.registerProvider(VanishNametagProvider())
+//        NameTagHandler.registerProvider(StaffModeNametagProvider())
 //
-//        registerAdapter("Staff", StaffVisibilityHandler())
-//        registerOverride("Staff", StaffVisibilityOverrideHandler())
+//        VisibilityHandler.registerAdapter("Staff", StaffVisibilityHandler())
+//        VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
+
+        logger.info("Loaded cosmetics")
     }
 
-    private fun setupRedisHandler() {
+    private fun loadListeners() {
+        server.pluginManager.registerEvents(PlayerListener(this), this)
+
+        logger.info("Loaded listeners")
+    }
+
+    private fun loadConfigurations() {
+        configFactory = ConfigFactory.newFactory(this)
+
+        redisConfig = configFactory.fromFile("redis", RedisConfigProcessor.javaClass)
+        mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
+        settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
+
+        logger.info("Loaded configurations")
+    }
+
+    private fun loadHandlers() {
+        mongoHandler = MongoHandler
+        playerHandler = PlayerHandler
+        rankHandler = RankHandler
+        grantHandler = GrantHandler
+        serverHandler = ServerHandler
+
         localInstance = ServerInstance(
             settings.id,
             settings.group
@@ -140,10 +194,8 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
             .withHandler(RedisHandler).build()
 
         setupDataStore()
-    }
 
-    override fun disable() {
-        mongoHandler.close()
+        logger.info("Loaded handlers")
     }
 
     override var layer: RedisStorageLayer<ServerInstance>? = null

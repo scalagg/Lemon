@@ -47,7 +47,7 @@ class Rank(
         }
 
         inheritances.forEach {
-            val rank = Lemon.instance.rankHandler.getRank(it).orElse(null)
+            val rank = Lemon.instance.rankHandler.findRank(it).orElse(null)
 
             compoundedPermissions.addAll(rank.getCompoundedPermissions())
         }

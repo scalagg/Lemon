@@ -1,4 +1,4 @@
-package com.solexgames.lemon.punishment.category
+package com.solexgames.lemon.player.punishment.category
 
 enum class PunishmentCategoryIntensity {
 
