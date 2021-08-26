@@ -2,24 +2,38 @@ package com.solexgames.lemon.player.channel.impl
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.channel.Channel
+import com.solexgames.lemon.player.rank.Rank
+import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-class StaffChannel : Channel {
+class StaffChannel(private val channel: StaffChannelType) : Channel {
 
-    override fun onMessage(player: Player, message: String) {
-        // publish(player, message, channel)
+    override fun getId(): String {
+        return "staff-${channel.name.toLowerCase()}"
     }
 
-    override fun inChannel(player: Player): Boolean {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
-        var inChannel = false
-
-        lemonPlayer.ifPresent {
-            val metadata = it.getMetadata("staff-channel")
-
-            inChannel = metadata != null
-        }
-
-        return inChannel
+    override fun getPermission(): String {
+        return "lemon.channel.${channel.name.toLowerCase()}"
     }
+
+    override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
+        return "${channel.color}[${channel.name[0]}] ${CC.DARK_AQUA}[${Lemon.instance.settings.id}] ${rank.color}${sender}${CC.AQUA}: $message"
+    }
+
+    override fun isGlobal(): Boolean {
+        return true
+    }
+
+    override fun shouldCheckForPrefix(): Boolean {
+        return true
+    }
+
+    override fun hasPermission(t: Player): Boolean {
+        return t.hasPermission(getPermission())
+    }
+
+    override fun getPrefix(): String {
+        return channel.prefix
+    }
+
 }

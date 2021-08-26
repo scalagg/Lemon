@@ -2,8 +2,8 @@ package com.solexgames.lemon.listener
 
 import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.LemonPlayer
-import com.solexgames.lemon.player.event.GrantAppliedEvent
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -34,15 +34,10 @@ object PlayerListener : Listener {
 
         if (!lemonPlayer.loaded) {
             event.disallow(
-                AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                "${CC.RED}Your data couldn't load correctly.\n" +
-                        "\n" +
-                        "${CC.RED}If this issue persists, contact staff."
+                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, LemonConstants.PLAYER_DATA_LOAD
             )
             return
         }
-
-        // TODO: 25/08/2021 Check if the player is banned...
 
         if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff()) {
             event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
@@ -70,8 +65,6 @@ object PlayerListener : Listener {
 //            else if (serverHandler.slowChatTime != 0) {
 //
 //            }
-        } else {
-            // check staff channels
         }
 
         // lemonPlayer chat cooldown check

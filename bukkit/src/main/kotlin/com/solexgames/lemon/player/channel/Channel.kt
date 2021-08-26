@@ -1,11 +1,20 @@
 package com.solexgames.lemon.player.channel
 
+import com.solexgames.lemon.model.Permissible
+import com.solexgames.lemon.model.Prefixable
+import com.solexgames.lemon.player.rank.Rank
 import org.bukkit.entity.Player
 
-interface Channel {
+interface Channel: Prefixable, Permissible<Player> {
 
-    fun onMessage(player: Player, message: String)
+    fun getId(): String
 
-    fun inChannel(player: Player): Boolean
+    fun isGlobal(): Boolean
+
+    fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String
+
+    override fun isPrefixed(message: String): Boolean {
+        return message.startsWith("${getPrefix()} ")
+    }
 
 }

@@ -21,10 +21,7 @@ class LemonPlayer(
 ): Persistent<Document> {
 
     var notes: MutableList<Note> = mutableListOf()
-    var prefixes: MutableList<String> = mutableListOf()
     var ignoring: MutableList<String> = mutableListOf()
-    var permissions: MutableList<String> = mutableListOf()
-    var bungeePermissions: MutableList<String> = mutableListOf()
 
     var loaded: Boolean = false
 
@@ -38,27 +35,34 @@ class LemonPlayer(
     private var metaData: MutableMap<String, Metadata> = mutableMapOf()
 
     fun recalculateGrants() {
-        Lemon.instance.grantHandler.findGrants(uniqueId).forEach { grant ->
+        val grants = Lemon.instance.grantHandler.findGrants(uniqueId)
+        activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+
+        if (activeGrant == null) {
+            val rank = Lemon.instance.rankHandler.getDefaultRank()
+            activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
+
+            Lemon.instance.grantHandler.registerGrant(uniqueId, activeGrant!!)
+        }
+
+        var shouldRecalculate = false
+
+        grants.forEach { grant ->
             if (!grant.removed && !grant.hasExpired()) {
                 grant.removedReason = "Expired"
                 grant.removedAt = System.currentTimeMillis()
                 grant.removed = true
 
-                getPlayer().ifPresent {
-                    it.sendMessage("${CC.GREEN}Your ${grant.getRank().getColoredName()} ${CC.GREEN}grant has expired.")
-                }
+                shouldRecalculate = true
             }
         }
 
-        activeGrant = GrantRecalculationUtil.getProminentGrant(
-            Lemon.instance.grantHandler.findGrants(uniqueId)
-        )
+        if (shouldRecalculate) {
+            activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
 
-        if (activeGrant == null) {
-            val rank = Lemon.instance.rankHandler.getDefaultRank()
-            val grant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), "console", "Default", Long.MAX_VALUE)
-
-            Lemon.instance.grantHandler.registerGrant(uniqueId, grant)
+            getPlayer().ifPresent {
+                it.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant!!.getRank().getColoredName()}${CC.GREEN}.")
+            }
         }
     }
 
@@ -103,7 +107,9 @@ class LemonPlayer(
     }
 
     override fun load(future: CompletableFuture<Document>) {
-        TODO("Not yet implemented")
+        future.whenComplete { t, u ->
+
+        }
     }
 
 }

@@ -25,7 +25,6 @@ object LemonConstants {
     @JvmStatic
     val STORE_LINK: String = ""
 
-
     val BAN_MESSAGE_TEMP = """&cYou are &4banned &cfrom $SERVER_NAME for <time>.
             &cYou were banned for: &7<reason> (ID: #<id>)
                 &7If you feel this ban is unjustified, create a ticket at $WEB_LINK.

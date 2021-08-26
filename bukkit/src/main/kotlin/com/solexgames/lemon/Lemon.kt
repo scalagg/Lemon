@@ -110,6 +110,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
             if (!lemonPlayer.isPresent) {
                 throw ConditionFailedException("Could not find that player.")
             }
+
             return@registerContext lemonPlayer.get()
         }
 
@@ -128,14 +129,11 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
 //
 //        VisibilityHandler.registerAdapter("Staff", StaffVisibilityHandler())
 //        VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
-
-        logger.info("Loaded cosmetics")
     }
 
     private fun loadListeners() {
-        server.pluginManager.registerEvents(PlayerListener(this), this)
+        server.pluginManager.registerEvents(PlayerListener, this)
 
-        logger.info("Loaded listeners")
     }
 
     private fun loadConfigurations() {
@@ -144,8 +142,6 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
         redisConfig = configFactory.fromFile("redis", RedisConfigProcessor.javaClass)
         mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
         settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
-
-        logger.info("Loaded configurations")
     }
 
     private fun loadHandlers() {
