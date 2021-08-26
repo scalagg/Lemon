@@ -1,7 +1,7 @@
 package com.solexgames.lemon.player.rank
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.model.Persistent
+import com.solexgames.lemon.type.Persistent
 import net.evilblock.cubed.util.CC
 import org.bson.Document
 import java.util.*

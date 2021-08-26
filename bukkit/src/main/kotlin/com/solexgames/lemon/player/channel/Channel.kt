@@ -1,7 +1,7 @@
 package com.solexgames.lemon.player.channel
 
-import com.solexgames.lemon.model.Permissible
-import com.solexgames.lemon.model.Prefixable
+import com.solexgames.lemon.type.Permissible
+import com.solexgames.lemon.type.Prefixable
 import com.solexgames.lemon.player.rank.Rank
 import org.bukkit.entity.Player
 

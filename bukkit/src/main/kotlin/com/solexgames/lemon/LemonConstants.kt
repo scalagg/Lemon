@@ -52,8 +52,8 @@ object LemonConstants {
         &7If you feel this ban is unjustified, create a ticket at $WEB_LINK.
         """.trimIndent()
 
-    var MUTE_MESSAGE = ChatColor.RED.toString() + "You cannot speak as you are currently muted."
-    var KICK_MESSAGE = ChatColor.RED.toString() + "You were kicked for: " + ChatColor.GRAY + "<reason>"
+    var MUTE_MESSAGE = "${CC.RED}You cannot speak as you are currently muted."
+    var KICK_MESSAGE = "${CC.RED}You were kicked for: " + ChatColor.GRAY + "<reason>"
 
     @JvmStatic
     var SLOW_CHAT_MESSAGE = "${CC.RED}Chat is currently slowed, please wait <amount> before chatting again."
@@ -68,8 +68,8 @@ object LemonConstants {
 
     @JvmStatic
     var SERVER_NOT_LOADED = """
-        ${ChatColor.RED}The server you've tried to connect to has not loaded.
-        ${ChatColor.RED}Please try again in a few seconds or contact staff.
+        ${CC.RED}The server you've tried to connect to has not loaded.
+        ${CC.RED}Please try again in a few seconds or contact staff.
         """.trimIndent()
 
 }

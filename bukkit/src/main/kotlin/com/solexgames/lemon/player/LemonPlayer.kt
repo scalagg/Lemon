@@ -1,11 +1,11 @@
 package com.solexgames.lemon.player
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.model.Persistent
+import com.solexgames.lemon.type.Persistent
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
-import com.solexgames.lemon.util.Cooldown
+import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.GrantRecalculationUtil
 import net.evilblock.cubed.util.CC
 import org.bson.Document

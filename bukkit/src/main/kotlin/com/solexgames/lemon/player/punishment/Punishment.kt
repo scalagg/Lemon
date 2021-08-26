@@ -1,9 +1,9 @@
 package com.solexgames.lemon.player.punishment
 
-import com.solexgames.lemon.model.Saveable
+import com.solexgames.lemon.type.Saveable
 import com.solexgames.lemon.player.punishment.category.PunishmentCategory
 import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensity
-import com.solexgames.lemon.util.Expireable
+import com.solexgames.lemon.util.other.Expireable
 import java.util.*
 import java.util.concurrent.CompletableFuture
 

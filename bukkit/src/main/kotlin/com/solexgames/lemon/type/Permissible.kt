@@ -1,4 +1,4 @@
-package com.solexgames.lemon.model
+package com.solexgames.lemon.type
 
 interface Permissible<T> {
 

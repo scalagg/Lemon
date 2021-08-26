@@ -19,6 +19,9 @@ import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
 import com.solexgames.lemon.task.impl.daddyshark.BukkitInstanceUpdateRunnable
+import com.solexgames.lemon.util.LemonWebUtil
+import com.solexgames.lemon.util.lemon.LemonWebData
+import com.solexgames.lemon.util.lemon.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
 import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
@@ -42,14 +45,16 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var grantHandler: GrantHandler
     lateinit var serverHandler: ServerHandler
 
-    lateinit var redisConfig: RedisConfigProcessor
     lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
 
-    lateinit var configFactory: ConfigFactory
+    private lateinit var redisConfig: RedisConfigProcessor
+    private lateinit var configFactory: ConfigFactory
 
     lateinit var jedisManager: JedisManager
     lateinit var jedisSettings: JedisSettings
+
+    lateinit var lemonWebData: LemonWebData
 
     private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
 
@@ -60,7 +65,33 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
     override fun enable() {
         instance = this
 
-        loadConfigurations()
+        loadBaseConfigurations()
+
+        LemonWebUtil.fetchServerData(settings.serverPassword).whenComplete { webData, throwable ->
+            if (throwable != null || webData == null) {
+                logger.info("Something went wrong during data validation, shutting down... (${throwable?.message})")
+                server.pluginManager.disablePlugin(this)
+
+                return@whenComplete
+            }
+
+            if (webData.status == LemonWebStatus.FAILED) {
+                logger.info("Something went wrong during data validation, shutting down... (${webData.message})")
+                server.pluginManager.disablePlugin(this)
+
+                return@whenComplete
+            }
+
+            logger.info("Passed data validation checks, now loading Lemon with ${webData.serverName}'s data.")
+
+            lemonWebData = webData
+
+            runAfterDataValidation()
+        }
+    }
+
+    private fun runAfterDataValidation() {
+        loadExtraConfigurations()
         loadCosmetics()
         loadListeners()
         loadHandlers()
@@ -70,8 +101,6 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
             BukkitInstanceUpdateRunnable(this),
             0L, DaddySharkConstants.UPDATE_DELAY_MILLI
         )
-
-        logger.info("Loaded Lemon")
     }
 
     override fun disable() {
@@ -119,8 +148,8 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
 
     private fun loadCosmetics() {
         CC.setup(
-            settings.primaryColor.toString(),
-            settings.secondaryColor.toString()
+            lemonWebData.primary,
+            lemonWebData.secondary
         )
 
 //        NameTagHandler.registerProvider(DefaultNametagProvider())
@@ -136,12 +165,15 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
 
     }
 
-    private fun loadConfigurations() {
+    private fun loadBaseConfigurations() {
         configFactory = ConfigFactory.newFactory(this)
 
+        settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
+    }
+
+    private fun loadExtraConfigurations() {
         redisConfig = configFactory.fromFile("redis", RedisConfigProcessor.javaClass)
         mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
-        settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
     }
 
     private fun loadHandlers() {
@@ -190,8 +222,6 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
             .withHandler(RedisHandler).build()
 
         setupDataStore()
-
-        logger.info("Loaded handlers")
     }
 
     override var layer: RedisStorageLayer<ServerInstance>? = null

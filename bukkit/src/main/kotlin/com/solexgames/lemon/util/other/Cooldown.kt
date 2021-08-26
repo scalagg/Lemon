@@ -1,4 +1,4 @@
-package com.solexgames.lemon.util
+package com.solexgames.lemon.util.other
 
 import net.evilblock.cubed.util.time.TimeUtil
 
