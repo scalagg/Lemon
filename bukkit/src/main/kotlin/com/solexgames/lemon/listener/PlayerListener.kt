@@ -81,7 +81,7 @@ object PlayerListener : Listener {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            it.save()
+            Lemon.instance.playerHandler.players.remove(it.uniqueId)?.save()
         }
     }
 

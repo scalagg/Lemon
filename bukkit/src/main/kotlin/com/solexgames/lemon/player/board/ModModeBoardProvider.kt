@@ -19,7 +19,7 @@ object ModModeBoardProvider : ScoreboardOverride() {
         lemonPlayer.ifPresent {
 //            board.add("${CC.GRAY}${CC.S}--------------------")
 //            board.add(getVanishStatus(it))
-//            board.add("Channel: ${CC.PRI}${getChannel(it.channelType)}")
+//            board.add("Channel: ${CC.PRI}${getChannel(it)}")
 //            board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size}")
 //            board.add("TPS: ${CC.PRI}${RedisUtil.getTicksPerSecondFormatted()}")
 //            board.add(" ")
@@ -41,7 +41,9 @@ object ModModeBoardProvider : ScoreboardOverride() {
         return shouldOverride
     }
 
-//    private fun getChannel(channelType: ChatChannelType): String {
+//    private fun getChannel(lemonPlayer: LemonPlayer): String {
+//        lemonPlayer.getMetadata("channel")
+//
 //        return if (channelType == null) "Regular" else {
 //            when (channelType) {
 //                DEV -> "&3Developer"
