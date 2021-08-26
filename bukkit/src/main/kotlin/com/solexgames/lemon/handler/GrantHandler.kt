@@ -49,12 +49,12 @@ object GrantHandler {
     }
 
     /**
-     * Find a grant by it's id
+     * Find a grant by its id
      *
      * @param uuid the unique identifier of the grant
      * @return the grant if found
     */
-    fun findGrantById(uuid: UUID): Optional<Grant> {
+    private fun findGrantById(uuid: UUID): Optional<Grant> {
         return Optional.ofNullable(grants.getOrDefault(uuid, null))
     }
 
