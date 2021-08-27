@@ -10,9 +10,9 @@ import java.util.concurrent.CompletableFuture
 class Rank(
     uuid: UUID = UUID.randomUUID(),
     name: String
-) : Persistent<Document> {
+): Persistent<Document> {
 
-    constructor(name: String) : this(UUID.randomUUID(), name)
+    constructor(name: String): this(UUID.randomUUID(), name)
 
     var uuid: UUID = uuid
     var weight: Int = 0

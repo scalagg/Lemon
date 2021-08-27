@@ -7,7 +7,7 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*
 
-object ModModeBoardProvider : ScoreboardOverride() {
+object ModModeBoardProvider: ScoreboardOverride() {
 
     override fun getTitle(player: Player): String {
         return CC.B_PRI + "Staff Mode"

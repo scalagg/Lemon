@@ -21,7 +21,7 @@ class Grant(
     var addedOn: String,
     var addedReason: String,
     duration: Long
-) : Expireable(addedAt, duration), Saveable {
+): Expireable(addedAt, duration), Saveable {
 
     var scopes: MutableList<String> = mutableListOf("global")
 

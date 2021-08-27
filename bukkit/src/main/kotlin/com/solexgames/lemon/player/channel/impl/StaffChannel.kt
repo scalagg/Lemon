@@ -6,7 +6,7 @@ import com.solexgames.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-class StaffChannel(private val channel: StaffChannelType) : Channel {
+class StaffChannel(private val channel: StaffChannelType): Channel {
 
     override fun getId(): String {
         return "staff-${channel.name.toLowerCase()}"

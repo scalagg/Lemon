@@ -4,7 +4,9 @@ import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.LemonPlayer
+import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -15,7 +17,7 @@ import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.concurrent.CompletableFuture
 
-object PlayerListener : Listener {
+object PlayerListener: Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerPreLogin(event: AsyncPlayerPreLoginEvent) {
@@ -51,23 +53,41 @@ object PlayerListener : Listener {
         val player = event.player
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val serverHandler = Lemon.instance.serverHandler
+        val chatSlowed = Lemon.instance.serverHandler.slowChatTime != 0
 
         if (!lemonPlayer.isStaff()) {
             if (serverHandler.chatMuted || lemonPlayer.hasPermission("lemon.chat.bypass")) {
                 event.isCancelled = true
                 player.sendMessage("${CC.RED}Global chat is currently muted.")
             }
-
 //            else if (player is muted) {
 //                event.isCancelled = true
 //                player.sendMessage("${CC.RED}You're muted for ...")
 //            }
-//            else if (serverHandler.slowChatTime != 0) {
-//
-//            }
+            else if (chatSlowed) {
+                if (lemonPlayer.slowChatCooldown.isActive()) {
+                    val formatted = TimeUtil.millisToSeconds(lemonPlayer.slowChatCooldown.getRemaining())
+                    player.sendMessage("${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
+                    event.isCancelled = true
+                    return
+                }
+                lemonPlayer.slowChatCooldown = Cooldown(serverHandler.slowChatTime * 1000L)
+            }
+            else {
+                if (lemonPlayer.chatCooldown.isActive()) {
+                    val formatted = TimeUtil.millisToSeconds(lemonPlayer.chatCooldown.getRemaining())
+                    player.sendMessage("${CC.RED}You are on chat cooldown, please wait ${formatted}.")
+                    event.isCancelled = true
+                    return
+                }
+                lemonPlayer.resetChatCooldown()
+            }
         }
 
-        // lemonPlayer chat cooldown check
+        if (event.isCancelled)
+            return
+
+        // check for channels etc.
     }
 
     private fun onDisconnect(player: Player) {

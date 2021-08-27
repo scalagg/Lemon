@@ -32,7 +32,7 @@ import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.ConfigFactory
 
-class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform {
+class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     companion object {
         @JvmStatic

@@ -6,7 +6,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 
-class ShutdownRunnable(seconds: Int) : LemonRunnable(seconds) {
+class ShutdownRunnable(seconds: Int): LemonRunnable(seconds) {
 
     init {
         runTaskTimerAsynchronously(Lemon.instance, 20L, 20L)

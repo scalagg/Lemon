@@ -2,12 +2,21 @@ package com.solexgames.lemon.util.other
 
 import net.evilblock.cubed.util.time.TimeUtil
 
-class Cooldown(millis: Long) {
+class Cooldown(duration: Long) {
 
-    private val expiry: Long = System.currentTimeMillis() + millis
+    private val start: Long = System.currentTimeMillis()
+    private val expiry: Long = start + duration
 
-    fun expirationFormat(): String {
-        return TimeUtil.formatIntoDetailedString(expiry.toInt())
+    fun getTimeLeft(): String {
+        return TimeUtil.formatIntoDetailedString(getRemaining().toInt())
+    }
+
+    fun getPassed(): Long {
+        return System.currentTimeMillis() - start
+    }
+
+    fun getRemaining(): Long {
+        return expiry - System.currentTimeMillis()
     }
 
     fun isActive(): Boolean {

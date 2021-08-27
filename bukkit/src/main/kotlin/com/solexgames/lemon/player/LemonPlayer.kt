@@ -29,6 +29,7 @@ class LemonPlayer(
     var helpOpCooldown: Cooldown = Cooldown(0L)
     var reportCooldown: Cooldown = Cooldown(0L)
     var chatCooldown: Cooldown = Cooldown(0L)
+    var slowChatCooldown: Cooldown = Cooldown(0L)
 
     var activeGrant: Grant? = null
 
@@ -76,6 +77,16 @@ class LemonPlayer(
         }
 
         return boolean
+    }
+
+    fun resetChatCooldown() {
+        val donor = false
+
+        chatCooldown = if (donor) {
+            Cooldown(1000L)
+        } else {
+            Cooldown(3000L)
+        }
     }
 
     fun updateOrAddMetadata(id: String, data: Metadata) {

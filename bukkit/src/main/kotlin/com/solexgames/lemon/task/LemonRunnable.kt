@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable
  * @author puugz
  * @since 23/08/2021 19:19
  */
-abstract class LemonRunnable(var seconds: Int) : BukkitRunnable() {
+abstract class LemonRunnable(var seconds: Int): BukkitRunnable() {
 
     override fun run() {
         if (getSeconds().contains(seconds)) {
