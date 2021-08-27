@@ -10,6 +10,7 @@ class BukkitInstanceUpdateRunnable(platform: DaddySharkPlatform): InstanceUpdate
 
     override fun run() {
         val instance = platform.getLocalServerInstance()
+
         instance.maxPlayers = Bukkit.getOnlinePlayers().size
         instance.onlinePlayers = Bukkit.getMaxPlayers()
         instance.whitelisted = Bukkit.hasWhitelist()

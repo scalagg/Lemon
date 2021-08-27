@@ -4,6 +4,6 @@ main: com.solexgames.lemon.Lemon
 
 author: SolexGames
 website: https://solexgames.com
-description: Extensive rank, punishment, & moderation suite written by SolexGames.
+description: Extensive rank, punishment, & moderation suite.
 
-depend: [Cubed]
+depend: [Cubed, spark]

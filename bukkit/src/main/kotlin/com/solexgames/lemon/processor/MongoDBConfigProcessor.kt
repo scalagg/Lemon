@@ -8,6 +8,6 @@ object MongoDBConfigProcessor {
     val uri: String = "mongodb://localhost:27017"
 
     @Comment("What database should we store data in?")
-    val database: String = "SGSoftware"
+    val database: String = "SolexGames"
 
 }
