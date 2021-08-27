@@ -1,6 +1,7 @@
 package com.solexgames.lemon.player
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.player.enums.PermissionCheck
 import com.solexgames.lemon.type.Persistent
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
@@ -67,20 +68,35 @@ class LemonPlayer(
         }
     }
 
-    fun hasPermission(permission: String, ignorePlayer: Boolean = false): Boolean {
-        var boolean = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
+    fun hasPermission(
+        permission: String,
+        checkType: PermissionCheck = PermissionCheck.PLAYER
+    ): Boolean {
+        var hasPermission = false
 
-        if (!ignorePlayer) {
-            getPlayer().ifPresent {
-                if (it.isOp || it.hasPermission(permission.lowercase())) boolean = true
+        when (checkType) {
+            PermissionCheck.COMPOUNDED -> hasPermission = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
+            PermissionCheck.PLAYER -> getPlayer().ifPresent {
+                if (it.isOp || it.hasPermission(permission.lowercase())) {
+                    hasPermission = true
+                }
+            }
+            PermissionCheck.BOTH -> {
+                hasPermission = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
+
+                getPlayer().ifPresent {
+                    if (it.isOp || it.hasPermission(permission.lowercase())) {
+                        hasPermission = true
+                    }
+                }
             }
         }
 
-        return boolean
+        return hasPermission
     }
 
     fun resetChatCooldown() {
-        val donor = false
+        val donor = hasPermission("lemon.donator")
 
         chatCooldown = if (donor) {
             Cooldown(1000L)
@@ -106,7 +122,7 @@ class LemonPlayer(
     }
 
     fun isStaff(): Boolean {
-        return hasPermission("lemon.staff", true)
+        return hasPermission("lemon.staff")
     }
 
     fun getPlayer(): Optional<Player> {

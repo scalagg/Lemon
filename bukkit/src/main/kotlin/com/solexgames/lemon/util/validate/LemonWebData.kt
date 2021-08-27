@@ -1,4 +1,4 @@
-package com.solexgames.lemon.util.lemon
+package com.solexgames.lemon.util.validate
 
 /**
  * @author GrowlyX

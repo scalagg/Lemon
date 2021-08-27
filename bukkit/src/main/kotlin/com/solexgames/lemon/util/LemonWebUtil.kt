@@ -2,7 +2,7 @@ package com.solexgames.lemon.util
 
 import com.google.gson.JsonParser
 import com.solexgames.lemon.LemonConstants
-import com.solexgames.lemon.util.lemon.LemonWebData
+import com.solexgames.lemon.util.validate.LemonWebData
 import java.io.InputStreamReader
 import java.net.URL
 import java.util.concurrent.CompletableFuture

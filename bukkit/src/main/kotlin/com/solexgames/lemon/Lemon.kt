@@ -20,8 +20,8 @@ import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
 import com.solexgames.lemon.task.impl.daddyshark.BukkitInstanceUpdateRunnable
 import com.solexgames.lemon.util.LemonWebUtil
-import com.solexgames.lemon.util.lemon.LemonWebData
-import com.solexgames.lemon.util.lemon.LemonWebStatus
+import com.solexgames.lemon.util.validate.LemonWebData
+import com.solexgames.lemon.util.validate.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
 import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
@@ -44,6 +44,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var rankHandler: RankHandler
     lateinit var grantHandler: GrantHandler
     lateinit var serverHandler: ServerHandler
+    lateinit var chatHandler: ChatHandler
 
     lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
@@ -182,6 +183,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         rankHandler = RankHandler
         grantHandler = GrantHandler
         serverHandler = ServerHandler
+        chatHandler = ChatHandler
 
         localInstance = ServerInstance(
             settings.id,

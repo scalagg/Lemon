@@ -1,8 +1,10 @@
 package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.player.LemonPlayer
+import com.solexgames.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -27,7 +29,7 @@ object PlayerHandler {
         }
 
         val offline = Bukkit.getOfflinePlayer(uuid)
-        val name = Cubed.instance.uuidCache.name(uuid)
+        val name = CubedCacheUtil.fetchNameByUuid(uuid)
 
         return Optional.ofNullable(
             if (offline.hasPlayedBefore()) {
@@ -56,7 +58,7 @@ object PlayerHandler {
             return Optional.ofNullable(LemonPlayer(offline.uniqueId, offline.name, null))
         }
 
-        val uuid = Cubed.instance.uuidCache.uuid(name)
+        val uuid = CubedCacheUtil.fetchUuidByName(name)
 
         return Optional.ofNullable(LemonPlayer(uuid!!, name, null))
     }

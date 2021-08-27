@@ -7,7 +7,9 @@ import com.solexgames.lemon.player.channel.impl.StaffChannelType
 
 object ChatHandler {
 
-    private val channels: MutableMap<String, Channel> = mutableMapOf()
+    val channels: MutableMap<String, Channel> = mutableMapOf()
+
+    val channelOverride: Channel? = null
 
     init {
         channels["default"] = DefaultChannel()
