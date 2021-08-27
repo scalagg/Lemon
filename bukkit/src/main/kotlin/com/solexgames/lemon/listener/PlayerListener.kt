@@ -23,6 +23,11 @@ object PlayerListener: Listener {
         ignoreCancelled = true
     )
     fun onPlayerPreLoginHigh(event: AsyncPlayerPreLoginEvent) {
+        if (!Lemon.canJoin) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, LemonConstants.SERVER_NOT_LOADED)
+            return
+        }
+
         val lemonPlayer = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
 
         val completableFuture = CompletableFuture.supplyAsync {

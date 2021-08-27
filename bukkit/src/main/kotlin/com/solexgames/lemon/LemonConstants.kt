@@ -69,10 +69,6 @@ object LemonConstants {
         """.trimIndent()
 
     @JvmStatic
-    var SERVER_NOT_LOADED = """
-        ${CC.RED}The server you've tried to connect to has not loaded.
-        ${CC.RED}Please try again in a few seconds or contact staff.
-        """.trimIndent()
-
+    var SERVER_NOT_LOADED = "${CC.RED}The server has not loaded yet, please reconnect in a few seconds."
 
 }
