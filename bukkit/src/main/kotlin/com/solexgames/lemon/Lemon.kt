@@ -40,6 +40,9 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     companion object {
         @JvmStatic
         lateinit var instance: Lemon
+
+        @JvmStatic
+        var canJoin: Boolean = false
     }
 
     lateinit var mongoHandler: MongoHandler
@@ -105,6 +108,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             BukkitInstanceUpdateRunnable(this),
             0L, DaddySharkConstants.UPDATE_DELAY_MILLI
         )
+
+        server.consoleSender.sendMessage(
+            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded and the server will be joinable in ${CC.GREEN}3 seconds${CC.SEC}."
+        )
+
+        Schedulers.sync().runLater({
+            canJoin = true
+        }, 60L)
     }
 
     override fun disable() {

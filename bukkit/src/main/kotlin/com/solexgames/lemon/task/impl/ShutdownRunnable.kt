@@ -9,13 +9,13 @@ import org.bukkit.Bukkit
 class ShutdownRunnable(seconds: Int): LemonRunnable(seconds) {
 
     init {
-        runTaskTimerAsynchronously(Lemon.instance, 20L, 20L)
+        runTaskTimerAsynchronously(Lemon.instance, 0L, 20L)
     }
 
     override fun onRun() {
         if (seconds == 2) {
             Bukkit.getOnlinePlayers().forEach { player ->
-                player.kickPlayer("${CC.RED}The server is currently rebooting...\n${CC.RED}Please reconnect in a few minutes.")
+                player.kickPlayer("${CC.RED}The server is currently rebooting.")
             }
         } else {
             broadcast("${CC.SEC}The server will be rebooting in ${CC.PRI}${TimeUtil.formatIntoDetailedString(seconds)}${CC.SEC}.")
