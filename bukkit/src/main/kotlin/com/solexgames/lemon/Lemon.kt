@@ -27,9 +27,12 @@ import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
+import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.ClassUtils
+import org.bukkit.event.Listener
 import xyz.mkotb.configapi.ConfigFactory
 
 class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
@@ -133,7 +136,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             }
             return@registerContext rank.get()
         }
-        // prefix commandContext
+
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val lemonPlayer = playerHandler.findPlayer(it.firstArg)
 
@@ -142,6 +145,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             }
 
             return@registerContext lemonPlayer.get()
+        }
+
+        ClassUtils.getClassesInPackage(this, "com.solexgames.lemon.command").forEach {
+            if (it.isAssignableFrom(BaseCommand::class.java)) {
+                val baseCommand = it.newInstance() as BaseCommand
+
+                commandManager.registerCommand(baseCommand)
+            }
         }
 
         logger.info("Loaded command manager")
@@ -162,8 +173,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun loadListeners() {
-        server.pluginManager.registerEvents(PlayerListener, this)
+        ClassUtils.getClassesInPackage(this, "com.solexgames.lemon.listener").forEach {
+            if (it.isAssignableFrom(Listener::class.java)) {
+                val listener = it.newInstance() as Listener
 
+                server.pluginManager.registerEvents(listener, this)
+            }
+        }
     }
 
     private fun loadBaseConfigurations() {
