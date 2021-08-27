@@ -5,7 +5,7 @@ import com.mongodb.client.model.Filters
 import com.mongodb.client.model.ReplaceOptions
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
-import com.solexgames.lemon.type.Saveable
+import com.solexgames.lemon.util.type.Saveable
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.other.Expireable
 import org.bson.Document

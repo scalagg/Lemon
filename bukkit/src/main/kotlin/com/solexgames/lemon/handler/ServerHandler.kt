@@ -1,17 +1,14 @@
 package com.solexgames.lemon.handler
 
-import com.solexgames.lemon.task.impl.ShutdownRunnable
+import com.solexgames.lemon.task.ShutdownRunnable
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
 object ServerHandler {
 
-    var chatMuted: Boolean = false
-    var slowChatTime: Int = 3
+    var shutdownRunnable: ShutdownRunnable? = null
 
-    private var shutdownRunnable: ShutdownRunnable? = null
-
-    fun initiateShutdown(seconds: Int, initiator: Player) {
+    fun initiateShutdown(initiator: Player, seconds: Int) {
         if (shutdownRunnable != null) {
             initiator.sendMessage("${CC.RED}A server shutdown has already been initialized.")
             return
@@ -22,7 +19,7 @@ object ServerHandler {
 
     fun cancelShutdown(stopper: Player) {
         if (shutdownRunnable == null) {
-            stopper.sendMessage("${CC.RED}There is no scheduled shutdown currently running.")
+            stopper.sendMessage("${CC.RED}There is currently no scheduled shutdown.")
             return
         }
         shutdownRunnable!!.cancel()

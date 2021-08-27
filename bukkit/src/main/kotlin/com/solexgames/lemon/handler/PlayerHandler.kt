@@ -2,9 +2,7 @@ package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.util.CubedCacheUtil
-import net.evilblock.cubed.Cubed
-import net.evilblock.cubed.util.bukkit.Tasks
-import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
+import me.lucko.helper.Schedulers
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -14,13 +12,13 @@ object PlayerHandler {
     var players: MutableMap<UUID, LemonPlayer> = mutableMapOf()
 
     init {
-        Tasks.asyncTimer(20L * 60L, 20L * 60L) {
+        Schedulers.async().runRepeating(Runnable {
             players.values.stream().filter {
                 !it.getPlayer().isPresent
             }.forEach {
                 players.remove(it.uniqueId)?.save()
             }
-        }
+        }, 20L * 60L, 20L * 60L)
     }
 
     fun findPlayer(uuid: UUID): Optional<LemonPlayer> {

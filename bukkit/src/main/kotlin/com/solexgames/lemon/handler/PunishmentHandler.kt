@@ -9,6 +9,7 @@ import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensi
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.collections.ArrayList
 
 /**
  * @author GrowlyX
@@ -19,7 +20,7 @@ object PunishmentHandler {
 
     private fun fetchPunishments(key: String, uuid: UUID, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>> {
         return CompletableFuture.supplyAsync {
-            val list = mutableListOf<Punishment>()
+            val list = ArrayList<Punishment>()
 
             Lemon.instance.mongoHandler.punishmentCollection.find(Filters.eq(key, uuid.toString())).forEach {
                 val punishment = LemonConstants.GSON.fromJson(it.toJson(), Punishment::class.java)

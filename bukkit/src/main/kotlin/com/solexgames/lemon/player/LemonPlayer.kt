@@ -2,7 +2,7 @@ package com.solexgames.lemon.player
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.enums.PermissionCheck
-import com.solexgames.lemon.type.Persistent
+import com.solexgames.lemon.util.type.Persistent
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
@@ -14,6 +14,8 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class LemonPlayer(
     var uniqueId: UUID,
@@ -21,20 +23,20 @@ class LemonPlayer(
     var ipAddress: String?
 ): Persistent<Document> {
 
-    var notes: MutableList<Note> = mutableListOf()
-    var ignoring: MutableList<String> = mutableListOf()
+    var notes = ArrayList<Note>()
+    var ignoring = ArrayList<String>()
 
-    var loaded: Boolean = false
+    var loaded = false
 
-    var commandCooldown: Cooldown = Cooldown(0L)
-    var helpOpCooldown: Cooldown = Cooldown(0L)
-    var reportCooldown: Cooldown = Cooldown(0L)
-    var chatCooldown: Cooldown = Cooldown(0L)
-    var slowChatCooldown: Cooldown = Cooldown(0L)
+    var commandCooldown = Cooldown(0L)
+    var helpOpCooldown = Cooldown(0L)
+    var reportCooldown = Cooldown(0L)
+    var chatCooldown = Cooldown(0L)
+    var slowChatCooldown = Cooldown(0L)
 
     var activeGrant: Grant? = null
 
-    private var metaData: MutableMap<String, Metadata> = mutableMapOf()
+    private var metadata = HashMap<String, Metadata>()
 
     fun recalculateGrants() {
         val grants = Lemon.instance.grantHandler.findGrants(uniqueId)
@@ -106,19 +108,19 @@ class LemonPlayer(
     }
 
     fun updateOrAddMetadata(id: String, data: Metadata) {
-        metaData[id] = data
+        metadata[id] = data
     }
 
     fun removeMetadata(id: String): Metadata? {
-        return metaData.remove(id)
+        return metadata.remove(id)
     }
 
     fun hasMetadata(id: String): Boolean {
-        return metaData.containsKey(id)
+        return metadata.containsKey(id)
     }
 
     fun getMetadata(id: String): Metadata? {
-        return metaData.getOrDefault(id, null)
+        return metadata.getOrDefault(id, null)
     }
 
     fun isStaff(): Boolean {
@@ -134,7 +136,7 @@ class LemonPlayer(
     }
 
     override fun load(future: CompletableFuture<Document>) {
-        future.whenComplete { t, u ->
+        future.whenComplete { document, throwable ->
 
         }
     }

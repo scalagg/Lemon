@@ -11,14 +11,14 @@ import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import com.solexgames.lemon.handler.*
-import com.solexgames.lemon.listener.PlayerListener
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.cached.CachedLemonPlayer
+import com.solexgames.lemon.player.nametag.*
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
-import com.solexgames.lemon.task.impl.daddyshark.BukkitInstanceUpdateRunnable
+import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import com.solexgames.lemon.util.LemonWebUtil
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
@@ -27,11 +27,15 @@ import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
+import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
+import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
+import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.event.Listener
 import xyz.mkotb.configapi.ConfigFactory
 
@@ -113,6 +117,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded and the server will be joinable in ${CC.GREEN}3 seconds${CC.SEC}."
         )
 
+        Cubed.instance.uuidCache = RedisUUIDCache(jedisManager)
+
         Schedulers.sync().runLater({
             canJoin = true
         }, 60L)
@@ -175,11 +181,11 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             lemonWebData.secondary
         )
 
-//        NameTagHandler.registerProvider(DefaultNametagProvider())
-//        NameTagHandler.registerProvider(VanishNametagProvider())
-//        NameTagHandler.registerProvider(StaffModeNametagProvider())
-//
-//        VisibilityHandler.registerAdapter("Staff", StaffVisibilityHandler())
+        NametagHandler.registerProvider(DefaultNametagProvider())
+        NametagHandler.registerProvider(VanishNametagProvider())
+        NametagHandler.registerProvider(ModModeNametagProvider())
+
+//        VisibilityHandler.registerAdapter("Staff", StaffVisiblityHandler())
 //        VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
     }
 

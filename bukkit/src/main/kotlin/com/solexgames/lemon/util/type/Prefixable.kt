@@ -1,4 +1,4 @@
-package com.solexgames.lemon.type
+package com.solexgames.lemon.util.type
 
 interface Prefixable {
 

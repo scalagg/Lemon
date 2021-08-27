@@ -11,6 +11,6 @@ object SettingsConfigProcessor {
     val group: String = "hub"
 
     @Comment("What's the password to your network details?")
-    val serverPassword: String = "sg-lool"
+    val serverPassword: String = "server_password"
 
 }

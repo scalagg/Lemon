@@ -5,7 +5,7 @@ import java.util.*
 
 object RankHandler {
 
-    var ranks: MutableMap<UUID, Rank> = mutableMapOf()
+    val ranks = HashMap<UUID, Rank>()
 
     fun findRank(uuid: UUID): Optional<Rank> {
         return Optional.ofNullable(ranks.getOrDefault(uuid, null))

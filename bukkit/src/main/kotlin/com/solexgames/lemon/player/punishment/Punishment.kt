@@ -1,6 +1,6 @@
 package com.solexgames.lemon.player.punishment
 
-import com.solexgames.lemon.type.Saveable
+import com.solexgames.lemon.util.type.Saveable
 import com.solexgames.lemon.player.punishment.category.PunishmentCategory
 import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensity
 import com.solexgames.lemon.util.other.Expireable

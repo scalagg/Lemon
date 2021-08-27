@@ -1,7 +1,7 @@
-package com.solexgames.lemon.task.impl
+package com.solexgames.lemon.task
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.task.LemonRunnable
+import com.solexgames.lemon.util.task.LemonRunnable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit

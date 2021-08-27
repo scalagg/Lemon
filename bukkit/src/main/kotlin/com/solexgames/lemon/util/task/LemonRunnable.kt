@@ -1,4 +1,4 @@
-package com.solexgames.lemon.task
+package com.solexgames.lemon.util.task
 
 import net.evilblock.cubed.util.Color
 import org.bukkit.Bukkit
@@ -13,8 +13,8 @@ abstract class LemonRunnable(var seconds: Int): BukkitRunnable() {
     override fun run() {
         if (getSeconds().contains(seconds)) {
             onRun()
-            seconds++
-        } else {
+            seconds--
+        } else if (seconds == 0) {
             onEnd()
             cancel()
         }

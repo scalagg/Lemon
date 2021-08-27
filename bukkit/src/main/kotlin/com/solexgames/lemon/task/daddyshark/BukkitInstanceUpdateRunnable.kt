@@ -1,4 +1,4 @@
-package com.solexgames.lemon.task.impl.daddyshark
+package com.solexgames.lemon.task.daddyshark
 
 import com.solexgames.daddyshark.commons.platform.DaddySharkPlatform
 import com.solexgames.daddyshark.commons.update.InstanceUpdateRunnable
