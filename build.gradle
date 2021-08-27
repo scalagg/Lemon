@@ -1,42 +1,4 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
-//    id "com.gorylenko.gradle-git-properties" version "2.3.1"
-    id 'application'
-}
-
-mainClassName = ''
-
 allprojects {
     group 'com.solexgames.lemon'
-    version '1.0-SNAPSHOT'
-
-    repositories {
-        mavenCentral()
-
-        maven { url 'https://jitpack.io' }
-    }
-}
-
-subprojects {
-    apply plugin: 'org.jetbrains.kotlin.jvm'
-    apply plugin: 'com.github.johnrengelman.shadow'
-//    apply plugin: 'com.gorylenko.gradle-git-properties'
-    apply plugin: 'application'
-
-//    gitProperties {
-//        gitPropertiesName = "settings.properties"
-//        gitPropertiesResourceDir = "com/solexgames/resources" as Directory
-//        gitPropertiesDir = "com/solexgames/settings" as Directory
-//    }
-
-    dependencies {
-        implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.21'
-    }
-
-    shadowJar {
-        archiveClassifier.set("")
-    }
-
-    tasks.build.dependsOn(shadowJar)
+    version '1.0.0'
 }

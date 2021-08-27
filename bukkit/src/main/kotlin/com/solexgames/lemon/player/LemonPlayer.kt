@@ -79,7 +79,7 @@ class LemonPlayer(
         when (checkType) {
             PermissionCheck.COMPOUNDED -> hasPermission = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
             PermissionCheck.PLAYER -> getPlayer().ifPresent {
-                if (it.isOp || it.hasPermission(permission.lowercase())) {
+                if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                     hasPermission = true
                 }
             }
@@ -87,7 +87,7 @@ class LemonPlayer(
                 hasPermission = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
 
                 getPlayer().ifPresent {
-                    if (it.isOp || it.hasPermission(permission.lowercase())) {
+                    if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                         hasPermission = true
                     }
                 }

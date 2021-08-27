@@ -71,7 +71,7 @@ class PunishmentDetailedViewMenu(
                 val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
                 val canRemove: Boolean = lemonPlayer.hasPermission(
-                    "lemon.punishment.remove." + punishment.category.name.lowercase()
+                    "lemon.punishment.remove." + punishment.category.name.toLowerCase()
                 )
 
                 lore.add(if (canRemove) CC.GREEN + "[Click to remove]" else CC.RED + "[You cannot remove this]")

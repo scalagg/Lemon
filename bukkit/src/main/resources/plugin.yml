@@ -1,5 +1,5 @@
 name: Lemon
-version: ${git.commit.id.abbrev}
+version: 1.0.0
 main: com.solexgames.lemon.Lemon
 
 author: SolexGames

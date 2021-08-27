@@ -46,7 +46,7 @@ class PunishmentViewMenu(
             integer += 2
 
             buttons[integer] = ItemBuilder.of(Material.WOOL)
-                .name("${getChatColorByIntensity(it)}${StringUtils.upperCase(it.name.lowercase()) + "s"}")
+                .name("${getChatColorByIntensity(it)}${StringUtils.upperCase(it.name.toLowerCase()) + "s"}")
                 .data(getWoolColorByIntensity(it))
                 .addToLore(
                     "${CC.GRAY}Click to view punishments",
