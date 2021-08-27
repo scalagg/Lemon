@@ -1,5 +1,6 @@
 package com.solexgames.lemon.menu
 
+import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.enums.PunishmentViewType
 import com.solexgames.lemon.player.punishment.Punishment
@@ -16,6 +17,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -23,8 +25,7 @@ import java.util.*
  */
 class PunishmentViewMenu(
     private var uuid: UUID,
-    private var viewType: PunishmentViewType,
-    private var punishments: List<Punishment>
+    private var viewType: PunishmentViewType
 ): Menu() {
 
     override fun getTitle(player: Player): String {
@@ -51,7 +52,11 @@ class PunishmentViewMenu(
                     "${CC.GRAY}Click to view punishments",
                     "${CC.GRAY}for this category."
                 ).toButton { u, v ->
-
+                    this.fetchPunishments(it).whenComplete { list, _ ->
+                        PunishmentDetailedViewMenu(
+                            uuid, it, viewType, list
+                        ).openMenu(player)
+                    }
                 }
         }
 
@@ -60,6 +65,17 @@ class PunishmentViewMenu(
         }
 
         return buttons
+    }
+
+    private fun fetchPunishments(category: PunishmentCategory): CompletableFuture<List<Punishment>> {
+        return when (viewType) {
+            PunishmentViewType.TARGET_HIST -> {
+                Lemon.instance.punishmentHandler.fetchPunishmentsForTargetOfCategory(uuid, category)
+            }
+            PunishmentViewType.STAFF_HIST -> {
+                Lemon.instance.punishmentHandler.fetchPunishmentsByExecutorOfCategory(uuid, category)
+            }
+        }
     }
 
     private fun getWoolColorByIntensity(category: PunishmentCategory): Short {

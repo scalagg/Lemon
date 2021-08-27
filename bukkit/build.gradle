@@ -1,27 +1,8 @@
-plugins {
-    id "java"
-    id "org.jetbrains.kotlin.jvm" version "1.5.21"
-    id "com.gorylenko.gradle-git-properties" version "2.3.1"
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
+mainClassName = "com.solexgames.lemon.Lemon"
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
+
     implementation fileTree(dir: "internal", include: "*.jar")
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.0"
-
     compileOnly fileTree(dir: "lib", include: "*.jar")
-}
-
-gitProperties {
-    gitPropertiesName = "settings.properties"
-    gitPropertiesResourceDir = "com/solexgames/resources" as Directory
-    gitPropertiesDir = "com/solexgames/settings" as Directory
 }

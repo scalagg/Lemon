@@ -70,7 +70,6 @@ object PlayerListener : Listener {
         val player = event.player
 
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
-        val serverHandler = Lemon.instance.serverHandler
         val chatHandler = Lemon.instance.chatHandler
 
         if (!lemonPlayer.isStaff()) {
@@ -134,16 +133,15 @@ object PlayerListener : Listener {
         }
 
         if (channelMatch?.isGlobal() == true) {
-//            RedisHandler.buildMessage(
-//                "channel-message",
-//                MapBuilder<String, String>()
-//                    .put("message", event.message)
-//                    .put("sender", player.name)
-//                    .put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
-//                    .build()
-//            )
-
-            // TODO: 8/27/2021 setup redis shit & send globally w/ data
+            RedisHandler.buildMessage(
+                "channel-message",
+                MapBuilder<String, String>()
+                    .put("channel", channelMatch!!.getId())
+                    .put("message", event.message)
+                    .put("sender", player.name)
+                    .put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
+                    .build()
+            )
         } else {
             Bukkit.getOnlinePlayers().forEach {
                 var canReceive = true

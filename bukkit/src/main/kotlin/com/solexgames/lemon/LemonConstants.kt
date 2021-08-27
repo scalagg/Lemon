@@ -7,6 +7,10 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import java.text.SimpleDateFormat
+
+
+
 
 object LemonConstants {
 
@@ -40,6 +44,9 @@ object LemonConstants {
     @JvmStatic
     val EMPTY = ItemBuilder(Material.STAINED_GLASS_PANE, 15)
         .name(" ").toButton()
+
+    @JvmStatic
+    val FORMAT = SimpleDateFormat("MM/dd/yyyy HH:mma")
 
     val BAN_MESSAGE_TEMP = """&cYou are &4banned &cfrom $SERVER_NAME for <time>.
             &cYou were banned for: &7<reason> (ID: #<id>)

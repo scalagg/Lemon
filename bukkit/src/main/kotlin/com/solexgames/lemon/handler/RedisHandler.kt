@@ -1,10 +1,8 @@
 package com.solexgames.lemon.handler
 
-import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.redis.RedisMessage
 import com.solexgames.redis.handler.JedisHandler
 import com.solexgames.redis.json.JsonAppender
-import java.util.concurrent.CompletableFuture
 
 object RedisHandler: JedisHandler {
 

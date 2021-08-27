@@ -9,11 +9,15 @@ import java.util.concurrent.CompletableFuture
  */
 class RedisMessage(private val message: String) {
 
-    fun publish(async: Boolean = true) {
-        if (async) {
-            CompletableFuture.runAsync { Lemon.instance.jedisManager.publish(message) }
+    fun publish(async: Boolean = true): CompletableFuture<Void>? {
+        return if (async) {
+            CompletableFuture.runAsync {
+                Lemon.instance.jedisManager.publish(message)
+            }
         } else {
             Lemon.instance.jedisManager.publish(message)
+
+            return null
         }
     }
 }

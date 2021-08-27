@@ -55,6 +55,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var grantHandler: GrantHandler
     lateinit var serverHandler: ServerHandler
     lateinit var chatHandler: ChatHandler
+    lateinit var punishmentHandler: PunishmentHandler
 
     lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
@@ -217,6 +218,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         grantHandler = GrantHandler
         serverHandler = ServerHandler
         chatHandler = ChatHandler
+        punishmentHandler = PunishmentHandler
 
         localInstance = ServerInstance(
             settings.id,
