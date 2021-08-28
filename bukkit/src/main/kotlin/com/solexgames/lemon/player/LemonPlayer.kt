@@ -35,39 +35,47 @@ class LemonPlayer(
     var slowChatCooldown = Cooldown(0L)
 
     var activeGrant: Grant? = null
+    
+    lateinit var country: String
 
     private var metadata = HashMap<String, Metadata>()
 
     fun recalculateGrants() {
-        val grants = Lemon.instance.grantHandler.findGrants(uniqueId)
+        val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
         var shouldRecalculate = false
 
-        grants.forEach { grant ->
-            if (!grant.removed && !grant.hasExpired()) {
-                grant.removedReason = "Expired"
-                grant.removedAt = System.currentTimeMillis()
-                grant.removed = true
+        completableFuture.whenComplete { grants, _ ->
+            grants.forEach { grant ->
+                if (!grant.removed && !grant.hasExpired()) {
+                    grant.removedReason = "Expired"
+                    grant.removedAt = System.currentTimeMillis()
+                    grant.removed = true
 
-                shouldRecalculate = true
+                    shouldRecalculate = true
+                }
             }
-        }
 
-        activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
-
-        if (activeGrant == null) {
-            val rank = Lemon.instance.rankHandler.getDefaultRank()
-            activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
-
-            Lemon.instance.grantHandler.registerGrant(uniqueId, activeGrant!!)
-        }
-
-        if (shouldRecalculate) {
             activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
 
-            getPlayer().ifPresent {
-                it.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant!!.getRank().getColoredName()}${CC.GREEN}.")
+            if (activeGrant == null) {
+                val rank = Lemon.instance.rankHandler.getDefaultRank()
+                activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
+
+                Lemon.instance.grantHandler.registerGrant(uniqueId, activeGrant!!)
+            }
+
+            if (shouldRecalculate) {
+                activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+
+                getPlayer().ifPresent {
+                    it.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant!!.getRank().getColoredName()}${CC.GREEN}.")
+                }
             }
         }
+    }
+    
+    fun fetchCountry() {
+        // TODO: 8/28/2021 use geo location api to fetch & update the players' country to jedis 
     }
 
     fun hasPermission(

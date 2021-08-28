@@ -1,4 +1,4 @@
-package com.solexgames.lemon.menu
+package com.solexgames.lemon.menu.punishment
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.enums.PunishmentViewType

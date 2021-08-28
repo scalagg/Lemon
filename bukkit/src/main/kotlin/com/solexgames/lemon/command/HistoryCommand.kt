@@ -1,6 +1,7 @@
 package com.solexgames.lemon.command
 
-import com.solexgames.lemon.menu.PunishmentViewMenu
+import com.solexgames.lemon.LemonConstants
+import com.solexgames.lemon.menu.punishment.PunishmentViewMenu
 import com.solexgames.lemon.player.enums.PunishmentViewType
 import com.solexgames.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.acf.BaseCommand
@@ -25,7 +26,7 @@ class HistoryCommand: BaseCommand() {
         CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.other")) {
-            player.sendMessage(MessageKeys.PERMISSION_DENIED.messageKey.key)
+            player.sendMessage(LemonConstants.NO_PERMISSION)
             return
         }
 
@@ -39,7 +40,7 @@ class HistoryCommand: BaseCommand() {
         CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.other")) {
-            player.sendMessage(MessageKeys.PERMISSION_DENIED.messageKey.key)
+            player.sendMessage(LemonConstants.NO_PERMISSION)
             return
         }
 
