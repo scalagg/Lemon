@@ -99,7 +99,16 @@ class PunishmentDetailedViewMenu(
             }
 
             override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-                // TODO: 8/27/2021 handle un-punish things
+                val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+
+                val canRemove: Boolean = lemonPlayer.hasPermission(
+                    "lemon.punishment.remove." + punishment.category.fancyVersion.toLowerCase()
+                )
+
+                if (!canRemove) {
+                    player.sendMessage("${CC.RED}Sorry, but you do not have permission to remove ${punishment.category.fancyVersion + "s"}.")
+                    return
+                }
             }
         }
     }

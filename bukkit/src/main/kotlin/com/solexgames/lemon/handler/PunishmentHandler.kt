@@ -22,7 +22,7 @@ object PunishmentHandler {
         return CompletableFuture.supplyAsync {
             val list = ArrayList<Punishment>()
 
-            Lemon.instance.mongoHandler.punishmentCollection.find(Filters.eq(key, uuid.toString())).forEach {
+            Lemon.instance.mongoHandler.grantCollection.find(Filters.eq(key, uuid.toString())).forEach {
                 val punishment = LemonConstants.GSON.fromJson(it.toJson(), Punishment::class.java)
 
                 if (punishment != null && test.invoke(punishment)) list.add(punishment)
@@ -67,7 +67,7 @@ object PunishmentHandler {
     fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment> {
         return CompletableFuture.supplyAsync {
             val reference = AtomicReference<Punishment>()
-            val document = Lemon.instance.mongoHandler.punishmentCollection
+            val document = Lemon.instance.mongoHandler.grantCollection
                 .find(Filters.eq("uuid", uuid.toString())).first()
 
             if (document != null) {
