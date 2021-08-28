@@ -1,21 +1,24 @@
 package com.solexgames.lemon.player
 
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.ReplaceOptions
+import com.solexgames.datastore.commons.constants.ConsoleColor
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.enums.PermissionCheck
-import com.solexgames.lemon.util.type.Persistent
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
-import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.GrantRecalculationUtil
+import com.solexgames.lemon.util.other.Cooldown
+import com.solexgames.lemon.util.type.Persistent
 import net.evilblock.cubed.util.CC
 import org.bson.Document
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+
 
 class LemonPlayer(
     var uniqueId: UUID,
@@ -26,8 +29,6 @@ class LemonPlayer(
     var notes = ArrayList<Note>()
     var ignoring = ArrayList<String>()
 
-    var loaded = false
-
     var commandCooldown = Cooldown(0L)
     var helpOpCooldown = Cooldown(0L)
     var reportCooldown = Cooldown(0L)
@@ -35,16 +36,17 @@ class LemonPlayer(
     var slowChatCooldown = Cooldown(0L)
 
     var activeGrant: Grant? = null
-    
-    lateinit var country: String
 
+    lateinit var country: String
     private var metadata = HashMap<String, Metadata>()
 
-    fun recalculateGrants() {
+    private fun recalculateGrants() {
         val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
         var shouldRecalculate = false
 
-        completableFuture.whenComplete { grants, _ ->
+        completableFuture.whenComplete { grants, throwable ->
+            throwable?.printStackTrace()
+
             grants.forEach { grant ->
                 if (!grant.removed && !grant.hasExpired()) {
                     grant.removedReason = "Expired"
@@ -73,9 +75,9 @@ class LemonPlayer(
             }
         }
     }
-    
+
     fun fetchCountry() {
-        // TODO: 8/28/2021 use geo location api to fetch & update the players' country to jedis 
+        // TODO: 8/28/2021 use geo location api to fetch & update the players' country to jedis
     }
 
     fun hasPermission(
@@ -140,12 +142,60 @@ class LemonPlayer(
     }
 
     override fun save(): CompletableFuture<Void> {
-        TODO("Not yet implemented")
+        return CompletableFuture.runAsync {
+            val document = Document("_id", uniqueId)
+            document["uuid"] = uniqueId.toString()
+
+            document["notes"] = LemonConstants.GSON.toJson(notes)
+            document["ignoring"] = LemonConstants.GSON.toJson(ignoring)
+
+            finalizeMetaData()
+
+            document["metadata"] = LemonConstants.GSON.toJson(metadata)
+
+            Lemon.instance.mongoHandler.playerCollection.replaceOne(
+                Filters.eq("uuid", uniqueId.toString()),
+                document, ReplaceOptions().upsert(true)
+            )
+        }
+    }
+
+    private fun finalizeMetaData() {
+        updateOrAddMetadata(
+            "last-connection", Metadata(System.currentTimeMillis())
+        )
+
+        updateOrAddMetadata(
+            "current-rank", Metadata(activeGrant?.getRank()?.uuid.toString())
+        )
     }
 
     override fun load(future: CompletableFuture<Document>) {
         future.whenComplete { document, throwable ->
-            loaded = true
+            if (document == null || throwable != null) {
+                updateOrAddMetadata(
+                    "first-connection", Metadata(System.currentTimeMillis())
+                )
+
+                save().whenComplete { _, u ->
+                    u?.printStackTrace()
+                }
+
+                throwable?.printStackTrace()
+                return@whenComplete
+            }
+
+            notes = LemonConstants.GSON.fromJson(
+                document.getString("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE
+            )
+            ignoring = LemonConstants.GSON.fromJson(
+                document.getString("ignoring"), LemonConstants.STRING_ARRAY_LIST_TYPE
+            )
+            metadata = LemonConstants.GSON.fromJson(
+                document.getString("metadata"), LemonConstants.STRING_METADATA_MAP_TYPE
+            )
+
+            recalculateGrants()
         }
     }
 

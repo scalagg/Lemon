@@ -14,6 +14,7 @@ import com.solexgames.lemon.command.HistoryCommand
 import com.solexgames.lemon.command.ShutdownCommand
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
+import com.solexgames.lemon.player.board.ModModeBoardProvider
 import com.solexgames.lemon.player.cached.CachedLemonPlayer
 import com.solexgames.lemon.player.nametag.DefaultNametagProvider
 import com.solexgames.lemon.player.nametag.ModModeNametagProvider
@@ -36,6 +37,7 @@ import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
@@ -203,6 +205,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         NametagHandler.registerProvider(VanishNametagProvider())
         NametagHandler.registerProvider(ModModeNametagProvider())
 
+        ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
+
 //        VisibilityHandler.registerAdapter("Staff", StaffVisiblityHandler())
 //        VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
     }
@@ -230,7 +234,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadHandlers() {
         mongoHandler = MongoHandler
         playerHandler = PlayerHandler
+
         rankHandler = RankHandler
+        rankHandler.loadAllRanks()
+
         grantHandler = GrantHandler
         serverHandler = ServerHandler
         chatHandler = ChatHandler

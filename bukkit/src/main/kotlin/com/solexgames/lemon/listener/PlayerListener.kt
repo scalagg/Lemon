@@ -57,9 +57,9 @@ class PlayerListener : Listener {
     fun onPlayerPreLoginLow(event: AsyncPlayerPreLoginEvent) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.uniqueId).orElse(null)
 
-        if (lemonPlayer == null || !lemonPlayer.loaded) {
+        if (lemonPlayer == null) {
             event.disallow(
-                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
+                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad + " (${lemonPlayer})"
             )
         }
     }
@@ -77,7 +77,7 @@ class PlayerListener : Listener {
                 cancel(event, "${CC.RED}Global chat is currently muted.")
             } else if (chatHandler.slowChatTime != 0) {
                 if (lemonPlayer.slowChatCooldown.isActive()) {
-                    val formatted = TimeUtil.millisToSeconds(lemonPlayer.slowChatCooldown.getRemaining())
+                    val formatted = TimeUtil.millisToSeconds((lemonPlayer.slowChatCooldown.getRemaining().toFloat()).toLong())
 
                     cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
                     return
@@ -176,7 +176,12 @@ class PlayerListener : Listener {
                     return@forEach
                 }
 
-                player.sendMessage(channelMatch?.getFormatted(event.message, player.name, lemonPlayer.activeGrant!!.getRank(), it))
+                player.sendMessage(channelMatch?.getFormatted(
+                    event.message,
+                    player.name,
+                    lemonPlayer.activeGrant?.getRank() ?: Lemon.instance.rankHandler.getDefaultRank(),
+                    it
+                ))
             }
         }
 
@@ -187,8 +192,6 @@ class PlayerListener : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.player)
         event.joinMessage = null
-
-        // TODO: 8/27/2021 add more stuff
 
         lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
     }
@@ -205,12 +208,12 @@ class PlayerListener : Listener {
         onDisconnect(event.player)
     }
 
-    fun cancel(event: PlayerEvent, message: String) {
+    private fun cancel(event: PlayerEvent, message: String) {
         event.player.sendMessage(message)
         (event as Cancellable).isCancelled = true
     }
 
-    fun onDisconnect(player: Player) {
+    private fun onDisconnect(player: Player) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {

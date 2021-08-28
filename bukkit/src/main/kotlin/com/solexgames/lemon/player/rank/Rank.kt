@@ -1,17 +1,18 @@
 package com.solexgames.lemon.player.rank
 
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.ReplaceOptions
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.util.type.Persistent
+import com.solexgames.lemon.util.type.Saveable
 import net.evilblock.cubed.util.CC
 import org.bson.Document
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.ArrayList
 
 class Rank(
     val uuid: UUID = UUID.randomUUID(),
     var name: String
-): Persistent<Document> {
+): Saveable {
 
     constructor(name: String): this(UUID.randomUUID(), name)
 
@@ -32,8 +33,19 @@ class Rank(
         return color + name
     }
 
+    @JvmName("getNewPrefix")
+    fun getPrefix(): String {
+        val prefix = ""
+
+        return if (prefix.isBlank() || prefix.isEmpty()) {
+            prefix
+        } else {
+            this.prefix
+        }
+    }
+
     /**
-     * Returns a mutable list with permissions from
+     * Returns a list with permissions from
      * all inherited ranks as well as the current rank
      */
     fun getCompoundedPermissions(): ArrayList<String> {
@@ -54,11 +66,24 @@ class Rank(
         return compoundedPermissions
     }
 
-    override fun load(future: CompletableFuture<Document>) {
-        TODO("Not yet implemented")
-    }
-
     override fun save(): CompletableFuture<Void> {
-        TODO("Not yet implemented")
+        return CompletableFuture.runAsync {
+            val document = Document("_id", uuid)
+            document["name"] = name
+            document["weight"] = weight
+            document["prefix"] = prefix
+            document["suffix"] = suffix
+            document["color"] = color
+            document["italic"] = italic
+            document["hidden"] = hidden
+            document["defaultRank"] = defaultRank
+            document["inheritances"] = inheritances
+            document["permissions"] = permissions
+
+            Lemon.instance.mongoHandler.rankCollection.replaceOne(
+                Filters.eq("_id", uuid),
+                document, ReplaceOptions().upsert(true)
+            )
+        }
     }
 }

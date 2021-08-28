@@ -1,14 +1,17 @@
 package com.solexgames.lemon
 
-import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import net.evilblock.cubed.acf.MessageKeys
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
-import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.Note
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 object LemonConstants {
 
@@ -16,10 +19,22 @@ object LemonConstants {
     private val BASE_PREFIX = "${CC.PRI}${CC.BOLD}%s ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
 
     @JvmStatic
+    val NULL: Optional<*> = Optional.ofNullable(null)
+
+    @JvmStatic
     val STAFF = String.format(BASE_PREFIX, "Staff")
 
     @JvmStatic
     val LEMON = String.format(BASE_PREFIX, "Lemon")
+
+    @JvmStatic
+    val STRING_METADATA_MAP_TYPE = object : TypeToken<HashMap<String, Metadata>>() {}.type
+
+    @JvmStatic
+    val NOTE_ARRAY_LIST_TYPE = object : TypeToken<ArrayList<Note>>() {}.type
+
+    @JvmStatic
+    val STRING_ARRAY_LIST_TYPE = object : TypeToken<ArrayList<Note>>() {}.type
 
     @JvmStatic
     val GSON = Serializers.gson

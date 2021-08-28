@@ -14,7 +14,9 @@ interface Channel: Prefixable, Permissible<Player> {
     fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String
 
     override fun isPrefixed(message: String): Boolean {
-        return message.startsWith("${getPrefix()} ")
+        val prefix = getPrefix()
+
+        return prefix != null && message.startsWith("$prefix ")
     }
 
 }

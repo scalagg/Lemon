@@ -13,7 +13,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class Grant(
-    @SerializedName("_id") val uuid: UUID,
+    val uuid: UUID,
     var target: UUID,
     var rankId: UUID,
     var addedBy: UUID?,
@@ -57,10 +57,23 @@ class Grant(
 
     override fun save(): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
+            val document = Document("_id", uuid)
+            document["target"] = target.toString()
+            document["rankId"] = rankId.toString()
+            document["addedBy"] = addedBy.toString()
+            document["addedAt"] = addedAt
+            document["addedOn"] = addedOn
+            document["addedReason"] = addedReason
+            document["duration"] = duration
+            document["scopes"] = scopes
+            document["removedReason"] = removedReason
+            document["removedBy"] = removedBy
+            document["removedAt"] = removedAt
+            document["removed"] = removed
+
             Lemon.instance.mongoHandler.grantCollection.replaceOne(
                 Filters.eq("_id", uuid),
-                Document.parse(LemonConstants.GSON.toJson(this)),
-                ReplaceOptions().upsert(true)
+                document, ReplaceOptions().upsert(true)
             )
         }
     }

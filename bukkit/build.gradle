@@ -17,7 +17,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.30"
     implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
-    compileOnly fileTree(dir: "lib", include: "*.jar")
+    compileOnly fileTree("lib")
     compile fileTree(dir: "internal", include: "*.jar")
 }
 

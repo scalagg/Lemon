@@ -1,5 +1,6 @@
 package com.solexgames.lemon.handler
 
+import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.channel.Channel
 import com.solexgames.lemon.player.channel.ChannelOverride
 import com.solexgames.lemon.player.channel.impl.DefaultChannel
@@ -32,6 +33,11 @@ object ChatHandler {
 
     fun findChannelOverride(player: Player): Optional<ChannelOverride> {
         var override: ChannelOverride? = null
+
+        if (channelOverrides.isEmpty()) {
+            return Optional.ofNullable(null)
+        }
+
         var index = 0
 
         while (override == null || !override.shouldOverride(player)) {

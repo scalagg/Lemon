@@ -2,7 +2,7 @@ package com.solexgames.lemon.util.type
 
 interface Prefixable {
 
-    fun getPrefix(): String
+    fun getPrefix(): String?
 
     fun shouldCheckForPrefix(): Boolean
 
