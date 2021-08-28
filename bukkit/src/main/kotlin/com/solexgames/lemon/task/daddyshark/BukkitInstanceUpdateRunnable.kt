@@ -6,7 +6,7 @@ import me.lucko.spark.api.SparkProvider
 import me.lucko.spark.api.statistic.StatisticWindow
 import org.bukkit.Bukkit
 
-class BukkitInstanceUpdateRunnable(platform: DaddySharkPlatform): InstanceUpdateRunnable(platform) {
+class BukkitInstanceUpdateRunnable(private var platform: DaddySharkPlatform): Runnable {
 
     override fun run() {
         val instance = platform.getLocalServerInstance()
@@ -18,7 +18,10 @@ class BukkitInstanceUpdateRunnable(platform: DaddySharkPlatform): InstanceUpdate
         instance.version = Bukkit.getVersion()
 
         instance.ticksPerSecond = SparkProvider.get().tps()?.poll(StatisticWindow.TicksPerSecond.MINUTES_1) ?: 0.0
+        instance.lastHeartbeat = System.currentTimeMillis()
 
-        super.run()
+        this.platform.layer?.saveEntry(instance.serverId, instance)?.whenComplete { _, u ->
+            u?.printStackTrace()
+        }
     }
 }
