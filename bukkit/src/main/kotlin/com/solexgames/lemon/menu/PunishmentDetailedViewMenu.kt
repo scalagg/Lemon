@@ -1,6 +1,5 @@
 package com.solexgames.lemon.menu
 
-import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.enums.PunishmentViewType
 import com.solexgames.lemon.player.punishment.Punishment
@@ -14,12 +13,14 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks.delayed
 import net.evilblock.cubed.util.time.TimeUtil
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import java.util.*
-
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * @author GrowlyX
@@ -36,36 +37,50 @@ class PunishmentDetailedViewMenu(
         class PunishmentButton(private val punishment: Punishment): Button() {
 
             override fun getButtonItem(player: Player): ItemStack {
-                val lore = mutableListOf<String>()
+                val lore = ArrayList<String>()
 
-                val statusLore = if (punishment.removed) CC.RED + "(Removed)" else if (!punishment.hasExpired()) CC.GREEN + "(Active)" else CC.GOLD + "(Expired)"
-                val issuer = if (punishment.addedBy == null) CC.D_RED + "Console" else CubedCacheUtil.fetchNameByUuid(punishment.addedBy)
+                val statusLore = if (punishment.removed) "${CC.RED}(Removed)" else if (!punishment.hasExpired()) "${CC.GREEN}(Active)" else "${CC.YELLOW}(Expired)"
+                val addedBy = punishment.removedBy?.let {
+                    CubedCacheUtil.fetchName(it)
+                } ?: let {
+                    "${CC.D_RED}Console"
+                }
 
-                lore.add(CC.GRAY + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
+                lore.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
+                if (punishment.removed) {
+                    lore.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
+                }
+                if (punishment.hasExpired()) {
+                    lore.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
+                }
 
-                lore.add("  ")
-                lore.add("${CC.SEC}Issuer: ${CC.PRI + issuer}")
-                lore.add("${CC.SEC}Target: ${CC.PRI + CubedCacheUtil.fetchNameByUuid(punishment.target)}")
+                lore.add("")
+                lore.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(punishment.target)}")
 
                 if (!punishment.category.instant) {
                     lore.add("${CC.SEC}Duration: ${CC.PRI + punishment.getDurationString()}")
                 }
+                if (!punishment.removed || !punishment.hasExpired()) {
+                    lore.add("${CC.SEC}Expire Date: ${CC.PRI + punishment.getExpirationString()}")
+                }
 
-                lore.add("  ")
-                lore.add("${CC.SEC}Reason: ${CC.PRI + punishment.addedReason}")
-                lore.add("${CC.SEC}Server: ${CC.PRI + punishment.addedOn}")
-                lore.add("  ")
-                lore.add("${CC.SEC}Expire Date: ${CC.PRI + punishment.getExpirationString()}")
-                lore.add("  ")
+                lore.add("")
+                lore.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
+                lore.add("${CC.SEC}Issued On: ${CC.PRI}${punishment.addedOn}")
+                lore.add("${CC.SEC}Issued Reason: ${CC.PRI}${punishment.addedReason}")
+                lore.add("")
 
                 if (punishment.removed) {
-                    lore.add(
-                        "${CC.SEC}Remover: ${ CC.PRI + if (punishment.removedBy != null) CubedCacheUtil.fetchNameByUuid(
-                            punishment.removedBy!!
-                        ) else CC.D_RED + "Console"}"
-                    )
-                    lore.add("${CC.SEC}Removal Reason: ${CC.PRI + punishment.removedReason}")
-                    lore.add("  ")
+                    val removedBy = punishment.removedBy?.let {
+                        CubedCacheUtil.fetchName(it)
+                    } ?: let {
+                        "${CC.D_RED}Console"
+                    }
+
+                    lore.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
+                    lore.add("${CC.SEC}Removed On: ${CC.PRI}${punishment.removedOn}")
+                    lore.add("${CC.SEC}Removed Reason: ${CC.PRI}${punishment.removedReason}")
+                    lore.add("")
                 }
 
                 val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
@@ -74,12 +89,13 @@ class PunishmentDetailedViewMenu(
                     "lemon.punishment.remove." + punishment.category.name.toLowerCase()
                 )
 
-                lore.add(if (canRemove) CC.GREEN + "[Click to remove]" else CC.RED + "[You cannot remove this]")
+                lore.add(if (canRemove) "${CC.GREEN}Click to remove this punishment." else "${CC.RED}You can't remove this punishment.")
 
-                return ItemBuilder(XMaterial.LIME_WOOL)
+                return ItemBuilder(Material.WOOL)
                     .data((if (!punishment.hasExpired()) 5 else if (punishment.removed) 1 else 14).toShort())
                     .name("${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)} $statusLore")
-                    .addToLore(*lore.toTypedArray()).build()
+                    .addToLore(lore)
+                    .build()
             }
 
             override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
@@ -98,14 +114,11 @@ class PunishmentDetailedViewMenu(
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
-        val buttons = mutableMapOf<Int, Button>()
-        var integer = 0
-
-        punishments.forEach {
-            buttons[integer++] = PunishmentButton(it)
+        return HashMap<Int, Button>().also {
+            punishments.forEach { punishment ->
+                it[it.size] = PunishmentButton(punishment)
+            }
         }
-
-        return buttons
     }
 
     override fun onClose(player: Player, manualClose: Boolean) {

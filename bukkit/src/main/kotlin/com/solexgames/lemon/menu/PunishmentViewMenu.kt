@@ -29,7 +29,7 @@ class PunishmentViewMenu(
 ): Menu() {
 
     override fun getTitle(player: Player): String {
-        val name = CubedCacheUtil.fetchNameByUuid(uuid)
+        val name = CubedCacheUtil.fetchName(uuid)
         val base = "History ${Constants.DOUBLE_ARROW_RIGHT} $name"
 
         return when (viewType) {

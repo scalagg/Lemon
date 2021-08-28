@@ -40,15 +40,6 @@ class LemonPlayer(
 
     fun recalculateGrants() {
         val grants = Lemon.instance.grantHandler.findGrants(uniqueId)
-        activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
-
-        if (activeGrant == null) {
-            val rank = Lemon.instance.rankHandler.getDefaultRank()
-            activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
-
-            Lemon.instance.grantHandler.registerGrant(uniqueId, activeGrant!!)
-        }
-
         var shouldRecalculate = false
 
         grants.forEach { grant ->
@@ -59,6 +50,15 @@ class LemonPlayer(
 
                 shouldRecalculate = true
             }
+        }
+
+        activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+
+        if (activeGrant == null) {
+            val rank = Lemon.instance.rankHandler.getDefaultRank()
+            activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
+
+            Lemon.instance.grantHandler.registerGrant(uniqueId, activeGrant!!)
         }
 
         if (shouldRecalculate) {

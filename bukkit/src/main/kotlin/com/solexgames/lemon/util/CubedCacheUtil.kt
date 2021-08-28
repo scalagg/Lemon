@@ -10,12 +10,12 @@ import java.util.*
 object CubedCacheUtil {
 
     @JvmStatic
-    fun fetchUuidByName(name: String): UUID? {
+    fun fetchUuid(name: String): UUID? {
         return Cubed.instance.uuidCache.uuid(name)
     }
 
     @JvmStatic
-    fun fetchNameByUuid(uuid: UUID): String {
+    fun fetchName(uuid: UUID): String? {
         return Cubed.instance.uuidCache.name(uuid)
     }
 }
