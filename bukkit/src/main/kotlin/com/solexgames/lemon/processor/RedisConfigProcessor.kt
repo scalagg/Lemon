@@ -2,7 +2,7 @@ package com.solexgames.lemon.processor
 
 import xyz.mkotb.configapi.comment.Comment
 
-object RedisConfigProcessor {
+class RedisConfigProcessor {
 
     @Comment("What should the redis address be?")
     val address: String = "127.0.0.1"

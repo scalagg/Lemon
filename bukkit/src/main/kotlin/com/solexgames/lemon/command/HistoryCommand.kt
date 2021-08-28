@@ -14,7 +14,7 @@ import java.util.*
  * @author GrowlyX
  * @since 8/27/2021
  */
-object HistoryCommand: BaseCommand() {
+class HistoryCommand: BaseCommand() {
 
     @Syntax("<player>")
     @CommandAlias("history|c|check|hist")

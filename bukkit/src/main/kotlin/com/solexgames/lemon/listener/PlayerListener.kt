@@ -2,7 +2,6 @@ package com.solexgames.lemon.listener
 
 import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel
@@ -19,7 +18,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.*
 import java.util.concurrent.CompletableFuture
 
-object PlayerListener : Listener {
+class PlayerListener : Listener {
 
     @EventHandler(
         priority = EventPriority.HIGHEST,
@@ -27,7 +26,7 @@ object PlayerListener : Listener {
     )
     fun onPlayerPreLoginHigh(event: AsyncPlayerPreLoginEvent) {
         if (!Lemon.canJoin) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, LemonConstants.SERVER_NOT_LOADED)
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.serverNotLoaded)
             return
         }
 
@@ -60,7 +59,7 @@ object PlayerListener : Listener {
 
         if (lemonPlayer == null || !lemonPlayer.loaded) {
             event.disallow(
-                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, LemonConstants.PLAYER_DATA_LOAD
+                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
             )
         }
     }
@@ -191,7 +190,7 @@ object PlayerListener : Listener {
 
         // TODO: 8/27/2021 add more stuff
 
-        lemonPlayer.orElse(null) ?: event.player.kickPlayer(LemonConstants.PLAYER_DATA_LOAD)
+        lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -206,12 +205,12 @@ object PlayerListener : Listener {
         onDisconnect(event.player)
     }
 
-    private fun cancel(event: PlayerEvent, message: String) {
+    fun cancel(event: PlayerEvent, message: String) {
         event.player.sendMessage(message)
         (event as Cancellable).isCancelled = true
     }
 
-    private fun onDisconnect(player: Player) {
+    fun onDisconnect(player: Player) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {

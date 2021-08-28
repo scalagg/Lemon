@@ -2,7 +2,7 @@ package com.solexgames.lemon.processor
 
 import xyz.mkotb.configapi.comment.Comment
 
-object MongoDBConfigProcessor {
+class MongoDBConfigProcessor {
 
     @Comment("What should the mongo URI be?")
     val uri: String = "mongodb://localhost:27017"

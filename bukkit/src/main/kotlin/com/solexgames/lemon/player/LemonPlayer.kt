@@ -137,7 +137,7 @@ class LemonPlayer(
 
     override fun load(future: CompletableFuture<Document>) {
         future.whenComplete { document, throwable ->
-
+            loaded = true
         }
     }
 

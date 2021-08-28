@@ -9,9 +9,6 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import java.text.SimpleDateFormat
 
-
-
-
 object LemonConstants {
 
     @JvmStatic
@@ -42,49 +39,12 @@ object LemonConstants {
     val SINGLE_ROW =  listOf(0, 1, 2, 3, 4, 5, 6, 7, 8)
 
     @JvmStatic
-    val EMPTY = ItemBuilder(Material.STAINED_GLASS_PANE, 15)
-        .name(" ").toButton()
+    val EMPTY = ItemBuilder(Material.STAINED_GLASS_PANE)
+        .data(15)
+        .name(" ")
+        .toButton()
 
     @JvmStatic
     val FORMAT = SimpleDateFormat("MM/dd/yyyy HH:mma")
-
-    val BAN_MESSAGE_TEMP = """&cYou are &4banned &cfrom $SERVER_NAME for <time>.
-            &cYou were banned for: &7<reason> (ID: #<id>)
-                &7If you feel this ban is unjustified, create a ticket at $WEB_LINK.
-                &6You may also purchase an unban at $STORE_LINK."""
-    val BAN_MESSAGE_PERM = """
-        &cYou are permanently &4banned &cfrom $SERVER_NAME.
-        &cYou were &4banned&c for: &7<reason> (ID: #<id>)
-        &7If you feel this ban is unjustified, create a ticket at $WEB_LINK.
-        &6You may also purchase an unban at $STORE_LINK.
-        """.trimIndent()
-    val BLACK_LIST_MESSAGE = """
-        &cYou are blacklisted from $SERVER_NAME.&7
-        &7You may not appeal this type of punishment.
-        &4You may also not purchase an unban for this type of ban.
-        """.trimIndent()
-    val IP_BAN_RELATION_MESSAGE = """
-        &cYour IP is permanently &4banned &cfrom $SERVER_NAME.
-        &cYour ban is in relation to the account: &7<player>
-        &7If you feel this ban is unjustified, create a ticket at $WEB_LINK.
-        &6You can purchase an unban for <player> &6at $STORE_LINK.
-        """.trimIndent()
-    val BLACK_LIST_RELATION_MESSAGE = """
-        &cYour IP is permanently &4blacklisted &cfrom $SERVER_NAME.
-        &cYour blacklist is in relation to the account: &7<player>
-        &7If you feel this ban is unjustified, create a ticket at $WEB_LINK.
-        """.trimIndent()
-
-    var MUTE_MESSAGE = "${CC.RED}You cannot speak as you are currently muted."
-    var KICK_MESSAGE = "${CC.RED}You were kicked for: " + ChatColor.GRAY + "<reason>"
-
-    @JvmStatic
-    var PLAYER_DATA_LOAD = """
-        ${CC.RED}An error occurred while trying to load your data.
-        ${CC.RED}Please try again later or contact a staff member.
-        """.trimIndent()
-
-    @JvmStatic
-    var SERVER_NOT_LOADED = "${CC.RED}The server has not loaded yet, please reconnect in a few seconds."
 
 }

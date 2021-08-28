@@ -40,18 +40,16 @@ class PunishmentViewMenu(
 
     override fun getButtons(player: Player): Map<Int, Button> {
         val buttons = mutableMapOf<Int, Button>()
-        var integer = -1
+        var integer = 0
 
         PunishmentCategory.values().forEach {
-            integer += 2
-
-            buttons[integer] = ItemBuilder.of(Material.WOOL)
-                .name("${getChatColorByIntensity(it)}${StringUtils.upperCase(it.name.toLowerCase()) + "s"}")
+            buttons[integer++] = ItemBuilder.of(Material.WOOL)
+                .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
                 .data(getWoolColorByIntensity(it))
                 .addToLore(
                     "${CC.GRAY}Click to view punishments",
                     "${CC.GRAY}for this category."
-                ).toButton { u, v ->
+                ).toButton { _, _ ->
                     this.fetchPunishments(it).whenComplete { list, _ ->
                         PunishmentDetailedViewMenu(
                             uuid, it, viewType, list
@@ -80,7 +78,7 @@ class PunishmentViewMenu(
 
     private fun getWoolColorByIntensity(category: PunishmentCategory): Short {
         return when (category.intensity) {
-            PunishmentCategoryIntensity.LIGHT -> 4
+            PunishmentCategoryIntensity.LIGHT -> 5
             PunishmentCategoryIntensity.MEDIUM -> 1
             PunishmentCategoryIntensity.MAX -> 14
         }
@@ -88,7 +86,7 @@ class PunishmentViewMenu(
 
     private fun getChatColorByIntensity(category: PunishmentCategory): ChatColor {
         return when (category.intensity) {
-            PunishmentCategoryIntensity.LIGHT -> ChatColor.YELLOW
+            PunishmentCategoryIntensity.LIGHT -> ChatColor.GREEN
             PunishmentCategoryIntensity.MEDIUM -> ChatColor.GOLD
             PunishmentCategoryIntensity.MAX -> ChatColor.RED
         }

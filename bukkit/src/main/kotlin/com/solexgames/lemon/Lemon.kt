@@ -10,16 +10,20 @@ import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnect
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
+import com.solexgames.lemon.command.HistoryCommand
+import com.solexgames.lemon.command.ShutdownCommand
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.cached.CachedLemonPlayer
-import com.solexgames.lemon.player.nametag.*
+import com.solexgames.lemon.player.nametag.DefaultNametagProvider
+import com.solexgames.lemon.player.nametag.ModModeNametagProvider
+import com.solexgames.lemon.player.nametag.VanishNametagProvider
 import com.solexgames.lemon.player.rank.Rank
+import com.solexgames.lemon.processor.LanguageConfigProcessor
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
 import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
-import com.solexgames.lemon.util.LemonWebUtil
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
@@ -31,11 +35,11 @@ import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
-import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
-import net.evilblock.cubed.visibility.VisibilityHandler
+import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.ClassUtils
+import org.bukkit.ChatColor
 import org.bukkit.event.Listener
 import xyz.mkotb.configapi.ConfigFactory
 
@@ -59,6 +63,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
+    lateinit var languageConfig: LanguageConfigProcessor
 
     private lateinit var redisConfig: RedisConfigProcessor
     private lateinit var configFactory: ConfigFactory
@@ -79,27 +84,41 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         loadBaseConfigurations()
 
-        LemonWebUtil.fetchServerData(settings.serverPassword).whenComplete { webData, throwable ->
-            if (throwable != null || webData == null) {
-                logger.info("Something went wrong during data validation, shutting down... (${throwable?.message})")
-                server.pluginManager.disablePlugin(this)
+//        LemonWebUtil.fetchServerData(settings.serverPassword).whenComplete { webData, throwable ->
+////            if (throwable != null || webData == null) {
+////                logger.info("Something went wrong during data validation, shutting down... (${throwable?.message})")
+////                server.pluginManager.disablePlugin(this)
+////
+////                return@whenComplete
+////            }
+////
+////            if (webData.status == LemonWebStatus.FAILED) {
+////                logger.info("Something went wrong during data validation, shutting down... (${webData.message})")
+////                server.pluginManager.disablePlugin(this)
+////
+////                return@whenComplete
+////            }
+//
+//            logger.info("Passed data validation checks, now loading Lemon with ${webData.serverName}'s data.")
+//
+//            lemonWebData = webData
+//
+//            runAfterDataValidation()
+//        }
 
-                return@whenComplete
-            }
+        lemonWebData = LemonWebData(
+            LemonWebStatus.SUCCESS,
+            "DEV",
+            "SolexGames",
+            "GOLD",
+            "YELLOW",
+            "discord.gg/solexgames",
+            "twitter.com/solexgames",
+            "solexgames.com",
+            "store.solexgames.com"
+        )
 
-            if (webData.status == LemonWebStatus.FAILED) {
-                logger.info("Something went wrong during data validation, shutting down... (${webData.message})")
-                server.pluginManager.disablePlugin(this)
-
-                return@whenComplete
-            }
-
-            logger.info("Passed data validation checks, now loading Lemon with ${webData.serverName}'s data.")
-
-            lemonWebData = webData
-
-            runAfterDataValidation()
-        }
+        runAfterDataValidation()
     }
 
     private fun runAfterDataValidation() {
@@ -166,11 +185,9 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         }
 
         ClassUtils.getClassesInPackage(this, "com.solexgames.lemon.command").forEach {
-            if (it.isAssignableFrom(BaseCommand::class.java)) {
-                val baseCommand = it.newInstance() as BaseCommand
+            val baseCommand = it.newInstance() as BaseCommand
 
-                commandManager.registerCommand(baseCommand)
-            }
+            commandManager.registerCommand(baseCommand)
         }
 
         logger.info("Loaded command manager")
@@ -178,8 +195,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     private fun loadCosmetics() {
         CC.setup(
-            lemonWebData.primary,
-            lemonWebData.secondary
+            ChatColor.valueOf(lemonWebData.primary).toString(),
+            ChatColor.valueOf(lemonWebData.secondary).toString()
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider())
@@ -192,23 +209,22 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     private fun loadListeners() {
         ClassUtils.getClassesInPackage(this, "com.solexgames.lemon.listener").forEach {
-            if (it.isAssignableFrom(Listener::class.java)) {
-                val listener = it.newInstance() as Listener
+            val listener = it.newInstance() as Listener
 
-                server.pluginManager.registerEvents(listener, this)
-            }
+            server.pluginManager.registerEvents(listener, this)
         }
     }
 
     private fun loadBaseConfigurations() {
         configFactory = ConfigFactory.newFactory(this)
 
-        settings = configFactory.fromFile("settings", SettingsConfigProcessor.javaClass)
+        settings = configFactory.fromFile("settings", SettingsConfigProcessor::class.java)
     }
 
     private fun loadExtraConfigurations() {
-        redisConfig = configFactory.fromFile("redis", RedisConfigProcessor.javaClass)
-        mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor.javaClass)
+        languageConfig = configFactory.fromFile("language", LanguageConfigProcessor::class.java)
+        redisConfig = configFactory.fromFile("redis", RedisConfigProcessor::class.java)
+        mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor::class.java)
     }
 
     private fun loadHandlers() {
@@ -245,6 +261,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         layerBuilder.setConnection(redisConnection)
 
         playerLayer = layerBuilder.build()
+        consoleLogger = BetterConsoleLogger()
 
         jedisSettings = JedisSettings(
             redisConfig.address,

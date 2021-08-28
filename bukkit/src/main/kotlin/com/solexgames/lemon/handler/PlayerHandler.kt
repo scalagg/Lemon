@@ -37,7 +37,7 @@ object PlayerHandler {
             if (offline.hasPlayedBefore()) {
                 LemonPlayer(uuid, offline.name, null)
             } else {
-                LemonPlayer(uuid, name, null)
+                LemonPlayer(uuid, name!!, null)
             }
         )
     }
