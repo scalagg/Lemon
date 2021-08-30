@@ -29,8 +29,8 @@ object MongoHandler {
 
             playerCollection = database.getCollection("lemon_players")
             prefixCollection = database.getCollection("chat_tags")
-            rankCollection = database.getCollection("ranks")
             punishmentCollection = database.getCollection("punishments")
+            rankCollection = database.getCollection("ranks")
             disguiseCollection = database.getCollection("disguises")
             grantCollection = database.getCollection("grants")
 

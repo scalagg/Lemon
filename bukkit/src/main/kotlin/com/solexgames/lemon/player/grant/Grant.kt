@@ -1,11 +1,9 @@
 package com.solexgames.lemon.player.grant
 
-import com.google.gson.annotations.SerializedName
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.ReplaceOptions
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonConstants
-import com.solexgames.lemon.util.type.Saveable
+import com.solexgames.lemon.util.type.Savable
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.other.Expireable
 import org.bson.Document
@@ -21,7 +19,7 @@ class Grant(
     var addedOn: String,
     var addedReason: String,
     duration: Long
-): Expireable(addedAt, duration), Saveable {
+): Expireable(addedAt, duration), Savable {
 
     var scopes: MutableList<String> = mutableListOf("global")
 

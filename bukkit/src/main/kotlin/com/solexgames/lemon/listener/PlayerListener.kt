@@ -99,10 +99,7 @@ class PlayerListener : Listener {
         if (event.isCancelled)
             return
 
-        val globalChatDisabledMeta = lemonPlayer.getMetadata("global-chat-disabled")
-        val globalChatDisabled = globalChatDisabledMeta != null && globalChatDisabledMeta.asBoolean()
-
-        if (globalChatDisabled) {
+        if (!lemonPlayer.getSetting("global-chat")) {
             cancel(event, "${CC.RED}You have global chat disabled, re-enable it to continue chatting.")
             return
         }
@@ -156,18 +153,11 @@ class PlayerListener : Listener {
                 val lemonTarget = Lemon.instance.playerHandler.findPlayer(it).orElse(null)
 
                 if (lemonTarget != null) {
-                    val globalChatDisabledTargetMeta = lemonTarget.getMetadata("global-chat-disabled")
-                    val globalChatDisabledTarget = globalChatDisabledTargetMeta != null && globalChatDisabledTargetMeta.asBoolean()
-
-                    if (globalChatDisabledTarget) {
+                    if (lemonTarget.getSetting("global-chat-disabled")) {
                         return@forEach
                     }
 
-                    val channelDisabledTargetMeta = lemonTarget.getMetadata(channelMatch?.getId() + "-disabled")
-                    val channelDisabledTarget =
-                        channelDisabledTargetMeta != null && channelDisabledTargetMeta.asBoolean()
-
-                    if (channelDisabledTarget) {
+                    if (lemonTarget.getSetting(channelMatch?.getId() + "-disabled")) {
                         return@forEach
                     }
                 }
@@ -217,7 +207,7 @@ class PlayerListener : Listener {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            Lemon.instance.playerHandler.players.remove(it.uniqueId)?.save()
+            Lemon.instance.playerHandler.players.remove(it.uuid)?.save()
         }
     }
 }

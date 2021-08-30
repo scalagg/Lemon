@@ -15,7 +15,7 @@ class DefaultChannel: Channel {
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(sender).orElse(null)
 
-        return "${rank.getPrefix()}${rank.color}${lemonPlayer.name}${CC.WHITE}: $message"
+        return "${rank.prefix}${rank.color}${lemonPlayer.name}${CC.WHITE}: $message"
     }
 
     override fun getPrefix(): String? {

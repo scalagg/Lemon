@@ -2,7 +2,6 @@ package com.solexgames.lemon.handler
 
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.bukkit.player.PlayerSnapshot
-import net.evilblock.cubed.util.bukkit.selection.impl.ItemInteractionHandler
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerQuitEvent

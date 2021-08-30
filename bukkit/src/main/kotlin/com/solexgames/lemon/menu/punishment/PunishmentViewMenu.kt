@@ -49,7 +49,7 @@ class PunishmentViewMenu(
                     "${CC.GRAY}Click to view punishments",
                     "${CC.GRAY}for this category."
                 ).toButton { _, _ ->
-                    this.fetchPunishments(it).whenComplete { list, _ ->
+                    fetchPunishments(it).whenComplete { list, _ ->
                         PunishmentDetailedViewMenu(
                             uuid, it, viewType, list
                         ).openMenu(player)

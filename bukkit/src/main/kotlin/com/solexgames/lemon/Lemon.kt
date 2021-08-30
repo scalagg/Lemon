@@ -44,6 +44,7 @@ import net.evilblock.cubed.util.ClassUtils
 import org.bukkit.ChatColor
 import org.bukkit.event.Listener
 import xyz.mkotb.configapi.ConfigFactory
+import java.util.function.Consumer
 
 class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
@@ -186,11 +187,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             return@registerContext lemonPlayer.get()
         }
 
-        ClassUtils.getClassesInPackage(this, "com.solexgames.lemon.command").forEach {
-            val baseCommand = it.newInstance() as BaseCommand
-
-            commandManager.registerCommand(baseCommand)
+        val registerCommandAction = Consumer<String> {
+            ClassUtils.getClassesInPackage(this, it).forEach { clazz ->
+                commandManager.registerCommand(clazz.newInstance() as BaseCommand)
+            }
         }
+
+        registerCommandAction.accept("com.solexgames.lemon.command")
+        registerCommandAction.accept("com.solexgames.lemon.command.conversation")
 
         logger.info("Loaded command manager")
     }

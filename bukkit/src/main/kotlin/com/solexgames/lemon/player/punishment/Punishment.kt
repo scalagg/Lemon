@@ -6,7 +6,7 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.punishment.category.PunishmentCategory
 import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensity
 import com.solexgames.lemon.util.other.Expireable
-import com.solexgames.lemon.util.type.Saveable
+import com.solexgames.lemon.util.type.Savable
 import org.bson.Document
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -20,7 +20,7 @@ class Punishment(
     val addedReason: String,
     duration: Long,
     val category: PunishmentCategory
-): Expireable(addedAt, duration), Saveable {
+): Expireable(addedAt, duration), Savable {
 
     var removedReason: String? = null
     var removedOn: String? = null
