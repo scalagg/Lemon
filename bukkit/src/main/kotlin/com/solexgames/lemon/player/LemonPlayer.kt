@@ -2,7 +2,6 @@ package com.solexgames.lemon.player
 
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.ReplaceOptions
-import com.solexgames.datastore.commons.constants.ConsoleColor
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.enums.PermissionCheck
@@ -21,13 +20,13 @@ import java.util.concurrent.CompletableFuture
 
 
 class LemonPlayer(
-    var uniqueId: UUID,
+    var uuid: UUID,
     var name: String,
     var ipAddress: String?
 ): Persistent<Document> {
 
     var notes = ArrayList<Note>()
-    var ignoring = ArrayList<String>()
+    var ignoring = ArrayList<UUID>()
 
     var commandCooldown = Cooldown(0L)
     var helpOpCooldown = Cooldown(0L)
@@ -36,12 +35,14 @@ class LemonPlayer(
     var slowChatCooldown = Cooldown(0L)
 
     var activeGrant: Grant? = null
+    var lastRecipient: String? = null
 
     lateinit var country: String
+
     private var metadata = HashMap<String, Metadata>()
 
     private fun recalculateGrants() {
-        val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
+        val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uuid)
         var shouldRecalculate = false
 
         completableFuture.whenComplete { grants, throwable ->
@@ -61,9 +62,9 @@ class LemonPlayer(
 
             if (activeGrant == null) {
                 val rank = Lemon.instance.rankHandler.getDefaultRank()
-                activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
+                activeGrant = Grant(UUID.randomUUID(), uuid, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
 
-                Lemon.instance.grantHandler.registerGrant(uniqueId, activeGrant!!)
+                Lemon.instance.grantHandler.registerGrant(uuid, activeGrant!!)
             }
 
             if (shouldRecalculate) {
@@ -117,6 +118,15 @@ class LemonPlayer(
         }
     }
 
+    fun getColoredName(): String {
+        return activeGrant!!.getRank().color + name
+    }
+
+    fun getSetting(id: String): Boolean {
+        val data = getMetadata(id)
+        return data != null && data.asBoolean()
+    }
+
     fun updateOrAddMetadata(id: String, data: Metadata) {
         metadata[id] = data
     }
@@ -138,13 +148,13 @@ class LemonPlayer(
     }
 
     fun getPlayer(): Optional<Player> {
-        return Optional.of(Bukkit.getPlayer(uniqueId))
+        return Optional.of(Bukkit.getPlayer(uuid))
     }
 
     override fun save(): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
-            val document = Document("_id", uniqueId)
-            document["uuid"] = uniqueId.toString()
+            val document = Document("_id", uuid)
+            document["uuid"] = uuid.toString()
 
             document["notes"] = LemonConstants.GSON.toJson(notes)
             document["ignoring"] = LemonConstants.GSON.toJson(ignoring)
@@ -154,12 +164,12 @@ class LemonPlayer(
             document["metadata"] = LemonConstants.GSON.toJson(metadata)
 
             Lemon.instance.mongoHandler.playerCollection.replaceOne(
-                Filters.eq("uuid", uniqueId.toString()),
+                Filters.eq("uuid", uuid.toString()),
                 document, ReplaceOptions().upsert(true)
             )
         }
     }
-
+    
     private fun finalizeMetaData() {
         updateOrAddMetadata(
             "last-connection", Metadata(System.currentTimeMillis())
@@ -185,11 +195,11 @@ class LemonPlayer(
                 return@whenComplete
             }
 
+            document.getList("ignoring", String::class.java).onEach { uuid ->
+                ignoring.add(UUID.fromString(uuid))
+            }
             notes = LemonConstants.GSON.fromJson(
                 document.getString("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE
-            )
-            ignoring = LemonConstants.GSON.fromJson(
-                document.getString("ignoring"), LemonConstants.STRING_ARRAY_LIST_TYPE
             )
             metadata = LemonConstants.GSON.fromJson(
                 document.getString("metadata"), LemonConstants.STRING_METADATA_MAP_TYPE
@@ -198,5 +208,4 @@ class LemonPlayer(
             recalculateGrants()
         }
     }
-
 }
