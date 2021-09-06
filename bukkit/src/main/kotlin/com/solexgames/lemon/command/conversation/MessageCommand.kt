@@ -5,6 +5,7 @@ import com.solexgames.lemon.Lemon
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
@@ -21,6 +22,7 @@ class MessageCommand: BaseCommand() {
 
     @Syntax("<player> <message>")
     @CommandAlias("message|msg|tell|t|whisper|w")
+    @CommandCompletion("player-uv")
     fun onMessage(player: Player, target: OnlinePlayer, message: String) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val targetLemonPlayer = Lemon.instance.playerHandler.findPlayer(target.player).orElse(null)
@@ -50,8 +52,8 @@ class MessageCommand: BaseCommand() {
             target.player.playSound(target.player.location, Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 5f)
         }
 
-        lemonPlayer.lastRecipient = target.player.name
-        targetLemonPlayer.lastRecipient = player.name
+        lemonPlayer.lastRecipient = target.player.uniqueId
+        targetLemonPlayer.lastRecipient = player.uniqueId
 
         player.sendMessage("${CC.GRAY}(To ${targetLemonPlayer.getColoredName()}${CC.GRAY}) $message")
         target.player.sendMessage("${CC.GRAY}(From ${lemonPlayer.getColoredName()}${CC.GRAY}) $message")

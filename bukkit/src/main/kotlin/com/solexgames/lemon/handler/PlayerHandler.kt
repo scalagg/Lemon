@@ -20,7 +20,7 @@ object PlayerHandler {
             players.values.stream().filter {
                 !it.getPlayer().isPresent
             }.forEach {
-                players.remove(it.uuid)?.save()
+                players.remove(it.uniqueId)?.save()
             }
         }, 20L * 60L, 20L * 60L)
     }

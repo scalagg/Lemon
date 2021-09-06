@@ -34,7 +34,7 @@ object LemonConstants {
     val NOTE_ARRAY_LIST_TYPE = object : TypeToken<ArrayList<Note>>() {}.type
 
     @JvmStatic
-    val STRING_ARRAY_LIST_TYPE = object : TypeToken<ArrayList<Note>>() {}.type
+    val UUID_ARRAY_LIST_TYPE = object : TypeToken<ArrayList<UUID>>() {}.type
 
     @JvmStatic
     val GSON = Serializers.gson

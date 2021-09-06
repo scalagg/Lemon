@@ -41,7 +41,9 @@ import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.function.Consumer
@@ -185,6 +187,28 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             }
 
             return@registerContext lemonPlayer.get()
+        }
+
+        commandManager.commandCompletions.registerAsyncCompletion("players") {
+            val list = mutableListOf<String>()
+
+            Bukkit.getOnlinePlayers().forEach {
+                list.add(it.name)
+            }
+
+            return@registerAsyncCompletion list
+        }
+
+        commandManager.commandCompletions.registerAsyncCompletion("players-uv") {
+            val list = mutableListOf<String>()
+
+            Bukkit.getOnlinePlayers().forEach {
+                if (!it.hasMetadata("vanished")) {
+                    list.add(it.name)
+                }
+            }
+
+            return@registerAsyncCompletion list
         }
 
         val registerCommandAction = Consumer<String> {

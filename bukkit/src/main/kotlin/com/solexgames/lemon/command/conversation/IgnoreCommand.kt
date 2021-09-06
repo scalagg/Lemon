@@ -5,6 +5,7 @@ import com.solexgames.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
@@ -20,6 +21,7 @@ class IgnoreCommand: BaseCommand() {
 
     @Syntax("[player]")
     @CommandAlias("ignore|block")
+    @CommandCompletion("player-uv")
     fun onIgnore(player: Player, @Optional uuid: UUID?) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
@@ -31,10 +33,12 @@ class IgnoreCommand: BaseCommand() {
 
             player.sendMessage("${CC.B_PRI}Ignore List ${CC.SEC}(${CC.PRI}${lemonPlayer.ignoring.size}${CC.SEC}):")
             player.sendMessage("")
+
             lemonPlayer.ignoring.forEach {
                 val playerName = CubedCacheUtil.fetchName(it) ?: "N/A"
-                player.sendMessage("${CC.SEC}${Constants.DOUBLE_ARROW_RIGHT} ${CC.PRI}$playerName")
+                player.sendMessage(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.PRI}$playerName")
             }
+
             return
         }
 

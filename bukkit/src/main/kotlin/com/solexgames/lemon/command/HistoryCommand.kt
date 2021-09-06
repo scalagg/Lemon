@@ -8,6 +8,7 @@ import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.MessageKeys
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
 import org.bukkit.entity.Player
@@ -22,6 +23,7 @@ class HistoryCommand: BaseCommand() {
     @Syntax("<player>")
     @CommandAlias("history|c|check|hist")
     @CommandPermission("lemon.command.history")
+    @CommandCompletion("@players")
     fun onHistory(player: Player, uuid: UUID) {
         CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
@@ -36,6 +38,7 @@ class HistoryCommand: BaseCommand() {
     @Syntax("<player>")
     @CommandAlias("staffhistory|staffhist")
     @CommandPermission("lemon.command.staffhistory")
+    @CommandCompletion("@players")
     fun onStaffHistory(player: Player, uuid: UUID) {
         CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 

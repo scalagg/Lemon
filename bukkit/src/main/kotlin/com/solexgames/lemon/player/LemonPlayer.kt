@@ -12,7 +12,6 @@ import com.solexgames.lemon.util.GrantRecalculationUtil
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.type.Persistent
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.Document
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -27,13 +26,15 @@ class LemonPlayer(
 ): Persistent<Document> {
 
     var notes = ArrayList<Note>()
-    var ignoring = ArrayList<String>()
+    var ignoring = ArrayList<UUID>()
 
     var commandCooldown = Cooldown(0L)
     var helpOpCooldown = Cooldown(0L)
     var reportCooldown = Cooldown(0L)
     var chatCooldown = Cooldown(0L)
     var slowChatCooldown = Cooldown(0L)
+
+    var lastRecipient: UUID? = null
 
     lateinit var activeGrant: Grant
     lateinit var country: String
@@ -82,6 +83,15 @@ class LemonPlayer(
 
     fun fetchCountry() {
         // TODO: 8/28/2021 use geo location api to fetch & update the players' country to jedis
+    }
+
+    fun getColoredName(): String {
+        return activeGrant.getRank().color + name
+    }
+
+    fun getSetting(id: String): Boolean {
+        val data = getMetadata(id)
+        return data != null && data.asBoolean()
     }
 
     fun hasPermission(
@@ -156,6 +166,7 @@ class LemonPlayer(
             finalizeMetaData()
 
             document["metadata"] = LemonConstants.GSON.toJson(metadata)
+            document["lastRecipient"] = lastRecipient.toString()
 
             Lemon.instance.mongoHandler.playerCollection.replaceOne(
                 Filters.eq("uuid", uniqueId.toString()),
@@ -193,11 +204,13 @@ class LemonPlayer(
                 document.getString("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE
             )
             ignoring = LemonConstants.GSON.fromJson(
-                document.getString("ignoring"), LemonConstants.STRING_ARRAY_LIST_TYPE
+                document.getString("ignoring"), LemonConstants.UUID_ARRAY_LIST_TYPE
             )
             metadata = LemonConstants.GSON.fromJson(
                 document.getString("metadata"), LemonConstants.STRING_METADATA_MAP_TYPE
             )
+
+            lastRecipient = UUID.fromString(document.getString("lastRecipient"))
         }
 
         recalculateGrants()
