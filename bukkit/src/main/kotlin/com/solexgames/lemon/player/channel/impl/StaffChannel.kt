@@ -17,7 +17,7 @@ class StaffChannel(private val channel: StaffChannelType): Channel {
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
-        return "${channel.color}[${channel.name[0]}] ${CC.DARK_AQUA}[${Lemon.instance.settings.id}] ${rank.color}${sender}${CC.AQUA}: $message"
+        return "${channel.color}[${channel.name[0]}] ${CC.DARK_AQUA}[${Lemon.instance.settings.id}] ${rank.color}${sender}${CC.AQUA}: ${dePrefixed(message)}"
     }
 
     override fun isGlobal(): Boolean {
@@ -26,10 +26,6 @@ class StaffChannel(private val channel: StaffChannelType): Channel {
 
     override fun shouldCheckForPrefix(): Boolean {
         return true
-    }
-
-    override fun hasPermission(t: Player): Boolean {
-        return t.hasPermission(getPermission())
     }
 
     override fun getPrefix(): String {

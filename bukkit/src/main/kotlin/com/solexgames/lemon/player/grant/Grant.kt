@@ -29,7 +29,8 @@ class Grant(
     var removed: Boolean = false
 
     fun getRank(): Rank {
-        return Lemon.instance.rankHandler.findRank(rankId).orElse(Lemon.instance.rankHandler.getDefaultRank())
+        return Lemon.instance.rankHandler.findRank(rankId)
+            .orElse(Lemon.instance.rankHandler.getDefaultRank())
     }
 
     /**
@@ -56,6 +57,7 @@ class Grant(
     override fun save(): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             val document = Document("_id", uuid)
+            document["uuid"] = uuid.toString()
             document["target"] = target.toString()
             document["rankId"] = rankId.toString()
             document["addedBy"] = addedBy.toString()

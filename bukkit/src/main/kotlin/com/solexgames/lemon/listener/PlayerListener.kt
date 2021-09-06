@@ -5,7 +5,7 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel
-import com.solexgames.lemon.util.MapBuilder
+import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
@@ -18,6 +18,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.*
 import java.util.concurrent.CompletableFuture
 
+@ExperimentalStdlibApi
 class PlayerListener : Listener {
 
     @EventHandler(
@@ -77,7 +78,7 @@ class PlayerListener : Listener {
                 cancel(event, "${CC.RED}Global chat is currently muted.")
             } else if (chatHandler.slowChatTime != 0) {
                 if (lemonPlayer.slowChatCooldown.isActive()) {
-                    val formatted = TimeUtil.millisToSeconds((lemonPlayer.slowChatCooldown.getRemaining().toFloat()).toLong())
+                    val formatted = String.format("%.0f", lemonPlayer.slowChatCooldown.getRemaining())
 
                     cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
                     return
@@ -86,7 +87,7 @@ class PlayerListener : Listener {
                 lemonPlayer.slowChatCooldown = Cooldown(chatHandler.slowChatTime * 1000L)
             } else {
                 if (lemonPlayer.chatCooldown.isActive()) {
-                    val formatted = TimeUtil.millisToSeconds(lemonPlayer.chatCooldown.getRemaining())
+                    val formatted = String.format("%.0f", lemonPlayer.chatCooldown.getRemaining())
 
                     cancel(event, "${CC.RED}You're on chat cooldown, please wait ${formatted}.")
                     return
@@ -131,13 +132,15 @@ class PlayerListener : Listener {
         if (channelMatch?.isGlobal() == true) {
             RedisHandler.buildMessage(
                 "channel-message",
-                MapBuilder<String, String>()
-                    .put("channel", channelMatch!!.getId())
-                    .put("message", event.message)
-                    .put("sender", player.name)
-                    .put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
-                    .build()
-            )
+                buildMap {
+                    put("channel", channelMatch!!.getId())
+                    put("message", event.message)
+                    put("sender", player.name)
+                    put("rank", lemonPlayer.activeGrant.getRank().uuid.toString())
+                }
+            ).publishAsync()
+
+            event.isCancelled = true
         } else {
             Bukkit.getOnlinePlayers().forEach {
                 var canReceive = true
@@ -169,7 +172,7 @@ class PlayerListener : Listener {
                 player.sendMessage(channelMatch?.getFormatted(
                     event.message,
                     player.name,
-                    lemonPlayer.activeGrant?.getRank() ?: Lemon.instance.rankHandler.getDefaultRank(),
+                    lemonPlayer.activeGrant.getRank(),
                     it
                 ))
             }

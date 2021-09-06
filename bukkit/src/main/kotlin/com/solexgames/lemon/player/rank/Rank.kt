@@ -69,6 +69,7 @@ class Rank(
     override fun save(): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             val document = Document("_id", uuid)
+            document["uuid"] = uuid.toString()
             document["name"] = name
             document["weight"] = weight
             document["prefix"] = prefix

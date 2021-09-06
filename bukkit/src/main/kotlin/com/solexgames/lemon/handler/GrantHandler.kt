@@ -17,9 +17,9 @@ object GrantHandler {
 
     private fun fetchGrants(key: String, uuid: UUID, test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
         return CompletableFuture.supplyAsync {
-            val list = ArrayList<Grant>()
+            val list = mutableListOf<Grant>()
 
-            Lemon.instance.mongoHandler.punishmentCollection.find(Filters.eq(key, uuid.toString())).forEach {
+            Lemon.instance.mongoHandler.grantCollection.find(Filters.eq(key, uuid.toString())).forEach {
                 val grant = LemonConstants.GSON.fromJson(it.toJson(), Grant::class.java)
 
                 if (grant != null && test.invoke(grant)) list.add(grant)
@@ -37,20 +37,14 @@ object GrantHandler {
         return fetchGrants("target", uuid) { true }
     }
 
-    fun registerGrant(uuid: UUID, grant: Grant) {
-        CompletableFuture.runAsync {
-            Lemon.instance.mongoHandler.grantCollection.replaceOne(
-                Filters.eq("_id", uuid),
-                Document.parse(LemonConstants.GSON.toJson(grant)),
-                ReplaceOptions().upsert(true)
-            )
-        }.whenComplete { _, u ->
+    fun registerGrant(grant: Grant) {
+        grant.save().whenComplete { _, u ->
             u?.printStackTrace()
         }
     }
 
     fun wipeGrant(uuid: UUID, remover: UUID?) {
-        fetchExactGrantById(uuid).whenComplete { grant, throwable ->
+        fetchExactGrantById(uuid).whenComplete { grant, _ ->
             grant.removedReason = "Removed"
             grant.removedAt = System.currentTimeMillis()
             grant.removed = true

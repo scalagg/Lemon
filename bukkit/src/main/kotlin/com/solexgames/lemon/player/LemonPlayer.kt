@@ -12,6 +12,7 @@ import com.solexgames.lemon.util.GrantRecalculationUtil
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.type.Persistent
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.Document
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -20,13 +21,13 @@ import java.util.concurrent.CompletableFuture
 
 
 class LemonPlayer(
-    var uuid: UUID,
+    var uniqueId: UUID,
     var name: String,
     var ipAddress: String?
 ): Persistent<Document> {
 
     var notes = ArrayList<Note>()
-    var ignoring = ArrayList<UUID>()
+    var ignoring = ArrayList<String>()
 
     var commandCooldown = Cooldown(0L)
     var helpOpCooldown = Cooldown(0L)
@@ -34,21 +35,25 @@ class LemonPlayer(
     var chatCooldown = Cooldown(0L)
     var slowChatCooldown = Cooldown(0L)
 
-    var activeGrant: Grant? = null
-    var lastRecipient: String? = null
-
+    lateinit var activeGrant: Grant
     lateinit var country: String
 
     private var metadata = HashMap<String, Metadata>()
 
     private fun recalculateGrants() {
-        val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uuid)
+        val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
         var shouldRecalculate = false
 
-        completableFuture.whenComplete { grants, throwable ->
+        completableFuture.whenComplete { it, throwable ->
             throwable?.printStackTrace()
 
-            grants.forEach { grant ->
+            if (it == null || it.isEmpty()) {
+                setupAutomaticGrant()
+
+                return@whenComplete
+            }
+
+            it.forEach { grant ->
                 if (!grant.removed && !grant.hasExpired()) {
                     grant.removedReason = "Expired"
                     grant.removedAt = System.currentTimeMillis()
@@ -58,23 +63,21 @@ class LemonPlayer(
                 }
             }
 
-            activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
-
-            if (activeGrant == null) {
-                val rank = Lemon.instance.rankHandler.getDefaultRank()
-                activeGrant = Grant(UUID.randomUUID(), uuid, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
-
-                Lemon.instance.grantHandler.registerGrant(uuid, activeGrant!!)
-            }
-
             if (shouldRecalculate) {
-                activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+                activeGrant = GrantRecalculationUtil.getProminentGrant(it)
 
-                getPlayer().ifPresent {
-                    it.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant!!.getRank().getColoredName()}${CC.GREEN}.")
+                getPlayer().ifPresent { player ->
+                    player.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant.getRank().getColoredName()}${CC.GREEN}.")
                 }
             }
         }
+    }
+
+    private fun setupAutomaticGrant() {
+        val rank = Lemon.instance.rankHandler.getDefaultRank()
+        activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
+
+        Lemon.instance.grantHandler.registerGrant(activeGrant)
     }
 
     fun fetchCountry() {
@@ -88,14 +91,14 @@ class LemonPlayer(
         var hasPermission = false
 
         when (checkType) {
-            PermissionCheck.COMPOUNDED -> hasPermission = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
+            PermissionCheck.COMPOUNDED -> hasPermission = activeGrant.getRank().getCompoundedPermissions().contains(permission)
             PermissionCheck.PLAYER -> getPlayer().ifPresent {
                 if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                     hasPermission = true
                 }
             }
             PermissionCheck.BOTH -> {
-                hasPermission = activeGrant?.getRank()?.getCompoundedPermissions()?.contains(permission) ?: false
+                hasPermission = activeGrant.getRank().getCompoundedPermissions().contains(permission)
 
                 getPlayer().ifPresent {
                     if (it.isOp || it.hasPermission(permission.toLowerCase())) {
@@ -116,15 +119,6 @@ class LemonPlayer(
         } else {
             Cooldown(3000L)
         }
-    }
-
-    fun getColoredName(): String {
-        return activeGrant!!.getRank().color + name
-    }
-
-    fun getSetting(id: String): Boolean {
-        val data = getMetadata(id)
-        return data != null && data.asBoolean()
     }
 
     fun updateOrAddMetadata(id: String, data: Metadata) {
@@ -148,13 +142,13 @@ class LemonPlayer(
     }
 
     fun getPlayer(): Optional<Player> {
-        return Optional.of(Bukkit.getPlayer(uuid))
+        return Optional.of(Bukkit.getPlayer(uniqueId))
     }
 
     override fun save(): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
-            val document = Document("_id", uuid)
-            document["uuid"] = uuid.toString()
+            val document = Document("_id", uniqueId)
+            document["uuid"] = uniqueId.toString()
 
             document["notes"] = LemonConstants.GSON.toJson(notes)
             document["ignoring"] = LemonConstants.GSON.toJson(ignoring)
@@ -164,19 +158,19 @@ class LemonPlayer(
             document["metadata"] = LemonConstants.GSON.toJson(metadata)
 
             Lemon.instance.mongoHandler.playerCollection.replaceOne(
-                Filters.eq("uuid", uuid.toString()),
+                Filters.eq("uuid", uniqueId.toString()),
                 document, ReplaceOptions().upsert(true)
             )
         }
     }
-    
+
     private fun finalizeMetaData() {
         updateOrAddMetadata(
             "last-connection", Metadata(System.currentTimeMillis())
         )
 
         updateOrAddMetadata(
-            "current-rank", Metadata(activeGrant?.getRank()?.uuid.toString())
+            "current-rank", Metadata(activeGrant.getRank().uuid.toString())
         )
     }
 
@@ -195,17 +189,18 @@ class LemonPlayer(
                 return@whenComplete
             }
 
-            document.getList("ignoring", String::class.java).onEach { uuid ->
-                ignoring.add(UUID.fromString(uuid))
-            }
             notes = LemonConstants.GSON.fromJson(
                 document.getString("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE
+            )
+            ignoring = LemonConstants.GSON.fromJson(
+                document.getString("ignoring"), LemonConstants.STRING_ARRAY_LIST_TYPE
             )
             metadata = LemonConstants.GSON.fromJson(
                 document.getString("metadata"), LemonConstants.STRING_METADATA_MAP_TYPE
             )
-
-            recalculateGrants()
         }
+
+        recalculateGrants()
     }
+
 }

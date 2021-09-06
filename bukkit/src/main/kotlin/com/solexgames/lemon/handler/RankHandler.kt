@@ -48,7 +48,7 @@ object RankHandler {
         val rank = Rank("Default")
         rank.defaultRank = true
 
-        rank.save().whenComplete { t, u ->
+        rank.save().whenComplete { _, u ->
             u?.printStackTrace()
         }
 

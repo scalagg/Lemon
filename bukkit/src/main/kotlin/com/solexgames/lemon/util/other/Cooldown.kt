@@ -4,8 +4,8 @@ import net.evilblock.cubed.util.time.TimeUtil
 
 class Cooldown(duration: Long) {
 
-    private val start: Long = System.currentTimeMillis()
-    private val expiry: Long = start + duration
+    private val start = System.currentTimeMillis()
+    private val expiry = start + duration
 
     fun getTimeLeft(): String {
         return TimeUtil.formatIntoDetailedString(getRemaining().toInt())
