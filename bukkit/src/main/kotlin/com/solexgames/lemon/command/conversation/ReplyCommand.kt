@@ -11,9 +11,9 @@ import org.bukkit.entity.Player
  * @author puugz
  * @since 29/08/2021 19:40
  */
-class ReplyCommand: BaseCommand() {
+class ReplyCommand : BaseCommand() {
 
-    @CommandAlias("reply|r|respond")
+    @CommandAlias("reply|r")
     fun onReply(player: Player, @Optional message: String?) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
@@ -24,7 +24,7 @@ class ReplyCommand: BaseCommand() {
                 player.sendMessage("${CC.RED}You're currently not messaging anyone.")
             }
         } ?: let {
-            player.performCommand("msg ${lemonPlayer.lastRecipient} $message")
+            player.performCommand("message ${lemonPlayer.lastRecipient} $message")
         }
     }
 }

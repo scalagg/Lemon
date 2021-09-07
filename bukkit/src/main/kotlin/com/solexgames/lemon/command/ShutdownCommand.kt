@@ -25,6 +25,7 @@ class ShutdownCommand: BaseCommand() {
     }
 
     @Subcommand("initiate|start")
+    @Description("Initiate a server shutdown.")
     fun onInitiate(player: Player, @Name("time") time: Duration) {
         if (time.isPermanent()) {
             throw ConditionFailedException("That duration is too long.")
@@ -40,6 +41,7 @@ class ShutdownCommand: BaseCommand() {
     }
 
     @Subcommand("status")
+    @Description("View the status of the current shutdown.")
     fun onStatus(player: Player) {
         val shutdown = Lemon.instance.serverHandler.shutdownRunnable
 
@@ -51,6 +53,7 @@ class ShutdownCommand: BaseCommand() {
     }
 
     @Subcommand("cancel|stop")
+    @Description("Cancel the current shutdown.")
     fun onCancel(player: Player) {
         Lemon.instance.serverHandler.cancelShutdown(player)
     }

@@ -17,11 +17,11 @@ import java.util.*
  * @author puugz
  * @since 29/08/2021 01:01
  */
-class UnIgnoreCommand: BaseCommand() {
+class UnIgnoreCommand : BaseCommand() {
 
     @Syntax("[player]")
     @CommandAlias("unignore|unblock")
-    @CommandCompletion("player-uv")
+    @CommandCompletion("@players-uv")
     fun onIgnore(player: Player, @Optional uuid: UUID?) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 

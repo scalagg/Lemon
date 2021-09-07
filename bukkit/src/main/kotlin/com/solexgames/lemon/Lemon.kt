@@ -1,5 +1,9 @@
 package com.solexgames.lemon
 
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.google.gson.stream.JsonWriter
 import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
 import com.solexgames.daddyshark.commons.logger.BetterConsoleLogger
 import com.solexgames.daddyshark.commons.model.ServerInstance
@@ -10,8 +14,7 @@ import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnect
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
-import com.solexgames.lemon.command.HistoryCommand
-import com.solexgames.lemon.command.ShutdownCommand
+import com.solexgames.lemon.adapt.UUIDAdapter
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.board.ModModeBoardProvider
@@ -36,17 +39,34 @@ import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
+import net.evilblock.cubed.entity.EntitySerializer
+import net.evilblock.cubed.entity.animation.EntityAnimation
+import net.evilblock.cubed.menu.template.MenuTemplate
+import net.evilblock.cubed.menu.template.MenuTemplateButton
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
+import net.evilblock.cubed.serialize.BlockVectorAdapter
+import net.evilblock.cubed.serialize.ItemStackAdapter
+import net.evilblock.cubed.serialize.LocationAdapter
+import net.evilblock.cubed.serialize.VectorAdapter
+import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.entity.Player
+import org.bukkit.Location
+import org.bukkit.entity.Entity
 import org.bukkit.event.Listener
+import org.bukkit.inventory.ItemStack
+import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
+import java.io.IOException
+import java.util.*
+import java.util.UUID
 import java.util.function.Consumer
+
 
 class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
@@ -127,6 +147,19 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun runAfterDataValidation() {
+        Serializers.useGsonBuilderThenRebuild { builder ->
+            builder
+                .registerTypeHierarchyAdapter(ItemStack::class.java, ItemStackAdapter())
+                .registerTypeHierarchyAdapter(Location::class.java, LocationAdapter())
+                .registerTypeHierarchyAdapter(Vector::class.java, VectorAdapter())
+                .registerTypeHierarchyAdapter(BlockVector::class.java, BlockVectorAdapter())
+                .registerTypeAdapter(Entity::class.java, EntitySerializer)
+                .registerTypeAdapter(UUID::class.java, UUIDAdapter())
+                .registerTypeAdapter(EntityAnimation::class.java, AbstractTypeSerializer<EntityAnimation>())
+                .registerTypeAdapter(MenuTemplate::class.java, AbstractTypeSerializer<MenuTemplate<*>>())
+                .registerTypeAdapter(MenuTemplateButton::class.java, AbstractTypeSerializer<MenuTemplateButton>())
+        }
+
         loadExtraConfigurations()
         loadCosmetics()
         loadListeners()
@@ -156,20 +189,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
 
-//        commandManager.commandCompletions.registerAsyncCompletion("tags") {
-//
-//        }
         commandManager.commandCompletions.registerAsyncCompletion("ranks") {
             return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
         }
-//        commandManager.commandContexts.registerContext(ServerInstance::class.java) {
-//            var server = serverHandler.findServer(it.firstArg)
-//
-//            if (!server.isPresent) {
-//                throw ConditionFailedException("That server does not exist.")
-//            }
-//            return@registerContext server
-//        }
+
         commandManager.commandContexts.registerContext(Rank::class.java) {
             val rank = rankHandler.findRank(it.firstArg)
 
@@ -218,7 +241,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         }
 
         registerCommandAction.accept("com.solexgames.lemon.command")
-        registerCommandAction.accept("com.solexgames.lemon.command.conversation")
 
         logger.info("Loaded command manager")
     }

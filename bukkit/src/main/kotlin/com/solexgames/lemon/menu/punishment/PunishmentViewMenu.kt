@@ -1,5 +1,6 @@
 package com.solexgames.lemon.menu.punishment
 
+import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.enums.PunishmentViewType
@@ -42,7 +43,7 @@ class PunishmentViewMenu(
         var integer = 0
 
         PunishmentCategory.values().forEach {
-            buttons[integer++] = ItemBuilder.of(Material.WOOL)
+            buttons[integer++] = ItemBuilder(XMaterial.WHITE_WOOL)
                 .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
                 .data(getWoolColorByIntensity(it))
                 .addToLore(

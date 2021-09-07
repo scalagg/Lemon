@@ -10,8 +10,6 @@ class VanishNametagProvider: NametagProvider("vanish", 25) {
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo? {
         return if (toRefresh.hasMetadata("vanished")) {
             createNametag("${CC.GRAY}[V] ", "")
-        } else {
-            null
-        }
+        } else null
     }
 }

@@ -6,6 +6,7 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.type.Savable
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.other.Expireable
+import com.solexgames.lemon.util.type.Loadable
 import org.bson.Document
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -60,14 +61,16 @@ class Grant(
             document["uuid"] = uuid.toString()
             document["target"] = target.toString()
             document["rankId"] = rankId.toString()
-            document["addedBy"] = addedBy.toString()
+            document["scopes"] = scopes
+            document["duration"] = duration
+
+            document["addedBy"] = if (addedBy == null) null else addedBy.toString()
             document["addedAt"] = addedAt
             document["addedOn"] = addedOn
             document["addedReason"] = addedReason
-            document["duration"] = duration
-            document["scopes"] = scopes
+
             document["removedReason"] = removedReason
-            document["removedBy"] = removedBy
+            document["removedBy"] = if (removedBy == null) null else removedBy.toString()
             document["removedAt"] = removedAt
             document["removed"] = removed
 

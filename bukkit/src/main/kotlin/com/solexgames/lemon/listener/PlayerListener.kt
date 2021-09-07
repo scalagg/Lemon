@@ -7,6 +7,7 @@ import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.other.Cooldown
+import com.solexgames.lemon.util.quickaccess.remaining
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
@@ -78,7 +79,7 @@ class PlayerListener : Listener {
                 cancel(event, "${CC.RED}Global chat is currently muted.")
             } else if (chatHandler.slowChatTime != 0) {
                 if (lemonPlayer.slowChatCooldown.isActive()) {
-                    val formatted = String.format("%.0f", lemonPlayer.slowChatCooldown.getRemaining())
+                    val formatted = remaining(lemonPlayer.slowChatCooldown)
 
                     cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
                     return
@@ -87,7 +88,7 @@ class PlayerListener : Listener {
                 lemonPlayer.slowChatCooldown = Cooldown(chatHandler.slowChatTime * 1000L)
             } else {
                 if (lemonPlayer.chatCooldown.isActive()) {
-                    val formatted = String.format("%.0f", lemonPlayer.chatCooldown.getRemaining())
+                    val formatted = remaining(lemonPlayer.chatCooldown)
 
                     cancel(event, "${CC.RED}You're on chat cooldown, please wait ${formatted}.")
                     return
@@ -100,7 +101,7 @@ class PlayerListener : Listener {
         if (event.isCancelled)
             return
 
-        if (!lemonPlayer.getSetting("global-chat")) {
+        if (lemonPlayer.getSetting("global-chat-disabled")) {
             cancel(event, "${CC.RED}You have global chat disabled, re-enable it to continue chatting.")
             return
         }
@@ -210,7 +211,7 @@ class PlayerListener : Listener {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            Lemon.instance.playerHandler.players.remove(it.uuid)?.save()
+            Lemon.instance.playerHandler.players.remove(it.uniqueId)?.save()
         }
     }
 }

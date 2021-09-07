@@ -29,7 +29,7 @@ class LemonPlayer(
     var ignoring = ArrayList<UUID>()
 
     var commandCooldown = Cooldown(0L)
-    var helpOpCooldown = Cooldown(0L)
+    var requestCooldown = Cooldown(0L)
     var reportCooldown = Cooldown(0L)
     var chatCooldown = Cooldown(0L)
     var slowChatCooldown = Cooldown(0L)

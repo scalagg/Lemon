@@ -3,6 +3,8 @@ package com.solexgames.lemon.task
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.task.LemonRunnable
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.Tasks.sync
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 
@@ -14,8 +16,10 @@ class ShutdownRunnable(seconds: Int): LemonRunnable(seconds) {
 
     override fun onRun() {
         if (seconds == 2) {
-            Bukkit.getOnlinePlayers().forEach { player ->
-                player.kickPlayer("${CC.RED}The server is currently rebooting.")
+            sync {
+                Bukkit.getOnlinePlayers().forEach { player ->
+                    player.kickPlayer("${CC.RED}The server is currently rebooting.")
+                }
             }
         } else {
             broadcast("${CC.SEC}The server will be rebooting in ${CC.PRI}${TimeUtil.formatIntoDetailedString(seconds)}${CC.SEC}.")

@@ -10,8 +10,6 @@ class ModModeNametagProvider: NametagProvider("mod-mode", 50) {
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo? {
         return if (toRefresh.hasMetadata("mod-mode")) {
             createNametag("${CC.GRAY}[M] ", "")
-        } else {
-            null
-        }
+        } else null
     }
 }

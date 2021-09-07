@@ -18,11 +18,11 @@ import org.bukkit.metadata.FixedMetadataValue
  * @author puugz
  * @since 29/08/2021 00:10
  */
-class MessageCommand: BaseCommand() {
+class MessageCommand : BaseCommand() {
 
     @Syntax("<player> <message>")
     @CommandAlias("message|msg|tell|t|whisper|w")
-    @CommandCompletion("player-uv")
+    @CommandCompletion("@players-uv")
     fun onMessage(player: Player, target: OnlinePlayer, message: String) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val targetLemonPlayer = Lemon.instance.playerHandler.findPlayer(target.player).orElse(null)

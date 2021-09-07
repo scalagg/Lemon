@@ -1,5 +1,6 @@
 package com.solexgames.lemon.menu.punishment
 
+import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.enums.PunishmentViewType
 import com.solexgames.lemon.player.punishment.Punishment
@@ -64,13 +65,14 @@ class PunishmentDetailedViewMenu(
             val lore = ArrayList<String>()
 
             val statusLore = if (punishment.removed) "${CC.RED}(Removed)" else if (!punishment.hasExpired()) "${CC.GREEN}(Active)" else "${CC.YELLOW}(Expired)"
-            val addedBy = punishment.removedBy?.let {
+            val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
                 "${CC.D_RED}Console"
             }
 
             lore.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
+
             if (punishment.removed) {
                 lore.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
             }
@@ -115,7 +117,7 @@ class PunishmentDetailedViewMenu(
 
             lore.add(if (canRemove) "${CC.GREEN}Click to remove this punishment." else "${CC.RED}You can't remove this punishment.")
 
-            return ItemBuilder(Material.WOOL)
+            return ItemBuilder(XMaterial.WHITE_WOOL)
                 .data((if (!punishment.hasExpired()) 5 else if (punishment.removed) 1 else 14).toShort())
                 .name("${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)} $statusLore")
                 .addToLore(lore)
@@ -126,11 +128,11 @@ class PunishmentDetailedViewMenu(
             val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
             val canRemove: Boolean = lemonPlayer.hasPermission(
-                "lemon.punishment.remove." + punishment.category.fancyVersion.toLowerCase()
+                "lemon.punishment.remove." + punishment.category.name.toLowerCase()
             )
 
             if (!canRemove) {
-                player.sendMessage("${CC.RED}Sorry, but you do not have permission to remove ${punishment.category.fancyVersion + "s"}.")
+                player.sendMessage("${CC.RED}Sorry, but you do not have permission to remove ${punishment.category.fancyVersion.toLowerCase()}s.")
                 return
             }
         }

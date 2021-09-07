@@ -9,8 +9,8 @@ import java.util.*
  */
 
 open class Expireable(
-    val addedAt: Long,
-    val duration: Long
+    open val addedAt: Long,
+    open val duration: Long
 ) {
 
     var expireDate: Date = Date(addedAt + duration)
