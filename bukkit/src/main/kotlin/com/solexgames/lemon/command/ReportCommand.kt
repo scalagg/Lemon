@@ -26,8 +26,8 @@ class ReportCommand : BaseCommand() {
     fun onDefault(player: Player, target: Player) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
-        if (lemonPlayer.reportCooldown.isActive()) {
-            val remaining = remaining(lemonPlayer.reportCooldown)
+        if (lemonPlayer.cooldowns["report"]?.isActive() == true) {
+            val remaining = lemonPlayer.cooldowns["report"]?.let { remaining(it) }
             player.sendMessage("${CC.RED}You must wait $remaining seconds before submitting another report.")
 
             return

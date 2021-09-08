@@ -2,6 +2,7 @@ package com.solexgames.lemon
 
 import com.cryptomorin.xseries.XMaterial
 import com.google.gson.reflect.TypeToken
+import com.solexgames.lemon.player.metadata.Metadata
 import net.evilblock.cubed.acf.MessageKeys
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -36,7 +37,7 @@ object LemonConstants {
     val NOTE_ARRAY_LIST_TYPE: Type = object : TypeToken<ArrayList<Note>>() {}.type
 
     @JvmStatic
-    val UUID_ARRAY_LIST_TYPE: Type = object : TypeToken<ArrayList<UUID>>() {}.type
+    val UUID_ARRAY_LIST_TYPE: Type = object : TypeToken<MutableList<UUID>>() {}.type
 
     @JvmStatic
     val GSON = Serializers.gson

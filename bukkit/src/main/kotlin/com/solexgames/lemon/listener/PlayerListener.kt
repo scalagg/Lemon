@@ -29,16 +29,28 @@ class PlayerListener : Listener {
         }
 
         Lemon.instance.mongoHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
-            .thenAccept { lemonPlayer ->
-                if (lemonPlayer == null) {
-                    val lemonPlayerCreated = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
-                    lemonPlayerCreated.handleIfFirstCreated()
+            .whenComplete { lemonPlayer, throwable ->
+                try {
+                    val lemonPlayerFinal: LemonPlayer?
 
-                    Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayerCreated
-                } else {
-                    lemonPlayer.handlePostLoad()
+                    if (lemonPlayer == null || throwable != null) {
+                        lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+                        lemonPlayerFinal.handleIfFirstCreated()
 
-                    Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayer
+                        throwable?.printStackTrace()
+                    } else {
+                        lemonPlayer.ipAddress = event.address.hostAddress
+                        lemonPlayer.handlePostLoad()
+
+                        lemonPlayerFinal = lemonPlayer
+                    }
+
+                    println("first=$lemonPlayer")
+                    println("final=$lemonPlayerFinal")
+
+                    Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayerFinal
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                 }
             }
     }
@@ -73,17 +85,17 @@ class PlayerListener : Listener {
             if (chatHandler.chatMuted || lemonPlayer.hasPermission("lemon.chat.bypass")) {
                 cancel(event, "${CC.RED}Global chat is currently muted.")
             } else if (chatHandler.slowChatTime != 0) {
-                if (lemonPlayer.slowChatCooldown.isActive()) {
-                    val formatted = remaining(lemonPlayer.slowChatCooldown)
+                if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true) {
+                    val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
 
                     cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
                     return
                 }
 
-                lemonPlayer.slowChatCooldown = Cooldown(chatHandler.slowChatTime * 1000L)
+                lemonPlayer.cooldowns["slowChat"] = Cooldown(chatHandler.slowChatTime * 1000L)
             } else {
-                if (lemonPlayer.chatCooldown.isActive()) {
-                    val formatted = remaining(lemonPlayer.chatCooldown)
+                if (lemonPlayer.cooldowns["chat"]?.isActive() == true) {
+                    val formatted = lemonPlayer.cooldowns["chat"]?.let { remaining(it) }
 
                     cancel(event, "${CC.RED}You're on chat cooldown, please wait ${formatted}.")
                     return
@@ -194,6 +206,12 @@ class PlayerListener : Listener {
         } else {
             if (currentPlayerCount > Integer.parseInt(highestPlayerCount)) {
                 Lemon.instance.getLocalServerInstance().metaData["highest-player-count"] = currentPlayerCount.toString()
+            }
+        }
+
+        lemonPlayer.ifPresent { player ->
+            player.handleOnConnection.forEach {
+                it.accept(event.player)
             }
         }
     }

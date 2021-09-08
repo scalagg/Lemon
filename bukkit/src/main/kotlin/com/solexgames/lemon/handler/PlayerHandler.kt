@@ -70,7 +70,7 @@ object PlayerHandler {
     }
 
     fun findPlayer(player: Player): Optional<LemonPlayer> {
-        return findPlayer(player.uniqueId)
+        return Optional.ofNullable(players[player.uniqueId])
     }
 
     fun vanishPlayer(player: Player, power: Int = 0) {

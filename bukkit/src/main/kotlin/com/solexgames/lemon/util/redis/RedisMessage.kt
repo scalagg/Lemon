@@ -17,7 +17,9 @@ class RedisMessage(private val message: String) {
 
     fun publishAsync(channel: String): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
-            Lemon.instance.jedisManager.publish(message)
+            Lemon.instance.jedisManager.runCommand {
+                it.publish(channel, message)
+            }
         }
     }
 

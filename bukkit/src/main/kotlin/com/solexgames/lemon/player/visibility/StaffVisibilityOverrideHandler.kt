@@ -16,7 +16,7 @@ class StaffVisibilityOverrideHandler : OverrideHandler {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(toRefresh).orElse(null)
         val lemonPlayerTarget = Lemon.instance.playerHandler.findPlayer(refreshFor).orElse(null)
 
-        return if (!lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff")) {
+        return if (lemonPlayer != null && lemonPlayerTarget != null && !lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff")) {
             OverrideAction.SHOW
         } else OverrideAction.NEUTRAL
     }

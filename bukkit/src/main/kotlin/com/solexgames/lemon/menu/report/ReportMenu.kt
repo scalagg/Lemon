@@ -47,7 +47,7 @@ class ReportMenu(private val target: Player) : Menu() {
                         if (throwable != null) {
                             player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")
                         } else {
-                            lemonPlayer.reportCooldown = Cooldown(60000L)
+                            lemonPlayer.cooldowns["report"] = Cooldown(60000L)
 
                             player.closeInventory()
                             player.sendMessage("${CC.GREEN}Your report has been submitted.")

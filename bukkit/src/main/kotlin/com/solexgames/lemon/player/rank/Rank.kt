@@ -1,11 +1,8 @@
 package com.solexgames.lemon.player.rank
 
-import com.mongodb.client.model.Filters
-import com.mongodb.client.model.ReplaceOptions
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
-import org.bson.Document
 import java.util.*
 import java.util.concurrent.CompletableFuture
 

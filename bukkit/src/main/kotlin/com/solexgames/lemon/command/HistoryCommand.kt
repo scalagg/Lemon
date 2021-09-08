@@ -22,6 +22,21 @@ import java.util.*
  */
 class HistoryCommand : BaseCommand() {
 
+    @CommandAlias("recalculate-permissions")
+    fun onRecalculate(player: Player) {
+        Lemon.instance.playerHandler.findPlayer(player).ifPresent {
+            it.recalculateGrants(
+                autoNotify = false,
+                forceRecalculatePermissions = true,
+                shouldCalculateNow = true
+            )
+
+            player.sendMessage("player map = ${Lemon.instance.playerHandler.players}")
+            player.sendMessage("Active Grant = ${it.activeGrant}")
+            player.sendMessage("On join stuff = ${it.handleOnConnection}")
+        }
+    }
+
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandAlias("history|c|check|hist")

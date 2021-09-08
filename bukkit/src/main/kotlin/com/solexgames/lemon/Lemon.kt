@@ -1,7 +1,5 @@
 package com.solexgames.lemon
 
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
 import com.google.gson.LongSerializationPolicy
 import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
 import com.solexgames.daddyshark.commons.logger.BetterConsoleLogger
@@ -13,8 +11,8 @@ import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnect
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
+import com.solexgames.lemon.adapt.LemonPlayerAdapter
 import com.solexgames.lemon.adapt.UUIDAdapter
-import com.solexgames.lemon.annotate.Excluded
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.board.ModModeBoardProvider
@@ -29,6 +27,7 @@ import com.solexgames.lemon.processor.LanguageConfigProcessor
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
+import com.solexgames.lemon.task.GrantUpdateRunnable
 import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
@@ -149,27 +148,16 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun runAfterDataValidation() {
-        val strategy = object : ExclusionStrategy {
-            override fun shouldSkipClass(clazz: Class<*>?): Boolean {
-                return false
-            }
-
-            override fun shouldSkipField(field: FieldAttributes): Boolean {
-                return field.getAnnotation(Excluded::class.java) != null
-            }
-        }
-
         Serializers.useGsonBuilderThenRebuild { builder ->
-            builder
+            builder.serializeNulls()
                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
-                .addDeserializationExclusionStrategy(strategy)
-                .addSerializationExclusionStrategy(strategy)
                 .registerTypeHierarchyAdapter(ItemStack::class.java, ItemStackAdapter())
                 .registerTypeHierarchyAdapter(Location::class.java, LocationAdapter())
                 .registerTypeHierarchyAdapter(Vector::class.java, VectorAdapter())
                 .registerTypeHierarchyAdapter(BlockVector::class.java, BlockVectorAdapter())
                 .registerTypeAdapter(Entity::class.java, EntitySerializer)
-                .registerTypeAdapter(UUID::class.java, UUIDAdapter())
+                .registerTypeAdapter(UUID::class.java, UUIDAdapter)
+                .registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
                 .registerTypeAdapter(EntityAnimation::class.java, AbstractTypeSerializer<EntityAnimation>())
                 .registerTypeAdapter(MenuTemplate::class.java, AbstractTypeSerializer<MenuTemplate<*>>())
                 .registerTypeAdapter(MenuTemplateButton::class.java, AbstractTypeSerializer<MenuTemplateButton>())
@@ -180,6 +168,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         loadListeners()
         loadHandlers()
         loadCommands()
+
+        Schedulers.async().runRepeating(GrantUpdateRunnable(), 0L, 20L)
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable(this),

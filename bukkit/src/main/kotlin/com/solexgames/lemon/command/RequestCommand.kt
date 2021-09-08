@@ -25,8 +25,8 @@ class RequestCommand : BaseCommand() {
     fun onDefault(player: Player, message: String) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
-        if (lemonPlayer.requestCooldown.isActive()) {
-            val remaining = remaining(lemonPlayer.requestCooldown)
+        if (lemonPlayer.cooldowns["request"]?.isActive() == true) {
+            val remaining = lemonPlayer.cooldowns["request"]?.let { remaining(it) }
             player.sendMessage("${CC.RED}You must wait $remaining seconds before submitting another request.")
 
             return
@@ -41,7 +41,7 @@ class RequestCommand : BaseCommand() {
             if (throwable != null) {
                 player.sendMessage("${CC.RED}Something went wrong while submitting your request, try again later.")
             } else {
-                lemonPlayer.requestCooldown = Cooldown(60000L)
+                lemonPlayer.cooldowns["request"] = Cooldown(60000L)
 
                 player.sendMessage("${CC.GREEN}Your request has been submitted.")
             }

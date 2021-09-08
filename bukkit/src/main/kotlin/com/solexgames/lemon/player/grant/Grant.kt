@@ -53,8 +53,6 @@ class Grant(
     }
 
     override fun save(): CompletableFuture<Void> {
-        println(Serializers.gson.toJson(this))
-
         return Lemon.instance.mongoHandler.grantLayer.saveEntry(uuid.toString(), this)
     }
 }

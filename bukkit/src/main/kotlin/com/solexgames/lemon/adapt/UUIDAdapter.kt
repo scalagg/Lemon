@@ -8,7 +8,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/7/2021
  */
-class UUIDAdapter : JsonDeserializer<UUID>, JsonSerializer<UUID> {
+object UUIDAdapter : JsonDeserializer<UUID>, JsonSerializer<UUID> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): UUID? {

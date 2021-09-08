@@ -10,12 +10,17 @@ object GrantRecalculationUtil {
      * of a mutable list with grants
      */
     @JvmStatic
-    fun getProminentGrant(grants: List<Grant>): Grant {
-        return grants.stream()
-            .sorted(Comparator.comparingLong(Grant::addedAt).reversed())
-            .collect(Collectors.toList()).stream()
-            .filter { grant ->
-                grant != null && !grant.removed && !grant.hasExpired() && !grant.getRank().hidden && grant.isApplicable()
-            }.findFirst().orElse(null)
+    fun getProminentGrant(grants: List<Grant>): Grant? {
+        return grants
+            .sortedByDescending { it.addedBy }
+            .filter { !it.removed && !it.hasExpired() && !it.getRank().hidden && it.isApplicable() }
+            .find { true }
+    }
+
+    @JvmStatic
+    fun getPermissionGrants(grants: List<Grant>): List<Grant> {
+        return grants
+            .sortedByDescending { it.addedBy }
+            .filter { !it.removed && !it.hasExpired() && it.isApplicable() }
     }
 }

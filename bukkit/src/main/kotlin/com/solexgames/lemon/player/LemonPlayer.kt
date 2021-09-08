@@ -1,8 +1,6 @@
 package com.solexgames.lemon.player
 
-import com.google.gson.annotations.Expose
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.annotate.Excluded
 import com.solexgames.lemon.player.enums.PermissionCheck
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
@@ -13,13 +11,17 @@ import com.solexgames.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
+import kotlin.collections.ArrayList
 
 class LemonPlayer(
     var uniqueId: UUID,
     var name: String,
-    @Excluded
+
+    @Transient
     var ipAddress: String?
 ): Savable {
 
@@ -29,60 +31,111 @@ class LemonPlayer(
     var notes = mutableListOf<Note>()
     var ignoring = mutableListOf<UUID>()
 
-    @Excluded
-    var commandCooldown = Cooldown(0L)
+    @Transient
+    val cooldowns: MutableMap<String, Cooldown> = mutableMapOf()
 
-    @Excluded
-    var requestCooldown = Cooldown(0L)
+    @Transient
+    val handleOnConnection: ArrayList<Consumer<Player>> = arrayListOf()
 
-    @Excluded
-    var reportCooldown = Cooldown(0L)
-
-    @Excluded
-    var chatCooldown = Cooldown(0L)
-
-    @Excluded
-    var slowChatCooldown = Cooldown(0L)
-
-    @Excluded
+    @Transient
     var activeGrant: Grant? = null
 
-    private var metadata = HashMap<String, Metadata>()
+    @Transient
+    lateinit var attachment: PermissionAttachment
 
-    fun recalculateGrants() {
+    var metadata = HashMap<String, Metadata>()
+
+    init {
+        cooldowns["command"] = Cooldown(0L)
+        cooldowns["request"] = Cooldown(0L)
+        cooldowns["report"] = Cooldown(0L)
+        cooldowns["chat"] = Cooldown(0L)
+        cooldowns["slowChat"] = Cooldown(0L)
+    }
+
+    fun recalculateGrants(autoNotify: Boolean = false, forceRecalculatePermissions: Boolean = false, shouldCalculateNow: Boolean = false) {
         val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
-        var shouldRecalculate = false
 
-        completableFuture.whenComplete { it, throwable ->
-            throwable?.printStackTrace()
-
-            if (it == null || it.isEmpty()) {
+        completableFuture.whenComplete { grants, _ ->
+            if (grants == null || grants.isEmpty()) {
                 setupAutomaticGrant()
 
                 return@whenComplete
             }
 
-            it.forEach { grant ->
+            var shouldNotifyPlayer = autoNotify
+
+            grants.forEach { grant ->
                 if (!grant.removed && !grant.hasExpired()) {
                     grant.removedReason = "Expired"
                     grant.removedAt = System.currentTimeMillis()
                     grant.removed = true
 
-                    shouldRecalculate = true
+                    shouldNotifyPlayer = true
                 }
             }
 
-            if (shouldRecalculate) {
-                activeGrant = GrantRecalculationUtil.getProminentGrant(it)
+            val previousRank = if (activeGrant == null) null else activeGrant!!.getRank().uuid
+            activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
 
-                getPlayer().ifPresent { player ->
-                    player.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant!!.getRank().getColoredName()}${CC.GREEN}.")
+            var shouldRecalculatePermissions = forceRecalculatePermissions
+
+            if (previousRank != null && previousRank != activeGrant!!.rankId) {
+                shouldRecalculatePermissions = true
+            }
+
+            if (shouldNotifyPlayer) {
+                handleOnConnection.add {
+                    notifyPlayerOfRankUpdate(it)
                 }
+            }
+
+            if (activeGrant == null) {
+                setupAutomaticGrant()
+            }
+
+            if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
+        }
+    }
+
+    private fun notifyPlayerOfRankUpdate(player: Player) {
+        activeGrant?.let { grant ->
+            player.sendMessage("${CC.GREEN}Your rank has been set to ${grant.getRank().getColoredName()}${CC.GREEN}.")
+        }
+    }
+
+    fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false) {
+        val handleAddPermission: (String) -> Unit = {
+            attachment.setPermission(it, !it.startsWith("*"))
+        }
+        val handlePlayerSetup: (Player) -> Unit = {
+            val permissionOnlyGrants = GrantRecalculationUtil.getPermissionGrants(grants)
+
+            setupPermissionAttachment(it)
+
+            permissionOnlyGrants.forEach { grant ->
+                grant.getRank().getCompoundedPermissions().forEach { permission ->
+                    handleAddPermission.invoke(permission)
+                }
+            }
+
+            it.recalculatePermissions()
+        }
+
+        if (instant) {
+            getPlayer().ifPresent(handlePlayerSetup)
+        } else {
+            handleOnConnection.add {
+                handlePlayerSetup.invoke(it)
             }
         }
     }
 
-    fun setupAutomaticGrant() {
+    private fun setupPermissionAttachment(player: Player) {
+        this.attachment = player.addAttachment(Lemon.instance)
+    }
+
+    private fun setupAutomaticGrant() {
         val rank = Lemon.instance.rankHandler.getDefaultRank()
         activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
 
@@ -128,7 +181,7 @@ class LemonPlayer(
     fun resetChatCooldown() {
         val donor = hasPermission("lemon.donator")
 
-        chatCooldown = if (donor) {
+        cooldowns["chat"] = if (donor) {
             Cooldown(1000L)
         } else {
             Cooldown(3000L)
