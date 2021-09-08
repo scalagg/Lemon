@@ -69,7 +69,7 @@ class EnvironmentCommand : BaseCommand() {
 
             sender.sendMessage("")
             sender.sendMessage("${CC.GRAY}Players (Current): ${CC.WHITE}${t.onlinePlayers}")
-            sender.sendMessage("${CC.GRAY}Online (Highest): ${CC.WHITE}${t.metaData["highest-player-count"]}")
+            sender.sendMessage("${CC.GRAY}Players (Highest): ${CC.WHITE}${t.metaData["highest-player-count"]}")
             sender.sendMessage("${CC.GRAY}Players (Limit): ${CC.WHITE}${t.maxPlayers}")
             sender.sendMessage("")
 

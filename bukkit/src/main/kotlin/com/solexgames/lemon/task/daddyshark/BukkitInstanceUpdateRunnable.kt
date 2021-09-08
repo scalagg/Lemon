@@ -17,7 +17,7 @@ class BukkitInstanceUpdateRunnable(private var platform: DaddySharkPlatform): Ru
         instance.onlineMode = Bukkit.getOnlineMode()
         instance.version = Bukkit.getVersion()
 
-        instance.ticksPerSecond = SparkProvider.get().tps()?.poll(StatisticWindow.TicksPerSecond.MINUTES_1) ?: 0.0
+        instance.ticksPerSecond = SparkProvider.get().tps()?.poll(StatisticWindow.TicksPerSecond.SECONDS_5) ?: 0.0
         instance.lastHeartbeat = System.currentTimeMillis()
 
         platform.layer!!.saveEntry(instance.serverId, instance).whenComplete { _, u ->

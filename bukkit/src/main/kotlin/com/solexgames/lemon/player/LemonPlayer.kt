@@ -236,6 +236,8 @@ class LemonPlayer(
             loaded = true
         }
 
+        loaded = true
+
         recalculateGrants()
     }
 

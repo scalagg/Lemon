@@ -3,6 +3,7 @@ package com.solexgames.lemon.command
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.quickaccess.MessageType
+import com.solexgames.lemon.util.quickaccess.coloredName
 import com.solexgames.lemon.util.quickaccess.remaining
 import com.solexgames.lemon.util.quickaccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
@@ -33,7 +34,7 @@ class RequestCommand : BaseCommand() {
 
         sendStaffMessage(
             player,
-            "${CC.YELLOW}${player.name} ${CC.RED}submitted a request: ${CC.YELLOW}$message${CC.RED}.",
+            "${CC.YELLOW}${coloredName(player)} ${CC.RED}submitted a request: ${CC.YELLOW}$message${CC.RED}.",
             true,
             MessageType.NOTIFICATION
         ).whenComplete { _, throwable ->

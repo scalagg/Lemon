@@ -4,6 +4,7 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.enums.ReportType
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.quickaccess.MessageType
+import com.solexgames.lemon.util.quickaccess.coloredName
 import com.solexgames.lemon.util.quickaccess.sendStaffMessage
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
@@ -39,7 +40,7 @@ class ReportMenu(private val target: Player) : Menu() {
                 .data(it.data).toButton() { _, _ ->
                     sendStaffMessage(
                         player,
-                        "${CC.YELLOW}${player.name} ${CC.RED}reported ${CC.YELLOW}${target.name}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",
+                        "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",
                         true,
                         MessageType.NOTIFICATION
                     ).whenComplete { _, throwable ->
