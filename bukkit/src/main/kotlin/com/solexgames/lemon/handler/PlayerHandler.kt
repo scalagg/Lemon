@@ -1,8 +1,10 @@
 package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.util.CubedCacheUtil
+import com.solexgames.lemon.util.quickaccess.uuid
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -10,6 +12,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 object PlayerHandler {
 
@@ -85,5 +88,25 @@ object PlayerHandler {
         NametagHandler.reloadPlayer(player)
     }
 
+    fun fetchAlternateAccountsFor(lemonPlayer: LemonPlayer): CompletableFuture<Map<UUID, String>> {
+        return CompletableFuture.supplyAsync {
+            val accounts = mutableMapOf<UUID, String>()
+
+            Lemon.instance.mongoHandler.playerCollection.find().forEach {
+                val pastIpAddresses = LemonConstants.GSON.fromJson<MutableMap<String, Long>>(
+                    it.getString("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE
+                )
+
+                lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
+                    if (pastIpAddresses.containsKey(address)) {
+                        accounts[uuid(it.getString("uuid"))] = address
+                        return@forEachIndexed
+                    }
+                }
+            }
+
+            return@supplyAsync accounts
+        }
+    }
 
 }

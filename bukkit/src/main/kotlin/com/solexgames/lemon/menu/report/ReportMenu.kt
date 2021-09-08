@@ -48,6 +48,7 @@ class ReportMenu(private val target: Player) : Menu() {
                         } else {
                             lemonPlayer.reportCooldown = Cooldown(60000L)
 
+                            player.closeInventory()
                             player.sendMessage("${CC.GREEN}Your report has been submitted.")
                         }
                     }

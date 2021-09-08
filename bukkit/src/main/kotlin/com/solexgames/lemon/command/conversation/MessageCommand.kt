@@ -1,9 +1,10 @@
 package com.solexgames.lemon.command.conversation
 
-import com.cryptomorin.xseries.XSound
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.player.metadata.Metadata
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
+import net.evilblock.cubed.acf.MessageKeys
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.Syntax
@@ -12,7 +13,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import org.bukkit.metadata.FixedMetadataValue
 
 /**
  * @author puugz
@@ -31,7 +31,7 @@ class MessageCommand : BaseCommand() {
         val pmSettingTarget = targetLemonPlayer.getSetting("private-messages")
 
         if (!VisibilityHandler.treatAsOnline(target.player, player)) {
-            throw ConditionFailedException("Could not find that player.")
+            player.sendMessage(MessageKeys.COULD_NOT_FIND_PLAYER.messageKey.key.replace("{search}", target.player.name))
         }
         if (!pmSetting) {
             throw ConditionFailedException("You have private messages disabled.")
@@ -49,11 +49,18 @@ class MessageCommand : BaseCommand() {
         val soundSetting = targetLemonPlayer.getSetting("pm-sounds")
 
         if (soundSetting) {
-            target.player.playSound(target.player.location, Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 5f)
+            target.player.playSound(target.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1F)
         }
 
-        lemonPlayer.lastRecipient = target.player.uniqueId
-        targetLemonPlayer.lastRecipient = player.uniqueId
+        lemonPlayer.updateOrAddMetadata(
+            "last-recipient",
+            Metadata(target.player.uniqueId.toString())
+        )
+
+        targetLemonPlayer.updateOrAddMetadata(
+            "last-recipient",
+            Metadata(player.uniqueId.toString())
+        )
 
         player.sendMessage("${CC.GRAY}(To ${targetLemonPlayer.getColoredName()}${CC.GRAY}) $message")
         target.player.sendMessage("${CC.GRAY}(From ${lemonPlayer.getColoredName()}${CC.GRAY}) $message")

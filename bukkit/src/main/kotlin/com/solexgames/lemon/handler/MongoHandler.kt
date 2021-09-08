@@ -10,13 +10,12 @@ import java.util.logging.Logger
 
 object MongoHandler {
 
-    var isConnected = false
+    private var isConnected = false
 
-    lateinit var client: MongoClient
-    lateinit var database: MongoDatabase
+    private lateinit var client: MongoClient
+    private lateinit var database: MongoDatabase
 
     lateinit var playerCollection: MongoCollection<Document>
-    lateinit var prefixCollection: MongoCollection<Document>
     lateinit var punishmentCollection: MongoCollection<Document>
     lateinit var rankCollection: MongoCollection<Document>
     lateinit var disguiseCollection: MongoCollection<Document>
@@ -28,7 +27,6 @@ object MongoHandler {
             database = client.getDatabase(Lemon.instance.mongoConfig.database)
 
             playerCollection = database.getCollection("lemon_players")
-            prefixCollection = database.getCollection("chat_tags")
             punishmentCollection = database.getCollection("punishments")
             rankCollection = database.getCollection("ranks")
             disguiseCollection = database.getCollection("disguises")

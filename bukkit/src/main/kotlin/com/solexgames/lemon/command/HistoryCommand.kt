@@ -21,9 +21,9 @@ import java.util.*
 class HistoryCommand : BaseCommand() {
 
     @Syntax("<player>")
+    @CommandCompletion("@players")
     @CommandAlias("history|c|check|hist")
     @CommandPermission("lemon.command.history")
-    @CommandCompletion("@players")
     fun onHistory(player: Player, uuid: UUID) {
         CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
@@ -36,9 +36,9 @@ class HistoryCommand : BaseCommand() {
     }
 
     @Syntax("<player>")
+    @CommandCompletion("@players")
     @CommandAlias("staffhistory|staffhist")
     @CommandPermission("lemon.command.staffhistory")
-    @CommandCompletion("@players")
     fun onStaffHistory(player: Player, uuid: UUID) {
         CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 

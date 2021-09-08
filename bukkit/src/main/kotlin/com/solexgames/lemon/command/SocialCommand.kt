@@ -29,14 +29,14 @@ class SocialCommand : BaseCommand() {
     @CommandAlias("website")
     fun onWebsite(sender: CommandSender) {
         sender.sendMessage(
-            "${CC.SEC}Twitter: ${CC.PRI}${Lemon.instance.lemonWebData.domain}"
+            "${CC.SEC}Website: ${CC.PRI}${Lemon.instance.lemonWebData.domain}"
         )
     }
 
     @CommandAlias("store")
     fun onStore(sender: CommandSender) {
         sender.sendMessage(
-            "${CC.SEC}Twitter: ${CC.PRI}${Lemon.instance.lemonWebData.store}"
+            "${CC.SEC}Store: ${CC.PRI}${Lemon.instance.lemonWebData.store}"
         )
     }
 }

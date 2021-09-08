@@ -18,15 +18,17 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-
 class LemonPlayer(
     var uniqueId: UUID,
     var name: String,
     var ipAddress: String?
 ): Persistent<Document> {
 
-    var notes = ArrayList<Note>()
-    var ignoring = ArrayList<UUID>()
+    var pastIpAddresses = mutableMapOf<String, Long>()
+    var pastLogins = mutableMapOf<String, Long>()
+
+    var notes = mutableListOf<Note>()
+    var ignoring = mutableListOf<UUID>()
 
     var commandCooldown = Cooldown(0L)
     var requestCooldown = Cooldown(0L)
@@ -34,16 +36,16 @@ class LemonPlayer(
     var chatCooldown = Cooldown(0L)
     var slowChatCooldown = Cooldown(0L)
 
-    var lastRecipient: UUID? = null
+    var loaded = false
 
     lateinit var activeGrant: Grant
-    lateinit var country: String
 
     private var metadata = HashMap<String, Metadata>()
 
     private fun recalculateGrants() {
         val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
         var shouldRecalculate = false
+
 
         completableFuture.whenComplete { it, throwable ->
             throwable?.printStackTrace()
@@ -79,10 +81,6 @@ class LemonPlayer(
         activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
 
         Lemon.instance.grantHandler.registerGrant(activeGrant)
-    }
-
-    fun fetchCountry() {
-        // TODO: 8/28/2021 use geo location api to fetch & update the players' country to jedis
     }
 
     fun getColoredName(): String {
@@ -152,10 +150,14 @@ class LemonPlayer(
     }
 
     fun getPlayer(): Optional<Player> {
-        return Optional.of(Bukkit.getPlayer(uniqueId))
+        return Optional.ofNullable(Bukkit.getPlayer(uniqueId))
     }
 
     override fun save(): CompletableFuture<Void> {
+        if (!loaded) {
+            throw RuntimeException("Cannot save LemonPlayer when it's not loaded")
+        }
+
         return CompletableFuture.runAsync {
             val document = Document("_id", uniqueId)
             document["uuid"] = uniqueId.toString()
@@ -166,7 +168,7 @@ class LemonPlayer(
             finalizeMetaData()
 
             document["metadata"] = LemonConstants.GSON.toJson(metadata)
-            document["lastRecipient"] = lastRecipient.toString()
+            document["pastIpAddresses"] = LemonConstants.GSON.toJson(pastIpAddresses)
 
             Lemon.instance.mongoHandler.playerCollection.replaceOne(
                 Filters.eq("uuid", uniqueId.toString()),
@@ -175,28 +177,46 @@ class LemonPlayer(
         }
     }
 
+
     private fun finalizeMetaData() {
         updateOrAddMetadata(
             "last-connection", Metadata(System.currentTimeMillis())
         )
 
         updateOrAddMetadata(
-            "current-rank", Metadata(activeGrant.getRank().uuid.toString())
+            "last-connected-server-id", Metadata(Lemon.instance.settings.id)
+        )
+
+        updateOrAddMetadata(
+            "last-connected-server-group", Metadata(Lemon.instance.settings.group)
+        )
+
+        updateOrAddMetadata(
+            "last-ip-address", Metadata(ipAddress)
+        )
+
+        updateOrAddMetadata(
+            "last-calculated-rank", Metadata(activeGrant.getRank().uuid.toString())
         )
     }
 
     override fun load(future: CompletableFuture<Document>) {
         future.whenComplete { document, throwable ->
             if (document == null || throwable != null) {
+                throwable?.printStackTrace()
+
                 updateOrAddMetadata(
                     "first-connection", Metadata(System.currentTimeMillis())
                 )
+
+                finalizeMetaData()
 
                 save().whenComplete { _, u ->
                     u?.printStackTrace()
                 }
 
-                throwable?.printStackTrace()
+                loaded = true
+
                 return@whenComplete
             }
 
@@ -209,8 +229,11 @@ class LemonPlayer(
             metadata = LemonConstants.GSON.fromJson(
                 document.getString("metadata"), LemonConstants.STRING_METADATA_MAP_TYPE
             )
+            pastIpAddresses = LemonConstants.GSON.fromJson(
+                document.getString("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE
+            )
 
-            lastRecipient = UUID.fromString(document.getString("lastRecipient"))
+            loaded = true
         }
 
         recalculateGrants()

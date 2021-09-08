@@ -23,6 +23,8 @@ import com.solexgames.lemon.player.nametag.DefaultNametagProvider
 import com.solexgames.lemon.player.nametag.ModModeNametagProvider
 import com.solexgames.lemon.player.nametag.VanishNametagProvider
 import com.solexgames.lemon.player.rank.Rank
+import com.solexgames.lemon.player.visibility.StaffVisibilityHandler
+import com.solexgames.lemon.player.visibility.StaffVisibilityOverrideHandler
 import com.solexgames.lemon.processor.LanguageConfigProcessor
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
@@ -54,6 +56,7 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
+import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -257,8 +260,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
 
-//        VisibilityHandler.registerAdapter("Staff", StaffVisiblityHandler())
-//        VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
+        VisibilityHandler.registerAdapter("Staff", StaffVisibilityHandler())
+        VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
     }
 
     private fun loadListeners() {

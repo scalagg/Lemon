@@ -33,17 +33,6 @@ class Rank(
         return color + name
     }
 
-    @JvmName("getNewPrefix")
-    fun getPrefix(): String {
-        val prefix = ""
-
-        return if (prefix.isBlank() || prefix.isEmpty()) {
-            prefix
-        } else {
-            this.prefix
-        }
-    }
-
     /**
      * Returns a list with permissions from
      * all inherited ranks as well as the current rank

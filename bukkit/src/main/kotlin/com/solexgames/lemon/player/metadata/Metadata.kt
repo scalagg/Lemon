@@ -1,6 +1,8 @@
 package com.solexgames.lemon.player.metadata
 
-class Metadata(private var value: Any) {
+import java.util.*
+
+class Metadata(private var value: Any?) {
 
     fun asInt(): Int {
         return value as Int
@@ -8,6 +10,10 @@ class Metadata(private var value: Any) {
 
     fun asString(): String {
         return value as String
+    }
+
+    fun asUuid(): UUID {
+        return UUID.fromString(asString())
     }
 
     fun asBoolean(): Boolean {
@@ -21,4 +27,5 @@ class Metadata(private var value: Any) {
     fun asDouble(): Double {
         return value as Double
     }
+
 }

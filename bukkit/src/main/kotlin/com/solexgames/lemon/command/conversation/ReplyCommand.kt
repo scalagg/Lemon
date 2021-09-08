@@ -1,6 +1,7 @@
 package com.solexgames.lemon.command.conversation
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.Optional
@@ -17,14 +18,16 @@ class ReplyCommand : BaseCommand() {
     fun onReply(player: Player, @Optional message: String?) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
-        message?.let {
-            lemonPlayer.lastRecipient?.let {
-                player.sendMessage("${CC.SEC}You're currently messaging ${CC.PRI}$it${CC.SEC}.")
+        lemonPlayer.getMetadata("last-recipient")?.let {
+            val recipientUsername = CubedCacheUtil.fetchName(it.asUuid())
+
+            message?.let {
+                player.performCommand("message $recipientUsername $message")
             } ?: let {
-                player.sendMessage("${CC.RED}You're currently not messaging anyone.")
+                player.sendMessage("${CC.SEC}You're currently messaging ${CC.PRI}$recipientUsername${CC.SEC}.")
             }
         } ?: let {
-            player.performCommand("message ${lemonPlayer.lastRecipient} $message")
+            player.sendMessage("${CC.RED}You're not messaging anyone.")
         }
     }
 }
