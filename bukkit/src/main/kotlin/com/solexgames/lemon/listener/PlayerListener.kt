@@ -28,11 +28,9 @@ class PlayerListener : Listener {
             return
         }
 
-        Lemon.instance.mongoHandler.lemonPlayerLayer
-            .fetchEntryByKey(event.uniqueId.toString()).whenComplete { lemonPlayer, u ->
-                u?.printStackTrace()
-
-                if (lemonPlayer == null || u != null) {
+        Lemon.instance.mongoHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
+            .thenAccept { lemonPlayer ->
+                if (lemonPlayer == null) {
                     val lemonPlayerCreated = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
                     lemonPlayerCreated.handleIfFirstCreated()
 
@@ -167,12 +165,14 @@ class PlayerListener : Listener {
                     return@forEach
                 }
 
-                player.sendMessage(channelMatch?.getFormatted(
-                    event.message,
-                    player.name,
-                    lemonPlayer.activeGrant!!.getRank(),
-                    it
-                ))
+                player.sendMessage(
+                    channelMatch?.getFormatted(
+                        event.message,
+                        player.name,
+                        lemonPlayer.activeGrant!!.getRank(),
+                        it
+                    )
+                )
             }
         }
 

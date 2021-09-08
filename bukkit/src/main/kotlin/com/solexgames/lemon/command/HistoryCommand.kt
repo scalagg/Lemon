@@ -22,30 +22,6 @@ import java.util.*
  */
 class HistoryCommand : BaseCommand() {
 
-    @CommandAlias("save-profile")
-    fun save(player: Player) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
-
-        lemonPlayer.ifPresent {
-            it.save().whenComplete { t, u ->
-                u?.printStackTrace()
-
-                player.sendMessage("Saved, check mongo.")
-            }
-        }
-    }
-
-    @CommandAlias("grant-recalculate")
-    fun recalc(player: Player) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
-
-        lemonPlayer.ifPresent {
-            it.setupAutomaticGrant()
-
-            player.sendMessage("Done, try chatting.")
-        }
-    }
-
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandAlias("history|c|check|hist")

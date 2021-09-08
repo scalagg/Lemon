@@ -2,6 +2,7 @@ package com.solexgames.lemon.player
 
 import com.google.gson.annotations.Expose
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.annotate.Excluded
 import com.solexgames.lemon.player.enums.PermissionCheck
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
@@ -18,6 +19,7 @@ import java.util.concurrent.CompletableFuture
 class LemonPlayer(
     var uniqueId: UUID,
     var name: String,
+    @Excluded
     var ipAddress: String?
 ): Savable {
 
@@ -27,22 +29,22 @@ class LemonPlayer(
     var notes = mutableListOf<Note>()
     var ignoring = mutableListOf<UUID>()
 
-    @Expose(deserialize = false, serialize = false)
+    @Excluded
     var commandCooldown = Cooldown(0L)
 
-    @Expose(deserialize = false, serialize = false)
+    @Excluded
     var requestCooldown = Cooldown(0L)
 
-    @Expose(deserialize = false, serialize = false)
+    @Excluded
     var reportCooldown = Cooldown(0L)
 
-    @Expose(deserialize = false, serialize = false)
+    @Excluded
     var chatCooldown = Cooldown(0L)
 
-    @Expose(deserialize = false, serialize = false)
+    @Excluded
     var slowChatCooldown = Cooldown(0L)
 
-    @Expose(deserialize = false, serialize = false)
+    @Excluded
     var activeGrant: Grant? = null
 
     private var metadata = HashMap<String, Metadata>()
@@ -180,9 +182,15 @@ class LemonPlayer(
             "last-ip-address", Metadata(ipAddress)
         )
 
-        updateOrAddMetadata(
-            "last-calculated-rank", Metadata(activeGrant!!.getRank().uuid.toString())
-        )
+        ipAddress?.let {
+            pastIpAddresses.put(it, System.currentTimeMillis())
+        }
+
+        activeGrant?.let {
+            updateOrAddMetadata(
+                "last-calculated-rank", Metadata(it.getRank().uuid.toString())
+            )
+        }
     }
 
     fun handlePostLoad() {
@@ -199,6 +207,8 @@ class LemonPlayer(
         save().whenComplete { _, u ->
             u?.printStackTrace()
         }
+
+        handlePostLoad()
     }
 
 }

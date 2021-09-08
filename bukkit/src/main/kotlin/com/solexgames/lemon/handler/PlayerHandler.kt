@@ -13,10 +13,11 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.HashMap
 
 object PlayerHandler {
 
-    var players: MutableMap<UUID, LemonPlayer> = mutableMapOf()
+    var players: HashMap<UUID, LemonPlayer> = hashMapOf()
 
     init {
         Schedulers.async().runRepeating(Runnable {

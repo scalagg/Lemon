@@ -1,5 +1,7 @@
 package com.solexgames.lemon
 
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.google.gson.LongSerializationPolicy
 import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
 import com.solexgames.daddyshark.commons.logger.BetterConsoleLogger
@@ -12,6 +14,7 @@ import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import com.solexgames.lemon.adapt.UUIDAdapter
+import com.solexgames.lemon.annotate.Excluded
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.board.ModModeBoardProvider
@@ -146,9 +149,21 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun runAfterDataValidation() {
+        val strategy = object : ExclusionStrategy {
+            override fun shouldSkipClass(clazz: Class<*>?): Boolean {
+                return false
+            }
+
+            override fun shouldSkipField(field: FieldAttributes): Boolean {
+                return field.getAnnotation(Excluded::class.java) != null
+            }
+        }
+
         Serializers.useGsonBuilderThenRebuild { builder ->
             builder
                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
+                .addDeserializationExclusionStrategy(strategy)
+                .addSerializationExclusionStrategy(strategy)
                 .registerTypeHierarchyAdapter(ItemStack::class.java, ItemStackAdapter())
                 .registerTypeHierarchyAdapter(Location::class.java, LocationAdapter())
                 .registerTypeHierarchyAdapter(Vector::class.java, VectorAdapter())
