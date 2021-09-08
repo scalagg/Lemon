@@ -66,10 +66,12 @@ class EnvironmentCommand : BaseCommand() {
 
             sender.sendMessage("${CC.PRI}${CC.BOLD}${t.serverId} Information:")
             sender.sendMessage("${CC.GRAY}Group: ${CC.WHITE}${t.serverGroup}")
+
             sender.sendMessage("")
             sender.sendMessage("${CC.GRAY}Players (Current): ${CC.WHITE}${t.onlinePlayers}")
             sender.sendMessage("${CC.GRAY}Online (Highest): ${CC.WHITE}${t.metaData["highest-player-count"]}")
             sender.sendMessage("${CC.GRAY}Players (Limit): ${CC.WHITE}${t.maxPlayers}")
+            sender.sendMessage("")
 
             sender.sendMessage("${CC.GRAY}TPS: ${CC.WHITE}${String.format("%.2f",
                 t.ticksPerSecond.coerceAtMost(20.0)

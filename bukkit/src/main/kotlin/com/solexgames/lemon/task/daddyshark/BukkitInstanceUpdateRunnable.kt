@@ -11,8 +11,8 @@ class BukkitInstanceUpdateRunnable(private var platform: DaddySharkPlatform): Ru
     override fun run() {
         val instance = platform.getLocalServerInstance()
 
-        instance.maxPlayers = Bukkit.getOnlinePlayers().size
-        instance.onlinePlayers = Bukkit.getMaxPlayers()
+        instance.onlinePlayers = Bukkit.getOnlinePlayers().size
+        instance.maxPlayers = Bukkit.getMaxPlayers()
         instance.whitelisted = Bukkit.hasWhitelist()
         instance.onlineMode = Bukkit.getOnlineMode()
         instance.version = Bukkit.getVersion()
