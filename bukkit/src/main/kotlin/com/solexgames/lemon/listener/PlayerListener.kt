@@ -134,7 +134,7 @@ class PlayerListener : Listener {
                     put("channel", channelMatch!!.getId())
                     put("message", event.message)
                     put("sender", player.name)
-                    put("rank", lemonPlayer.activeGrant.getRank().uuid.toString())
+                    put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
                 }
             ).publishAsync()
 
@@ -170,7 +170,7 @@ class PlayerListener : Listener {
                 player.sendMessage(channelMatch?.getFormatted(
                     event.message,
                     player.name,
-                    lemonPlayer.activeGrant.getRank(),
+                    lemonPlayer.activeGrant!!.getRank(),
                     it
                 ))
             }

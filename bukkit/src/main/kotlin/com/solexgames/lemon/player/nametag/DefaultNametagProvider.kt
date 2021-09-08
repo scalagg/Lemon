@@ -10,6 +10,6 @@ class DefaultNametagProvider: NametagProvider("default-fallback", 0) {
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(toRefresh).orElse(null)
 
-        return createNametag(lemonPlayer.activeGrant.getRank().color, "")
+        return createNametag(lemonPlayer.activeGrant!!.getRank().color, "")
     }
 }

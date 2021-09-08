@@ -43,7 +43,7 @@ class LemonPlayer(
     var slowChatCooldown = Cooldown(0L)
 
     @Expose(deserialize = false, serialize = false)
-    lateinit var activeGrant: Grant
+    var activeGrant: Grant? = null
 
     private var metadata = HashMap<String, Metadata>()
 
@@ -74,7 +74,7 @@ class LemonPlayer(
                 activeGrant = GrantRecalculationUtil.getProminentGrant(it)
 
                 getPlayer().ifPresent { player ->
-                    player.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant.getRank().getColoredName()}${CC.GREEN}.")
+                    player.sendMessage("${CC.GREEN}Your rank has been set to ${activeGrant!!.getRank().getColoredName()}${CC.GREEN}.")
                 }
             }
         }
@@ -84,11 +84,11 @@ class LemonPlayer(
         val rank = Lemon.instance.rankHandler.getDefaultRank()
         activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
 
-        Lemon.instance.grantHandler.registerGrant(activeGrant)
+        Lemon.instance.grantHandler.registerGrant(activeGrant!!)
     }
 
     fun getColoredName(): String {
-        return activeGrant.getRank().color + name
+        return activeGrant!!.getRank().color + name
     }
 
     fun getSetting(id: String): Boolean {
@@ -103,14 +103,14 @@ class LemonPlayer(
         var hasPermission = false
 
         when (checkType) {
-            PermissionCheck.COMPOUNDED -> hasPermission = activeGrant.getRank().getCompoundedPermissions().contains(permission)
+            PermissionCheck.COMPOUNDED -> hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
             PermissionCheck.PLAYER -> getPlayer().ifPresent {
                 if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                     hasPermission = true
                 }
             }
             PermissionCheck.BOTH -> {
-                hasPermission = activeGrant.getRank().getCompoundedPermissions().contains(permission)
+                hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
 
                 getPlayer().ifPresent {
                     if (it.isOp || it.hasPermission(permission.toLowerCase())) {
@@ -181,7 +181,7 @@ class LemonPlayer(
         )
 
         updateOrAddMetadata(
-            "last-calculated-rank", Metadata(activeGrant.getRank().uuid.toString())
+            "last-calculated-rank", Metadata(activeGrant!!.getRank().uuid.toString())
         )
     }
 
