@@ -1,5 +1,6 @@
 package com.solexgames.lemon.command
 
+import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.menu.punishment.PunishmentViewMenu
 import com.solexgames.lemon.player.enums.PunishmentViewType
@@ -11,6 +12,7 @@ import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -19,6 +21,30 @@ import java.util.*
  * @since 8/27/2021
  */
 class HistoryCommand : BaseCommand() {
+
+    @CommandAlias("save-profile")
+    fun save(player: Player) {
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
+
+        lemonPlayer.ifPresent {
+            it.save().whenComplete { t, u ->
+                u?.printStackTrace()
+
+                player.sendMessage("Saved, check mongo.")
+            }
+        }
+    }
+
+    @CommandAlias("grant-recalculate")
+    fun recalc(player: Player) {
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
+
+        lemonPlayer.ifPresent {
+            it.setupAutomaticGrant()
+
+            player.sendMessage("Done, try chatting.")
+        }
+    }
 
     @Syntax("<player>")
     @CommandCompletion("@players")

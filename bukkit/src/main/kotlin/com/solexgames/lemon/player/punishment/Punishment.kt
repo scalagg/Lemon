@@ -29,26 +29,7 @@ class Punishment(
     var removed: Boolean = false
 
     override fun save(): CompletableFuture<Void> {
-        return CompletableFuture.runAsync {
-            val document = Document("_id", uuid)
-            document["target"] = target.toString()
-            document["addedBy"] = addedBy.toString()
-            document["addedAt"] = addedAt
-            document["addedOn"] = addedOn
-            document["addedReason"] = addedReason
-            document["duration"] = duration
-            document["category"] = category.name
-            document["removedReason"] = removedReason
-            document["removedOn"] = removedOn
-            document["removedBy"] = removedBy.toString()
-            document["removedAt"] = removedAt
-            document["removed"] = removed
-
-            Lemon.instance.mongoHandler.punishmentCollection.replaceOne(
-                Filters.eq("_id", uuid),
-                document, ReplaceOptions().upsert(true)
-            )
-        }
+        return Lemon.instance.mongoHandler.punishmentLayer.saveEntry(uuid.toString(), this)
     }
 
     fun isIntensity(intensity: PunishmentCategoryIntensity): Boolean {

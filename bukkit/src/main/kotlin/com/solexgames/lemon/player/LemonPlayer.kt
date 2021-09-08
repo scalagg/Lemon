@@ -1,18 +1,15 @@
 package com.solexgames.lemon.player
 
-import com.mongodb.client.model.Filters
-import com.mongodb.client.model.ReplaceOptions
+import com.google.gson.annotations.Expose
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.enums.PermissionCheck
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
 import com.solexgames.lemon.util.GrantRecalculationUtil
 import com.solexgames.lemon.util.other.Cooldown
-import com.solexgames.lemon.util.type.Persistent
+import com.solexgames.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
-import org.bson.Document
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -22,7 +19,7 @@ class LemonPlayer(
     var uniqueId: UUID,
     var name: String,
     var ipAddress: String?
-): Persistent<Document> {
+): Savable {
 
     var pastIpAddresses = mutableMapOf<String, Long>()
     var pastLogins = mutableMapOf<String, Long>()
@@ -30,22 +27,29 @@ class LemonPlayer(
     var notes = mutableListOf<Note>()
     var ignoring = mutableListOf<UUID>()
 
+    @Expose(deserialize = false, serialize = false)
     var commandCooldown = Cooldown(0L)
+
+    @Expose(deserialize = false, serialize = false)
     var requestCooldown = Cooldown(0L)
+
+    @Expose(deserialize = false, serialize = false)
     var reportCooldown = Cooldown(0L)
+
+    @Expose(deserialize = false, serialize = false)
     var chatCooldown = Cooldown(0L)
+
+    @Expose(deserialize = false, serialize = false)
     var slowChatCooldown = Cooldown(0L)
 
-    var loaded = false
-
+    @Expose(deserialize = false, serialize = false)
     lateinit var activeGrant: Grant
 
     private var metadata = HashMap<String, Metadata>()
 
-    private fun recalculateGrants() {
+    fun recalculateGrants() {
         val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
         var shouldRecalculate = false
-
 
         completableFuture.whenComplete { it, throwable ->
             throwable?.printStackTrace()
@@ -76,7 +80,7 @@ class LemonPlayer(
         }
     }
 
-    private fun setupAutomaticGrant() {
+    fun setupAutomaticGrant() {
         val rank = Lemon.instance.rankHandler.getDefaultRank()
         activeGrant = Grant(UUID.randomUUID(), uniqueId, rank.uuid, null, System.currentTimeMillis(), Lemon.instance.settings.id, "Automatic (Lemon)", Long.MAX_VALUE)
 
@@ -154,29 +158,10 @@ class LemonPlayer(
     }
 
     override fun save(): CompletableFuture<Void> {
-        if (!loaded) {
-            throw RuntimeException("Cannot save LemonPlayer when it's not loaded")
-        }
+        finalizeMetaData()
 
-        return CompletableFuture.runAsync {
-            val document = Document("_id", uniqueId)
-            document["uuid"] = uniqueId.toString()
-
-            document["notes"] = LemonConstants.GSON.toJson(notes)
-            document["ignoring"] = LemonConstants.GSON.toJson(ignoring)
-
-            finalizeMetaData()
-
-            document["metadata"] = LemonConstants.GSON.toJson(metadata)
-            document["pastIpAddresses"] = LemonConstants.GSON.toJson(pastIpAddresses)
-
-            Lemon.instance.mongoHandler.playerCollection.replaceOne(
-                Filters.eq("uuid", uniqueId.toString()),
-                document, ReplaceOptions().upsert(true)
-            )
-        }
+        return Lemon.instance.mongoHandler.lemonPlayerLayer.saveEntry(uniqueId.toString(), this)
     }
-
 
     private fun finalizeMetaData() {
         updateOrAddMetadata(
@@ -200,45 +185,20 @@ class LemonPlayer(
         )
     }
 
-    override fun load(future: CompletableFuture<Document>) {
-        future.whenComplete { document, throwable ->
-            if (document == null || throwable != null) {
-                throwable?.printStackTrace()
-
-                updateOrAddMetadata(
-                    "first-connection", Metadata(System.currentTimeMillis())
-                )
-
-                finalizeMetaData()
-
-                save().whenComplete { _, u ->
-                    u?.printStackTrace()
-                }
-
-                loaded = true
-
-                return@whenComplete
-            }
-
-            notes = LemonConstants.GSON.fromJson(
-                document.getString("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE
-            )
-            ignoring = LemonConstants.GSON.fromJson(
-                document.getString("ignoring"), LemonConstants.UUID_ARRAY_LIST_TYPE
-            )
-            metadata = LemonConstants.GSON.fromJson(
-                document.getString("metadata"), LemonConstants.STRING_METADATA_MAP_TYPE
-            )
-            pastIpAddresses = LemonConstants.GSON.fromJson(
-                document.getString("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE
-            )
-
-            loaded = true
-        }
-
-        loaded = true
-
+    fun handlePostLoad() {
         recalculateGrants()
+    }
+
+    fun handleIfFirstCreated() {
+        updateOrAddMetadata(
+            "first-connection", Metadata(System.currentTimeMillis())
+        )
+
+        finalizeMetaData()
+
+        save().whenComplete { _, u ->
+            u?.printStackTrace()
+        }
     }
 
 }

@@ -60,11 +60,6 @@ object RedisHandler: JedisHandler {
         }
     }
 
-    @Subscription(action = "manual-server-group-update")
-    fun onManualGroupUpdate(jsonAppender: JsonAppender) {
-
-    }
-
     private fun sendMessage(message: String, permission: (Player) -> Boolean) {
         Bukkit.getOnlinePlayers().forEach {
             if (permission.invoke(it)) {

@@ -10,16 +10,14 @@ object RankHandler {
     val ranks = mutableMapOf<UUID, Rank>()
 
     fun loadAllRanks() {
-        Lemon.instance.mongoHandler.rankCollection.find().forEach {
-            val rank = LemonConstants.GSON.fromJson(
-                it.toJson(), Rank::class.java
-            )
+        Lemon.instance.mongoHandler.rankLayer.fetchAllEntries().whenComplete { t, u ->
+            t.forEach {
+                ranks[it.value.uuid] = it.value
+            }
 
-            if (rank != null) ranks[rank.uuid] = rank
-        }
-
-        ranks.ifEmpty {
-            createDefaultRank()
+            ranks.ifEmpty {
+                createDefaultRank()
+            }
         }
     }
 

@@ -89,23 +89,19 @@ object PlayerHandler {
     }
 
     fun fetchAlternateAccountsFor(lemonPlayer: LemonPlayer): CompletableFuture<Map<UUID, String>> {
-        return CompletableFuture.supplyAsync {
+        return Lemon.instance.mongoHandler.lemonPlayerLayer.fetchAllEntries().thenApply {
             val accounts = mutableMapOf<UUID, String>()
 
-            Lemon.instance.mongoHandler.playerCollection.find().forEach {
-                val pastIpAddresses = LemonConstants.GSON.fromJson<MutableMap<String, Long>>(
-                    it.getString("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE
-                )
-
+            it.forEach { entry ->
                 lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
-                    if (pastIpAddresses.containsKey(address)) {
-                        accounts[uuid(it.getString("uuid"))] = address
+                    if (entry.value.pastIpAddresses.containsKey(address)) {
+                        accounts[entry.value.uniqueId] = address
                         return@forEachIndexed
                     }
                 }
             }
 
-            return@supplyAsync accounts
+            return@thenApply accounts
         }
     }
 

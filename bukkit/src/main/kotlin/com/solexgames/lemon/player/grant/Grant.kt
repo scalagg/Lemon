@@ -1,13 +1,10 @@
 package com.solexgames.lemon.player.grant
 
-import com.mongodb.client.model.Filters
-import com.mongodb.client.model.ReplaceOptions
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.util.type.Savable
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.other.Expireable
-import com.solexgames.lemon.util.type.Loadable
-import org.bson.Document
+import com.solexgames.lemon.util.type.Savable
+import net.evilblock.cubed.serializers.Serializers
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -56,28 +53,8 @@ class Grant(
     }
 
     override fun save(): CompletableFuture<Void> {
-        return CompletableFuture.runAsync {
-            val document = Document("_id", uuid)
-            document["uuid"] = uuid.toString()
-            document["target"] = target.toString()
-            document["rankId"] = rankId.toString()
-            document["scopes"] = scopes
-            document["duration"] = duration
+        println(Serializers.gson.toJson(this))
 
-            document["addedBy"] = if (addedBy == null) null else addedBy.toString()
-            document["addedAt"] = addedAt
-            document["addedOn"] = addedOn
-            document["addedReason"] = addedReason
-
-            document["removedReason"] = removedReason
-            document["removedBy"] = if (removedBy == null) null else removedBy.toString()
-            document["removedAt"] = removedAt
-            document["removed"] = removed
-
-            Lemon.instance.mongoHandler.grantCollection.replaceOne(
-                Filters.eq("_id", uuid),
-                document, ReplaceOptions().upsert(true)
-            )
-        }
+        return Lemon.instance.mongoHandler.grantLayer.saveEntry(uuid.toString(), this)
     }
 }

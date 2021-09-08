@@ -1,15 +1,12 @@
 package com.solexgames.lemon.listener
 
-import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel
-import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.quickaccess.remaining
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
@@ -17,7 +14,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.*
-import java.util.concurrent.CompletableFuture
 
 @ExperimentalStdlibApi
 class PlayerListener : Listener {
@@ -32,24 +28,21 @@ class PlayerListener : Listener {
             return
         }
 
-        val lemonPlayer = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+        Lemon.instance.mongoHandler.lemonPlayerLayer
+            .fetchEntryByKey(event.uniqueId.toString()).whenComplete { lemonPlayer, u ->
+                u?.printStackTrace()
 
-        val completableFuture = CompletableFuture.supplyAsync {
-            Lemon.instance.mongoHandler.playerCollection.find(
-                Filters.eq(
-                    "uuid",
-                    event.uniqueId.toString()
-                )
-            ).first()
-        }
+                if (lemonPlayer == null || u != null) {
+                    val lemonPlayerCreated = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+                    lemonPlayerCreated.handleIfFirstCreated()
 
-        lemonPlayer.load(completableFuture)
+                    Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayerCreated
+                } else {
+                    lemonPlayer.handlePostLoad()
 
-        if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff()) {
-            event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
-        }
-
-        Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayer
+                    Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayer
+                }
+            }
     }
 
     @EventHandler(
@@ -61,8 +54,12 @@ class PlayerListener : Listener {
 
         if (lemonPlayer == null) {
             event.disallow(
-                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad + " (${lemonPlayer})"
+                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
             )
+        } else {
+            if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff()) {
+                event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
+            }
         }
     }
 

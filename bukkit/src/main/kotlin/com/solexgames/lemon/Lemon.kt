@@ -1,5 +1,6 @@
 package com.solexgames.lemon
 
+import com.google.gson.LongSerializationPolicy
 import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
 import com.solexgames.daddyshark.commons.logger.BetterConsoleLogger
 import com.solexgames.daddyshark.commons.model.ServerInstance
@@ -76,7 +77,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         var canJoin: Boolean = false
     }
 
-    lateinit var mongoHandler: MongoHandler
+    lateinit var mongoHandler: DataStoreHandler
     lateinit var playerHandler: PlayerHandler
     lateinit var rankHandler: RankHandler
     lateinit var grantHandler: GrantHandler
@@ -147,6 +148,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun runAfterDataValidation() {
         Serializers.useGsonBuilderThenRebuild { builder ->
             builder
+                .setLongSerializationPolicy(LongSerializationPolicy.STRING)
                 .registerTypeHierarchyAdapter(ItemStack::class.java, ItemStackAdapter())
                 .registerTypeHierarchyAdapter(Location::class.java, LocationAdapter())
                 .registerTypeHierarchyAdapter(Vector::class.java, VectorAdapter())
@@ -178,10 +180,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         Schedulers.sync().runLater({
             canJoin = true
         }, 60L)
-    }
-
-    override fun disable() {
-        mongoHandler.close()
     }
 
     private fun loadCommands() {
@@ -284,7 +282,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun loadHandlers() {
-        mongoHandler = MongoHandler
+        mongoHandler = DataStoreHandler
         playerHandler = PlayerHandler
 
         rankHandler = RankHandler

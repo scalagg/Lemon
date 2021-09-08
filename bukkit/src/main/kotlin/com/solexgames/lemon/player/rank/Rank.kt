@@ -56,24 +56,6 @@ class Rank(
     }
 
     override fun save(): CompletableFuture<Void> {
-        return CompletableFuture.runAsync {
-            val document = Document("_id", uuid)
-            document["uuid"] = uuid.toString()
-            document["name"] = name
-            document["weight"] = weight
-            document["prefix"] = prefix
-            document["suffix"] = suffix
-            document["color"] = color
-            document["italic"] = italic
-            document["hidden"] = hidden
-            document["defaultRank"] = defaultRank
-            document["inheritances"] = inheritances
-            document["permissions"] = permissions
-
-            Lemon.instance.mongoHandler.rankCollection.replaceOne(
-                Filters.eq("_id", uuid),
-                document, ReplaceOptions().upsert(true)
-            )
-        }
+        return Lemon.instance.mongoHandler.rankLayer.saveEntry(uuid.toString(), this)
     }
 }

@@ -5,7 +5,6 @@ import net.evilblock.cubed.visibility.VisibilityAction
 import net.evilblock.cubed.visibility.VisibilityAdapter
 import org.bukkit.entity.Player
 
-
 /**
  * @author GrowlyX
  * @since 9/7/2021
