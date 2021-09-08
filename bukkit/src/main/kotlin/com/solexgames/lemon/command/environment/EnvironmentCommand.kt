@@ -66,8 +66,10 @@ class EnvironmentCommand : BaseCommand() {
 
             sender.sendMessage("${CC.PRI}${CC.BOLD}${t.serverId} Information:")
             sender.sendMessage("${CC.GRAY}Group: ${CC.WHITE}${t.serverGroup}")
-            sender.sendMessage("${CC.GRAY}Online: ${CC.WHITE}${t.onlinePlayers}")
-            sender.sendMessage("${CC.GRAY}Max Players: ${CC.WHITE}${t.maxPlayers}")
+            sender.sendMessage("")
+            sender.sendMessage("${CC.GRAY}Players (Current): ${CC.WHITE}${t.onlinePlayers}")
+            sender.sendMessage("${CC.GRAY}Online (Highest): ${CC.WHITE}${t.metaData["highest-player-count"]}")
+            sender.sendMessage("${CC.GRAY}Players (Limit): ${CC.WHITE}${t.maxPlayers}")
 
             sender.sendMessage("${CC.GRAY}TPS: ${CC.WHITE}${String.format("%.2f",
                 t.ticksPerSecond.coerceAtMost(20.0)
@@ -77,7 +79,7 @@ class EnvironmentCommand : BaseCommand() {
             sender.sendMessage("${CC.GRAY}Online Mode: ${CC.WHITE}${t.onlineMode}")
             sender.sendMessage("")
             sender.sendMessage("${CC.GRAY}Version: ${CC.WHITE}${t.version}")
-            sender.sendMessage("${CC.GRAY}Last Heartbeat: ${CC.WHITE}${DurationFormatUtils.formatDurationWords(System.currentTimeMillis() - t.lastHeartbeat, true, true)}")
+            sender.sendMessage("${CC.GRAY}Last Heartbeat: ${CC.WHITE}${DurationFormatUtils.formatDurationWords(System.currentTimeMillis() - t.lastHeartbeat, true, false)}")
         }
     }
 }

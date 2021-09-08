@@ -1,9 +1,5 @@
 package com.solexgames.lemon
 
-import com.google.gson.TypeAdapter
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
 import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
 import com.solexgames.daddyshark.commons.logger.BetterConsoleLogger
 import com.solexgames.daddyshark.commons.model.ServerInstance
@@ -65,7 +61,6 @@ import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
-import java.io.IOException
 import java.util.*
 import java.util.UUID
 import java.util.function.Consumer
@@ -164,7 +159,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         }
 
         loadExtraConfigurations()
-        loadCosmetics()
+        setupPlayerLookAndFeel()
         loadListeners()
         loadHandlers()
         loadCommands()
@@ -248,10 +243,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         logger.info("Loaded command manager")
     }
 
-    private fun loadCosmetics() {
+    private fun setupPlayerLookAndFeel() {
         CC.setup(
-            ChatColor.valueOf(lemonWebData.primary).toString(),
-            ChatColor.valueOf(lemonWebData.secondary).toString()
+            toCCColorFormat(lemonWebData.primary),
+            toCCColorFormat(lemonWebData.secondary)
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider())
@@ -262,6 +257,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         VisibilityHandler.registerAdapter("Staff", StaffVisibilityHandler())
         VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
+    }
+
+    private fun toCCColorFormat(string: String): String {
+        return ChatColor.valueOf(string).toString()
     }
 
     private fun loadListeners() {

@@ -188,6 +188,17 @@ class PlayerListener : Listener {
         event.joinMessage = null
 
         lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
+
+        val highestPlayerCount = Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]
+        val currentPlayerCount = Bukkit.getOnlinePlayers().size
+
+        if (highestPlayerCount == null) {
+            Lemon.instance.getLocalServerInstance().metaData["highest-player-count"] = currentPlayerCount.toString()
+        } else {
+            if (currentPlayerCount > Integer.parseInt(highestPlayerCount)) {
+                Lemon.instance.getLocalServerInstance().metaData["highest-player-count"] = currentPlayerCount.toString()
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
