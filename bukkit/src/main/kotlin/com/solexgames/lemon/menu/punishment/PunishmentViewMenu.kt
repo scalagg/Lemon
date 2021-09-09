@@ -24,8 +24,8 @@ import java.util.concurrent.CompletableFuture
  * @since 8/27/2021
  */
 class PunishmentViewMenu(
-    private var uuid: UUID,
-    private var viewType: PunishmentViewType
+    private val uuid: UUID,
+    private val viewType: PunishmentViewType
 ): Menu() {
 
     override fun getTitle(player: Player): String {

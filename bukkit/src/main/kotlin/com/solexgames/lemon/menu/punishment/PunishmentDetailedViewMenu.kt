@@ -28,10 +28,10 @@ import kotlin.collections.HashMap
  * @since 8/27/2021
  */
 class PunishmentDetailedViewMenu(
-    private var uuid: UUID,
-    private var category: PunishmentCategory,
-    private var viewType: PunishmentViewType,
-    private var punishments: List<Punishment>
+    private val uuid: UUID,
+    private val category: PunishmentCategory,
+    private val viewType: PunishmentViewType,
+    private val punishments: List<Punishment>
 ): PaginatedMenu() {
 
     override fun getPrePaginatedTitle(player: Player): String {
