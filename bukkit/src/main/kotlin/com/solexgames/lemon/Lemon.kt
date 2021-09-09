@@ -13,6 +13,7 @@ import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import com.solexgames.lemon.adapt.LemonPlayerAdapter
 import com.solexgames.lemon.adapt.UUIDAdapter
+import com.solexgames.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.board.ModModeBoardProvider
@@ -101,7 +102,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
 
-    private lateinit var consoleLogger: BetterConsoleLogger
+    private lateinit var consoleLogger: ConsoleLogger
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
 
@@ -200,6 +201,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             if (!rank.isPresent) {
                 throw ConditionFailedException("That rank does not exist.")
             }
+
             return@registerContext rank.get()
         }
 
@@ -323,7 +325,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         layerBuilder.setConnection(redisConnection)
 
         playerLayer = layerBuilder.build()
-        consoleLogger = BetterConsoleLogger()
+        consoleLogger = DaddySharkLogAdapter()
 
         jedisSettings = JedisSettings(
             redisConfig.address,

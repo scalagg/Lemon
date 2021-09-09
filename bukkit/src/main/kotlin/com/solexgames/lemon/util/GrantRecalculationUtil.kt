@@ -12,15 +12,14 @@ object GrantRecalculationUtil {
     @JvmStatic
     fun getProminentGrant(grants: List<Grant>): Grant? {
         return grants
-            .sortedByDescending { it.addedBy }
-            .filter { !it.removed && !it.hasExpired() && !it.getRank().hidden && it.isApplicable() }
-            .find { true }
+            .sortedByDescending { it.addedAt }
+            .firstOrNull { it.removedBy == null && !it.hasExpired() && !it.getRank().hidden && it.isApplicable() }
     }
 
     @JvmStatic
     fun getPermissionGrants(grants: List<Grant>): List<Grant> {
         return grants
-            .sortedByDescending { it.addedBy }
-            .filter { !it.removed && !it.hasExpired() && it.isApplicable() }
+            .sortedByDescending { it.addedAt }
+            .filter { it.removedBy == null && !it.hasExpired() && it.isApplicable() }
     }
 }

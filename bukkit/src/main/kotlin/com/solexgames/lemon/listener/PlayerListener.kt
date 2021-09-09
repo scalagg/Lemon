@@ -30,28 +30,21 @@ class PlayerListener : Listener {
 
         Lemon.instance.mongoHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
             .whenComplete { lemonPlayer, throwable ->
-                try {
-                    val lemonPlayerFinal: LemonPlayer?
+                val lemonPlayerFinal: LemonPlayer?
 
-                    if (lemonPlayer == null || throwable != null) {
-                        lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
-                        lemonPlayerFinal.handleIfFirstCreated()
+                if (lemonPlayer == null || throwable != null) {
+                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+                    lemonPlayerFinal.handleIfFirstCreated()
 
-                        throwable?.printStackTrace()
-                    } else {
-                        lemonPlayer.ipAddress = event.address.hostAddress
-                        lemonPlayer.handlePostLoad()
+                    throwable?.printStackTrace()
+                } else {
+                    lemonPlayer.ipAddress = event.address.hostAddress
+                    lemonPlayer.handlePostLoad()
 
-                        lemonPlayerFinal = lemonPlayer
-                    }
-
-                    println("first=$lemonPlayer")
-                    println("final=$lemonPlayerFinal")
-
-                    Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayerFinal
-                } catch (exception: Exception) {
-                    exception.printStackTrace()
+                    lemonPlayerFinal = lemonPlayer
                 }
+
+                Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayerFinal
             }
     }
 

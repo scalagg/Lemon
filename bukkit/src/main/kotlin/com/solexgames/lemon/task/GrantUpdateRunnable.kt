@@ -14,7 +14,7 @@ class GrantUpdateRunnable : Runnable {
             val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
 
             lemonPlayer.ifPresent {
-                it.recalculateGrants()
+                it.checkForGrantUpdate()
             }
         }
     }

@@ -15,7 +15,7 @@ class StaffVisibilityHandler : VisibilityAdapter {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(toRefresh).orElse(null)
         val lemonPlayerTarget = Lemon.instance.playerHandler.findPlayer(refreshFor).orElse(null)
 
-        if (lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff")) {
+        if (lemonPlayer != null && lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff")) {
             return VisibilityAction.HIDE
         }
 

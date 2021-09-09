@@ -24,7 +24,7 @@ class Grant(
     var removedReason: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
-    var removed: Boolean = false
+    var removed = false
 
     fun getRank(): Rank {
         return Lemon.instance.rankHandler.findRank(rankId)
@@ -37,7 +37,7 @@ class Grant(
      */
     fun isApplicable(): Boolean {
         if (scopes.contains("global")) {
-            return true
+            return scopes.contains("global")
         }
 
         var boolean = false
