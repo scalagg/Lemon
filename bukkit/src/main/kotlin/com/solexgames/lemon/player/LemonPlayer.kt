@@ -78,6 +78,8 @@ class LemonPlayer(
                         grant.removedAt = System.currentTimeMillis()
                         grant.removed = true
 
+                        grant.save()
+
                         shouldNotifyPlayer = true
                     }
                 }
@@ -124,24 +126,9 @@ class LemonPlayer(
     }
 
     fun checkForGrantUpdate() {
-        val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
-        var shouldRecalculate = false
-
-        completableFuture.whenComplete { t, _ ->
-            assert(t != null)
-
-            t.forEach { grant ->
-                if (!grant.removed && grant.hasExpired()) {
-                    shouldRecalculate = true
-                }
-            }
-
-            if (shouldRecalculate) {
-                recalculateGrants(
-                    shouldCalculateNow = true
-                )
-            }
-        }
+        recalculateGrants(
+            shouldCalculateNow = true
+        )
     }
 
     private fun notifyPlayerOfRankUpdate(player: Player) {
