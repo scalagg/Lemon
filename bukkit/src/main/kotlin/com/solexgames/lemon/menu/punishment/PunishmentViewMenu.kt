@@ -3,18 +3,18 @@ package com.solexgames.lemon.menu.punishment
 import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
-import com.solexgames.lemon.player.enums.PunishmentViewType
+import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.player.punishment.Punishment
 import com.solexgames.lemon.player.punishment.category.PunishmentCategory
 import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensity
 import com.solexgames.lemon.util.CubedCacheUtil
+import com.solexgames.lemon.util.quickaccess.coloredName
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -25,16 +25,16 @@ import java.util.concurrent.CompletableFuture
  */
 class PunishmentViewMenu(
     private val uuid: UUID,
-    private val viewType: PunishmentViewType
+    private val viewType: HistoryViewType
 ): Menu() {
 
     override fun getTitle(player: Player): String {
-        val name = CubedCacheUtil.fetchName(uuid)
-        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} $name"
+        val name = CubedCacheUtil.fetchName(uuid)!!
+        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(name)}"
 
         return when (viewType) {
-            PunishmentViewType.STAFF_HIST -> "Staff $base"
-            PunishmentViewType.TARGET_HIST -> base
+            HistoryViewType.STAFF_HIST -> "Staff $base"
+            HistoryViewType.TARGET_HIST -> base
         }
     }
 
@@ -67,10 +67,10 @@ class PunishmentViewMenu(
 
     private fun fetchPunishments(category: PunishmentCategory): CompletableFuture<List<Punishment>> {
         return when (viewType) {
-            PunishmentViewType.TARGET_HIST -> {
+            HistoryViewType.TARGET_HIST -> {
                 Lemon.instance.punishmentHandler.fetchPunishmentsForTargetOfCategory(uuid, category)
             }
-            PunishmentViewType.STAFF_HIST -> {
+            HistoryViewType.STAFF_HIST -> {
                 Lemon.instance.punishmentHandler.fetchPunishmentsByExecutorOfCategory(uuid, category)
             }
         }

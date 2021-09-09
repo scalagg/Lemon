@@ -22,6 +22,7 @@ class Grant(
     var scopes: MutableList<String> = mutableListOf("global")
 
     var removedReason: String? = null
+    var removedOn: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
     var removed = false
@@ -53,6 +54,12 @@ class Grant(
     }
 
     override fun save(): CompletableFuture<Void> {
+        Lemon.instance.playerHandler.findPlayer(target).ifPresent {
+            it.recalculateGrants(
+                shouldCalculateNow = true
+            )
+        }
+
         return Lemon.instance.mongoHandler.grantLayer.saveEntry(uuid.toString(), this)
     }
 }

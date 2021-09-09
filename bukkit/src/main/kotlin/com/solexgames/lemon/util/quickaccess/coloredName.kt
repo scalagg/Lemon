@@ -7,8 +7,14 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/7/2021
  */
-fun coloredName(player: Player): String {
-    val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+fun coloredName(name: String?): String? {
+    val lemonPlayer = name?.let { Lemon.instance.playerHandler.findPlayer(it).orElse(null) }
 
-    return lemonPlayer.getColoredName()
+    lemonPlayer?.let {
+        return it.getColoredName()
+    } ?: return name
+}
+
+fun coloredName(player: Player): String? {
+    return coloredName(player.name)
 }

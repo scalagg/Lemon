@@ -2,16 +2,19 @@ package com.solexgames.lemon.handler
 
 import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.grant.Grant
+import org.bson.conversions.Bson
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * @author GrowlyX
+ * @since 8/27/2021
+ */
 object GrantHandler {
 
-    private fun fetchGrants(test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
-        return Lemon.instance.mongoHandler.grantLayer.fetchAllEntries().thenApply {
+    private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
+        return Lemon.instance.mongoHandler.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {
             val mutableList = mutableListOf<Grant>()
 
             it.forEach { entry ->
@@ -25,15 +28,15 @@ object GrantHandler {
     }
 
     fun fetchGrantsByExecutor(uuid: UUID): CompletableFuture<List<Grant>> {
-        return fetchGrants {
-            it.addedBy == uuid
-        }
+        return fetchGrants(
+            Filters.eq("addedBy", uuid.toString())
+        ) { true }
     }
 
     fun fetchGrantsFor(uuid: UUID): CompletableFuture<List<Grant>> {
-        return fetchGrants {
-            it.target == uuid
-        }
+        return fetchGrants(
+            Filters.eq("target", uuid.toString())
+        ) { true }
     }
 
     fun registerGrant(grant: Grant) {
