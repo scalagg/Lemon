@@ -71,7 +71,6 @@ import java.util.*
 import java.util.UUID
 import java.util.function.Consumer
 
-
 class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     companion object {
