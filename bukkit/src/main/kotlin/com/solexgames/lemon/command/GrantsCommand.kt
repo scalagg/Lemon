@@ -30,7 +30,7 @@ class GrantsCommand : BaseCommand() {
         val name = CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.grants.other")) {
-            player.sendMessage(LemonConstants.NO_PERMISSION)
+            player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
             return
         }
 
@@ -60,7 +60,7 @@ class GrantsCommand : BaseCommand() {
         val name = CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.grants.other")) {
-            player.sendMessage(LemonConstants.NO_PERMISSION)
+            player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
             return
         }
 

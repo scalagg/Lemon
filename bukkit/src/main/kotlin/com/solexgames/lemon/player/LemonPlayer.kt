@@ -62,50 +62,46 @@ class LemonPlayer(
         val completableFuture = Lemon.instance.grantHandler.fetchGrantsFor(uniqueId)
 
         completableFuture.whenComplete { grants, _ ->
-            try {
-                if (grants == null || grants.isEmpty()) {
-                    setupAutomaticGrant()
+            if (grants == null || grants.isEmpty()) {
+                setupAutomaticGrant()
 
-                    return@whenComplete
-                }
-
-                var shouldNotifyPlayer = autoNotify
-                val previousRank = fetchPreviousRank(grants)
-
-                grants.forEach { grant ->
-                    if (!grant.removed && grant.hasExpired()) {
-                        grant.removedReason = "Expired"
-                        grant.removedAt = System.currentTimeMillis()
-                        grant.removed = true
-
-                        grant.save()
-
-                        shouldNotifyPlayer = true
-                    }
-                }
-
-                activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
-
-                var shouldRecalculatePermissions = forceRecalculatePermissions
-
-                if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.rankId) {
-                    shouldRecalculatePermissions = true
-                }
-
-                if (shouldNotifyPlayer && !connecting) {
-                    handleOnConnection.add {
-                        notifyPlayerOfRankUpdate(it)
-                    }
-                }
-
-                if (activeGrant == null) {
-                    setupAutomaticGrant()
-                }
-
-                if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
-            } catch (e: Exception) {
-                e.printStackTrace()
+                return@whenComplete
             }
+
+            var shouldNotifyPlayer = autoNotify
+            val previousRank = fetchPreviousRank(grants)
+
+            grants.forEach { grant ->
+                if (!grant.removed && grant.hasExpired()) {
+                    grant.removedReason = "Expired"
+                    grant.removedAt = System.currentTimeMillis()
+                    grant.removed = true
+
+                    grant.save()
+
+                    shouldNotifyPlayer = true
+                }
+            }
+
+            activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+
+            var shouldRecalculatePermissions = forceRecalculatePermissions
+
+            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.rankId) {
+                shouldRecalculatePermissions = true
+            }
+
+            if (shouldNotifyPlayer && !connecting) {
+                handleOnConnection.add {
+                    notifyPlayerOfRankUpdate(it)
+                }
+            }
+
+            if (activeGrant == null) {
+                setupAutomaticGrant()
+            }
+
+            if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
         }
     }
 

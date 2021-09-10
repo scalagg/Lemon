@@ -2,7 +2,6 @@ package com.solexgames.lemon
 
 import com.google.gson.LongSerializationPolicy
 import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
-import com.solexgames.daddyshark.commons.logger.BetterConsoleLogger
 import com.solexgames.daddyshark.commons.model.ServerInstance
 import com.solexgames.daddyshark.commons.platform.DaddySharkPlatform
 import com.solexgames.datastore.commons.connection.impl.RedisConnection
@@ -18,6 +17,7 @@ import com.solexgames.lemon.handler.*
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.board.ModModeBoardProvider
 import com.solexgames.lemon.player.cached.CachedLemonPlayer
+import com.solexgames.lemon.player.channel.Channel
 import com.solexgames.lemon.player.nametag.DefaultNametagProvider
 import com.solexgames.lemon.player.nametag.ModModeNametagProvider
 import com.solexgames.lemon.player.nametag.VanishNametagProvider
@@ -40,6 +40,8 @@ import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
+import net.evilblock.cubed.acf.MessageKeys
+import net.evilblock.cubed.acf.MessageType
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.entity.EntitySerializer
 import net.evilblock.cubed.entity.animation.EntityAnimation
@@ -191,6 +193,15 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
 
+        listOf<MessageType>(MessageType.HELP, MessageType.ERROR, MessageType.INFO, MessageType.SYNTAX).forEach {
+            commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
+            commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))
+        }
+
+        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
+            return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
+        }
+
         commandManager.commandCompletions.registerAsyncCompletion("ranks") {
             return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
         }
@@ -199,17 +210,22 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             val rank = rankHandler.findRank(it.firstArg)
 
             if (!rank.isPresent) {
-                throw ConditionFailedException("That rank does not exist.")
+                throw ConditionFailedException("Could not find a rank by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
             }
 
             return@registerContext rank.get()
+        }
+
+        commandManager.commandContexts.registerContext(Channel::class.java) {
+            return@registerContext chatHandler.findChannel(it.firstArg)
+                ?: throw ConditionFailedException("Could not find a channel by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
         }
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val lemonPlayer = playerHandler.findPlayer(it.firstArg)
 
             if (!lemonPlayer.isPresent) {
-                throw ConditionFailedException("Could not find that player.")
+                throw ConditionFailedException("Could not find a player by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
             }
 
             return@registerContext lemonPlayer.get()

@@ -119,6 +119,14 @@ class PlayerListener : Listener {
             channelMatch = chatHandler.channels["default"]
         }
 
+        lemonPlayer.getMetadata("channel")?.let {
+            val possibleChannel = chatHandler.channels[it.asString()]
+
+            if (possibleChannel != null) {
+                channelMatch = possibleChannel
+            }
+        }
+
         val channelOverride = chatHandler.findChannelOverride(player)
 
         channelOverride.ifPresent {
