@@ -25,7 +25,8 @@ class ReportMenu(private val target: Player) : Menu() {
 
     override fun getButtons(player: Player): Map<Int, Button> {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
-        val buttons = mutableMapOf<Int, Button>(); var int = 0
+        val buttons = mutableMapOf<Int, Button>()
+        var int = 0
 
         ReportType.VALUES.forEach {
             val finalDescription = mutableListOf<String>()
@@ -37,7 +38,7 @@ class ReportMenu(private val target: Player) : Menu() {
             buttons[int++] = ItemBuilder(it.material)
                 .name("${CC.PRI}${it.fancyName}")
                 .setLore(finalDescription)
-                .data(it.data).toButton() { _, _ ->
+                .toButton { _, _ ->
                     sendStaffMessage(
                         player,
                         "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",

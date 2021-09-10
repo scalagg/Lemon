@@ -18,10 +18,10 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/6/2021
  */
-@CommandAlias("report")
+
 class ReportCommand : BaseCommand() {
 
-    @Default
+    @CommandAlias("report")
     @Syntax("<player>")
     fun onDefault(player: Player, target: Player) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)

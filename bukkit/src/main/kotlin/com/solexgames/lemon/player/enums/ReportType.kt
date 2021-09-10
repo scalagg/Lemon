@@ -10,56 +10,47 @@ enum class ReportType(
     val fancyName: String,
     val examples: List<String>,
     val material: XMaterial,
-    val data: Short
 ) {
 
     COMBAT_HACKS(
         "Combat Hacks",
         listOf("KillAura", "Reach", "Aim Assist"),
-        XMaterial.DIAMOND_SWORD,
-        0
+        XMaterial.DIAMOND_SWORD
     ),
     MOVEMENT_HACKS(
         "Movement Hacks",
         listOf("Speed", "Bunny Hop", "Fly"),
-        XMaterial.RABBIT_FOOT,
-        0
+        XMaterial.RABBIT_FOOT
     ),
     VELOCITY_HACKS(
         "Velocity Hacks",
         listOf("Velocity", "Reduced KB", "Anti KB"),
-        XMaterial.SLIME_BALL,
-        0
+        XMaterial.SLIME_BALL
     ),
     CHAT_ABUSE(
         "Chat Abuse",
         listOf("Toxicity", "Spam", "Illegal Characters"),
-        XMaterial.PAPER,
-        0
+        XMaterial.PAPER
     ),
     GAME_SABOTAGE(
         "Game Sabotage",
         listOf("Camping", "Running", "Stalling"),
-        XMaterial.RED_BED,
-        0
+        XMaterial.RED_BED
     ),
     CROSS_TEAMING(
         "Teaming",
         listOf("Trucing", "Player Collision", "Group Game Sabotage"),
-        XMaterial.STICK,
-        0
+        XMaterial.STICK
     ),
     SUSPICIOUS_ACTIVITY(
         "Suspicious Activity",
-        listOf("DDos Threats", "Dox Threats", "Self Harm"),
-        XMaterial.RED_DYE,
-        1
+        listOf("DDoS Threats", "Dox Threats", "Self Harm"),
+        XMaterial.RED_DYE
     ),
     OTHER(
         "Other",
         listOf("Anything that's not listed..."),
-        XMaterial.PAINTING,
-        0
+        XMaterial.PAINTING
     );
 
     companion object {

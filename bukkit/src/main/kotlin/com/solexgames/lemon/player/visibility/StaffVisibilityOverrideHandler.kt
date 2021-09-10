@@ -5,10 +5,8 @@ import net.evilblock.cubed.visibility.OverrideAction
 import net.evilblock.cubed.visibility.OverrideHandler
 import org.bukkit.entity.Player
 
-
 /**
- * @author GrowlyX
- * @since 9/7/2021
+ * @author puugz, GrowlyX
  */
 class StaffVisibilityOverrideHandler : OverrideHandler {
 

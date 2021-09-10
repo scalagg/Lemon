@@ -14,29 +14,21 @@ class SocialCommand : BaseCommand() {
 
     @CommandAlias("discord")
     fun onDiscord(sender: CommandSender) {
-        sender.sendMessage(
-            "${CC.SEC}Discord: ${CC.PRI}${Lemon.instance.lemonWebData.discord}"
-        )
+        sender.sendMessage("${CC.SEC}Discord: ${CC.PRI}${Lemon.instance.lemonWebData.discord}")
     }
 
     @CommandAlias("twitter")
     fun onTwitter(sender: CommandSender) {
-        sender.sendMessage(
-            "${CC.SEC}Twitter: ${CC.PRI}${Lemon.instance.lemonWebData.twitter}"
-        )
+        sender.sendMessage("${CC.SEC}Twitter: ${CC.PRI}${Lemon.instance.lemonWebData.twitter}")
     }
 
     @CommandAlias("website")
     fun onWebsite(sender: CommandSender) {
-        sender.sendMessage(
-            "${CC.SEC}Website: ${CC.PRI}${Lemon.instance.lemonWebData.domain}"
-        )
+        sender.sendMessage("${CC.SEC}Website: ${CC.PRI}${Lemon.instance.lemonWebData.domain}")
     }
 
     @CommandAlias("store")
     fun onStore(sender: CommandSender) {
-        sender.sendMessage(
-            "${CC.SEC}Store: ${CC.PRI}${Lemon.instance.lemonWebData.store}"
-        )
+        sender.sendMessage("${CC.SEC}Store: ${CC.PRI}${Lemon.instance.lemonWebData.store}")
     }
 }

@@ -25,7 +25,7 @@ class ChannelCommand : BaseCommand() {
         if (channel == null) {
             lemonPlayer.metadata["channel"]?.let {
                 player.sendMessage("${CC.SEC}You're currently chatting in ${CC.PRI}${it.asString()}${CC.SEC}.")
-            } ?: player.sendMessage("${CC.RED}You're not chatting in a channel.")
+            } ?: player.sendMessage("${CC.RED}You're currently not chatting in a channel.")
 
             return
         }

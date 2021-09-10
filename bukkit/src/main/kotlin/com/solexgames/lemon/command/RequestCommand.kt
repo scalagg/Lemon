@@ -17,11 +17,9 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/6/2021
  */
-@CommandAlias("request")
 class RequestCommand : BaseCommand() {
 
-    @Default
-    @Syntax("[message]")
+    @CommandAlias("request")
     fun onDefault(player: Player, message: String) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 

@@ -25,17 +25,17 @@ class LemonPlayer(
     var ipAddress: String?
 ): Savable {
 
-    var pastIpAddresses = mutableMapOf<String, Long>()
-    var pastLogins = mutableMapOf<String, Long>()
+    var pastIpAddresses = HashMap<String, Long>()
+    var pastLogins = HashMap<String, Long>()
 
-    var notes = mutableListOf<Note>()
-    var ignoring = mutableListOf<UUID>()
-
-    @Transient
-    val cooldowns: MutableMap<String, Cooldown> = mutableMapOf()
+    var notes = ArrayList<Note>()
+    var ignoring = ArrayList<UUID>()
 
     @Transient
-    val handleOnConnection: ArrayList<Consumer<Player>> = arrayListOf()
+    val cooldowns = HashMap<String, Cooldown>()
+
+    @Transient
+    val handleOnConnection = ArrayList<Consumer<Player>>()
 
     @Transient
     var activeGrant: Grant? = null

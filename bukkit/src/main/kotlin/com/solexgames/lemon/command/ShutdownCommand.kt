@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
  */
 @CommandAlias("shutdown|reboot")
 @CommandPermission("lemon.command.shutdown")
-class ShutdownCommand: BaseCommand() {
+class ShutdownCommand : BaseCommand() {
 
     @Default
     @HelpCommand
@@ -46,7 +46,13 @@ class ShutdownCommand: BaseCommand() {
         val shutdown = Lemon.instance.serverHandler.shutdownRunnable
 
         if (shutdown != null) {
-            player.sendMessage("${CC.SEC}The server is scheduled to shutdown in ${CC.PRI}${TimeUtil.formatIntoDetailedString(shutdown.seconds)}${CC.SEC}.")
+            player.sendMessage(
+                "${CC.SEC}The server is scheduled to shutdown in ${CC.PRI}${
+                    TimeUtil.formatIntoDetailedString(
+                        shutdown.seconds
+                    )
+                }${CC.SEC}."
+            )
         } else {
             player.sendMessage("${CC.RED}There is currently no scheduled shutdown.")
         }

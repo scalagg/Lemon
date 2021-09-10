@@ -6,8 +6,7 @@ import net.evilblock.cubed.visibility.VisibilityAdapter
 import org.bukkit.entity.Player
 
 /**
- * @author GrowlyX
- * @since 9/7/2021
+ * @author puugz, GrowlyX
  */
 class StaffVisibilityHandler : VisibilityAdapter {
 

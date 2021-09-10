@@ -14,7 +14,6 @@ class EnvironmentCommand : BaseCommand() {
 
     @Default
     @HelpCommand
-    @Syntax("[page]")
     fun onHelp(help: CommandHelp) {
         help.showHelp()
     }
@@ -68,9 +67,9 @@ class EnvironmentCommand : BaseCommand() {
             sender.sendMessage("${CC.GRAY}Group: ${CC.WHITE}${t.serverGroup}")
 
             sender.sendMessage("")
-            sender.sendMessage("${CC.GRAY}Players (Current): ${CC.WHITE}${t.onlinePlayers}")
-            sender.sendMessage("${CC.GRAY}Players (Highest): ${CC.WHITE}${t.metaData["highest-player-count"]}")
-            sender.sendMessage("${CC.GRAY}Players (Limit): ${CC.WHITE}${t.maxPlayers}")
+            sender.sendMessage("${CC.GRAY}Online Players: ${CC.WHITE}${t.onlinePlayers}")
+            sender.sendMessage("${CC.GRAY}Max Players: ${CC.WHITE}${t.metaData["highest-player-count"]}")
+            sender.sendMessage("${CC.GRAY}Player Limit: ${CC.WHITE}${t.maxPlayers}")
             sender.sendMessage("")
 
             sender.sendMessage("${CC.GRAY}TPS: ${CC.WHITE}${String.format("%.2f",

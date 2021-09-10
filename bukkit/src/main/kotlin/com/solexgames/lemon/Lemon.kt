@@ -201,15 +201,11 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
         }
 
-        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
-            return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
-        }
-
         commandManager.commandContexts.registerContext(Rank::class.java) {
             val rank = rankHandler.findRank(it.firstArg)
 
             if (!rank.isPresent) {
-                throw ConditionFailedException("Could not find a rank by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+                throw ConditionFailedException("Could not find rank by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
             }
 
             return@registerContext rank.get()
@@ -217,14 +213,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         commandManager.commandContexts.registerContext(Channel::class.java) {
             return@registerContext chatHandler.findChannel(it.firstArg)
-                ?: throw ConditionFailedException("Could not find a channel by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+                ?: throw ConditionFailedException("Could not find channel by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
         }
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val lemonPlayer = playerHandler.findPlayer(it.firstArg)
 
             if (!lemonPlayer.isPresent) {
-                throw ConditionFailedException("Could not find a player by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+                throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
             }
 
             return@registerContext lemonPlayer.get()
