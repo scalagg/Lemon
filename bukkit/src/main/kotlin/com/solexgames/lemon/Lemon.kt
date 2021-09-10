@@ -139,7 +139,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             LemonWebStatus.SUCCESS,
             "DEV",
             "SolexGames",
-            "GOLD",
+            "GREEN",
             "YELLOW",
             "discord.gg/solexgames",
             "twitter.com/solexgames",
