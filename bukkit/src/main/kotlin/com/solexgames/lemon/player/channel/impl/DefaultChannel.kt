@@ -14,7 +14,7 @@ class DefaultChannel: Channel {
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(sender).orElse(null)
+        val lemonPlayer = Lemon.instance.playerHandler.findOnlinePlayer(sender) ?: return ""
         val player = Bukkit.getPlayer(sender)
 
         return "${rank.prefix}${lemonPlayer.getColoredName()}${rank.suffix}${CC.WHITE}: ${colorIfHasPermission(player, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"

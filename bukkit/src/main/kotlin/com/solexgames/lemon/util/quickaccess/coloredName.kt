@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
  * @since 9/7/2021
  */
 fun coloredNameOrConsole(sender: CommandSender): String {
-    val lemonPlayer = sender.name?.let { Lemon.instance.playerHandler.findPlayer(it).orElse(null) }
+    val lemonPlayer = sender.name?.let { Lemon.instance.playerHandler.findOnlinePlayer(it) }
 
     lemonPlayer?.let {
         return it.getColoredName()
@@ -18,7 +18,7 @@ fun coloredNameOrConsole(sender: CommandSender): String {
 }
 
 fun coloredName(name: String?): String? {
-    val lemonPlayer = name?.let { Lemon.instance.playerHandler.findPlayer(it).orElse(null) }
+    val lemonPlayer = name?.let { Lemon.instance.playerHandler.findOnlinePlayer(it) }
 
     lemonPlayer?.let {
         return it.getColoredName()

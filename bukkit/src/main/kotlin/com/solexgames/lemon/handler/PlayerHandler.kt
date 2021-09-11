@@ -47,6 +47,12 @@ object PlayerHandler {
         )
     }
 
+    fun findOnlinePlayer(name: String): LemonPlayer? {
+        return players.values.firstOrNull {
+            it.name.equals(name, true)
+        }
+    }
+
     fun findPlayer(name: String): Optional<LemonPlayer> {
         val player = Bukkit.getPlayer(name)
 
