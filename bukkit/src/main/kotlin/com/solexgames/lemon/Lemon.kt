@@ -246,7 +246,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             }
         }
 
-        commandManager.commandCompletions.registerAsyncCompletion("players") {
+        commandManager.commandCompletions.registerAsyncCompletion("all-players") {
             val list = mutableListOf<String>()
 
             Bukkit.getOnlinePlayers().forEach {

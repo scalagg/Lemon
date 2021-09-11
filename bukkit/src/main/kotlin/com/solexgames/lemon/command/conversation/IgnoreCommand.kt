@@ -21,7 +21,7 @@ class IgnoreCommand : BaseCommand() {
 
     @Syntax("[player]")
     @CommandAlias("ignore|block")
-    @CommandCompletion("@players-uv")
+    @CommandCompletion("@players")
     fun onIgnore(player: Player, @Optional uuid: UUID?) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 

@@ -5,17 +5,17 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.menu.better.BetterConfirmMenu
 import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.player.grant.Grant
-import com.solexgames.lemon.prompt.FuturePrompt
 import com.solexgames.lemon.util.CubedCacheUtil
 import com.solexgames.lemon.util.SplitUtil
 import com.solexgames.lemon.util.quickaccess.coloredName
-import com.solexgames.lemon.util.quickaccess.startContinuousPrompt
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
+import net.evilblock.cubed.util.text.TextSplitter
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -71,7 +71,7 @@ class GrantViewMenu(
                         "",
                         "${CC.YELLOW}Click to start wipe."
                     )
-                    .toButton() { clicker, clickType ->
+                    .toButton { clicker, _ ->
                         if (clicker != null) {
                             if (!clicker.hasPermission("lemon.grants.wipe")) {
                                 clicker.sendMessage("${CC.RED}You do not have permission to perform this action!")
@@ -87,10 +87,7 @@ class GrantViewMenu(
                                 clicker.sendMessage("${CC.SEC}Finished grant wipe, now updating menu...")
 
                                 Tasks.sync {
-                                    Bukkit.dispatchCommand(
-                                        player,
-                                        "granthistory $viewingFor"
-                                    )
+                                    player.performCommand("granthistory $viewingFor")
                                 }
                             }
                         }
@@ -126,13 +123,17 @@ class GrantViewMenu(
             lines.add("")
             lines.add("${CC.SEC}Scopes:")
 
+            val stringBuilder = StringBuilder()
+
             grant.scopes.forEach {
-                lines.add("${CC.GRAY} - ${CC.RESET}$it")
+                stringBuilder.append("${CC.GRAY} - ${CC.RESET}$it")
+            }
+            TextSplitter.split(stringBuilder.toString(), "", "").forEach {
+                lines.add(it)
             }
 
             lines.add("")
             lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
-            lines.add("${CC.SEC}Issued At: ${CC.PRI}${TimeUtil.formatIntoDateString(Date(grant.addedAt))}")
             lines.add("${CC.SEC}Issued On: ${CC.PRI}${grant.addedOn}")
             lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${grant.addedReason}")
             lines.add("")
@@ -145,7 +146,6 @@ class GrantViewMenu(
                 }
 
                 lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
-                lines.add("${CC.SEC}Removed At: ${CC.PRI}${TimeUtil.formatIntoDateString(Date(grant.removedAt))}")
                 lines.add("${CC.SEC}Removed On: ${CC.PRI}${grant.removedOn}")
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${grant.removedReason}")
                 lines.add("")
@@ -164,12 +164,19 @@ class GrantViewMenu(
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
             val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
-            if (!clickType.name.contains("RIGHT") || !grant.canRemove(lemonPlayer)) {
+            if (!grant.canRemove(lemonPlayer)) {
                 return
             }
 
-            startContinuousPrompt(
-                FuturePrompt({ _, input ->
+            InputPrompt()
+                .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
+                .acceptInput { _, input ->
+                    if (input.equals("stop", true) || input.equals("cancel", true)) {
+                        return@acceptInput
+                    }
+
+                    player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
+
                     val splitUuid = SplitUtil.splitUuid(grant.uuid)
                     val grantTarget = CubedCacheUtil.fetchName(grant.target)
 
@@ -192,21 +199,14 @@ class GrantViewMenu(
 
                             grant.save().thenAccept {
                                 Tasks.sync {
-                                    Bukkit.dispatchCommand(
-                                        player,
-                                        "grant${ if (viewType == HistoryViewType.STAFF_HIST) "history" else "s" } $viewingFor"
-                                    )
+                                    player.performCommand("grant${ if (viewType == HistoryViewType.STAFF_HIST) "history" else "s" } $viewingFor")
                                 }
                             }
                         } else {
-                            player.sendMessage("${CC.RED}You've quit the grant removal process.")
+                            player.sendMessage("${CC.RED}You didn't confirm to remove the grant.")
                         }
                     }.openMenu(player)
-
-                    return@FuturePrompt null
-                }, "Removal Reason"),
-                player
-            )
+                }.start(player)
 
             player.closeInventory()
         }

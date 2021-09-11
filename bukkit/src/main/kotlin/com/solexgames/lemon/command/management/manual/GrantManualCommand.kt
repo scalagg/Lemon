@@ -21,7 +21,7 @@ class GrantManualCommand : BaseCommand() {
     @CommandAlias("grantmanual")
     @Syntax("<player> <rank> <duration> [reason]")
     @CommandPermission("lemon.command.grantmanual")
-    @CommandCompletion("@players @ranks 1d|1w|1mo|3mo|6mo|1y|perm")
+    @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm")
     fun onGrantManual(
         sender: CommandSender,
         target: UUID,
@@ -47,7 +47,7 @@ class GrantManualCommand : BaseCommand() {
     @CommandAlias("grantmanualscope")
     @Syntax("<player> <rank> <duration> <scopes> [reason]")
     @CommandPermission("lemon.command.grantmanualscope")
-    @CommandCompletion("@players @ranks 1d|1w|1mo|3mo|6mo|1y|perm global")
+    @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm global")
     fun onGrantManualScope(
         sender: CommandSender,
         target: UUID,
