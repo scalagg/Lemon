@@ -3,6 +3,8 @@ package com.solexgames.lemon.command.management
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.rank.Rank
+import com.solexgames.lemon.util.SplitUtil
+import com.solexgames.lemon.util.quickaccess.replaceEmpty
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -24,6 +26,66 @@ class RankCommand : BaseCommand() {
     @HelpCommand
     fun onHelp(help: CommandHelp) {
         help.showHelp()
+    }
+
+    @Subcommand("list")
+    @Description("View all ranks.")
+    fun onList(sender: CommandSender) {
+        val rankList = Lemon.instance.rankHandler.getSorted()
+
+        if (rankList.isEmpty()) {
+            throw ConditionFailedException("There are no ranks.")
+        }
+
+        sender.sendMessage(arrayOf(
+            "${CC.B_PRI}Available Ranks:",
+            "${CC.SEC}${rankList.size}${CC.GRAY} ranks found.",
+            ""
+        ))
+
+        rankList.forEach {
+            sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${it.getColoredName()}")
+        }
+    }
+
+    @CommandCompletion("@ranks")
+    @Subcommand("view|info|information")
+    @Description("View information for a certain rank.")
+    fun onList(sender: CommandSender, rank: Rank) {
+        sender.sendMessage("${CC.B_PRI}${rank.name} Information:")
+        sender.sendMessage("")
+        sender.sendMessage("${CC.GRAY}Name: ${CC.WHITE}${rank.getColoredName()}")
+        sender.sendMessage("${CC.GRAY}ID: ${CC.WHITE}${SplitUtil.splitUuid(rank.uuid)}")
+        sender.sendMessage("${CC.GRAY}Weight: ${CC.WHITE}${rank.weight}")
+        sender.sendMessage("")
+        sender.sendMessage("${CC.GRAY}Prefix: ${CC.WHITE}${replaceEmpty(rank.prefix)}")
+        sender.sendMessage("${CC.GRAY}Suffix: ${CC.WHITE}${replaceEmpty(rank.suffix)}")
+        sender.sendMessage("${CC.GRAY}Color: ${CC.WHITE}${rank.color}this")
+        sender.sendMessage("")
+        sender.sendMessage("${CC.GRAY}Visible: ${CC.WHITE}${rank.visible}")
+        sender.sendMessage("")
+
+        sender.sendMessage("${CC.GRAY}Children: ${ if (rank.children.isEmpty()) "${CC.RED}None" else "" }")
+
+        if (rank.children.isNotEmpty()) {
+            rank.children.forEach {
+                val child = Lemon.instance.rankHandler.findRank(it)
+
+                if (child != null) {
+                    sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${rank.getColoredName()}")
+                }
+            }
+
+            sender.sendMessage("")
+        }
+
+        sender.sendMessage("${CC.GRAY}Permissions: ${ if (rank.permissions.isEmpty()) "${CC.RED}None" else "" }")
+
+        if (rank.permissions.isNotEmpty()) {
+            rank.permissions.forEach {
+                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}$it")
+            }
+        }
     }
 
     @Subcommand("create")
@@ -69,11 +131,11 @@ class RankCommand : BaseCommand() {
                 hashMapOf<String, String>().also {
                     it["uniqueId"] = rank.uuid.toString()
                 }
-            )
+            ).publishAsync()
 
             Lemon.instance.rankHandler.ranks.remove(rank.uuid)
 
-            sender.sendMessage("${CC.SEC}You've delete the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+            sender.sendMessage("${CC.SEC}You've deleted the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
     }
 
@@ -134,6 +196,114 @@ class RankCommand : BaseCommand() {
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} weight to ${CC.WHITE}${rank.weight}${CC.SEC}.")
+        }
+    }
+
+    @Subcommand("child list")
+    @CommandCompletion("@ranks")
+    @Description("View all available children.")
+    @CommandPermission("lemon.command.rank.child.edit")
+    fun onChildList(sender: CommandSender, rank: Rank) {
+        if (rank.children.isEmpty()) {
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} has no children.")
+        }
+
+        sender.sendMessage(arrayOf(
+            "${CC.B_PRI}${rank.name}'s Children:",
+            "${CC.SEC}${rank.children.size}${CC.GRAY} children found.",
+            ""
+        ))
+
+        rank.children.forEach {
+            val child = Lemon.instance.rankHandler.findRank(it)
+
+            if (child != null) {
+                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${rank.getColoredName()}")
+            }
+        }
+    }
+
+    @Subcommand("child add")
+    @CommandCompletion("@ranks @ranks")
+    @Description("Add a child to a rank.")
+    @CommandPermission("lemon.command.rank.child.edit")
+    fun onChildAdd(sender: CommandSender, rank: Rank, child: Rank) {
+        if (rank.children.contains(child.uuid)) {
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} already has the child rank ${CC.YELLOW}${child.name}${CC.RED}.")
+        }
+
+        rank.children.add(child.uuid)
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've added the child rank ${CC.PRI}${child.getColoredName()}${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+        }
+    }
+
+    @Subcommand("child remove")
+    @CommandCompletion("@ranks @ranks")
+    @Description("Remove a child from a rank.")
+    @CommandPermission("lemon.command.rank.child.edit")
+    fun onChildRemove(sender: CommandSender, rank: Rank, child: Rank) {
+        if (!rank.children.contains(child.uuid)) {
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} does not inherit the child rank ${CC.YELLOW}${child.name}${CC.RED}.")
+        }
+
+        rank.children.remove(child.uuid)
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've removed the child rank ${CC.PRI}${child.getColoredName()}${CC.SEC} from the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+        }
+    }
+
+    @Subcommand("permission list")
+    @CommandCompletion("@ranks")
+    @Description("View all permissions for a rank.")
+    @CommandPermission("lemon.command.rank.permission.edit")
+    fun onPermissionList(sender: CommandSender, rank: Rank) {
+        if (rank.permissions.isEmpty()) {
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} has no permissions.")
+        }
+
+        sender.sendMessage(arrayOf(
+            "${CC.B_PRI}${rank.name}'s Permissions:",
+            "${CC.SEC}${rank.permissions.size}${CC.GRAY} permissions found.",
+            ""
+        ))
+
+        rank.permissions.forEach {
+            sender.sendMessage("${CC.GRAY} - ${CC.WHITE}$it")
+        }
+    }
+
+    @Subcommand("permission add")
+    @CommandCompletion("@ranks")
+    @Description("Add a permission to a rank.")
+    @CommandPermission("lemon.command.rank.permission.edit")
+    fun onPermissionAdd(sender: CommandSender, rank: Rank, permission: String) {
+        if (rank.permissions.contains(permission)) {
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} already has the ${CC.YELLOW}${permission}${CC.RED} permission.")
+        }
+
+        rank.permissions.add(permission)
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've added the permission ${CC.WHITE}$permission${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+        }
+    }
+
+    @Subcommand("permission remove")
+    @CommandCompletion("@ranks")
+    @Description("Remove a permission from a rank.")
+    @CommandPermission("lemon.command.rank.permission.edit")
+    fun onPermissionRemove(sender: CommandSender, rank: Rank, permission: String) {
+        if (!rank.permissions.contains(permission)) {
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} does not have the ${CC.YELLOW}${permission}${CC.RED} permission.")
+        }
+
+        rank.permissions.remove(permission)
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've remove the permission ${CC.WHITE}$permission${CC.SEC} from the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
     }
 }

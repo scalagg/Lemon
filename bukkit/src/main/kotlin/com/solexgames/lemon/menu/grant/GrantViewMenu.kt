@@ -57,17 +57,17 @@ class GrantViewMenu(
         return HashMap<Int, Button>().also {
             if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid) {
                 it[4] = ItemBuilder(Material.PISTON_STICKY_BASE)
-                    .name("${CC.RED}Wipe Grants")
+                    .name("${CC.RED}Invalidate Grants")
                     .addToLore(
-                        "${CC.GRAY}Click to wipe all active",
+                        "${CC.GRAY}Click to invalidate all active",
                         "${CC.GRAY}active grants executed",
                         "${CC.GRAY}by ${CC.WHITE}$viewingFor${CC.GRAY}.",
                         "",
                         "${CC.GRAY}Grants will persist in",
                         "${CC.GRAY}their history after the",
-                        "${CC.GRAY}wipe.",
+                        "${CC.GRAY}invalidation.",
                         "",
-                        "${CC.RED}Shift Click to start wipe."
+                        "${CC.RED}Shift Click to start invalidation."
                     )
                     .toButton { clicker, type ->
                         if (clicker != null && type != null) {
@@ -78,7 +78,7 @@ class GrantViewMenu(
 
                             clicker.sendMessage("${CC.SEC}Starting grant wipe for ${CC.PRI}$viewingFor${CC.SEC}...")
 
-                            Lemon.instance.grantHandler.wipeAllGrantsFor(
+                            Lemon.instance.grantHandler.invalidateAllGrantsBy(
                                 uuid,
                                 clicker
                             ).thenAccept {
@@ -118,9 +118,11 @@ class GrantViewMenu(
             lines.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(grant.target)}")
             lines.add("${CC.SEC}Rank: ${CC.PRI}${grant.getRank().getColoredName()}")
             lines.add("${CC.SEC}Duration: ${CC.PRI + grant.durationString}")
+
             if (grant.isActive) {
                 lines.add("${CC.SEC}Expire Date: ${CC.PRI + grant.expirationString}")
             }
+
             lines.add("")
             lines.add("${CC.SEC}Scopes:")
 

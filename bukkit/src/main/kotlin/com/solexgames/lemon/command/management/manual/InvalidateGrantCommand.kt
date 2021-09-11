@@ -1,9 +1,12 @@
 package com.solexgames.lemon.command.management.manual
 
+import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.player.enums.InvalidationType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.Single
-import org.bukkit.entity.Player
+import net.evilblock.cubed.acf.annotation.CommandPermission
+import net.evilblock.cubed.util.CC
+import org.bukkit.command.CommandSender
 import java.util.*
 
 /**
@@ -12,8 +15,20 @@ import java.util.*
  */
 class InvalidateGrantCommand : BaseCommand() {
 
-    @CommandAlias("invalidategrant|ig")
-    fun onInvalidate(player: Player, uuid: UUID, @Single id: String) {
+    @CommandAlias("invalidategrants")
+    @CommandPermission("lemon.command.invalidategrants")
+    fun onInvalidate(sender: CommandSender, invalidationType: InvalidationType, uuid: UUID) {
+        val completableFuture = if (invalidationType == InvalidationType.ISSUED) {
+            Lemon.instance.grantHandler.invalidateAllGrantsBy(uuid, sender)
+        } else {
+            Lemon.instance.grantHandler.invalidateAllGrantsFor(uuid, sender)
+        }
 
+        sender.sendMessage("${CC.SEC}Starting grant invalidation...")
+
+        completableFuture.thenAccept {
+            sender.sendMessage("${CC.GREEN}Finished grant invalidation.")
+        }
     }
+
 }

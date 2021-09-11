@@ -43,6 +43,10 @@ object RankHandler {
             .joinToString(separator = "${CC.WHITE}, ")
     }
 
+    fun getSorted(): List<Rank> {
+        return ranks.values.sortedByDescending { it.weight }
+    }
+
     private fun createDefaultRank(): Rank {
         val rank = Rank("Default")
         rank.saveAndPushUpdatesGlobally()

@@ -70,7 +70,7 @@ class LemonPlayer(
             val previousRank = fetchPreviousRank(grants)
 
             grants.forEach { grant ->
-                if (!grant.isRemoved && grant.hasExpired()) {
+                if (!grant.isRemoved && grant.hasExpired) {
                     grant.removedReason = "Expired"
                     grant.removedAt = System.currentTimeMillis()
                     grant.removedOn = Lemon.instance.settings.id

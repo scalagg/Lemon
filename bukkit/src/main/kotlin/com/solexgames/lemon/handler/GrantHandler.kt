@@ -12,6 +12,7 @@ import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.function.Function
 
 /**
  * @author GrowlyX
@@ -51,8 +52,20 @@ object GrantHandler {
         }
     }
 
-    fun wipeAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
-        return fetchGrantsByExecutor(uuid).thenApply { grants ->
+    fun invalidateAllGrantsBy(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
+        return fetchGrantsByExecutor(uuid).thenApply { handle(uuid, sender, it); return@thenApply null }
+    }
+
+    fun invalidateAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
+        return fetchGrantsFor(uuid).thenApply { handle(uuid, sender, it); return@thenApply null }
+    }
+
+    fun handle(uuid: UUID, sender: CommandSender, list: List<Grant>) {
+        this.handleInvalidation(uuid, sender).invoke(list)
+    }
+
+    private fun handleInvalidation(uuid: UUID, sender: CommandSender): (List<Grant>) -> Unit {
+        return { grants ->
             var wiped = 0
 
             grants.forEach {
@@ -70,10 +83,8 @@ object GrantHandler {
             }
 
             if (wiped == 0) {
-                sender.sendMessage("${CC.RED}No active grants issued by $uuid were found.")
+                sender.sendMessage("${CC.RED}No active grants related to $uuid were found.")
             }
-
-            return@thenApply null
         }
     }
 
@@ -96,7 +107,7 @@ object GrantHandler {
                     separator = "${CC.SEC}, ${CC.PRI}"
                 )
             }${CC.SEC}.",
-            "${CC.SEC}This grant will ${grant.getFancyDurationString()}${CC.SEC}."
+            "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}."
         ))
     }
 
