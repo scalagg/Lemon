@@ -14,13 +14,11 @@ class EnvironmentCommand : BaseCommand() {
 
     @Default
     @HelpCommand
-    @Syntax("[help]")
     fun onHelp(help: CommandHelp) {
         help.showHelp()
     }
 
     @Subcommand("fetch-online")
-    @Syntax("<group>")
     @Description("Fetch online servers.")
     fun onFetchOnline(sender: CommandSender, group: String) {
         Lemon.instance.handler.fetchOnlineServerInstancesByGroup(group)?.whenComplete { t, u ->
@@ -54,7 +52,6 @@ class EnvironmentCommand : BaseCommand() {
         }
     }
 
-    @Syntax("<id>")
     @Subcommand("fetch")
     @Description("Fetch server by id.")
     fun onFetchServer(sender: CommandSender, id: String) {

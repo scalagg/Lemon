@@ -1,5 +1,6 @@
 package com.solexgames.lemon.command.essentials
 
+import com.solexgames.lemon.util.quickaccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
@@ -22,10 +23,10 @@ class ClearCommand : BaseCommand() {
         val name: String
 
         if (target != null) {
-            name = target.player.name
+            name = coloredName(target.player)!!
             target.player.clearInventory()
         } else {
-            name = player.name
+            name = coloredName(player)!!
             player.clearInventory()
         }
 

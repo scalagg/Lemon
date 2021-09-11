@@ -67,7 +67,7 @@ object PlayerHandler {
 
         val offline = Bukkit.getOfflinePlayer(name)
 
-        if (offline.hasPlayedBefore()) {
+        if (offline != null && offline.hasPlayedBefore()) {
             return Optional.ofNullable(LemonPlayer(offline.uniqueId, offline.name, null))
         }
 

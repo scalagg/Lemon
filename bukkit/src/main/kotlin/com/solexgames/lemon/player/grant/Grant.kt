@@ -27,7 +27,10 @@ class Grant(
     var removedOn: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
-    var removed = false
+    var isRemoved = false
+
+    val isActive: Boolean
+        get() = !isRemoved && !hasExpired
 
     fun getRank(): Rank {
         return Lemon.instance.rankHandler.findRank(rankId) ?: Lemon.instance.rankHandler.getDefaultRank()
@@ -55,7 +58,7 @@ class Grant(
     }
 
     fun canRemove(lemonPlayer: LemonPlayer): Boolean {
-        return lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !removed && !isAutoGrant()
+        return lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !isRemoved && !isAutoGrant()
     }
 
     fun isAutoGrant(): Boolean {

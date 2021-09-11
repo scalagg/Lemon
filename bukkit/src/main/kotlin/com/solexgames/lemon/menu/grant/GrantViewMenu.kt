@@ -15,9 +15,7 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
-import net.evilblock.cubed.util.text.TextSplitter
 import net.evilblock.cubed.util.time.TimeUtil
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
@@ -59,7 +57,7 @@ class GrantViewMenu(
         return HashMap<Int, Button>().also {
             if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid) {
                 it[4] = ItemBuilder(Material.PISTON_STICKY_BASE)
-                    .name("${CC.PRI}Wipe Grants")
+                    .name("${CC.RED}Wipe Grants")
                     .addToLore(
                         "${CC.GRAY}Click to wipe all active",
                         "${CC.GRAY}active grants executed",
@@ -69,7 +67,7 @@ class GrantViewMenu(
                         "${CC.GRAY}their history after the",
                         "${CC.GRAY}wipe.",
                         "",
-                        "${CC.YELLOW}Shift Click to start wipe."
+                        "${CC.RED}Shift Click to start wipe."
                     )
                     .toButton { clicker, type ->
                         if (clicker != null && type != null) {
@@ -101,7 +99,7 @@ class GrantViewMenu(
         override fun getButtonItem(player: Player): ItemStack {
             val lines = arrayListOf<String>()
 
-            val statusLore = if (grant.hasExpired()) "${CC.YELLOW}(Expired)" else if (!grant.removed) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
+            val statusLore = if (grant.hasExpired) "${CC.YELLOW}(Expired)" else if (!grant.isRemoved) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
             val addedBy = grant.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
@@ -110,17 +108,19 @@ class GrantViewMenu(
 
             lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(grant.addedAt)))
 
-            if (grant.hasExpired()) {
+            if (grant.hasExpired) {
                 lines.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(grant.expireDate))
-            } else if (grant.removed) {
+            } else if (grant.isRemoved) {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(grant.removedAt)))
             }
 
             lines.add("")
             lines.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(grant.target)}")
             lines.add("${CC.SEC}Rank: ${CC.PRI}${grant.getRank().getColoredName()}")
-            lines.add("${CC.SEC}Duration: ${CC.PRI + grant.getDurationString()}")
-            lines.add("${CC.SEC}Expire Date: ${CC.PRI + grant.getExpirationString()}")
+            lines.add("${CC.SEC}Duration: ${CC.PRI + grant.durationString}")
+            if (grant.isActive) {
+                lines.add("${CC.SEC}Expire Date: ${CC.PRI + grant.expirationString}")
+            }
             lines.add("")
             lines.add("${CC.SEC}Scopes:")
 
@@ -134,7 +134,7 @@ class GrantViewMenu(
             lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${grant.addedReason}")
             lines.add("")
 
-            if (grant.removed) {
+            if (grant.isRemoved) {
                 val removedBy = grant.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
@@ -152,7 +152,7 @@ class GrantViewMenu(
             lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You cannot remove this grant.")
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (grant.hasExpired()) 1 else if (!grant.removed) 5 else 14).toShort())
+                .data((if (grant.hasExpired) 1 else if (!grant.isRemoved) 5 else 14).toShort())
                 .name("${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)} $statusLore")
                 .addToLore(lines).build()
         }
@@ -184,7 +184,7 @@ class GrantViewMenu(
                         ), true
                     ) {
                         if (it) {
-                            grant.removed = true
+                            grant.isRemoved = true
                             grant.removedBy = player.uniqueId
                             grant.removedAt = System.currentTimeMillis()
                             grant.removedOn = Lemon.instance.settings.id

@@ -49,7 +49,7 @@ object LemonConstants {
     val STORE_LINK = Lemon.instance.lemonWebData.store
 
     @JvmStatic
-    val NO_PERMISSION_SUB: String = "${CC.RED}You do not have permission to perform this subcommand!"
+    val NO_PERMISSION_SUB: String = "${CC.RED}You do not have permission to perform this subcommand."
 
     @JvmStatic
     val SINGLE_ROW = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8)

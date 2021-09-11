@@ -27,6 +27,10 @@ class MessageCommand : BaseCommand() {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val targetLemonPlayer = Lemon.instance.playerHandler.findPlayer(target.player).orElse(null)
 
+        if (target.player.uniqueId == player.uniqueId) {
+            throw ConditionFailedException("You can't message yourself.")
+        }
+
         val pmSetting = lemonPlayer.getSetting("messages-disabled")
         val pmSettingTarget = targetLemonPlayer.getSetting("messages-disabled")
 

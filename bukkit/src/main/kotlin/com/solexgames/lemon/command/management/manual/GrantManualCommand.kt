@@ -3,12 +3,11 @@ package com.solexgames.lemon.command.management.manual
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.rank.Rank
-import com.solexgames.lemon.util.quickaccess.parseDuration
 import com.solexgames.lemon.util.quickaccess.senderUuid
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.annotation.Optional
-import net.evilblock.cubed.util.time.DateUtil
+import net.evilblock.cubed.util.time.Duration
 import org.bukkit.command.CommandSender
 import java.util.*
 
@@ -19,17 +18,15 @@ import java.util.*
 class GrantManualCommand : BaseCommand() {
 
     @CommandAlias("grantmanual")
-    @Syntax("<player> <rank> <duration> [reason]")
     @CommandPermission("lemon.command.grantmanual")
     @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm")
     fun onGrantManual(
         sender: CommandSender,
         target: UUID,
         rank: Rank,
-        duration: String,
-        reason: String
+        duration: Duration,
+        @Optional reason: String?
     ) {
-        val actualDuration = parseDuration(duration)
         val grant = Grant(
             UUID.randomUUID(),
             target,
@@ -37,27 +34,25 @@ class GrantManualCommand : BaseCommand() {
             senderUuid(sender),
             System.currentTimeMillis(),
             Lemon.instance.settings.id,
-            reason,
-            actualDuration
+            reason ?: "No reason provided",
+            duration.get()
         )
 
         Lemon.instance.grantHandler.handleGrant(sender, grant)
     }
 
     @CommandAlias("grantmanualscope")
-    @Syntax("<player> <rank> <duration> <scopes> [reason]")
     @CommandPermission("lemon.command.grantmanualscope")
     @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm global")
     fun onGrantManualScope(
         sender: CommandSender,
         target: UUID,
         rank: Rank,
-        duration: String,
-        scope: String,
-        reason: String
+        duration: Duration,
+        @Single scopes: String,
+        @Optional reason: String?
     ) {
-        val actualDuration = parseDuration(duration)
-        val actualScopes = scope.split(",")
+        val splitScopes = scopes.split(",")
         val grant = Grant(
             UUID.randomUUID(),
             target,
@@ -65,13 +60,13 @@ class GrantManualCommand : BaseCommand() {
             senderUuid(sender),
             System.currentTimeMillis(),
             Lemon.instance.settings.id,
-            reason,
-            actualDuration
+            reason ?: "No reason provided",
+            duration.get()
         )
 
         grant.scopes.clear()
 
-        actualScopes.forEach {
+        splitScopes.forEach {
             if (!grant.scopes.contains(it)) {
                 grant.scopes.add(it)
             }

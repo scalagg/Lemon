@@ -8,7 +8,6 @@ import com.solexgames.lemon.util.quickaccess.coloredName
 import com.solexgames.lemon.util.quickaccess.reloadPlayer
 import com.solexgames.lemon.util.quickaccess.senderUuid
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
 import java.util.*
@@ -57,8 +56,8 @@ object GrantHandler {
             var wiped = 0
 
             grants.forEach {
-                if (!it.removed) {
-                    it.removed = true
+                if (!it.isRemoved) {
+                    it.isRemoved = true
                     it.removedBy = senderUuid(sender)
                     it.removedAt = System.currentTimeMillis()
                     it.removedOn = Lemon.instance.settings.id
@@ -91,13 +90,13 @@ object GrantHandler {
         }
 
         sender.sendMessage(arrayOf(
-            "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the rank ${grant.getRank().getColoredName()}${CC.SEC} for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
+            "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${grant.getRank().getColoredName()}${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
             "${CC.SEC}Granted for scopes: ${CC.PRI}${
                 grant.scopes.joinToString(
                     separator = "${CC.SEC}, ${CC.PRI}"
                 )
             }${CC.SEC}.",
-            "${CC.SEC}The grant will ${grant.getFancyDurationString()}${CC.SEC}."
+            "${CC.SEC}This grant will ${grant.getFancyDurationString()}${CC.SEC}."
         ))
     }
 

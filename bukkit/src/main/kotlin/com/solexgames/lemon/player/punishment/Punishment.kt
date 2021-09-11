@@ -23,7 +23,10 @@ class Punishment(
     var removedOn: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
-    var removed: Boolean = false
+    var isRemoved: Boolean = false
+
+    val isActive: Boolean
+        get() = !isRemoved && !hasExpired
 
     override fun save(): CompletableFuture<Void> {
         return Lemon.instance.mongoHandler.punishmentLayer.saveEntry(uuid.toString(), this)

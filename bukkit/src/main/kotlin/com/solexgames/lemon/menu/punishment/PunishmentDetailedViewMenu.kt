@@ -62,7 +62,7 @@ class PunishmentDetailedViewMenu(
         override fun getButtonItem(player: Player): ItemStack {
             val lines = arrayListOf<String>()
 
-            val statusLore = if (punishment.hasExpired()) "${CC.YELLOW}(Expired)" else if (!punishment.removed) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
+            val statusLore = if (punishment.hasExpired) "${CC.YELLOW}(Expired)" else if (!punishment.isRemoved) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
             val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
@@ -71,9 +71,9 @@ class PunishmentDetailedViewMenu(
 
             lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
 
-            if (punishment.hasExpired()) {
+            if (punishment.hasExpired) {
                 lines.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
-            } else if (punishment.removed) {
+            } else if (punishment.isRemoved) {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
             }
 
@@ -81,20 +81,19 @@ class PunishmentDetailedViewMenu(
             lines.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(punishment.target)}")
 
             if (!punishment.category.instant) {
-                lines.add("${CC.SEC}Duration: ${CC.PRI + punishment.getDurationString()}")
+                lines.add("${CC.SEC}Duration: ${CC.PRI + punishment.durationString}")
             }
-            if (!punishment.removed || !punishment.hasExpired()) {
-                lines.add("${CC.SEC}Expire Date: ${CC.PRI + punishment.getExpirationString()}")
+            if (punishment.isActive) {
+                lines.add("${CC.SEC}Expire Date: ${CC.PRI + punishment.expirationString}")
             }
 
             lines.add("")
             lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
-            lines.add("${CC.SEC}Issued At: ${CC.PRI}${TimeUtil.formatIntoDateString(Date(punishment.addedAt))}")
             lines.add("${CC.SEC}Issued On: ${CC.PRI}${punishment.addedOn}")
             lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${punishment.addedReason}")
             lines.add("")
 
-            if (punishment.removed) {
+            if (punishment.isRemoved) {
                 val removedBy = punishment.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
@@ -102,7 +101,6 @@ class PunishmentDetailedViewMenu(
                 }
 
                 lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
-                lines.add("${CC.SEC}Removed At: ${CC.PRI}${TimeUtil.formatIntoDateString(Date(punishment.removedAt))}")
                 lines.add("${CC.SEC}Removed On: ${CC.PRI}${punishment.removedOn}")
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${punishment.removedReason}")
                 lines.add("")
@@ -117,7 +115,7 @@ class PunishmentDetailedViewMenu(
             lines.add(if (canRemove) "${CC.GREEN}Click to remove this punishment." else "${CC.RED}You can't remove this punishment.")
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (!punishment.hasExpired()) 5 else if (punishment.removed) 1 else 14).toShort())
+                .data((if (!punishment.hasExpired) 5 else if (punishment.isRemoved) 1 else 14).toShort())
                 .name("${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)} $statusLore")
                 .addToLore(lines)
                 .build()

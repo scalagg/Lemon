@@ -1,7 +1,6 @@
 package com.solexgames.lemon.util
 
 import com.solexgames.lemon.player.grant.Grant
-import java.util.stream.Collectors
 
 object GrantRecalculationUtil {
 
@@ -13,13 +12,13 @@ object GrantRecalculationUtil {
     fun getProminentGrant(grants: List<Grant>): Grant? {
         return grants
             .sortedByDescending { it.addedAt }
-            .firstOrNull { !it.removed && !it.hasExpired() && it.getRank().visible && it.isApplicable() }
+            .firstOrNull { !it.isRemoved && !it.hasExpired && it.getRank().visible && it.isApplicable() }
     }
 
     @JvmStatic
     fun getPermissionGrants(grants: List<Grant>): List<Grant> {
         return grants
             .sortedByDescending { it.addedAt }
-            .filter { !it.removed && !it.hasExpired() && it.isApplicable() }
+            .filter { !it.isRemoved && !it.hasExpired && it.isApplicable() }
     }
 }

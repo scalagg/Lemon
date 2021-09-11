@@ -14,8 +14,6 @@ import org.bukkit.entity.Player
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
-import kotlin.collections.ArrayList
 
 class LemonPlayer(
     var uniqueId: UUID,
@@ -72,11 +70,11 @@ class LemonPlayer(
             val previousRank = fetchPreviousRank(grants)
 
             grants.forEach { grant ->
-                if (!grant.removed && grant.hasExpired()) {
+                if (!grant.isRemoved && grant.hasExpired()) {
                     grant.removedReason = "Expired"
                     grant.removedAt = System.currentTimeMillis()
                     grant.removedOn = Lemon.instance.settings.id
-                    grant.removed = true
+                    grant.isRemoved = true
 
                     grant.save()
 

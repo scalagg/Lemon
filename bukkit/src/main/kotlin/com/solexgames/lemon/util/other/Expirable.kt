@@ -17,39 +17,36 @@ open class Expirable(
 
     var expireDate: Date = Date(addedAt + duration)
 
-    private fun isPermanent(): Boolean {
-        return duration == Long.MAX_VALUE
-    }
+    val isPermanent: Boolean
+        get() = duration == Long.MAX_VALUE
 
-    fun getExpirationString(): String {
-        return if (isPermanent()) {
+    val expirationString: String
+        get() = if (isPermanent) {
             "Never"
         } else {
             TimeUtil.formatIntoCalendarString(expireDate)
         }
-    }
 
-    fun getDurationString(): String {
-        return if (isPermanent()) {
+    val durationString: String
+        get() = if (isPermanent) {
             "Permanent"
         } else {
             DurationFormatUtils.formatDurationWords(
                 duration, true, true
             )
         }
-    }
 
-    fun getFancyDurationString(): String {
-        return if (isPermanent()) {
-            "${CC.RED}never${CC.SEC} expire"
+    val fancyDurationString: String
+        get() = if (isPermanent) {
+            "${CC.RED}not${CC.SEC} expire"
         } else {
-            "expire in ${CC.PRI}${DurationFormatUtils.formatDurationWords(
-                duration, true, true
-            )}"
+            "expire in ${CC.PRI}${
+                DurationFormatUtils.formatDurationWords(
+                    duration, true, true
+                )
+            }"
         }
-    }
 
-    fun hasExpired(): Boolean {
-        return !isPermanent() && System.currentTimeMillis() >= addedAt + duration
-    }
+    val hasExpired: Boolean
+        get() = !isPermanent && System.currentTimeMillis() >= addedAt + duration
 }
