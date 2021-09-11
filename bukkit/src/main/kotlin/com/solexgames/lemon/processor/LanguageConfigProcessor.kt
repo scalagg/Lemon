@@ -47,6 +47,6 @@ class LanguageConfigProcessor {
     var playerDataLoad = "${CC.RED}Your account did not load properly.\n${CC.GRAY}Please reconnect to resolve this issue."
 
     @Coloured
-    var serverNotLoaded = "${CC.RED}The server has not loaded yet, please reconnect in a few seconds."
+    var serverNotLoaded = "${CC.RED}The server is still loading.\n${CC.GRAY}Please reconnect in a few seconds."
 
 }
