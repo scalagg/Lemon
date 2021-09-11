@@ -109,8 +109,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
 
-    val conversationFactory = ConversationFactory(this)
-
     override fun enable() {
         instance = this
 
