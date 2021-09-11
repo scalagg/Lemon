@@ -20,9 +20,14 @@ class ListCommand : BaseCommand() {
         val correctedPlayerList = getCorrectedPlayerList(sender)
         val isMoreThan350 = correctedPlayerList.size > 350
 
+        // don't change these lines
         val sortedPlayers = correctedPlayerList
-            .map { it.getColoredName() }
-            .joinToString(separator = "${CC.WHITE}, ")
+            .map {
+                it.getColoredName()
+            }.joinToString(
+                separator = "${CC.WHITE}, "
+            )
+        // don't change these lines
 
         sender.sendMessage(
             arrayOf(

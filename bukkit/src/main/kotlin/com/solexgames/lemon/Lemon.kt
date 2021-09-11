@@ -265,9 +265,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         }
 
         registerCommandsInPackage(commandManager, "com.solexgames.lemon.command")
-        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command.environment")
-        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command.management")
-        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command.moderation")
 
         logger.info("Loaded command manager")
     }
@@ -366,7 +363,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         setupDataStore()
     }
 
-    fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
+    private fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
         ClassUtils.getClassesInPackage(this, commandPackage).forEach { clazz ->
             commandManager.registerCommand(clazz.newInstance() as BaseCommand)
         }

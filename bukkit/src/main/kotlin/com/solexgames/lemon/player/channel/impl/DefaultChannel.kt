@@ -7,7 +7,7 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class DefaultChannel: Channel {
+open class DefaultChannel: Channel {
 
     override fun getId(): String {
         return "default"
@@ -17,7 +17,11 @@ class DefaultChannel: Channel {
         val lemonPlayer = Lemon.instance.playerHandler.findOnlinePlayer(sender) ?: return ""
         val player = Bukkit.getPlayer(sender)
 
-        return "${rank.prefix}${lemonPlayer.getColoredName()}${rank.suffix}${CC.WHITE}: ${colorIfHasPermission(player, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"
+        return "${rank.prefix}${lemonPlayer.getColoredName()}${rank.suffix}${getChatTag(player) ?: ""}${CC.WHITE}: ${colorIfHasPermission(player, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"
+    }
+
+    open fun getChatTag(player: Player): String? {
+        return ""
     }
 
     override fun getPrefix(): String? {

@@ -58,7 +58,7 @@ class PunishmentViewMenu(
                 }
         }
 
-        for (int in LemonConstants.SINGLE_ROW) {
+        for (int in 0..8) {
             buttons.putIfAbsent(int, LemonConstants.EMPTY)
         }
 

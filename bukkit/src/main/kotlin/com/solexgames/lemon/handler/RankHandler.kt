@@ -38,7 +38,9 @@ object RankHandler {
     }
 
     fun getSortedRankString(): String {
-        return ranks.values.sortedBy { -it.weight }
+        return ranks.values
+            .filter { it.visible }
+            .sortedBy { -it.weight }
             .map { it.getColoredName() }
             .joinToString(separator = "${CC.WHITE}, ")
     }

@@ -114,7 +114,7 @@ object PlayerHandler {
     }
 
     fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer> {
-        var currentList = ArrayList<Player>(Bukkit.getOnlinePlayers())
+        var currentList = ArrayList(Bukkit.getOnlinePlayers())
             .mapNotNull {
                 Lemon.instance.playerHandler.findPlayer(it.uniqueId).orElse(null)
             }.sortedBy { -it.activeGrant!!.getRank().weight }

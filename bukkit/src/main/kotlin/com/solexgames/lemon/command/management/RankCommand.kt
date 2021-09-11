@@ -133,8 +133,6 @@ class RankCommand : BaseCommand() {
                 }
             ).publishAsync()
 
-            Lemon.instance.rankHandler.ranks.remove(rank.uuid)
-
             sender.sendMessage("${CC.SEC}You've deleted the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
     }

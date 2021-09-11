@@ -60,7 +60,7 @@ class PlayerListener : Listener {
                 AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
             )
         } else {
-            if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff()) {
+            if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff) {
                 event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
             }
         }
