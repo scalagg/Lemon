@@ -6,6 +6,7 @@ import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.CubedCacheUtil
 import com.solexgames.lemon.util.quickaccess.coloredName
 import com.solexgames.lemon.util.quickaccess.reloadPlayer
+import com.solexgames.lemon.util.quickaccess.senderUuid
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
@@ -51,26 +52,21 @@ object GrantHandler {
         }
     }
 
-    fun wipeGrant(uuid: UUID, remover: UUID?) {
-        fetchExactGrantById(uuid).whenComplete { grant, _ ->
-            grant.removedReason = "Removed"
-            grant.removedAt = System.currentTimeMillis()
-            grant.removed = true
-            grant.removedBy = remover
-
-            grant.save()
-        }
-    }
-
-    fun wipeAllGrantsFor(uuid: UUID) {
-        fetchGrantsFor(uuid).whenComplete { grants, _ ->
+    fun wipeAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
+        return fetchGrantsByExecutor(uuid).thenApply { grants ->
             grants.forEach {
-                it.removedReason = "Removed (Grant Wipe)"
-                it.removedAt = System.currentTimeMillis()
-                it.removed = true
+                if (!it.removed) {
+                    it.removed = true
+                    it.removedBy = senderUuid(sender)
+                    it.removedAt = System.currentTimeMillis()
+                    it.removedOn = Lemon.instance.settings.id
+                    it.removedReason = "Manual Wipe (Lemon)"
 
-                it.save()
+                    it.save()
+                }
             }
+
+            return@thenApply null
         }
     }
 

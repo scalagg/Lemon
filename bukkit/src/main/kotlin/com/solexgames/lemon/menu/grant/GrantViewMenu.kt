@@ -18,6 +18,7 @@ import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
@@ -50,6 +51,50 @@ class GrantViewMenu(
         return HashMap<Int, Button>().also {
             grants.sortedByDescending { it.addedAt }.forEach { grant ->
                 it[it.size] = GrantButton(grant, viewType, viewingFor!!)
+            }
+        }
+    }
+
+    override fun getGlobalButtons(player: Player): Map<Int, Button> {
+        return HashMap<Int, Button>().also {
+            if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid) {
+                it[4] = ItemBuilder(Material.PISTON_STICKY_BASE)
+                    .name("${CC.PRI}Wipe Grants")
+                    .addToLore(
+                        "${CC.GRAY}Click to wipe all active",
+                        "${CC.GRAY}active grants executed",
+                        "${CC.GRAY}by ${CC.WHITE}$viewingFor${CC.GRAY}.",
+                        "",
+                        "${CC.GRAY}Grants will persist in",
+                        "${CC.GRAY}their history after the",
+                        "${CC.GRAY}wipe.",
+                        "",
+                        "${CC.YELLOW}Click to start wipe."
+                    )
+                    .toButton() { clicker, clickType ->
+                        if (clicker != null) {
+                            if (!clicker.hasPermission("lemon.grants.wipe")) {
+                                clicker.sendMessage("${CC.RED}You do not have permission to perform this action!")
+                                return@toButton
+                            }
+
+                            clicker.sendMessage("${CC.SEC}Starting grant wipe for ${CC.PRI}$viewingFor${CC.SEC}...")
+
+                            Lemon.instance.grantHandler.wipeAllGrantsFor(
+                                uuid,
+                                clicker
+                            ).thenAccept {
+                                clicker.sendMessage("${CC.SEC}Finished grant wipe, now updating menu...")
+
+                                Tasks.sync {
+                                    Bukkit.dispatchCommand(
+                                        player,
+                                        "granthistory $viewingFor"
+                                    )
+                                }
+                            }
+                        }
+                    }
             }
         }
     }
@@ -111,14 +156,17 @@ class GrantViewMenu(
             lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You cannot remove this grant.")
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (!grant.hasExpired()) 5 else if (grant.removed) 1 else 14).toShort())
+                .data((if (grant.hasExpired()) 1 else if (!grant.removed) 5 else 14).toShort())
                 .name("${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)} $statusLore")
                 .addToLore(lines).build()
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
             val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
-            assert(clickType.name.contains("RIGHT") && grant.canRemove(lemonPlayer))
+
+            if (!clickType.name.contains("RIGHT") || !grant.canRemove(lemonPlayer)) {
+                return
+            }
 
             startContinuousPrompt(
                 FuturePrompt({ _, input ->

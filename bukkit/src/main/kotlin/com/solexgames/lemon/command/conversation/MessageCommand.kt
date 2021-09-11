@@ -27,16 +27,16 @@ class MessageCommand : BaseCommand() {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val targetLemonPlayer = Lemon.instance.playerHandler.findPlayer(target.player).orElse(null)
 
-        val pmSetting = lemonPlayer.getSetting("private-messages")
-        val pmSettingTarget = targetLemonPlayer.getSetting("private-messages")
+        val pmSetting = lemonPlayer.getSetting("messages-disabled")
+        val pmSettingTarget = targetLemonPlayer.getSetting("messages-disabled")
 
         if (!VisibilityHandler.treatAsOnline(target.player, player)) {
             player.sendMessage(MessageKeys.COULD_NOT_FIND_PLAYER.messageKey.key.replace("{search}", target.player.name))
         }
-        if (!pmSetting) {
+        if (pmSetting) {
             throw ConditionFailedException("You have private messages disabled.")
         }
-        if (!pmSettingTarget) {
+        if (pmSettingTarget) {
             throw ConditionFailedException("${CC.YELLOW}${target.player.name} ${CC.RED}has private messages disabled.")
         }
         if (lemonPlayer.ignoring.contains(target.player.uniqueId)) {

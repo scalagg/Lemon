@@ -12,7 +12,7 @@ import java.util.*
 object ChatHandler {
 
     val channels = mutableMapOf<String, Channel>()
-    val channelOverrides = ArrayList<ChannelOverride>()
+    private val channelOverrides = ArrayList<ChannelOverride>()
 
     var chatMuted = false
     var slowChatTime = 0

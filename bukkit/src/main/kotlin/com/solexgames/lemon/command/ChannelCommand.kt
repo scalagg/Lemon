@@ -53,4 +53,12 @@ class ChannelCommand : BaseCommand() {
                 )
         }${CC.SEC}.")
     }
+
+    @Subcommand("reset")
+    fun onReset(player: Player) {
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+        lemonPlayer.removeMetadata("channel")
+
+        player.sendMessage("${CC.GREEN}You've reset your channel.")
+    }
 }

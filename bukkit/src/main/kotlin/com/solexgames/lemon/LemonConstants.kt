@@ -25,9 +25,6 @@ object LemonConstants {
     val STAFF = String.format(BASE_PREFIX, "Staff")
 
     @JvmStatic
-    val LEMON = String.format(BASE_PREFIX, "Lemon")
-
-    @JvmStatic
     val STRING_METADATA_MAP_TYPE: Type = object : TypeToken<HashMap<String, Metadata>>() {}.type
 
     @JvmStatic

@@ -73,20 +73,25 @@ class PlayerListener : Listener {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val chatHandler = Lemon.instance.chatHandler
 
-        if (!lemonPlayer.isStaff()) {
-            // TODO: 27/08/2021 add mute check
-            if (chatHandler.chatMuted || lemonPlayer.hasPermission("lemon.chat.bypass")) {
-                cancel(event, "${CC.RED}Global chat is currently muted.")
-            } else if (chatHandler.slowChatTime != 0) {
-                if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true) {
-                    val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
+        if (lemonPlayer.activeGrant == null) {
+            cancel(event, "${CC.RED}Your profile has not loaded correctly.")
+            cancel(event, "${CC.RED}Reconnect to resolve this issue.")
+            return
+        }
 
-                    cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
-                    return
-                }
+        if (chatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.chat.mute.bypass")) {
+            cancel(event, "${CC.RED}Global chat is currently muted.")
+        } else if (chatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.chat.slow.bypass")) {
+            if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true) {
+                val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
 
-                lemonPlayer.cooldowns["slowChat"] = Cooldown(chatHandler.slowChatTime * 1000L)
-            } else {
+                cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
+                return
+            }
+
+            lemonPlayer.cooldowns["slowChat"] = Cooldown(chatHandler.slowChatTime * 1000L)
+        } else {
+            if (!lemonPlayer.hasPermission("lemon.chat.delay.bypass")) {
                 if (lemonPlayer.cooldowns["chat"]?.isActive() == true) {
                     val formatted = lemonPlayer.cooldowns["chat"]?.let { remaining(it) }
 
@@ -133,10 +138,12 @@ class PlayerListener : Listener {
             channelMatch = it
         }
 
-        if (channelMatch == null) /* could happen if someone messes with channels externally*/ {
+        if (channelMatch == null) {
             cancel(event, "${CC.RED}Something's wrong with global chat, please contact a developer. (104)")
             return
         }
+
+        event.isCancelled = true
 
         if (channelMatch?.isGlobal() == true) {
             RedisHandler.buildMessage(
@@ -148,48 +155,44 @@ class PlayerListener : Listener {
                     put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
                 }
             ).publishAsync()
-
-            event.isCancelled = true
         } else {
-            Bukkit.getOnlinePlayers().forEach {
+            for (target in Bukkit.getOnlinePlayers()) {
                 var canReceive = true
 
-                if (channelMatch?.getPermission() != null) {
-                    canReceive = it.hasPermission(channelMatch?.getPermission())
+                if (channelMatch!!.getPermission() != null) {
+                    canReceive = target.hasPermission(channelMatch!!.getPermission())
                 }
 
                 if (!canReceive) {
-                    return@forEach
+                    continue
                 }
 
-                val lemonTarget = Lemon.instance.playerHandler.findPlayer(it).orElse(null)
+                val lemonTarget = Lemon.instance.playerHandler.findPlayer(target).orElse(null)
 
                 if (lemonTarget != null) {
                     if (lemonTarget.getSetting("global-chat-disabled")) {
-                        return@forEach
+                        continue
                     }
 
                     if (lemonTarget.getSetting(channelMatch?.getId() + "-disabled")) {
-                        return@forEach
+                        continue
                     }
                 }
 
                 if (!canReceive) {
-                    return@forEach
+                    continue
                 }
 
-                player.sendMessage(
+                target.sendMessage(
                     channelMatch?.getFormatted(
                         event.message,
                         player.name,
                         lemonPlayer.activeGrant!!.getRank(),
-                        it
+                        target
                     )
                 )
             }
         }
-
-        event.isCancelled = true
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

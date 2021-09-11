@@ -30,6 +30,7 @@ import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
 import com.solexgames.lemon.task.GrantUpdateRunnable
 import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
+import com.solexgames.lemon.util.CubedCacheUtil
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
@@ -196,6 +197,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         val commandManager = CubedCommandManager(this)
 
         listOf<MessageType>(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
+            commandManager.getFormat(it).setColor(3, ChatColor.GRAY)
             commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
             commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))
         }
@@ -233,8 +235,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                 return@registerContext UUIDUtil.formatUUID(firstArgument)
                     ?: throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
             } else if (firstArgument.length <= 16) {
-                return@registerContext Cubed.instance.uuidCache.uuid(firstArgument)
-                    ?: throw ConditionFailedException("Couldn't find uuid of player ${CC.YELLOW}${firstArgument}${CC.RED}.")
+                return@registerContext CubedCacheUtil.fetchUuid(firstArgument)
+                    ?: throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${firstArgument}${CC.RED}.")
             }
 
             return@registerContext try {

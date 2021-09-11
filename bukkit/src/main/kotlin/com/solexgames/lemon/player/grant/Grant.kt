@@ -59,6 +59,10 @@ class Grant(
         return lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !removed && (addedReason != "Automatic (Lemon)" && addedBy != null)
     }
 
+    fun isAutoGrant(): Boolean {
+        return addedReason == "Automatic (Lemon)" && addedBy == null
+    }
+
     override fun save(): CompletableFuture<Void> {
         Tasks.asyncDelayed(2L) {
             RedisHandler.buildMessage(
