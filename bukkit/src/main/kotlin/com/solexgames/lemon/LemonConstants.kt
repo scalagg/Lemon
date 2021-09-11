@@ -40,9 +40,6 @@ object LemonConstants {
     val UUID_ARRAY_LIST_TYPE: Type = object : TypeToken<MutableList<UUID>>() {}.type
 
     @JvmStatic
-    val GSON = Serializers.gson
-
-    @JvmStatic
     val SERVER_NAME = Lemon.instance.lemonWebData.serverName
 
     @JvmStatic
@@ -65,7 +62,5 @@ object LemonConstants {
         .data(15)
         .name(" ")
         .toButton()
-
-
 
 }

@@ -60,6 +60,19 @@ object RedisHandler: JedisHandler {
         }
     }
 
+    @Subscription(action = "recalculate-grants")
+    fun onRecalculate(jsonAppender: JsonAppender) {
+        val targetUuid = UUID.fromString(
+            jsonAppender.getParam("target")
+        )
+
+        Lemon.instance.playerHandler.findPlayer(targetUuid).ifPresent {
+            it.recalculateGrants(
+                shouldCalculateNow = true
+            )
+        }
+    }
+
     private fun sendMessage(message: String, permission: (Player) -> Boolean) {
         Bukkit.getOnlinePlayers().forEach {
             if (permission.invoke(it)) {

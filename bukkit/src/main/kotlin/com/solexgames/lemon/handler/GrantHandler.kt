@@ -3,7 +3,13 @@ package com.solexgames.lemon.handler
 import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.grant.Grant
+import com.solexgames.lemon.util.CubedCacheUtil
+import com.solexgames.lemon.util.quickaccess.coloredName
+import com.solexgames.lemon.util.quickaccess.reloadPlayer
+import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
+import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -71,6 +77,24 @@ object GrantHandler {
     fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant> {
         return Lemon.instance.mongoHandler.grantLayer
             .fetchEntryByKey(uuid.toString())
+    }
+
+    fun handleGrant(sender: CommandSender, grant: Grant) {
+        val name = CubedCacheUtil.fetchName(grant.target)
+
+        grant.save().thenRun {
+            reloadPlayer(grant.uuid)
+        }
+
+        sender.sendMessage(arrayOf(
+            "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the rank ${grant.getRank().getColoredName()}${CC.SEC} for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
+            "${CC.SEC}Granted for scopes: ${CC.PRI}${
+                grant.scopes.joinToString(
+                    separator = "${CC.SEC}, ${CC.PRI}"
+                )
+            }${CC.SEC}.",
+            "${CC.SEC}The grant will ${grant.getFancyDurationString()}${CC.SEC}."
+        ))
     }
 
 }

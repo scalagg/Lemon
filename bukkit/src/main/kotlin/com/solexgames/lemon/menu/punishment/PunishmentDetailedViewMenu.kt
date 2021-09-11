@@ -43,7 +43,7 @@ class PunishmentDetailedViewMenu(
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return HashMap<Int, Button>().also {
-            punishments.forEach { punishment ->
+            punishments.sortedByDescending { it.addedAt }.forEach { punishment ->
                 it[it.size] = PunishmentButton(punishment)
             }
         }
@@ -62,7 +62,7 @@ class PunishmentDetailedViewMenu(
         override fun getButtonItem(player: Player): ItemStack {
             val lines = arrayListOf<String>()
 
-            val statusLore = if (punishment.removed) "${CC.RED}(Removed)" else if (!punishment.hasExpired()) "${CC.GREEN}(Active)" else "${CC.YELLOW}(Expired)"
+            val statusLore = if (punishment.hasExpired()) "${CC.YELLOW}(Expired)" else if (!punishment.removed) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
             val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
@@ -71,11 +71,10 @@ class PunishmentDetailedViewMenu(
 
             lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
 
-            if (punishment.removed) {
-                lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
-            }
             if (punishment.hasExpired()) {
                 lines.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
+            } else if (punishment.removed) {
+                lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
             }
 
             lines.add("")
@@ -90,6 +89,7 @@ class PunishmentDetailedViewMenu(
 
             lines.add("")
             lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
+            lines.add("${CC.SEC}Issued At: ${CC.PRI}${TimeUtil.formatIntoDateString(Date(punishment.addedAt))}")
             lines.add("${CC.SEC}Issued On: ${CC.PRI}${punishment.addedOn}")
             lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${punishment.addedReason}")
             lines.add("")
@@ -102,6 +102,7 @@ class PunishmentDetailedViewMenu(
                 }
 
                 lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
+                lines.add("${CC.SEC}Removed At: ${CC.PRI}${TimeUtil.formatIntoDateString(Date(punishment.removedAt))}")
                 lines.add("${CC.SEC}Removed On: ${CC.PRI}${punishment.removedOn}")
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${punishment.removedReason}")
                 lines.add("")

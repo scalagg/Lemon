@@ -1,4 +1,4 @@
-package com.solexgames.lemon.command
+package com.solexgames.lemon.command.management
 
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.menu.punishment.PunishmentViewMenu
@@ -40,7 +40,7 @@ class HistoryCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandCompletion("@players")
-    @CommandAlias("staffhistory|staffhist")
+    @CommandAlias("staffhistory|staffhist|csp|cp")
     @CommandPermission("lemon.command.staffhistory.punishments")
     fun onStaffHistory(player: Player, uuid: UUID) {
         val name = CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")

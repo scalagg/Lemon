@@ -212,7 +212,7 @@ class PlayerListener : Listener {
 
         lemonPlayer.ifPresent { player ->
             player.handleOnConnection.forEach {
-                it.accept(event.player)
+                it.invoke(event.player)
             }
         }
     }

@@ -25,21 +25,14 @@ object RankHandler {
         return Optional.ofNullable(ranks.getOrDefault(uuid, null))
     }
 
-    fun findRank(name: String): Optional<Rank> {
-        return ranks.values.stream()
-            .filter {
-                it.name.equals(name, true)
-            }.findFirst()
+    fun findRank(name: String): Rank? {
+        return ranks.values.firstOrNull {
+            it.name.equals(name, true)
+        }
     }
 
     fun getDefaultRank(): Rank {
-        val optionalRank = findRank("Default")
-
-        if (optionalRank.isPresent) {
-            return optionalRank.get()
-        }
-
-        return createDefaultRank()
+        return findRank("Default") ?: createDefaultRank()
     }
 
     private fun createDefaultRank(): Rank {

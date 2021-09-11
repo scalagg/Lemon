@@ -1,4 +1,4 @@
-package com.solexgames.lemon.command
+package com.solexgames.lemon.command.management
 
 import com.solexgames.lemon.Lemon
 import net.evilblock.cubed.acf.BaseCommand

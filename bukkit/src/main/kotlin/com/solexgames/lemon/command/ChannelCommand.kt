@@ -45,10 +45,12 @@ class ChannelCommand : BaseCommand() {
 
     @Subcommand("list|showall")
     fun onShowAll(player: Player) {
-        player.sendMessage("${CC.SEC}Channels: ${
-            Lemon.instance.chatHandler.channels.values.joinToString(
-                separator = "${CC.GRAY}, ${CC.PRI}"
-            )
+        player.sendMessage("${CC.SEC}Channels: ${CC.PRI}${
+            Lemon.instance.chatHandler.channels.values
+                .map { it.getId() }
+                .joinToString(
+                    separator = "${CC.YELLOW}, ${CC.PRI}"
+                )
         }${CC.SEC}.")
     }
 }

@@ -1,10 +1,12 @@
 package com.solexgames.lemon.player.grant
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.handler.RedisHandler
+import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.rank.Rank
-import com.solexgames.lemon.util.other.Expireable
+import com.solexgames.lemon.util.other.Expirable
 import com.solexgames.lemon.util.type.Savable
-import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -17,7 +19,7 @@ class Grant(
     var addedOn: String,
     var addedReason: String,
     duration: Long
-): Expireable(addedAt, duration), Savable {
+): Expirable(addedAt, duration), Savable {
 
     var scopes: MutableList<String> = mutableListOf("global")
 
@@ -53,10 +55,17 @@ class Grant(
         return boolean
     }
 
+    fun canRemove(lemonPlayer: LemonPlayer?): Boolean {
+        return lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !removed && (addedReason != "Automatic (Lemon)" && addedBy != null)
+    }
+
     override fun save(): CompletableFuture<Void> {
-        Lemon.instance.playerHandler.findPlayer(target).ifPresent {
-            it.recalculateGrants(
-                shouldCalculateNow = true
+        Tasks.asyncDelayed(2L) {
+            RedisHandler.buildMessage(
+                "recalculate-grants",
+                mutableMapOf<String, String>().also {
+                    it["target"] = target.toString()
+                }
             )
         }
 

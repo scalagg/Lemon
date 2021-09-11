@@ -40,7 +40,6 @@ import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.MessageKeys
 import net.evilblock.cubed.acf.MessageType
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.entity.EntitySerializer
@@ -58,10 +57,12 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
+import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
+import org.bukkit.conversations.ConversationFactory
 import org.bukkit.entity.Entity
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
@@ -106,6 +107,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private lateinit var consoleLogger: ConsoleLogger
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
+
+    val conversationFactory = ConversationFactory(this)
 
     override fun enable() {
         instance = this
@@ -192,7 +195,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
 
-        listOf<MessageType>(MessageType.HELP, MessageType.ERROR, MessageType.INFO, MessageType.SYNTAX).forEach {
+        listOf<MessageType>(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
             commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
             commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))
         }
@@ -202,13 +205,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         }
 
         commandManager.commandContexts.registerContext(Rank::class.java) {
-            val rank = rankHandler.findRank(it.firstArg)
+            val firstArgument = it.popFirstArg()
 
-            if (!rank.isPresent) {
-                throw ConditionFailedException("Could not find rank by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
-            }
-
-            return@registerContext rank.get()
+            return@registerContext rankHandler.findRank(firstArgument)
+                ?: throw ConditionFailedException("Could not find rank by the name: ${CC.YELLOW}$firstArgument${CC.RED}.")
         }
 
         commandManager.commandContexts.registerContext(Channel::class.java) {
@@ -224,6 +224,24 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             }
 
             return@registerContext lemonPlayer.get()
+        }
+
+        commandManager.commandContexts.registerContext(UUID::class.java) { c ->
+            val firstArgument = c.popFirstArg()
+
+            if (firstArgument.length == 32) {
+                return@registerContext UUIDUtil.formatUUID(firstArgument)
+                    ?: throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
+            } else if (firstArgument.length <= 16) {
+                return@registerContext Cubed.instance.uuidCache.uuid(firstArgument)
+                    ?: throw ConditionFailedException("Couldn't find uuid of player ${CC.YELLOW}${firstArgument}${CC.RED}.")
+            }
+
+            return@registerContext try {
+                UUID.fromString(firstArgument)
+            } catch (ignored: Exception) {
+                throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
+            }
         }
 
         commandManager.commandCompletions.registerAsyncCompletion("players") {

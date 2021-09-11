@@ -25,17 +25,17 @@ class LemonPlayer(
     var ipAddress: String?
 ): Savable {
 
-    var pastIpAddresses = HashMap<String, Long>()
-    var pastLogins = HashMap<String, Long>()
+    var pastIpAddresses = mutableMapOf<String, Long>()
+    var pastLogins = mutableMapOf<String, Long>()
 
-    var notes = ArrayList<Note>()
-    var ignoring = ArrayList<UUID>()
-
-    @Transient
-    val cooldowns = HashMap<String, Cooldown>()
+    var notes = mutableListOf<Note>()
+    var ignoring = mutableListOf<UUID>()
 
     @Transient
-    val handleOnConnection = ArrayList<Consumer<Player>>()
+    val cooldowns = mutableMapOf<String, Cooldown>()
+
+    @Transient
+    val handleOnConnection = arrayListOf<(Player) -> Any>()
 
     @Transient
     var activeGrant: Grant? = null
@@ -43,7 +43,7 @@ class LemonPlayer(
     @Transient
     lateinit var attachment: PermissionAttachment
 
-    var metadata = HashMap<String, Metadata>()
+    var metadata = mutableMapOf<String, Metadata>()
 
     init {
         cooldowns["command"] = Cooldown(0L)
@@ -75,6 +75,7 @@ class LemonPlayer(
                 if (!grant.removed && grant.hasExpired()) {
                     grant.removedReason = "Expired"
                     grant.removedAt = System.currentTimeMillis()
+                    grant.removedOn = Lemon.instance.settings.id
                     grant.removed = true
 
                     grant.save()

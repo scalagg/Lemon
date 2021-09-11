@@ -1,4 +1,4 @@
-package com.solexgames.lemon.command
+package com.solexgames.lemon.command.management
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.LemonConstants
@@ -53,8 +53,8 @@ class GrantsCommand : BaseCommand() {
     }
 
     @Syntax("<player>")
-    @CommandAlias("granthistory")
     @CommandCompletion("@players")
+    @CommandAlias("granthistory|granthist|gh|ghist")
     @CommandPermission("lemon.command.staffhistory.grants")
     fun onStaffHistory(player: Player, uuid: UUID) {
         val name = CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
