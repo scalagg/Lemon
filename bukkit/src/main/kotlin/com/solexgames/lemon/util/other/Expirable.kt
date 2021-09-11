@@ -25,7 +25,7 @@ open class Expirable(
         return if (isPermanent()) {
             "Never"
         } else {
-            TimeUtil.formatIntoDateString(expireDate)
+            TimeUtil.formatIntoCalendarString(expireDate)
         }
     }
 
