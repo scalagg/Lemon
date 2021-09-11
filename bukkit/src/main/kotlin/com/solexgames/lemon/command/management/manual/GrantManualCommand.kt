@@ -69,6 +69,8 @@ class GrantManualCommand : BaseCommand() {
             actualDuration
         )
 
+        grant.scopes.clear()
+
         actualScopes.forEach {
             if (!grant.scopes.contains(it)) {
                 grant.scopes.add(it)

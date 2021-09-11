@@ -14,6 +14,7 @@ class EnvironmentCommand : BaseCommand() {
 
     @Default
     @HelpCommand
+    @Syntax("[help]")
     fun onHelp(help: CommandHelp) {
         help.showHelp()
     }

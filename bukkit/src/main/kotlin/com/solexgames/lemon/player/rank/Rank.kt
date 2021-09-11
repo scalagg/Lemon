@@ -1,6 +1,7 @@
 package com.solexgames.lemon.player.rank
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
 import java.util.*
@@ -19,11 +20,9 @@ class Rank(
     var suffix: String = CC.RESET
     var color: String = CC.GRAY
 
-    var italic = false
-    var hidden = false
-    var defaultRank = false
+    var visible = true
 
-    val inheritances = ArrayList<UUID>()
+    val children = ArrayList<UUID>()
     val permissions = ArrayList<String>()
 
     fun getColoredName(): String {
@@ -43,10 +42,14 @@ class Rank(
             }
         }
 
-        inheritances.forEach {
-            val rank = Lemon.instance.rankHandler.findRank(it).orElse(null)
-
-            compoundedPermissions.addAll(rank.getCompoundedPermissions())
+        children.forEach {
+            Lemon.instance.rankHandler.findRank(it)?.let { rank ->
+                rank.getCompoundedPermissions().forEach { permission ->
+                    if (!compoundedPermissions.contains(permission)) {
+                        compoundedPermissions.add(permission)
+                    }
+                }
+            }
         }
 
         return compoundedPermissions
@@ -54,5 +57,18 @@ class Rank(
 
     override fun save(): CompletableFuture<Void> {
         return Lemon.instance.mongoHandler.rankLayer.saveEntry(uuid.toString(), this)
+    }
+
+    fun saveAndPushUpdatesGlobally(): CompletableFuture<Void> {
+        return this.save().thenApply {
+            RedisHandler.buildMessage(
+                "rank-update",
+                hashMapOf<String, String>().also {
+                    it["uniqueId"] = uuid.toString()
+                }
+            ).publishAsync()
+
+            return@thenApply null
+        }
     }
 }

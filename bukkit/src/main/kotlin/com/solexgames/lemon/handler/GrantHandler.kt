@@ -54,6 +54,8 @@ object GrantHandler {
 
     fun wipeAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
         return fetchGrantsByExecutor(uuid).thenApply { grants ->
+            var wiped = 0
+
             grants.forEach {
                 if (!it.removed) {
                     it.removed = true
@@ -63,7 +65,13 @@ object GrantHandler {
                     it.removedReason = "Manual Wipe (Lemon)"
 
                     it.save()
+
+                    wiped++
                 }
+            }
+
+            if (wiped == 0) {
+                sender.sendMessage("${CC.RED}No active grants issued by $uuid were found.")
             }
 
             return@thenApply null

@@ -9,6 +9,7 @@ import com.solexgames.redis.annotation.Subscription
 import com.solexgames.redis.handler.JedisHandler
 import com.solexgames.redis.json.JsonAppender
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -22,7 +23,7 @@ object RedisHandler: JedisHandler {
 
         val rank = Lemon.instance.rankHandler.findRank(
             UUID.fromString(jsonAppender.getParam("rank"))
-        ).orElse(Lemon.instance.rankHandler.getDefaultRank())
+        ) ?: Lemon.instance.rankHandler.getDefaultRank()
 
         val channel = Lemon.instance.chatHandler.findChannel(jsonAppender.getParam("channel")) ?: return
 
@@ -70,6 +71,25 @@ object RedisHandler: JedisHandler {
             it.recalculateGrants(
                 shouldCalculateNow = true
             )
+        }
+    }
+
+    @Subscription(action = "rank-delete")
+    fun onRankDelete(jsonAppender: JsonAppender) {
+        val rankUuid = UUID.fromString(
+            jsonAppender.getParam("uniqueId")
+        )
+
+        Lemon.instance.rankHandler.ranks.remove(rankUuid)
+    }
+
+    @Subscription(action = "rank-update")
+    fun onRankUpdate(jsonAppender: JsonAppender) {
+        val completableFuture = Lemon.instance.mongoHandler.rankLayer
+            .fetchEntryByKey(jsonAppender.getParam("uniqueId"))
+
+        completableFuture.thenAccept {
+            Lemon.instance.rankHandler.ranks[it.uuid] = it
         }
     }
 

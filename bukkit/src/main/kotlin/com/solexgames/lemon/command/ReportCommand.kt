@@ -9,8 +9,10 @@ import com.solexgames.lemon.util.quickaccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.Default
 import net.evilblock.cubed.acf.annotation.Syntax
+import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
@@ -23,7 +25,8 @@ class ReportCommand : BaseCommand() {
 
     @CommandAlias("report")
     @Syntax("<player>")
-    fun onDefault(player: Player, target: Player) {
+    @CommandCompletion("@players-uv")
+    fun onDefault(player: Player, target: OnlinePlayer) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
         if (lemonPlayer.cooldowns["report"]?.isActive() == true) {
@@ -33,10 +36,10 @@ class ReportCommand : BaseCommand() {
             return
         }
 
-        if (target.uniqueId == player.uniqueId) {
+        if (target.player.uniqueId == player.uniqueId) {
             throw ConditionFailedException("You're not allowed to report yourself.")
         }
 
-        ReportMenu(target).openMenu(player)
+        ReportMenu(target.player).openMenu(player)
     }
 }

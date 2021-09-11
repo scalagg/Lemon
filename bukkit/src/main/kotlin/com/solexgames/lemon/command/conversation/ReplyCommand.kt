@@ -4,6 +4,7 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player
 class ReplyCommand : BaseCommand() {
 
     @CommandAlias("reply|r")
+    @CommandCompletion("@players-uv")
     fun onReply(player: Player, @Optional message: String?) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 

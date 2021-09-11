@@ -90,6 +90,7 @@ class LemonPlayer(
 
             if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.rankId) {
                 shouldRecalculatePermissions = true
+                shouldNotifyPlayer = true
             }
 
             if (shouldNotifyPlayer && !connecting) {

@@ -30,8 +30,7 @@ class Grant(
     var removed = false
 
     fun getRank(): Rank {
-        return Lemon.instance.rankHandler.findRank(rankId)
-            .orElse(Lemon.instance.rankHandler.getDefaultRank())
+        return Lemon.instance.rankHandler.findRank(rankId) ?: Lemon.instance.rankHandler.getDefaultRank()
     }
 
     /**
@@ -55,8 +54,8 @@ class Grant(
         return boolean
     }
 
-    fun canRemove(lemonPlayer: LemonPlayer?): Boolean {
-        return lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !removed && (addedReason != "Automatic (Lemon)" && addedBy != null)
+    fun canRemove(lemonPlayer: LemonPlayer): Boolean {
+        return lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !removed && !isAutoGrant()
     }
 
     fun isAutoGrant(): Boolean {

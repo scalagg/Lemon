@@ -22,7 +22,7 @@ class MessageCommand : BaseCommand() {
 
     @Syntax("<player> <message>")
     @CommandAlias("message|msg|tell|t|whisper|w")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players-uv")
     fun onMessage(player: Player, target: OnlinePlayer, message: String) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val targetLemonPlayer = Lemon.instance.playerHandler.findPlayer(target.player).orElse(null)

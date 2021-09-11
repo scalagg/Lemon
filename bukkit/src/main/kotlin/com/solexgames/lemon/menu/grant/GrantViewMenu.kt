@@ -69,11 +69,11 @@ class GrantViewMenu(
                         "${CC.GRAY}their history after the",
                         "${CC.GRAY}wipe.",
                         "",
-                        "${CC.YELLOW}Click to start wipe."
+                        "${CC.YELLOW}Shift Click to start wipe."
                     )
-                    .toButton { clicker, _ ->
-                        if (clicker != null) {
-                            if (!clicker.hasPermission("lemon.grants.wipe")) {
+                    .toButton { clicker, type ->
+                        if (clicker != null && type != null) {
+                            if (!clicker.hasPermission("lemon.grants.wipe") && type.name.contains("SHIFT")) {
                                 clicker.sendMessage("${CC.RED}You do not have permission to perform this action!")
                                 return@toButton
                             }
@@ -118,18 +118,14 @@ class GrantViewMenu(
 
             lines.add("")
             lines.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(grant.target)}")
+            lines.add("${CC.SEC}Rank: ${CC.PRI}${grant.getRank().getColoredName()}")
             lines.add("${CC.SEC}Duration: ${CC.PRI + grant.getDurationString()}")
             lines.add("${CC.SEC}Expire Date: ${CC.PRI + grant.getExpirationString()}")
             lines.add("")
             lines.add("${CC.SEC}Scopes:")
 
-            val stringBuilder = StringBuilder()
-
             grant.scopes.forEach {
-                stringBuilder.append("${CC.GRAY} - ${CC.RESET}$it")
-            }
-            TextSplitter.split(stringBuilder.toString(), "", "").forEach {
-                lines.add(it)
+                lines.add("${CC.GRAY} - ${CC.RESET}$it")
             }
 
             lines.add("")
@@ -162,20 +158,19 @@ class GrantViewMenu(
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null) ?: return
 
-            if (!grant.canRemove(lemonPlayer)) {
-                return
-            }
+            if (!grant.canRemove(lemonPlayer)) return
 
             InputPrompt()
                 .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
-                .acceptInput { _, input ->
+                .acceptInput { context, input ->
                     if (input.equals("stop", true) || input.equals("cancel", true)) {
+                        context.sendMessage("${CC.SEC}You've cancelled the removal operation.")
                         return@acceptInput
                     }
 
-                    player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
+                    context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
 
                     val splitUuid = SplitUtil.splitUuid(grant.uuid)
                     val grantTarget = CubedCacheUtil.fetchName(grant.target)
@@ -203,7 +198,7 @@ class GrantViewMenu(
                                 }
                             }
                         } else {
-                            player.sendMessage("${CC.RED}You didn't confirm to remove the grant.")
+                            player.sendMessage("${CC.RED}You've cancelled the removal operation.")
                         }
                     }.openMenu(player)
                 }.start(player)

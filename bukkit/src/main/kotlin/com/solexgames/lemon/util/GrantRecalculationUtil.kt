@@ -13,7 +13,7 @@ object GrantRecalculationUtil {
     fun getProminentGrant(grants: List<Grant>): Grant? {
         return grants
             .sortedByDescending { it.addedAt }
-            .firstOrNull { !it.removed && !it.hasExpired() && !it.getRank().hidden && it.isApplicable() }
+            .firstOrNull { !it.removed && !it.hasExpired() && it.getRank().visible && it.isApplicable() }
     }
 
     @JvmStatic

@@ -17,7 +17,7 @@ class DefaultChannel: Channel {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(sender).orElse(null)
         val player = Bukkit.getPlayer(sender)
 
-        return "${rank.prefix}${lemonPlayer.getColoredName()}${CC.WHITE}: ${colorIfHasPermission(player, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"
+        return "${rank.prefix}${lemonPlayer.getColoredName()}${rank.suffix}${CC.WHITE}: ${colorIfHasPermission(player, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"
     }
 
     override fun getPrefix(): String? {

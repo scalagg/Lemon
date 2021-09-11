@@ -35,7 +35,7 @@ enum class ReportType(
     GAME_SABOTAGE(
         "Game Sabotage",
         listOf("Camping", "Running", "Stalling"),
-        XMaterial.RED_BED
+        XMaterial.GLOWSTONE_DUST
     ),
     CROSS_TEAMING(
         "Teaming",

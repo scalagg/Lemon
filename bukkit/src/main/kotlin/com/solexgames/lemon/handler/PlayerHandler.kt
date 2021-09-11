@@ -9,6 +9,7 @@ import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
@@ -104,6 +105,23 @@ object PlayerHandler {
 
             return@thenApply accounts
         }
+    }
+
+    fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer> {
+        var currentList = ArrayList<Player>(Bukkit.getOnlinePlayers())
+            .mapNotNull {
+                Lemon.instance.playerHandler.findPlayer(it.uniqueId).orElse(null)
+            }.sortedBy { -it.activeGrant!!.getRank().weight }
+
+        if (currentList.size > 350) {
+            currentList = currentList.subList(0, 350) as ArrayList<LemonPlayer>
+        }
+
+        if (sender.hasPermission("lemon.staff")) {
+            return currentList
+        }
+
+        return currentList.filter { !it.hasMetadata("vanished") && !it.hasMetadata("disguised") }
     }
 
 }
