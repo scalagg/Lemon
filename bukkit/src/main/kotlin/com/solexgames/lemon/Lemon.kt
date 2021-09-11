@@ -63,7 +63,6 @@ import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
-import org.bukkit.conversations.ConversationFactory
 import org.bukkit.entity.Entity
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
@@ -71,7 +70,6 @@ import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import java.util.UUID
-import java.util.function.Consumer
 
 class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
@@ -266,13 +264,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             return@registerAsyncCompletion list
         }
 
-        val registerCommandAction = Consumer<String> {
-            ClassUtils.getClassesInPackage(this, it).forEach { clazz ->
-                commandManager.registerCommand(clazz.newInstance() as BaseCommand)
-            }
-        }
-
-        registerCommandAction.accept("com.solexgames.lemon.command")
+        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command")
+        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command.environment")
+        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command.management")
+        registerCommandsInPackage(commandManager, "com.solexgames.lemon.command.moderation")
 
         logger.info("Loaded command manager")
     }
@@ -369,6 +364,12 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             .withHandler(RedisHandler).build()
 
         setupDataStore()
+    }
+
+    fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
+        ClassUtils.getClassesInPackage(this, commandPackage).forEach { clazz ->
+            commandManager.registerCommand(clazz.newInstance() as BaseCommand)
+        }
     }
 
     override var layer: RedisStorageLayer<ServerInstance>? = null

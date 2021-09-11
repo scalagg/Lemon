@@ -43,6 +43,12 @@ class LemonPlayer(
 
     var metadata = mutableMapOf<String, Metadata>()
 
+    val isStaff: Boolean
+        get() = hasPermission("lemon.staff")
+
+    val bukkitPlayer: Optional<Player>
+        get() = Optional.ofNullable(Bukkit.getPlayer(uniqueId))
+
     init {
         cooldowns["command"] = Cooldown(0L)
         cooldowns["request"] = Cooldown(0L)
@@ -152,7 +158,7 @@ class LemonPlayer(
         }
 
         if (instant) {
-            getPlayer().ifPresent(handlePlayerSetup)
+            bukkitPlayer.ifPresent(handlePlayerSetup)
         } else {
             handleOnConnection.add {
                 handlePlayerSetup.invoke(it)
@@ -188,7 +194,7 @@ class LemonPlayer(
 
         when (checkType) {
             PermissionCheck.COMPOUNDED -> hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
-            PermissionCheck.PLAYER -> getPlayer().ifPresent {
+            PermissionCheck.PLAYER -> bukkitPlayer.ifPresent {
                 if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                     hasPermission = true
                 }
@@ -196,7 +202,7 @@ class LemonPlayer(
             PermissionCheck.BOTH -> {
                 hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
 
-                getPlayer().ifPresent {
+                bukkitPlayer.ifPresent {
                     if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                         hasPermission = true
                     }
@@ -231,14 +237,6 @@ class LemonPlayer(
 
     fun getMetadata(id: String): Metadata? {
         return metadata.getOrDefault(id, null)
-    }
-
-    fun isStaff(): Boolean {
-        return hasPermission("lemon.staff")
-    }
-
-    fun getPlayer(): Optional<Player> {
-        return Optional.ofNullable(Bukkit.getPlayer(uniqueId))
     }
 
     override fun save(): CompletableFuture<Void> {

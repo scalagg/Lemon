@@ -23,7 +23,7 @@ object PlayerHandler {
     init {
         Schedulers.async().runRepeating(Runnable {
             players.values.stream().filter {
-                !it.getPlayer().isPresent
+                !it.bukkitPlayer.isPresent
             }.forEach {
                 players.remove(it.uniqueId)?.save()
             }
