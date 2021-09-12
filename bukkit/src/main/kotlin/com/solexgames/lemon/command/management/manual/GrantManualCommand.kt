@@ -24,7 +24,7 @@ class GrantManualCommand : BaseCommand() {
         sender: CommandSender,
         target: UUID,
         rank: Rank,
-        duration: Duration,
+        @Single duration: Duration,
         @Optional reason: String?
     ) {
         val grant = Grant(
@@ -48,7 +48,7 @@ class GrantManualCommand : BaseCommand() {
         sender: CommandSender,
         target: UUID,
         rank: Rank,
-        duration: Duration,
+        @Single duration: Duration,
         @Single scopes: String,
         @Optional reason: String?
     ) {
