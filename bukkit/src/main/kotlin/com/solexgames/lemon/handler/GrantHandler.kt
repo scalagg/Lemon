@@ -2,17 +2,17 @@ package com.solexgames.lemon.handler
 
 import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.coloredName
+import com.solexgames.lemon.LemonAPI.reloadPlayer
+import com.solexgames.lemon.LemonAPI.senderUuid
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.CubedCacheUtil
-import com.solexgames.lemon.util.quickaccess.coloredName
-import com.solexgames.lemon.util.quickaccess.reloadPlayer
-import com.solexgames.lemon.util.quickaccess.senderUuid
 import net.evilblock.cubed.util.CC
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author GrowlyX

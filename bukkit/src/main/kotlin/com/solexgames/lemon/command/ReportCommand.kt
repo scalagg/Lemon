@@ -1,16 +1,13 @@
 package com.solexgames.lemon.command
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.remaining
 import com.solexgames.lemon.menu.report.ReportMenu
-import com.solexgames.lemon.util.other.Cooldown
-import com.solexgames.lemon.util.quickaccess.MessageType
-import com.solexgames.lemon.util.quickaccess.remaining
-import com.solexgames.lemon.util.quickaccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
-import net.evilblock.cubed.acf.annotation.Default
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
@@ -31,8 +28,8 @@ class ReportCommand : BaseCommand() {
 
         if (lemonPlayer.cooldowns["report"]?.isActive() == true) {
             val remaining = lemonPlayer.cooldowns["report"]?.let { remaining(it) }
-            player.sendMessage("${CC.RED}You must wait $remaining seconds before submitting another report.")
 
+            player.sendMessage("${CC.RED}You must wait $remaining seconds before submitting another report.")
             return
         }
 

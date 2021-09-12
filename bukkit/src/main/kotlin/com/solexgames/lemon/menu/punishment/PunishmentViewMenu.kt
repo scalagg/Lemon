@@ -2,13 +2,14 @@ package com.solexgames.lemon.menu.punishment
 
 import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.coloredName
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.player.punishment.Punishment
 import com.solexgames.lemon.player.punishment.category.PunishmentCategory
 import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensity
 import com.solexgames.lemon.util.CubedCacheUtil
-import com.solexgames.lemon.util.quickaccess.coloredName
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC

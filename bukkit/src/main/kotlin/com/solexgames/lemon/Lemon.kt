@@ -176,7 +176,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         )
 
         server.consoleSender.sendMessage(
-            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded and the server will be joinable in ${CC.GREEN}3 seconds${CC.SEC}."
+            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. The server will be joinable in ${CC.GREEN}3 seconds${CC.SEC}."
         )
 
         Cubed.instance.uuidCache = RedisUUIDCache(jedisManager)
@@ -189,78 +189,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
 
-        listOf<MessageType>(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
-            commandManager.getFormat(it).setColor(3, ChatColor.GRAY)
-            commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
-            commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))
-        }
-
-        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
-            return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
-        }
-
-        commandManager.commandContexts.registerContext(Rank::class.java) {
-            val firstArgument = it.popFirstArg()
-
-            return@registerContext rankHandler.findRank(firstArgument)
-                ?: throw ConditionFailedException("Could not find rank by the name: ${CC.YELLOW}$firstArgument${CC.RED}.")
-        }
-
-        commandManager.commandContexts.registerContext(Channel::class.java) {
-            return@registerContext chatHandler.findChannel(it.firstArg)
-                ?: throw ConditionFailedException("Could not find channel by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
-        }
-
-        commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
-            val lemonPlayer = playerHandler.findPlayer(it.firstArg)
-
-            if (!lemonPlayer.isPresent) {
-                throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
-            }
-
-            return@registerContext lemonPlayer.get()
-        }
-
-        commandManager.commandContexts.registerContext(UUID::class.java) { c ->
-            val firstArgument = c.popFirstArg()
-
-            if (firstArgument.length == 32) {
-                return@registerContext UUIDUtil.formatUUID(firstArgument)
-                    ?: throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
-            } else if (firstArgument.length <= 16) {
-                return@registerContext CubedCacheUtil.fetchUuid(firstArgument)
-                    ?: throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${firstArgument}${CC.RED}.")
-            }
-
-            return@registerContext try {
-                UUID.fromString(firstArgument)
-            } catch (ignored: Exception) {
-                throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
-            }
-        }
-
-        commandManager.commandCompletions.registerAsyncCompletion("all-players") {
-            val list = mutableListOf<String>()
-
-            Bukkit.getOnlinePlayers().forEach {
-                list.add(it.name)
-            }
-
-            return@registerAsyncCompletion list
-        }
-
-        commandManager.commandCompletions.registerAsyncCompletion("players-uv") {
-            val list = mutableListOf<String>()
-
-            Bukkit.getOnlinePlayers().forEach {
-                if (!it.hasMetadata("vanished")) {
-                    list.add(it.name)
-                }
-            }
-
-            return@registerAsyncCompletion list
-        }
-
+        registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "com.solexgames.lemon.command")
 
         logger.info("Loaded command manager")
@@ -360,9 +289,77 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         setupDataStore()
     }
 
-    private fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
+    fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
         ClassUtils.getClassesInPackage(this, commandPackage).forEach { clazz ->
             commandManager.registerCommand(clazz.newInstance() as BaseCommand)
+        }
+    }
+
+    fun registerCompletionsAndContexts(commandManager: CubedCommandManager) {
+        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
+            return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
+        }
+
+        commandManager.commandContexts.registerContext(Rank::class.java) {
+            val firstArgument = it.popFirstArg()
+
+            return@registerContext rankHandler.findRank(firstArgument)
+                ?: throw ConditionFailedException("Could not find rank by the name: ${CC.YELLOW}$firstArgument${CC.RED}.")
+        }
+
+        commandManager.commandContexts.registerContext(Channel::class.java) {
+            return@registerContext chatHandler.findChannel(it.firstArg)
+                ?: throw ConditionFailedException("Could not find channel by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+        }
+
+        commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
+            val lemonPlayer = playerHandler.findPlayer(it.firstArg)
+
+            if (!lemonPlayer.isPresent) {
+                throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+            }
+
+            return@registerContext lemonPlayer.get()
+        }
+
+        commandManager.commandContexts.registerContext(UUID::class.java) { c ->
+            val firstArgument = c.popFirstArg()
+
+            if (firstArgument.length == 32) {
+                return@registerContext UUIDUtil.formatUUID(firstArgument)
+                    ?: throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
+            } else if (firstArgument.length <= 16) {
+                return@registerContext CubedCacheUtil.fetchUuid(firstArgument)
+                    ?: throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${firstArgument}${CC.RED}.")
+            }
+
+            return@registerContext try {
+                UUID.fromString(firstArgument)
+            } catch (ignored: Exception) {
+                throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
+            }
+        }
+
+        commandManager.commandCompletions.registerAsyncCompletion("all-players") {
+            val list = mutableListOf<String>()
+
+            Bukkit.getOnlinePlayers().forEach {
+                list.add(it.name)
+            }
+
+            return@registerAsyncCompletion list
+        }
+
+        commandManager.commandCompletions.registerAsyncCompletion("players-uv") {
+            val list = mutableListOf<String>()
+
+            Bukkit.getOnlinePlayers().forEach {
+                if (!it.hasMetadata("vanished")) {
+                    list.add(it.name)
+                }
+            }
+
+            return@registerAsyncCompletion list
         }
     }
 

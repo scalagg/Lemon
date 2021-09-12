@@ -1,9 +1,9 @@
 package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.messageType
 import com.solexgames.lemon.util.CubedCacheUtil
-import com.solexgames.lemon.util.quickaccess.MessageType
-import com.solexgames.lemon.util.quickaccess.messageType
 import com.solexgames.lemon.util.redis.RedisMessage
 import com.solexgames.redis.annotation.Subscription
 import com.solexgames.redis.handler.JedisHandler
@@ -48,12 +48,12 @@ object RedisHandler: JedisHandler {
         when (
             messageType(jsonAppender.getParam("messageType"))
         ) {
-            MessageType.PLAYER_MESSAGE -> {
+            LemonAPI.MessageType.PLAYER_MESSAGE -> {
                 sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$message") {
                     return@sendMessage it.hasPermission(permission)
                 }
             }
-            MessageType.NOTIFICATION -> {
+            LemonAPI.MessageType.NOTIFICATION -> {
                 sendMessage("$baseMessage$message") {
                     return@sendMessage it.hasPermission(permission)
                 }

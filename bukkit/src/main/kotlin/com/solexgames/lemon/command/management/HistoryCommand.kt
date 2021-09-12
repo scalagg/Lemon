@@ -1,10 +1,11 @@
 package com.solexgames.lemon.command.management
 
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.coloredName
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.menu.punishment.PunishmentViewMenu
 import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.util.CubedCacheUtil
-import com.solexgames.lemon.util.quickaccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias

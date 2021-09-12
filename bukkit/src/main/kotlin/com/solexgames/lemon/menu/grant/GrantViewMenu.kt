@@ -2,12 +2,13 @@ package com.solexgames.lemon.menu.grant
 
 import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.coloredName
 import com.solexgames.lemon.menu.better.BetterConfirmMenu
 import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.CubedCacheUtil
 import com.solexgames.lemon.util.SplitUtil
-import com.solexgames.lemon.util.quickaccess.coloredName
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC

@@ -26,5 +26,10 @@
       <option name="name" value="maven" />
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="file:/$PROJECT_DIR$/../../SolexGames%20Development/Lemon/bukkit/Users/puugz/.m2/repository" />
+    </remote-repository>
   </component>
 </project>

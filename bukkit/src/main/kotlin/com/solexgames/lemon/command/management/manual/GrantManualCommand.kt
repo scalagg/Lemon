@@ -1,9 +1,10 @@
 package com.solexgames.lemon.command.management.manual
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.senderUuid
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.rank.Rank
-import com.solexgames.lemon.util.quickaccess.senderUuid
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.annotation.Optional

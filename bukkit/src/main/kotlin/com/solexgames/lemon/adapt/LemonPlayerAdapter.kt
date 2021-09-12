@@ -3,7 +3,6 @@ package com.solexgames.lemon.adapt
 import com.google.gson.*
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.LemonPlayer
-import com.solexgames.lemon.util.quickaccess.uuid
 import net.evilblock.cubed.serializers.Serializers
 import java.lang.reflect.Type
 import java.util.*
@@ -18,7 +17,7 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
     override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): LemonPlayer? {
         val jsonObject = src as JsonObject
         val lemonPlayer = LemonPlayer(
-            uuid(jsonObject.get("uniqueId").asString),
+            UUID.fromString(jsonObject.get("uniqueId").asString),
             jsonObject.get("name").asString,
             null
         )

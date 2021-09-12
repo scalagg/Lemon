@@ -1,10 +1,11 @@
 package com.solexgames.lemon.command.management
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.replaceEmpty
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.SplitUtil
-import com.solexgames.lemon.util.quickaccess.replaceEmpty
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException

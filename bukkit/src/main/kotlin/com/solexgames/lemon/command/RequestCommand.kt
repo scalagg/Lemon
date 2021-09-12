@@ -1,15 +1,13 @@
 package com.solexgames.lemon.command
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.coloredName
+import com.solexgames.lemon.LemonAPI.remaining
+import com.solexgames.lemon.LemonAPI.sendStaffMessage
 import com.solexgames.lemon.util.other.Cooldown
-import com.solexgames.lemon.util.quickaccess.MessageType
-import com.solexgames.lemon.util.quickaccess.coloredName
-import com.solexgames.lemon.util.quickaccess.remaining
-import com.solexgames.lemon.util.quickaccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.Default
-import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
@@ -25,8 +23,8 @@ class RequestCommand : BaseCommand() {
 
         if (lemonPlayer.cooldowns["request"]?.isActive() == true) {
             val remaining = lemonPlayer.cooldowns["request"]?.let { remaining(it) }
-            player.sendMessage("${CC.RED}You must wait $remaining seconds before submitting another request.")
 
+            player.sendMessage("${CC.RED}You must wait $remaining seconds before submitting another request.")
             return
         }
 
@@ -34,7 +32,7 @@ class RequestCommand : BaseCommand() {
             player,
             "${CC.YELLOW}${coloredName(player)} ${CC.RED}submitted a request: ${CC.YELLOW}$message${CC.RED}.",
             true,
-            MessageType.NOTIFICATION
+            LemonAPI.MessageType.NOTIFICATION
         ).whenComplete { _, throwable ->
             if (throwable != null) {
                 player.sendMessage("${CC.RED}Something went wrong while submitting your request, try again later.")

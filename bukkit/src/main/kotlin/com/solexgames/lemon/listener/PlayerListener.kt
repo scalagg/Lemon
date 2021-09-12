@@ -1,11 +1,12 @@
 package com.solexgames.lemon.listener
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.LemonAPI
+import com.solexgames.lemon.LemonAPI.remaining
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel
 import com.solexgames.lemon.util.other.Cooldown
-import com.solexgames.lemon.util.quickaccess.remaining
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

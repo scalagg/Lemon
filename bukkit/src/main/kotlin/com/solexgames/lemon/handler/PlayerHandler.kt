@@ -1,10 +1,8 @@
 package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.util.CubedCacheUtil
-import com.solexgames.lemon.util.quickaccess.uuid
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -14,7 +12,6 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.HashMap
 
 object PlayerHandler {
 
