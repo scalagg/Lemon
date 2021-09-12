@@ -304,19 +304,22 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             val firstArgument = it.popFirstArg()
 
             return@registerContext rankHandler.findRank(firstArgument)
-                ?: throw ConditionFailedException("Could not find rank by the name: ${CC.YELLOW}$firstArgument${CC.RED}.")
+                ?: throw ConditionFailedException("No rank matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
         }
 
         commandManager.commandContexts.registerContext(Channel::class.java) {
-            return@registerContext chatHandler.findChannel(it.firstArg)
-                ?: throw ConditionFailedException("Could not find channel by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+            val firstArgument = it.popFirstArg()
+
+            return@registerContext chatHandler.findChannel(firstArgument)
+                ?: throw ConditionFailedException("No channel matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
         }
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
-            val lemonPlayer = playerHandler.findPlayer(it.firstArg)
+            val firstArgument = it.popFirstArg()
+            val lemonPlayer = playerHandler.findPlayer(firstArgument)
 
             if (!lemonPlayer.isPresent) {
-                throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${it.firstArg}${CC.RED}.")
+                throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
             return@registerContext lemonPlayer.get()
@@ -330,7 +333,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                     ?: throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
             } else if (firstArgument.length <= 16) {
                 return@registerContext CubedCacheUtil.fetchUuid(firstArgument)
-                    ?: throw ConditionFailedException("Could not find player by the name: ${CC.YELLOW}${firstArgument}${CC.RED}.")
+                    ?: throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
             return@registerContext try {

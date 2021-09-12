@@ -1,9 +1,9 @@
 package com.solexgames.lemon.command.moderation
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredNameOrConsole
-import com.solexgames.lemon.LemonAPI.sendStaffMessage
+import com.solexgames.lemon.util.QuickAccess
+import com.solexgames.lemon.util.QuickAccess.coloredNameOrConsole
+import com.solexgames.lemon.util.QuickAccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
@@ -34,7 +34,7 @@ class ChatCommand : BaseCommand() {
         sendStaffMessage(
             sender,
             "$coloredName ${CC.D_AQUA}${if (toggledTo) "${CC.RED}disabled" else "${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
-            true, LemonAPI.MessageType.NOTIFICATION
+            true, QuickAccess.MessageType.NOTIFICATION
         )
     }
 }

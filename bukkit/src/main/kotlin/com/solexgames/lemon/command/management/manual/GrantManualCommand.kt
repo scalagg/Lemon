@@ -1,8 +1,7 @@
 package com.solexgames.lemon.command.management.manual
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.senderUuid
+import com.solexgames.lemon.util.QuickAccess.senderUuid
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.rank.Rank
 import net.evilblock.cubed.acf.BaseCommand

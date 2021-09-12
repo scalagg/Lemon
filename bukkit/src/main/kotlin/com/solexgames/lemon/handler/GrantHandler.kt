@@ -2,10 +2,9 @@ package com.solexgames.lemon.handler
 
 import com.mongodb.client.model.Filters
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredName
-import com.solexgames.lemon.LemonAPI.reloadPlayer
-import com.solexgames.lemon.LemonAPI.senderUuid
+import com.solexgames.lemon.util.QuickAccess.coloredName
+import com.solexgames.lemon.util.QuickAccess.reloadPlayer
+import com.solexgames.lemon.util.QuickAccess.senderUuid
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC

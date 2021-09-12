@@ -1,5 +1,6 @@
-package com.solexgames.lemon
+package com.solexgames.lemon.util
 
+import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.nametag.NametagHandler
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author puugz, GrowlyX
  */
-object LemonAPI {
+object QuickAccess {
 
     fun coloredNameOrConsole(sender: CommandSender): String {
         val lemonPlayer = sender.name?.let { Lemon.instance.playerHandler.findPlayer(it).orElse(null) }

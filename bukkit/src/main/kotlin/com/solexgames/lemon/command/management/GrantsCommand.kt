@@ -1,8 +1,7 @@
 package com.solexgames.lemon.command.management
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredName
+import com.solexgames.lemon.util.QuickAccess.coloredName
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.menu.grant.GrantViewMenu
 import com.solexgames.lemon.player.enums.HistoryViewType

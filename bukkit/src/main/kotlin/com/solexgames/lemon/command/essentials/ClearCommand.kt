@@ -1,6 +1,6 @@
 package com.solexgames.lemon.command.essentials
 
-import com.solexgames.lemon.LemonAPI.coloredName
+import com.solexgames.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion

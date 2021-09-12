@@ -1,10 +1,10 @@
 package com.solexgames.lemon.command
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredName
-import com.solexgames.lemon.LemonAPI.remaining
-import com.solexgames.lemon.LemonAPI.sendStaffMessage
+import com.solexgames.lemon.util.QuickAccess
+import com.solexgames.lemon.util.QuickAccess.coloredName
+import com.solexgames.lemon.util.QuickAccess.remaining
+import com.solexgames.lemon.util.QuickAccess.sendStaffMessage
 import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -32,7 +32,7 @@ class RequestCommand : BaseCommand() {
             player,
             "${CC.YELLOW}${coloredName(player)} ${CC.RED}submitted a request: ${CC.YELLOW}$message${CC.RED}.",
             true,
-            LemonAPI.MessageType.NOTIFICATION
+            QuickAccess.MessageType.NOTIFICATION
         ).whenComplete { _, throwable ->
             if (throwable != null) {
                 player.sendMessage("${CC.RED}Something went wrong while submitting your request, try again later.")

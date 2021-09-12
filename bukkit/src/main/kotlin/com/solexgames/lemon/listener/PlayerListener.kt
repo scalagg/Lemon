@@ -1,8 +1,7 @@
 package com.solexgames.lemon.listener
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.remaining
+import com.solexgames.lemon.util.QuickAccess.remaining
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel

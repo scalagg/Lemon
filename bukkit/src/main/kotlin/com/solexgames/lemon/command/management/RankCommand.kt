@@ -1,8 +1,7 @@
 package com.solexgames.lemon.command.management
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.replaceEmpty
+import com.solexgames.lemon.util.QuickAccess.replaceEmpty
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.rank.Rank
 import com.solexgames.lemon.util.SplitUtil

@@ -1,15 +1,13 @@
 package com.solexgames.lemon.handler
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.messageType
-import com.solexgames.lemon.util.CubedCacheUtil
+import com.solexgames.lemon.util.QuickAccess
+import com.solexgames.lemon.util.QuickAccess.messageType
 import com.solexgames.lemon.util.redis.RedisMessage
 import com.solexgames.redis.annotation.Subscription
 import com.solexgames.redis.handler.JedisHandler
 import com.solexgames.redis.json.JsonAppender
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -48,12 +46,12 @@ object RedisHandler: JedisHandler {
         when (
             messageType(jsonAppender.getParam("messageType"))
         ) {
-            LemonAPI.MessageType.PLAYER_MESSAGE -> {
+            QuickAccess.MessageType.PLAYER_MESSAGE -> {
                 sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$message") {
                     return@sendMessage it.hasPermission(permission)
                 }
             }
-            LemonAPI.MessageType.NOTIFICATION -> {
+            QuickAccess.MessageType.NOTIFICATION -> {
                 sendMessage("$baseMessage$message") {
                     return@sendMessage it.hasPermission(permission)
                 }

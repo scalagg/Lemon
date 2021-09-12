@@ -1,9 +1,9 @@
 package com.solexgames.lemon.menu.report
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredName
-import com.solexgames.lemon.LemonAPI.sendStaffMessage
+import com.solexgames.lemon.util.QuickAccess
+import com.solexgames.lemon.util.QuickAccess.coloredName
+import com.solexgames.lemon.util.QuickAccess.sendStaffMessage
 import com.solexgames.lemon.player.enums.ReportType
 import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.menu.Button
@@ -43,7 +43,7 @@ class ReportMenu(private val target: Player) : Menu() {
                         player,
                         "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",
                         true,
-                        LemonAPI.MessageType.NOTIFICATION
+                        QuickAccess.MessageType.NOTIFICATION
                     ).whenComplete { _, throwable ->
                         if (throwable != null) {
                             player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")

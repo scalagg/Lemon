@@ -1,7 +1,6 @@
 package com.solexgames.lemon.command.management
 
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredName
+import com.solexgames.lemon.util.QuickAccess.coloredName
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.menu.punishment.PunishmentViewMenu
 import com.solexgames.lemon.player.enums.HistoryViewType

@@ -2,8 +2,7 @@ package com.solexgames.lemon.menu.grant
 
 import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.coloredName
+import com.solexgames.lemon.util.QuickAccess.coloredName
 import com.solexgames.lemon.menu.better.BetterConfirmMenu
 import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.player.grant.Grant

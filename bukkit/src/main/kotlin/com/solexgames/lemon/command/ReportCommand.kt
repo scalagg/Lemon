@@ -1,8 +1,7 @@
 package com.solexgames.lemon.command
 
 import com.solexgames.lemon.Lemon
-import com.solexgames.lemon.LemonAPI
-import com.solexgames.lemon.LemonAPI.remaining
+import com.solexgames.lemon.util.QuickAccess.remaining
 import com.solexgames.lemon.menu.report.ReportMenu
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
