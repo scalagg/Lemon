@@ -31,6 +31,7 @@ import com.solexgames.lemon.processor.SettingsConfigProcessor
 import com.solexgames.lemon.task.GrantUpdateRunnable
 import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import com.solexgames.lemon.util.CubedCacheUtil
+import com.solexgames.lemon.util.LemonWebUtil
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
@@ -112,41 +113,27 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         loadBaseConfigurations()
 
-//        LemonWebUtil.fetchServerData(settings.serverPassword).whenComplete { webData, throwable ->
-////            if (throwable != null || webData == null) {
-////                logger.info("Something went wrong during data validation, shutting down... (${throwable?.message})")
-////                server.pluginManager.disablePlugin(this)
-////
-////                return@whenComplete
-////            }
-////
-////            if (webData.status == LemonWebStatus.FAILED) {
-////                logger.info("Something went wrong during data validation, shutting down... (${webData.message})")
-////                server.pluginManager.disablePlugin(this)
-////
-////                return@whenComplete
-////            }
-//
-//            logger.info("Passed data validation checks, now loading Lemon with ${webData.serverName}'s data.")
-//
-//            lemonWebData = webData
-//
-//            runAfterDataValidation()
-//        }
+        LemonWebUtil.fetchServerData(settings.serverPassword).whenComplete { webData, throwable ->
+            if (throwable != null || webData == null) {
+                consoleLogger.log("Something went wrong during data validation, shutting down... (${throwable?.message})")
+                server.pluginManager.disablePlugin(this)
 
-        lemonWebData = LemonWebData(
-            LemonWebStatus.SUCCESS,
-            "DEV",
-            "SolexGames",
-            "GREEN",
-            "YELLOW",
-            "discord.gg/solexgames",
-            "twitter.com/solexgames",
-            "solexgames.com",
-            "store.solexgames.com"
-        )
+                return@whenComplete
+            }
 
-        runAfterDataValidation()
+            if (webData.status == LemonWebStatus.FAILED) {
+                consoleLogger.log("Something went wrong during data validation, shutting down... (${webData.message})")
+                server.pluginManager.disablePlugin(this)
+
+                return@whenComplete
+            }
+
+            consoleLogger.log(
+                "Passed data validation checks, now loading Lemon with ${webData.serverName}'s information..."
+            ); lemonWebData = webData
+
+            runAfterDataValidation()
+        }
     }
 
     private fun runAfterDataValidation() {

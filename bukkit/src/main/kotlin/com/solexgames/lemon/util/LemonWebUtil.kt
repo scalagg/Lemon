@@ -4,6 +4,7 @@ import com.google.gson.JsonParser
 import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
+import net.evilblock.cubed.serializers.Serializers
 import java.io.InputStreamReader
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -25,21 +26,10 @@ object LemonWebUtil {
                 val url = URL("${BASE_URL}$id")
                 val json = JsonParser().parse(InputStreamReader(url.openStream())).asJsonObject
 
-//                return@supplyAsync LemonConstants.GSON.fromJson(json.toString(), LemonWebData::class.java)
-                return@supplyAsync LemonWebData(
-                    LemonWebStatus.SUCCESS,
-                    "DEV",
-                    "SolexGames",
-                    "GOLD",
-                    "YELLOW",
-                    "discord.gg/solexgames",
-                    "twitter.com/solexgames",
-                    "solexgames.com",
-                    "store.solexgames.com"
+                return@supplyAsync Serializers.gson.fromJson(
+                    json.toString(), LemonWebData::class.java
                 )
-            } catch (ignored: Exception) {
-                null
-            }
+            } catch (ignored: Exception) { null }
         }
     }
 }
