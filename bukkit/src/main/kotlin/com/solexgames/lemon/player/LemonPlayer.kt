@@ -1,11 +1,13 @@
 package com.solexgames.lemon.player
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.enums.PermissionCheck
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
 import com.solexgames.lemon.util.GrantRecalculationUtil
+import com.solexgames.lemon.util.QuickAccess
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
@@ -22,6 +24,8 @@ class LemonPlayer(
     @Transient
     var ipAddress: String?
 ): Savable {
+
+    val bungeePermissions = mutableListOf<String>()
 
     var pastIpAddresses = mutableMapOf<String, Long>()
     var pastLogins = mutableMapOf<String, Long>()
@@ -111,6 +115,19 @@ class LemonPlayer(
         }
     }
 
+    fun pushCocoaUpdates() {
+        RedisHandler.buildMessage(
+            "permission-update",
+            hashMapOf<String, String>().also {
+                it["uniqueId"] = uniqueId.toString()
+                it["currentDisplayName"] = getColoredName()
+                it["currentBungeePermissions"] = bungeePermissions.joinToString(
+                    separator = ","
+                )
+            }
+        ).publishAsync("cocoa")
+    }
+
     private fun fetchPreviousRank(grants: List<Grant>): UUID? {
         var uuid: UUID? = null
 
@@ -141,7 +158,11 @@ class LemonPlayer(
 
     private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false) {
         val handleAddPermission: (String) -> Unit = {
-            attachment.setPermission(it, !it.startsWith("*"))
+            if (it.startsWith("%")) {
+                bungeePermissions.add(it)
+            } else {
+                attachment.setPermission(it, !it.startsWith("*"))
+            }
         }
         val handlePlayerSetup: (Player) -> Unit = {
             val permissionOnlyGrants = GrantRecalculationUtil.getPermissionGrants(grants)
@@ -155,13 +176,22 @@ class LemonPlayer(
             }
 
             it.recalculatePermissions()
+
+            QuickAccess.reloadPlayer(
+                uniqueId,
+                recalculateGrants = false
+            )
         }
 
         if (instant) {
-            bukkitPlayer.ifPresent(handlePlayerSetup)
+            bukkitPlayer.ifPresent {
+                handlePlayerSetup.invoke(it)
+                pushCocoaUpdates()
+            }
         } else {
             handleOnConnection.add {
                 handlePlayerSetup.invoke(it)
+                pushCocoaUpdates()
             }
         }
     }

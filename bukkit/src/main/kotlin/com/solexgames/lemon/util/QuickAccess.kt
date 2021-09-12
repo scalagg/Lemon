@@ -46,15 +46,21 @@ object QuickAccess {
         return coloredName(player.uniqueId)
     }
 
-    fun reloadPlayer(uuid: UUID) {
+    fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true) {
         Bukkit.getPlayer(uuid)?.let {
             Lemon.instance.playerHandler.findPlayer(it).ifPresent { lemonPlayer ->
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)
 
-                lemonPlayer.recalculateGrants(
-                    shouldCalculateNow = true
-                )
+                if (recalculateGrants) {
+                    lemonPlayer.recalculateGrants(
+                        shouldCalculateNow = true
+                    )
+                }
+
+                it.displayName = lemonPlayer.getColoredName()
+
+                lemonPlayer.pushCocoaUpdates()
             }
         }
     }

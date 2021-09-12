@@ -6,6 +6,7 @@ plugins {
     id "maven-publish"
     id "org.jetbrains.kotlin.jvm" version "1.5.30"
     id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "com.gorylenko.gradle-git-properties" version "2.3.1"
 }
 
 repositories {
@@ -16,9 +17,8 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.30"
     implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
-    implementation fileTree("internal")
 
-//    compileOnly "net.evilblock.cubed:bukkit:1.2"
+    implementation fileTree("internal")
     compileOnly fileTree("lib")
 }
 
@@ -62,4 +62,7 @@ publishing {
 
 processResources {
     filter ReplaceTokens, tokens: ["plugin.version": project.version ]
+//    TODO: fix git commit stuff
+//    filter ReplaceTokens, tokens: ["git.commit.id.abbrev": (project.extensions.extraProperties.ge("gitProps") as Map<String, String>)["git.commit.id.abbrev"] ]
+//    filter ReplaceTokens, tokens: ["git.remote.origin.url": (project.extensions.extraProperties.get("gitProps") as Map<String, String>)["git.remote.origin.url"] ]
 }
