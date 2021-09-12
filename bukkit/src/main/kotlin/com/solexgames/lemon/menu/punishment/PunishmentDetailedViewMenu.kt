@@ -14,6 +14,7 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks.delayed
 import net.evilblock.cubed.util.time.TimeUtil
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
@@ -51,8 +52,13 @@ class PunishmentDetailedViewMenu(
 
     override fun onClose(player: Player, manualClose: Boolean) {
         if (manualClose) {
-            delayed(1L) {
-                PunishmentViewMenu(uuid, viewType).openMenu(player)
+            when (viewType) {
+                HistoryViewType.STAFF_HIST -> {
+                    Bukkit.dispatchCommand(player, "staffhistory $uuid")
+                }
+                HistoryViewType.TARGET_HIST -> {
+                    Bukkit.dispatchCommand(player, "history $uuid")
+                }
             }
         }
     }

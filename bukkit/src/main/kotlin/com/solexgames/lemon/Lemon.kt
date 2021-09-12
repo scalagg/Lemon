@@ -136,7 +136,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             LemonWebStatus.SUCCESS,
             "",
             "SolexGames",
-            "GOLD",
+            "GREEN",
             "YELLOW",
             "discord.gg/solexgames",
             "SolexGamesCOM",
@@ -189,6 +189,12 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
+
+        listOf<MessageType>(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
+            commandManager.getFormat(it).setColor(3, ChatColor.GRAY)
+            commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
+            commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))
+        }
 
         registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "com.solexgames.lemon.command")

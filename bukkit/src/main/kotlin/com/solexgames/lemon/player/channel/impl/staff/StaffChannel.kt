@@ -1,4 +1,4 @@
-package com.solexgames.lemon.player.channel.impl
+package com.solexgames.lemon.player.channel.impl.staff
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.channel.Channel
@@ -17,7 +17,7 @@ class StaffChannel(private val channel: StaffChannelType): Channel {
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
-        return "${channel.color}[${channel.name[0]}] ${CC.DARK_AQUA}[${Lemon.instance.settings.id}] ${rank.color}${sender}${CC.AQUA}: ${dePrefixed(message)}"
+        return "${channel.color}[${channel.name[0]}] ${CC.DARK_AQUA}[${Lemon.instance.settings.id}] ${rank.color}${sender}${CC.GRAY}: ${CC.AQUA}${dePrefixed(message)}"
     }
 
     override fun isGlobal(): Boolean {

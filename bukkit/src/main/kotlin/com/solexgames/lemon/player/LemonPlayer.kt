@@ -96,7 +96,7 @@ class LemonPlayer(
 
             var shouldRecalculatePermissions = forceRecalculatePermissions
 
-            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.rankId) {
+            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.getRank().uuid) {
                 shouldRecalculatePermissions = true
                 shouldNotifyPlayer = true
             }
@@ -159,7 +159,7 @@ class LemonPlayer(
     private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false) {
         val handleAddPermission: (String) -> Unit = {
             if (it.startsWith("%")) {
-                bungeePermissions.add(it)
+                bungeePermissions.add(it.removePrefix("%"))
             } else {
                 attachment.setPermission(it, !it.startsWith("*"))
             }
@@ -307,7 +307,8 @@ class LemonPlayer(
 
     fun handlePostLoad() {
         recalculateGrants(
-            connecting = true
+            connecting = true,
+            forceRecalculatePermissions = true
         )
     }
 

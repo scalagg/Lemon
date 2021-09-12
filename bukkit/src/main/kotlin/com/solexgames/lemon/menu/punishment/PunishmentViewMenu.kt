@@ -25,7 +25,8 @@ import java.util.concurrent.CompletableFuture
  */
 class PunishmentViewMenu(
     private val uuid: UUID,
-    private val viewType: HistoryViewType
+    private val viewType: HistoryViewType,
+    private val punishments: List<Punishment>
 ): Menu() {
 
     override fun getTitle(player: Player): String {
@@ -40,15 +41,34 @@ class PunishmentViewMenu(
 
     override fun getButtons(player: Player): Map<Int, Button> {
         val buttons = mutableMapOf<Int, Button>()
-        var integer = 0
+        var integer = 10
 
         PunishmentCategory.values().forEach {
-            buttons[integer++] = ItemBuilder(XMaterial.WHITE_WOOL)
+            val totalAmount = punishments.filter { punishment ->
+                punishment.category == it
+            }.size
+
+            buttons[integer] = ItemBuilder(XMaterial.WHITE_WOOL)
                 .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
                 .data(getWoolColorByIntensity(it))
+                .amount(totalAmount)
                 .addToLore(
-                    "${CC.GRAY}Click to view punishments",
-                    "${CC.GRAY}for this category."
+                    "${CC.GRAY}Viewing statistics for the",
+                    "${CC.GRAY}${it.fancyVersion} category:",
+                    "",
+                    "${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
+                    "${CC.GRAY}Active: ${CC.YELLOW}${
+                        punishments.filter { punishment ->
+                            punishment.category == it && punishment.isActive
+                        }.size
+                    }",
+                    "${CC.GRAY}Inactive: ${CC.RED}${
+                        punishments.filter { punishment ->
+                            punishment.category == it && punishment.isRemoved
+                        }.size
+                    }",
+                    "",
+                    "${CC.YELLOW}Click to view more info."
                 ).toButton { _, _ ->
                     fetchPunishments(it).whenComplete { list, _ ->
                         PunishmentDetailedViewMenu(
@@ -56,9 +76,11 @@ class PunishmentViewMenu(
                         ).openMenu(player)
                     }
                 }
+
+            integer += 2
         }
 
-        for (int in 0..8) {
+        for (int in 0..26) {
             buttons.putIfAbsent(int, LemonConstants.EMPTY)
         }
 

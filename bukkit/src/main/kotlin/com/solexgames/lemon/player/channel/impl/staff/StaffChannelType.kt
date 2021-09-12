@@ -1,4 +1,4 @@
-package com.solexgames.lemon.player.channel.impl
+package com.solexgames.lemon.player.channel.impl.staff
 
 import org.bukkit.ChatColor
 

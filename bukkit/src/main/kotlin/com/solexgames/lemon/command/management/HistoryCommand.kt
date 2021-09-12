@@ -1,7 +1,9 @@
 package com.solexgames.lemon.command.management
 
+import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.QuickAccess.coloredName
 import com.solexgames.lemon.LemonConstants
+import com.solexgames.lemon.menu.grant.GrantViewMenu
 import com.solexgames.lemon.menu.punishment.PunishmentViewMenu
 import com.solexgames.lemon.player.enums.HistoryViewType
 import com.solexgames.lemon.util.CubedCacheUtil
@@ -35,7 +37,16 @@ class HistoryCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${coloredName(name)}'s${CC.SEC} history...")
 
-        PunishmentViewMenu(uuid, HistoryViewType.TARGET_HIST).openMenu(player)
+        Lemon.instance.punishmentHandler.fetchAllPunishmentsForTarget(uuid).thenAccept {
+            if (it.isEmpty() && Lemon.instance.lemonWebData.serverName != "SolexGames") {
+                player.sendMessage("${CC.RED}No punishments found for ${CC.YELLOW}${coloredName(name)}${CC.RED}.")
+                return@thenAccept
+            }
+
+            PunishmentViewMenu(
+                uuid, HistoryViewType.TARGET_HIST, it
+            ).openMenu(player)
+        }
     }
 
     @Syntax("<player>")
@@ -52,7 +63,15 @@ class HistoryCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${coloredName(name)}'s${CC.SEC} staff history...")
 
-        PunishmentViewMenu(uuid, HistoryViewType.TARGET_HIST).openMenu(player)
-    }
+        Lemon.instance.punishmentHandler.fetchAllPunishmentsByExecutor(uuid).thenAccept {
+            if (it.isEmpty() && Lemon.instance.lemonWebData.serverName != "SolexGames") {
+                player.sendMessage("${CC.RED}No punishments found by ${CC.YELLOW}${coloredName(name)}${CC.RED}.")
+                return@thenAccept
+            }
 
+            PunishmentViewMenu(
+                uuid, HistoryViewType.STAFF_HIST, it
+            ).openMenu(player)
+        }
+    }
 }
