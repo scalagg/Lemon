@@ -242,7 +242,9 @@ class LemonPlayer(
     override fun save(): CompletableFuture<Void> {
         finalizeMetaData()
 
-        return Lemon.instance.mongoHandler.lemonPlayerLayer.saveEntry(uniqueId.toString(), this)
+        return Lemon.instance.mongoHandler.lemonPlayerLayer.saveEntry(
+            uniqueId.toString(), this
+        )
     }
 
     private fun finalizeMetaData() {

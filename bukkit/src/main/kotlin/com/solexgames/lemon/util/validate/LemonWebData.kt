@@ -5,7 +5,7 @@ package com.solexgames.lemon.util.validate
  * @since 8/26/2021
  */
 data class LemonWebData(
-    val status: LemonWebStatus,
+    val result: LemonWebStatus,
     val message: String,
 
     val serverName: String,

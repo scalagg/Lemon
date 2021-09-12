@@ -1,35 +1,30 @@
 package com.solexgames.lemon.util
 
-import com.google.gson.JsonParser
-import com.solexgames.lemon.LemonConstants
 import com.solexgames.lemon.util.validate.LemonWebData
-import com.solexgames.lemon.util.validate.LemonWebStatus
 import net.evilblock.cubed.serializers.Serializers
-import java.io.InputStreamReader
 import java.net.URL
-import java.util.concurrent.CompletableFuture
+import java.util.*
 
 /**
  * @author GrowlyX
  * @since 8/26/2021
  */
-
 object LemonWebUtil {
 
     @JvmStatic
-    val BASE_URL: String = "https://api.solexgames.com/fetch?id="
-
-    @JvmStatic
-    fun fetchServerData(id: String): CompletableFuture<LemonWebData> {
-        return CompletableFuture.supplyAsync {
-            try {
-                val url = URL("${BASE_URL}$id")
-                val json = JsonParser().parse(InputStreamReader(url.openStream())).asJsonObject
-
-                return@supplyAsync Serializers.gson.fromJson(
-                    json.toString(), LemonWebData::class.java
+    fun fetchServerData(id: String): LemonWebData? {
+        return try {
+            Scanner(
+                URL(
+                    "https://api.solexgames.com/fetch?id=$id"
+                ).openStream()
+            ).useDelimiter("\\A").use { scanner ->
+                Serializers.gson.fromJson(
+                    scanner.next(), LemonWebData::class.java
                 )
-            } catch (ignored: Exception) { null }
+            }
+        } catch (exception: Exception) {
+            exception.printStackTrace(); null
         }
     }
 }

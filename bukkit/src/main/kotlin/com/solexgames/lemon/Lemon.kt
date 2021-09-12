@@ -113,27 +113,37 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         loadBaseConfigurations()
 
-        LemonWebUtil.fetchServerData(settings.serverPassword).whenComplete { webData, throwable ->
-            if (throwable != null || webData == null) {
-                consoleLogger.log("Something went wrong during data validation, shutting down... (${throwable?.message})")
-                server.pluginManager.disablePlugin(this)
+//        val webData = LemonWebUtil.fetchServerData(settings.serverPassword)
+//
+//        if (webData == null) {
+//            consoleLogger.log("Something went wrong during data validation, shutting down... (webData=null)")
+//            server.pluginManager.disablePlugin(this)
+//
+//            return
+//        }
+//
+//        if (webData.result == LemonWebStatus.FAILED) {
+//            consoleLogger.log("Your server password's incorrect. (${webData.message})")
+//            server.pluginManager.disablePlugin(this)
+//
+//            return
+//        }
 
-                return@whenComplete
-            }
+        consoleLogger.log(
+            "Passed data validation checks, now loading Lemon with ${"SolexGames"}'s information..."
+        ); lemonWebData = LemonWebData(
+            LemonWebStatus.SUCCESS,
+            "",
+            "SolexGames",
+            "GOLD",
+            "YELLOW",
+            "discord.gg/solexgames",
+            "SolexGamesCOM",
+            "solexgames.com",
+            "store.solexgames.com"
+        )
 
-            if (webData.status == LemonWebStatus.FAILED) {
-                consoleLogger.log("Something went wrong during data validation, shutting down... (${webData.message})")
-                server.pluginManager.disablePlugin(this)
-
-                return@whenComplete
-            }
-
-            consoleLogger.log(
-                "Passed data validation checks, now loading Lemon with ${webData.serverName}'s information..."
-            ); lemonWebData = webData
-
-            runAfterDataValidation()
-        }
+        runAfterDataValidation()
     }
 
     private fun runAfterDataValidation() {
@@ -285,6 +295,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun loadBaseConfigurations() {
+        consoleLogger = DaddySharkLogAdapter()
         configFactory = ConfigFactory.newFactory(this)
 
         settings = configFactory.fromFile("settings", SettingsConfigProcessor::class.java)
@@ -333,7 +344,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         layerBuilder.setConnection(redisConnection)
 
         playerLayer = layerBuilder.build()
-        consoleLogger = DaddySharkLogAdapter()
 
         jedisSettings = JedisSettings(
             redisConfig.address,

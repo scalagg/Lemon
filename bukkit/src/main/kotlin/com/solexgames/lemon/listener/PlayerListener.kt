@@ -205,12 +205,8 @@ class PlayerListener : Listener {
         val highestPlayerCount = Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
-        if (highestPlayerCount == null) {
+        if (highestPlayerCount == null || currentPlayerCount > Integer.parseInt(highestPlayerCount)) {
             Lemon.instance.getLocalServerInstance().metaData["highest-player-count"] = currentPlayerCount.toString()
-        } else {
-            if (currentPlayerCount > Integer.parseInt(highestPlayerCount)) {
-                Lemon.instance.getLocalServerInstance().metaData["highest-player-count"] = currentPlayerCount.toString()
-            }
         }
 
         lemonPlayer.ifPresent { player ->
