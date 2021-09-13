@@ -217,7 +217,7 @@ class PlayerListener : Listener {
         // TODO: 9/12/2021 handle punishment checks
 
         if (lemonPlayer.cooldowns["command"]?.isActive() == true) {
-            val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
+            val formatted = lemonPlayer.cooldowns["command"]?.let { remaining(it) }
 
             cancel(event, "${CC.RED}You're on command cooldown, please wait ${formatted}.")
             return
