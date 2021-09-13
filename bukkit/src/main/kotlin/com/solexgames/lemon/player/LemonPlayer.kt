@@ -8,6 +8,7 @@ import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
 import com.solexgames.lemon.util.GrantRecalculationUtil
 import com.solexgames.lemon.util.QuickAccess
+import com.solexgames.lemon.util.VaultUtil
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
@@ -157,11 +158,15 @@ class LemonPlayer(
     }
 
     private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false) {
-        val handleAddPermission: (String) -> Unit = {
+        val handleAddPermission: (String, Player) -> Unit = { it, player ->
             if (it.startsWith("%")) {
                 bungeePermissions.add(it.removePrefix("%"))
             } else {
                 attachment.setPermission(it, !it.startsWith("*"))
+
+                VaultUtil.usePermissions { permission ->
+                    permission.playerAdd(player, it)
+                }
             }
         }
         val handlePlayerSetup: (Player) -> Unit = {
