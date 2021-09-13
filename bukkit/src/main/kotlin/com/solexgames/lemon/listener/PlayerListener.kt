@@ -79,7 +79,7 @@ class PlayerListener : Listener {
             if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true) {
                 val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
 
-                cancel(event, "${CC.RED}Global chat is currently slowed, please wait ${formatted}.")
+                cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted seconds.")
                 return
             }
 
@@ -89,7 +89,7 @@ class PlayerListener : Listener {
                 if (lemonPlayer.cooldowns["chat"]?.isActive() == true) {
                     val formatted = lemonPlayer.cooldowns["chat"]?.let { remaining(it) }
 
-                    cancel(event, "${CC.RED}You're on chat cooldown, please wait ${formatted}.")
+                    cancel(event, "${CC.RED}You're on chat cooldown, please wait $formatted seconds.")
                     return
                 }
 
@@ -219,7 +219,7 @@ class PlayerListener : Listener {
         if (lemonPlayer.cooldowns["command"]?.isActive() == true) {
             val formatted = lemonPlayer.cooldowns["command"]?.let { remaining(it) }
 
-            cancel(event, "${CC.RED}You're on command cooldown, please wait ${formatted}.")
+            cancel(event, "${CC.RED}You're on command cooldown, please wait $formatted seconds.")
             return
         }
 
