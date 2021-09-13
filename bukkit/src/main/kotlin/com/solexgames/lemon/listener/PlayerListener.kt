@@ -73,15 +73,9 @@ class PlayerListener : Listener {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val chatHandler = Lemon.instance.chatHandler
 
-        if (lemonPlayer.activeGrant == null) {
-            cancel(event, "${CC.RED}Your profile has not loaded correctly.")
-            cancel(event, "${CC.RED}Reconnect to resolve this issue.")
-            return
-        }
-
-        if (chatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.chat.mute.bypass")) {
+        if (chatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass")) {
             cancel(event, "${CC.RED}Global chat is currently muted.")
-        } else if (chatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.chat.slow.bypass")) {
+        } else if (chatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass")) {
             if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true) {
                 val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
 
@@ -91,7 +85,7 @@ class PlayerListener : Listener {
 
             lemonPlayer.cooldowns["slowChat"] = Cooldown(chatHandler.slowChatTime * 1000L)
         } else {
-            if (!lemonPlayer.hasPermission("lemon.chat.delay.bypass")) {
+            if (!lemonPlayer.hasPermission("lemon.cooldown.chat.bypass")) {
                 if (lemonPlayer.cooldowns["chat"]?.isActive() == true) {
                     val formatted = lemonPlayer.cooldowns["chat"]?.let { remaining(it) }
 
