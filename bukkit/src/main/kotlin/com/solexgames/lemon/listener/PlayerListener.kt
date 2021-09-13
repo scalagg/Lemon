@@ -217,6 +217,40 @@ class PlayerListener : Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun onCommand(event: PlayerCommandPreprocessEvent) {
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.player).orElse(null)
+
+        // TODO: 9/12/2021 handle punishment checks
+
+        if (lemonPlayer.cooldowns["command"]?.isActive() == true) {
+            val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
+
+            cancel(event, "${CC.RED}You're on command cooldown, please wait ${formatted}.")
+            return
+        }
+
+        val command = event.message.split(" ")[0]
+
+        if (command.contains(":") && !lemonPlayer.hasPermission("lemon.dev")) {
+            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
+            return
+        }
+
+        if (!lemonPlayer.hasPermission("lemon.command-blacklist.bypass")) {
+            Lemon.instance.settings.blacklistedCommands.forEach {
+                if (command.equals(it, true)) {
+                    cancel(event, "${CC.RED}You do not have permission to perform this command!")
+                    return
+                }
+            }
+        }
+
+        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass")) {
+            lemonPlayer.cooldowns["command"] = Cooldown(1000L)
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerQuit(event: PlayerQuitEvent) {
         event.quitMessage = null
         onDisconnect(event.player)

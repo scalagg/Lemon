@@ -176,7 +176,7 @@ class LemonPlayer(
 
             permissionOnlyGrants.forEach { grant ->
                 grant.getRank().getCompoundedPermissions().forEach { permission ->
-                    handleAddPermission.invoke(permission)
+                    handleAddPermission.invoke(permission, it)
                 }
             }
 
