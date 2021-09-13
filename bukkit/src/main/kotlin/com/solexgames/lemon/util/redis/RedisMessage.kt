@@ -11,7 +11,10 @@ class RedisMessage(private val message: String) {
 
     fun publishAsync(): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
-            Lemon.instance.jedisManager.publish(message)
+            Lemon.instance.jedisManager.runCommand {
+                it.publish("lemon:spigot", message)
+                it.close()
+            }
         }
     }
 
@@ -19,6 +22,7 @@ class RedisMessage(private val message: String) {
         return CompletableFuture.runAsync {
             Lemon.instance.jedisManager.runCommand {
                 it.publish(channel, message)
+                it.close()
             }
         }
     }
