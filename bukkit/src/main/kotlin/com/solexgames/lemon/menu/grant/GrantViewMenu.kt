@@ -36,8 +36,7 @@ class GrantViewMenu(
     private val viewingFor = CubedCacheUtil.fetchName(uuid)
 
     override fun getPrePaginatedTitle(player: Player): String {
-        val name = CubedCacheUtil.fetchName(uuid)!!
-        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(name)}"
+        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(uuid)}"
 
         return when (viewType) {
             HistoryViewType.STAFF_HIST -> "Staff $base"
@@ -115,7 +114,7 @@ class GrantViewMenu(
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(grant.target)}")
+            lines.add("${CC.SEC}Target: ${CC.PRI}${coloredName(grant.target)}")
             lines.add("${CC.SEC}Rank: ${CC.PRI}${grant.getRank().getColoredName()}")
             lines.add("${CC.SEC}Duration: ${CC.PRI + grant.durationString}")
 
@@ -134,7 +133,6 @@ class GrantViewMenu(
             lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
             lines.add("${CC.SEC}Issued On: ${CC.PRI}${grant.addedOn}")
             lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${grant.addedReason}")
-            lines.add("")
 
             if (grant.isRemoved) {
                 val removedBy = grant.removedBy?.let {
@@ -143,15 +141,18 @@ class GrantViewMenu(
                     "${CC.D_RED}Console"
                 }
 
+                lines.add("")
                 lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
                 lines.add("${CC.SEC}Removed On: ${CC.PRI}${grant.removedOn}")
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${grant.removedReason}")
-                lines.add("")
             }
 
             val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
 
-            lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You cannot remove this grant.")
+            if (grant.isActive) {
+                lines.add("")
+                lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You cannot remove this grant.")
+            }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
                 .data((if (grant.hasExpired) 1 else if (!grant.isRemoved) 5 else 14).toShort())
