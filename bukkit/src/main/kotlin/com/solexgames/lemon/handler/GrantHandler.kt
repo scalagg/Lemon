@@ -39,7 +39,7 @@ object GrantHandler {
         ) { true }
     }
 
-    fun fetchGrantsFor(uuid: UUID): CompletableFuture<List<Grant>> {
+    fun fetchGrantsFor(uuid: UUID?): CompletableFuture<List<Grant>> {
         return fetchGrants(
             Filters.eq("target", uuid.toString())
         ) { true }

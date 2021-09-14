@@ -59,6 +59,28 @@ object RedisHandler: JedisHandler {
         }
     }
 
+    @Subscription(action = "global-message")
+    fun onGlobalMessage(jsonAppender: JsonAppender) {
+        val message = jsonAppender.getParam("message")
+        val permission = jsonAppender.getParam("permission")
+
+        if (permission.isNotBlank()) {
+            Bukkit.broadcast(message, permission)
+        } else {
+            Bukkit.broadcastMessage(message)
+        }
+    }
+
+    @Subscription(action = "player-message")
+    fun onPlayerMessage(jsonAppender: JsonAppender) {
+        val message = jsonAppender.getParam("message")
+        val targetUuid = UUID.fromString(
+            jsonAppender.getParam("target")
+        )
+
+        Bukkit.getPlayer(targetUuid)?.sendMessage(message)
+    }
+
     @Subscription(action = "recalculate-grants")
     fun onRecalculate(jsonAppender: JsonAppender) {
         val targetUuid = UUID.fromString(
@@ -69,6 +91,17 @@ object RedisHandler: JedisHandler {
             it.recalculateGrants(
                 shouldCalculateNow = true
             )
+        }
+    }
+
+    @Subscription(action = "recalculate-punishments")
+    fun onPunishmentHandling(jsonAppender: JsonAppender) {
+        val targetUuid = UUID.fromString(
+            jsonAppender.getParam("target")
+        )
+
+        Lemon.instance.playerHandler.findPlayer(targetUuid).ifPresent {
+            it.recalculatePunishments()
         }
     }
 

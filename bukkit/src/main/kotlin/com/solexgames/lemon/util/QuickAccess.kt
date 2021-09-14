@@ -2,6 +2,7 @@ package com.solexgames.lemon.util
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.handler.RedisHandler
+import com.solexgames.lemon.player.punishment.Punishment
 import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
@@ -14,12 +15,16 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author puugz, GrowlyX
+ * @author GrowlyX, puugz
  */
 object QuickAccess {
 
     fun coloredNameOrConsole(sender: CommandSender): String {
-        val lemonPlayer = sender.name?.let { Lemon.instance.playerHandler.findPlayer(it).orElse(null) }
+        if (sender is ConsoleCommandSender) {
+            return "${CC.D_RED}Console"
+        }
+
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(sender as Player).orElse(null)
 
         lemonPlayer?.let {
             return it.getColoredName()
@@ -40,6 +45,26 @@ object QuickAccess {
         lemonPlayer?.let {
             return it.getColoredName()
         }  ?: return null
+    }
+
+    fun fetchColoredName(uuid: UUID?): String {
+        uuid ?: return "${CC.D_RED}Console"
+
+        val grants = Lemon.instance.grantHandler.fetchGrantsFor(uuid).get()
+
+        val playerName = CubedCacheUtil.fetchName(uuid)
+        val prominent = GrantRecalculationUtil.getProminentGrant(grants)
+            ?: return Lemon.instance.rankHandler.getDefaultRank().color + playerName
+
+        return prominent.getRank().color + playerName
+    }
+
+    fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int> {
+        return Lemon.instance.grantHandler.fetchGrantsFor(uuid).thenApplyAsync {
+            val prominent = GrantRecalculationUtil.getProminentGrant(it) ?: return@thenApplyAsync 0
+
+            return@thenApplyAsync prominent.getRank().weight
+        }
     }
 
     fun coloredName(player: Player): String? {
@@ -63,6 +88,12 @@ object QuickAccess {
                 lemonPlayer.pushCocoaUpdates()
             }
         }
+    }
+
+    fun uuidOf(sender: CommandSender): UUID? {
+        return if (sender is Player) {
+            sender.uniqueId
+        } else null
     }
 
     fun remaining(cooldown: Cooldown): String {
@@ -100,8 +131,69 @@ object QuickAccess {
         ).publishAsync()
     }
 
+    fun parseReason(reason: String?, fallback: String = "Unfair Advantage"): String {
+        val preParsedReason = reason?.removeSuffix("-s") ?: fallback
+
+        return preParsedReason.ifBlank { fallback }
+    }
+
+    fun attemptExpiration(punishment: Punishment, reason: String = "Expired", remover: UUID? = null) : Boolean {
+        return if (!punishment.isRemoved && punishment.hasExpired) {
+            punishment.isRemoved = true
+            punishment.removedAt = System.currentTimeMillis()
+            punishment.removedOn = Lemon.instance.settings.id
+            punishment.removedBy = remover
+            punishment.removedReason = reason
+
+            RedisHandler.buildMessage(
+                "recalculate-punishments",
+                mutableMapOf<String, String>().also { map ->
+                    map["uniqueId"] = punishment.target.toString()
+                }
+            )
+
+            false
+        } else true
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void> {
+        return RedisHandler.buildMessage(
+            "global-message",
+            buildMap {
+                put("message", message)
+                put("permission", permission ?: "")
+            }
+        ).publishAsync()
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void> {
+        return RedisHandler.buildMessage(
+            "player-message",
+            buildMap {
+                put("message", message)
+                put("target", uuid.toString())
+            }
+        ).publishAsync()
+    }
+
     fun messageType(name: String): MessageType {
         return MessageType.valueOf(name)
+    }
+
+    fun weightOf(issuer: CommandSender): Int {
+        if (issuer is ConsoleCommandSender) {
+            return Int.MAX_VALUE
+        }
+
+        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(issuer as Player).orElse(null)
+
+        lemonPlayer?.let {
+            return it.activeGrant!!.getRank().weight
+        }
+
+        return 0
     }
 
     enum class MessageType {

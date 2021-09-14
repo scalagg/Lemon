@@ -5,6 +5,7 @@ import com.solexgames.lemon.util.QuickAccess.remaining
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.channel.Channel
+import com.solexgames.lemon.player.punishment.category.PunishmentCategory
 import com.solexgames.lemon.util.other.Cooldown
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
@@ -72,6 +73,27 @@ class PlayerListener : Listener {
 
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
         val chatHandler = Lemon.instance.chatHandler
+
+        val mutePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.MUTE)
+
+        if (mutePunishment != null) {
+            cancel(event, lemonPlayer.getPunishmentMessage(mutePunishment))
+            return
+        }
+
+        val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
+
+        if (blacklistPunishment != null) {
+            cancel(event, "${CC.RED}You cannot chat while you're blacklisted.")
+            return
+        }
+
+        val banPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BAN)
+
+        if (banPunishment != null) {
+            cancel(event, "${CC.RED}You cannot chat while you're banned.")
+            return
+        }
 
         if (chatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass")) {
             cancel(event, "${CC.RED}Global chat is currently muted.")
@@ -214,8 +236,6 @@ class PlayerListener : Listener {
     fun onCommand(event: PlayerCommandPreprocessEvent) {
         val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.player).orElse(null)
 
-        // TODO: 9/12/2021 handle punishment checks
-
         if (lemonPlayer.cooldowns["command"]?.isActive() == true) {
             val formatted = lemonPlayer.cooldowns["command"]?.let { remaining(it) }
 
@@ -224,6 +244,26 @@ class PlayerListener : Listener {
         }
 
         val command = event.message.split(" ")[0]
+
+        val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
+
+        if (blacklistPunishment != null) {
+            cancel(event, """
+                ${CC.RED}You cannot perform commands while being blacklisted.
+                ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
+            """.trimIndent())
+            return
+        }
+
+        val banPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BAN)
+
+        if (banPunishment != null) {
+            cancel(event, """
+                ${CC.RED}You cannot perform commands while being banned.
+                ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
+            """.trimIndent())
+            return
+        }
 
         if (command.contains(":") && !lemonPlayer.hasPermission("lemon.dev")) {
             cancel(event, "${CC.RED}You're not allowed to use this syntax.")

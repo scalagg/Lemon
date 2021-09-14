@@ -39,7 +39,7 @@ object ModModeBoardProvider: ScoreboardOverride() {
     }
 
     private fun getVanishStatus(lemonPlayer: LemonPlayer): String {
-        val vanished = lemonPlayer.bukkitPlayer.orElse(null).hasMetadata("vanished")
+        val vanished = lemonPlayer.bukkitPlayer!!.hasMetadata("vanished")
         val hidingStaff = lemonPlayer.getSetting("hiding-staff")
 
         var status = if (vanished) CC.RED + "Hidden" else CC.GREEN + "Visible"

@@ -6,12 +6,19 @@ import com.solexgames.lemon.player.enums.PermissionCheck
 import com.solexgames.lemon.player.grant.Grant
 import com.solexgames.lemon.player.metadata.Metadata
 import com.solexgames.lemon.player.note.Note
+import com.solexgames.lemon.player.punishment.Punishment
+import com.solexgames.lemon.player.punishment.category.PunishmentCategory
+import com.solexgames.lemon.player.punishment.category.PunishmentCategory.*
+import com.solexgames.lemon.player.punishment.category.PunishmentCategoryIntensity
 import com.solexgames.lemon.util.GrantRecalculationUtil
 import com.solexgames.lemon.util.QuickAccess
+import com.solexgames.lemon.util.SplitUtil
 import com.solexgames.lemon.util.VaultUtil
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.type.Savable
+import me.lucko.helper.scheduler.threadlock.ServerThreadLock
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.permissions.PermissionAttachment
@@ -26,10 +33,12 @@ class LemonPlayer(
     var ipAddress: String?
 ): Savable {
 
-    val bungeePermissions = mutableListOf<String>()
+    private val bungeePermissions = mutableListOf<String>()
 
     var pastIpAddresses = mutableMapOf<String, Long>()
     var pastLogins = mutableMapOf<String, Long>()
+
+    val activePunishments = mutableMapOf<PunishmentCategory, Punishment?>()
 
     var notes = mutableListOf<Note>()
     var ignoring = mutableListOf<UUID>()
@@ -51,8 +60,8 @@ class LemonPlayer(
     val isStaff: Boolean
         get() = hasPermission("lemon.staff")
 
-    val bukkitPlayer: Optional<Player>
-        get() = Optional.ofNullable(Bukkit.getPlayer(uniqueId))
+    val bukkitPlayer: Player?
+        get() = Bukkit.getPlayer(uniqueId)
 
     init {
         cooldowns["command"] = Cooldown(0L)
@@ -60,6 +69,105 @@ class LemonPlayer(
         cooldowns["report"] = Cooldown(0L)
         cooldowns["chat"] = Cooldown(0L)
         cooldowns["slowChat"] = Cooldown(0L)
+
+        for (value in PunishmentCategory.VALUES) {
+            activePunishments[value] = null
+        }
+    }
+
+    fun recalculatePunishments(
+        connecting: Boolean = false,
+    ) {
+        val punishments = Lemon.instance.punishmentHandler
+            .fetchAllPunishmentsForTarget(uniqueId)
+
+        punishments.thenAccept { list ->
+            val currentMap = activePunishments.entries
+
+            list.forEach { QuickAccess.attemptExpiration(it) }
+
+            for (value in PunishmentCategory.VALUES) {
+                val newList = list.filter { it.category == value && it.isActive }
+
+                if (newList.isEmpty()) {
+                    continue
+                }
+
+                activePunishments[value] = newList[0]
+            }
+
+            if (!connecting) {
+                currentMap.forEach {
+                    if (it.value != null && activePunishments[it.key] == null) {
+                        bukkitPlayer?.ifPresent { player ->
+                            player.sendMessage("${CC.RED}You're no longer ${it.value!!.category.inf}.")
+                        }
+                    } else if (it.value == null && activePunishments[it.key] != null) {
+                        val newPunishment = activePunishments[it.key]!!
+                        val message = getPunishmentMessage(newPunishment)
+
+                        when (newPunishment.category.intensity) {
+                            PunishmentCategoryIntensity.MEDIUM -> {
+                                ServerThreadLock.obtain().use {
+                                    bukkitPlayer?.ifPresent { player ->
+                                        player.kickPlayer(message)
+                                    }
+                                }
+                            }
+                            PunishmentCategoryIntensity.LIGHT -> {
+                                bukkitPlayer?.ifPresent { player ->
+                                    player.sendMessage(message)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                val sortedCategories = PunishmentCategory.VALUES.sortedByDescending { it.ordinal }
+
+                for (sortedCategory in sortedCategories) {
+                    val punishmentInCategory = activePunishments[sortedCategory]
+
+                    if (punishmentInCategory != null) {
+                        val message = getPunishmentMessage(punishmentInCategory)
+
+                        handleOnConnection.add {
+                            it.sendMessage(message)
+                        }
+
+                        return@thenAccept
+                    }
+                }
+            }
+        }
+    }
+
+    fun getPunishmentMessage(punishment: Punishment): String {
+        return when (punishment.category) {
+            KICK -> """
+                ${CC.RED}You were kicked for:
+                ${CC.WHITE}${punishment.addedReason}
+            """.trimIndent()
+            MUTE -> """
+                ${CC.RED}You were muted ${punishment.durationType} for:
+                ${CC.WHITE}${punishment.addedReason}
+            """.trimIndent()
+            BAN -> if (punishment.isPermanent) {
+                String.format(
+                    Lemon.instance.languageConfig.permBanMessage,
+                    punishment.addedReason,
+                    SplitUtil.splitUuid(punishment.uuid)
+                )
+            } else {
+                String.format(
+                    Lemon.instance.languageConfig.tempBanMessage,
+                    punishment.durationString,
+                    punishment.addedReason,
+                    SplitUtil.splitUuid(punishment.uuid)
+                )
+            }
+            BLACKLIST -> Lemon.instance.languageConfig.blacklistMessage
+        }
     }
 
     fun recalculateGrants(
@@ -189,8 +297,8 @@ class LemonPlayer(
         }
 
         if (instant) {
-            bukkitPlayer.ifPresent {
-                handlePlayerSetup.invoke(it)
+            if (bukkitPlayer != null) {
+                handlePlayerSetup.invoke(bukkitPlayer!!)
                 pushCocoaUpdates()
             }
         } else {
@@ -221,6 +329,10 @@ class LemonPlayer(
         return data != null && data.asBoolean()
     }
 
+    fun fetchPunishmentOf(category: PunishmentCategory): Punishment? {
+        return this.activePunishments[category]
+    }
+
     fun hasPermission(
         permission: String,
         checkType: PermissionCheck = PermissionCheck.PLAYER
@@ -229,7 +341,7 @@ class LemonPlayer(
 
         when (checkType) {
             PermissionCheck.COMPOUNDED -> hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
-            PermissionCheck.PLAYER -> bukkitPlayer.ifPresent {
+            PermissionCheck.PLAYER -> bukkitPlayer?.ifPresent {
                 if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                     hasPermission = true
                 }
@@ -237,7 +349,7 @@ class LemonPlayer(
             PermissionCheck.BOTH -> {
                 hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
 
-                bukkitPlayer.ifPresent {
+                bukkitPlayer?.ifPresent {
                     if (it.isOp || it.hasPermission(permission.toLowerCase())) {
                         hasPermission = true
                     }
@@ -315,6 +427,10 @@ class LemonPlayer(
             connecting = true,
             forceRecalculatePermissions = true
         )
+
+        recalculatePunishments(
+            connecting = true
+        )
     }
 
     fun handleIfFirstCreated() {
@@ -329,6 +445,10 @@ class LemonPlayer(
         }
 
         handlePostLoad()
+    }
+
+    private fun Player.ifPresent(block: (Player) -> Unit) {
+        block.invoke(this)
     }
 
 }

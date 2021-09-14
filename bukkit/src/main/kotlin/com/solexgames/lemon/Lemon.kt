@@ -28,16 +28,14 @@ import com.solexgames.lemon.processor.LanguageConfigProcessor
 import com.solexgames.lemon.processor.MongoDBConfigProcessor
 import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
-import com.solexgames.lemon.task.GrantUpdateRunnable
+import com.solexgames.lemon.task.ResourceUpdateRunnable
 import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import com.solexgames.lemon.util.CubedCacheUtil
-import com.solexgames.lemon.util.LemonWebUtil
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
 import com.solexgames.redis.JedisManager
 import com.solexgames.redis.JedisSettings
-import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
@@ -61,6 +59,7 @@ import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
+import net.evilblock.cubed.util.time.Duration
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -169,7 +168,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         loadHandlers()
         loadCommands()
 
-        Schedulers.async().runRepeating(GrantUpdateRunnable(), 0L, 20L)
+        Schedulers.async().runRepeating(ResourceUpdateRunnable(), 0L, 20L)
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable(this),
@@ -347,6 +346,16 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                 UUID.fromString(firstArgument)
             } catch (ignored: Exception) {
                 throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
+            }
+        }
+
+        commandManager.commandContexts.registerContext(Duration::class.java) { c ->
+            val firstArg = c.popFirstArg()
+
+            return@registerContext try {
+                Duration.parse(firstArg)
+            } catch (ignored: Exception) {
+                throw ConditionFailedException("Invalid duration parsed. (Example: 1h30m)")
             }
         }
 

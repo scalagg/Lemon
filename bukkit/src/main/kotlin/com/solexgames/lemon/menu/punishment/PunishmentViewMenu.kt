@@ -100,17 +100,15 @@ class PunishmentViewMenu(
 
     private fun getWoolColorByIntensity(category: PunishmentCategory): Short {
         return when (category.intensity) {
-            PunishmentCategoryIntensity.LIGHT -> 5
-            PunishmentCategoryIntensity.MEDIUM -> 1
-            PunishmentCategoryIntensity.MAX -> 14
+            PunishmentCategoryIntensity.LIGHT -> 1
+            PunishmentCategoryIntensity.MEDIUM -> 14
         }
     }
 
     private fun getChatColorByIntensity(category: PunishmentCategory): ChatColor {
         return when (category.intensity) {
-            PunishmentCategoryIntensity.LIGHT -> ChatColor.GREEN
-            PunishmentCategoryIntensity.MEDIUM -> ChatColor.GOLD
-            PunishmentCategoryIntensity.MAX -> ChatColor.RED
+            PunishmentCategoryIntensity.LIGHT -> ChatColor.GOLD
+            PunishmentCategoryIntensity.MEDIUM -> ChatColor.RED
         }
     }
 }
