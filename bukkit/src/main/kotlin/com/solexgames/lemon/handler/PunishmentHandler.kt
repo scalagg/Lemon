@@ -243,7 +243,8 @@ object PunishmentHandler {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
                     "${CC.SEC}Issued By: ${CC.PRI}$issuerName",
-                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
+                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason} ${CC.GRAY}(${punishment.expirationString})",
+                    "${CC.SEC}Issued On: ${CC.WHITE}${punishment.addedOn}",
                     "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
                 )
             }
@@ -282,6 +283,7 @@ object PunishmentHandler {
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
                     "${CC.SEC}Removed By: ${CC.PRI}$issuerName",
                     "${CC.SEC}Removed Reason: ${CC.WHITE}${punishment.removedReason}",
+                    "${CC.SEC}Removed On: ${CC.WHITE}${punishment.removedOn}",
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
                 )
             }

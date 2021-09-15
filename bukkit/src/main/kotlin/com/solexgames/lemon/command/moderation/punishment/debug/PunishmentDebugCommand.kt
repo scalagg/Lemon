@@ -18,7 +18,7 @@ class PunishmentDebugCommand : BaseCommand() {
     fun onDebug(player: Player) {
         Lemon.instance.playerHandler.findPlayer(player).ifPresent {
             it.activePunishments.forEach { entry ->
-                player.sendMessage("${CC.YELLOW}Value of ${CC.WHITE}${entry.key.name}${CC.YELLOW}: ${entry.value}")
+                player.sendMessage("${CC.YELLOW}Value of ${CC.WHITE}${entry.key.name}${CC.YELLOW}: ${CC.PRI}${entry.value?.toString() ?: "N/A"}")
             }
         }
     }

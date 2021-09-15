@@ -133,8 +133,6 @@ object RedisHandler: JedisHandler {
         )
 
         Lemon.instance.playerHandler.findPlayer(targetUuid).ifPresent {
-            println("received recalculation packet")
-
             it.recalculatePunishments()
         }
     }
