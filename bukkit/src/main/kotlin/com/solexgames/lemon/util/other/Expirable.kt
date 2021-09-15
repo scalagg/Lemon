@@ -58,6 +58,17 @@ open class Expirable(
             }"
         }
 
+    val fancyDurationFromNowStringRaw: String
+        get() = if (isPermanent) {
+            "not expire"
+        } else {
+            "expire in ${
+                DurationFormatUtils.formatDurationWords(
+                    expireDate.time - System.currentTimeMillis(), true, true
+                )
+            }"
+        }
+
     val hasExpired: Boolean
         get() = !isPermanent && System.currentTimeMillis() >= addedAt + duration
 }

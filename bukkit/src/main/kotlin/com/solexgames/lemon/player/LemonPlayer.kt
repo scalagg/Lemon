@@ -75,8 +75,7 @@ class LemonPlayer(
     }
 
     fun recalculatePunishments(
-        connecting: Boolean = false,
-        debug: Boolean = true
+        connecting: Boolean = false
     ) {
         val punishments = Lemon.instance.punishmentHandler
             .fetchAllPunishmentsForTarget(uniqueId)
@@ -90,6 +89,7 @@ class LemonPlayer(
                 }
 
                 if (newList.isEmpty()) {
+                    activePunishments[value] = null
                     continue
                 }
 
@@ -141,7 +141,7 @@ class LemonPlayer(
             """.trimIndent()
             MUTE -> """
                 ${CC.RED}You're muted for: ${CC.WHITE}${punishment.addedReason}
-                ${CC.RED}This punishment will ${punishment.fancyDurationStringRaw}.
+                ${CC.RED}This punishment will ${punishment.fancyDurationFromNowStringRaw}.
             """.trimIndent()
             BAN -> if (punishment.isPermanent) {
                 String.format(

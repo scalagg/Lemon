@@ -178,7 +178,7 @@ object QuickAccess {
             punishment.removedBy = remover
             punishment.removedReason = reason
 
-            punishment.save().thenAccept {
+            punishment.save().thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
                     mutableMapOf<String, String>().also { map ->
