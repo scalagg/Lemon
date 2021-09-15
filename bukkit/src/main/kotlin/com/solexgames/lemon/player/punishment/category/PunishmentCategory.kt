@@ -10,6 +10,9 @@ enum class PunishmentCategory(val inf: String, var fancyVersion: String, var ing
     companion object {
         @JvmStatic
         val VALUES = values()
+
+        @JvmStatic
+        val PERSISTENT = listOf(MUTE, BAN, BLACKLIST)
     }
 
 }

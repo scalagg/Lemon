@@ -168,7 +168,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         loadHandlers()
         loadCommands()
 
-        Schedulers.async().runRepeating(ResourceUpdateRunnable(), 0L, 20L)
+        server.scheduler.runTaskTimerAsynchronously(this, ResourceUpdateRunnable(), 0L, 20L)
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable(this),
@@ -176,7 +176,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         )
 
         server.consoleSender.sendMessage(
-            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. The server will be joinable in ${CC.GREEN}3 seconds${CC.SEC}."
+            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Player will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
         )
 
         Cubed.instance.uuidCache = RedisUUIDCache(jedisManager)
@@ -189,7 +189,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
 
-        listOf<MessageType>(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
+        listOf(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
             commandManager.getFormat(it).setColor(3, ChatColor.GRAY)
             commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
             commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))

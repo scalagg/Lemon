@@ -46,10 +46,7 @@ object DataStoreHandler {
             this.rankLayer, this.grantLayer
         ).forEach {
             it.supplyWithCustomGson(Serializers.gson)
-        }
-
-        this.lemonPlayerLayer.fetchEntryByKey("testing").thenAccept {
-            Lemon.instance.getConsoleLogger().log("Initialized mongodb connection")
+            it.fetchEntryByKey("testing")
         }
     }
 }

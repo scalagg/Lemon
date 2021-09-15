@@ -247,7 +247,7 @@ class PlayerListener : Listener {
 
         val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
 
-        if (blacklistPunishment != null) {
+        if (blacklistPunishment != null && command != "/register") {
             cancel(event, """
                 ${CC.RED}You cannot perform commands while being blacklisted.
                 ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
@@ -257,7 +257,7 @@ class PlayerListener : Listener {
 
         val banPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BAN)
 
-        if (banPunishment != null) {
+        if (banPunishment != null && command != "/register") {
             cancel(event, """
                 ${CC.RED}You cannot perform commands while being banned.
                 ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.

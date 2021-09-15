@@ -3,10 +3,12 @@ package com.solexgames.lemon.handler
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.QuickAccess
 import com.solexgames.lemon.util.QuickAccess.messageType
+import com.solexgames.lemon.util.other.FancyMessage
 import com.solexgames.lemon.util.redis.RedisMessage
 import com.solexgames.redis.annotation.Subscription
 import com.solexgames.redis.handler.JedisHandler
 import com.solexgames.redis.json.JsonAppender
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -81,6 +83,36 @@ object RedisHandler: JedisHandler {
         Bukkit.getPlayer(targetUuid)?.sendMessage(message)
     }
 
+    @Subscription(action = "global-fancy-message")
+    fun onGlobalFancyMessage(jsonAppender: JsonAppender) {
+        val message = Serializers.gson.fromJson(
+            jsonAppender.getParam("message"),
+            FancyMessage::class.java
+        )
+        val permission = jsonAppender.getParam("permission")
+
+        Bukkit.getOnlinePlayers()
+            .filter { permission.isNotBlank() && it.hasPermission(permission) }
+            .forEach { message.sendToPlayer(it) }
+    }
+
+    @Subscription(action = "player-fancy-message")
+    fun onPlayerFancyMessage(jsonAppender: JsonAppender) {
+        val message = Serializers.gson.fromJson(
+            jsonAppender.getParam("message"),
+            FancyMessage::class.java
+        )
+        val targetUuid = UUID.fromString(
+            jsonAppender.getParam("target")
+        )
+
+        val player = Bukkit.getPlayer(targetUuid)
+
+        if (player != null) {
+            message.sendToPlayer(player)
+        }
+    }
+
     @Subscription(action = "recalculate-grants")
     fun onRecalculate(jsonAppender: JsonAppender) {
         val targetUuid = UUID.fromString(
@@ -97,10 +129,12 @@ object RedisHandler: JedisHandler {
     @Subscription(action = "recalculate-punishments")
     fun onPunishmentHandling(jsonAppender: JsonAppender) {
         val targetUuid = UUID.fromString(
-            jsonAppender.getParam("target")
+            jsonAppender.getParam("uniqueId")
         )
 
         Lemon.instance.playerHandler.findPlayer(targetUuid).ifPresent {
+            println("received recalculation packet")
+
             it.recalculatePunishments()
         }
     }

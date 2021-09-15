@@ -2,7 +2,7 @@ package com.solexgames.lemon.command.moderation
 
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.util.QuickAccess
-import com.solexgames.lemon.util.QuickAccess.coloredNameOrConsole
+import com.solexgames.lemon.util.QuickAccess.nameOrConsole
 import com.solexgames.lemon.util.QuickAccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -26,7 +26,7 @@ class ChatCommand : BaseCommand() {
         Lemon.instance.chatHandler.chatMuted = !Lemon.instance.chatHandler.chatMuted
 
         val toggledTo = Lemon.instance.chatHandler.chatMuted
-        val coloredName = coloredNameOrConsole(sender)
+        val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
         Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}Chat has been ${if (toggledTo) "disabled" else "enabled"} by ${if (hidden) "staff" else coloredName}.")

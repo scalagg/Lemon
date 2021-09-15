@@ -4,7 +4,9 @@ import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.punishment.Punishment
 import com.solexgames.lemon.util.other.Cooldown
+import com.solexgames.lemon.util.other.FancyMessage
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
@@ -19,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  */
 object QuickAccess {
 
-    fun coloredNameOrConsole(sender: CommandSender): String {
+    fun nameOrConsole(sender: CommandSender): String {
         if (sender is ConsoleCommandSender) {
             return "${CC.D_RED}Console"
         }
@@ -31,8 +33,14 @@ object QuickAccess {
         } ?: return "${CC.D_RED}Console"
     }
 
+    fun nameOrConsole(uuid: UUID?): String {
+        uuid ?: return "${CC.D_RED}Console"
+
+        return CubedCacheUtil.fetchName(uuid)!!
+    }
+
     fun coloredName(name: String?): String? {
-        val lemonPlayer = name?.let { Lemon.instance.playerHandler.findPlayer(it).orElse(null) }
+        val lemonPlayer = name?.let { Lemon.instance.playerHandler.findOnlinePlayer(it) }
 
         lemonPlayer?.let {
             return it.getColoredName()
@@ -120,7 +128,7 @@ object QuickAccess {
         return RedisHandler.buildMessage(
             "staff-message",
             buildMap {
-                put("sender-fancy", coloredNameOrConsole(sender))
+                put("sender-fancy", nameOrConsole(sender))
                 put("message", message)
                 put("permission", "lemon.staff")
                 put("messageType", messageType.name)
@@ -131,26 +139,53 @@ object QuickAccess {
         ).publishAsync()
     }
 
-    fun parseReason(reason: String?, fallback: String = "Unfair Advantage"): String {
+    fun parseReason(
+        reason: String?,
+        fallback: String = "Unfair Advantage"
+    ): String {
         val preParsedReason = reason?.removeSuffix("-s") ?: fallback
+        preParsedReason.removeSuffix(" ")
 
         return preParsedReason.ifBlank { fallback }
     }
 
+    fun attemptRemoval(
+        punishment: Punishment,
+        reason: String = "Expired",
+        remover: UUID? = null
+    ) {
+        punishment.isRemoved = true
+        punishment.removedAt = System.currentTimeMillis()
+        punishment.removedOn = Lemon.instance.settings.id
+        punishment.removedBy = remover
+        punishment.removedReason = reason
+
+        punishment.save().thenAccept {
+            RedisHandler.buildMessage(
+                "recalculate-punishments",
+                mutableMapOf<String, String>().also { map ->
+                    map["uniqueId"] = punishment.target.toString()
+                }
+            ).publishAsync()
+        }
+    }
+
     fun attemptExpiration(punishment: Punishment, reason: String = "Expired", remover: UUID? = null) : Boolean {
-        return if (!punishment.isRemoved && punishment.hasExpired) {
+        return if (!punishment.isRemoved && punishment.hasExpired && !punishment.category.instant) {
             punishment.isRemoved = true
             punishment.removedAt = System.currentTimeMillis()
             punishment.removedOn = Lemon.instance.settings.id
             punishment.removedBy = remover
             punishment.removedReason = reason
 
-            RedisHandler.buildMessage(
-                "recalculate-punishments",
-                mutableMapOf<String, String>().also { map ->
-                    map["uniqueId"] = punishment.target.toString()
-                }
-            )
+            punishment.save().thenAccept {
+                RedisHandler.buildMessage(
+                    "recalculate-punishments",
+                    mutableMapOf<String, String>().also { map ->
+                        map["uniqueId"] = punishment.target.toString()
+                    }
+                ).publishAsync()
+            }
 
             false
         } else true
@@ -168,6 +203,17 @@ object QuickAccess {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
+    fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void> {
+        return RedisHandler.buildMessage(
+            "global-fancy-message",
+            buildMap {
+                put("message", gson.toJson(fancyMessage))
+                put("permission", permission ?: "")
+            }
+        ).publishAsync()
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void> {
         return RedisHandler.buildMessage(
             "player-message",
@@ -177,6 +223,18 @@ object QuickAccess {
             }
         ).publishAsync()
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void> {
+        return RedisHandler.buildMessage(
+            "player-fancy-message",
+            buildMap {
+                put("message", gson.toJson(fancyMessage))
+                put("target", uuid.toString())
+            }
+        ).publishAsync()
+    }
+
 
     fun messageType(name: String): MessageType {
         return MessageType.valueOf(name)

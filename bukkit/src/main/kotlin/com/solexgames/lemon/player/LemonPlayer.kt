@@ -16,7 +16,6 @@ import com.solexgames.lemon.util.SplitUtil
 import com.solexgames.lemon.util.VaultUtil
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.type.Savable
-import me.lucko.helper.scheduler.threadlock.ServerThreadLock
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
@@ -82,12 +81,14 @@ class LemonPlayer(
             .fetchAllPunishmentsForTarget(uniqueId)
 
         punishments.thenAccept { list ->
-            val currentMap = activePunishments.entries
+            val currentMap = activePunishments.toMutableMap()
 
             list.forEach { QuickAccess.attemptExpiration(it) }
 
             for (value in PunishmentCategory.VALUES) {
-                val newList = list.filter { it.category == value && it.isActive }
+                val newList = list.filter {
+                    it.category == value && (it.category.instant || it.isActive)
+                }
 
                 if (newList.isEmpty()) {
                     continue
@@ -98,32 +99,25 @@ class LemonPlayer(
 
             if (!connecting) {
                 currentMap.forEach {
-                    if (it.value != null && activePunishments[it.key] == null) {
-                        bukkitPlayer?.ifPresent { player ->
-                            player.sendMessage("${CC.RED}You're no longer ${it.value!!.category.inf}.")
-                        }
-                    } else if (it.value == null && activePunishments[it.key] != null) {
-                        val newPunishment = activePunishments[it.key]!!
-                        val message = getPunishmentMessage(newPunishment)
+                    val activeValue = activePunishments[it.key]
 
-                        when (newPunishment.category.intensity) {
-                            PunishmentCategoryIntensity.MEDIUM -> {
-                                ServerThreadLock.obtain().use {
-                                    bukkitPlayer?.ifPresent { player ->
-                                        player.kickPlayer(message)
-                                    }
+                    if (it.value == null && activeValue != null) {
+                        val message = getPunishmentMessage(activeValue)
+
+                        when (activeValue.category.intensity) {
+                            PunishmentCategoryIntensity.MEDIUM -> Tasks.sync {
+                                bukkitPlayer?.ifPresent { player ->
+                                    player.kickPlayer(message)
                                 }
                             }
-                            PunishmentCategoryIntensity.LIGHT -> {
-                                bukkitPlayer?.ifPresent { player ->
-                                    player.sendMessage(message)
-                                }
+                            PunishmentCategoryIntensity.LIGHT -> bukkitPlayer?.ifPresent { player ->
+                                player.sendMessage(message)
                             }
                         }
                     }
                 }
             } else {
-                val sortedCategories = PunishmentCategory.VALUES.sortedByDescending { it.ordinal }
+                val sortedCategories = PunishmentCategory.PERSISTENT.sortedByDescending { it.ordinal }
 
                 for (sortedCategory in sortedCategories) {
                     val punishmentInCategory = activePunishments[sortedCategory]
@@ -145,12 +139,12 @@ class LemonPlayer(
     fun getPunishmentMessage(punishment: Punishment): String {
         return when (punishment.category) {
             KICK -> """
-                ${CC.RED}You were kicked for:
+                ${CC.RED}You were kicked from ${Lemon.instance.settings.id}:
                 ${CC.WHITE}${punishment.addedReason}
             """.trimIndent()
             MUTE -> """
-                ${CC.RED}You were muted ${punishment.durationType} for:
-                ${CC.WHITE}${punishment.addedReason}
+                ${CC.RED}You're muted for: ${CC.WHITE}${punishment.addedReason}
+                ${CC.RED}This punishment will ${punishment.fancyDurationStringRaw}.
             """.trimIndent()
             BAN -> if (punishment.isPermanent) {
                 String.format(

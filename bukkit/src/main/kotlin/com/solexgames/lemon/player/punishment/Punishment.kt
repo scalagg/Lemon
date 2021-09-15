@@ -28,13 +28,6 @@ class Punishment(
     val isActive: Boolean
         get() = !isRemoved && !hasExpired
 
-    val durationType: String
-        get() = if (isPermanent) {
-            "indefinitely"
-        } else {
-            "temporarily"
-        }
-
     override fun save(): CompletableFuture<Void> {
         return Lemon.instance.mongoHandler.punishmentLayer.saveEntry(uuid.toString(), this)
     }

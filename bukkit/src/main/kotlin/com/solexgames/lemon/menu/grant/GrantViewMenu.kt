@@ -151,12 +151,12 @@ class GrantViewMenu(
 
             if (grant.isActive) {
                 lines.add("")
-                lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You cannot remove this grant.")
+                lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You can't remove this grant.")
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
                 .data((if (grant.hasExpired) 1 else if (!grant.isRemoved) 5 else 14).toShort())
-                .name("${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)} $statusLore")
+                .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)}")
                 .addToLore(lines).build()
         }
 
