@@ -98,7 +98,7 @@ object PunishmentHandler {
      */
     fun handleWarning(issuer: CommandSender, uuid: UUID, reason: String) {
         Tasks.async {
-            val issuerName = QuickAccess.nameOrConsole(issuer)
+            val issuerName = nameOrConsole(issuer)
             val targetName = QuickAccess.fetchColoredName(uuid)
 
             issuer.sendMessage("${CC.GREEN}You've warned $targetName${CC.GREEN} for ${CC.WHITE}$reason${CC.GREEN}.")
@@ -238,12 +238,15 @@ object PunishmentHandler {
 
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
-                .andHoverOf(
-                    "${CC.SEC}--------------------",
+
+            if (broadcastPermission.isNotBlank()) {
+                fancyMessage.andHoverOf(
+                    "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
                     "${CC.SEC}Issued By: ${CC.PRI}$issuerName",
                     "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
-                    "${CC.SEC}--------------------",
+                    "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
                 )
+            }
 
             QuickAccess.sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
@@ -273,12 +276,15 @@ object PunishmentHandler {
 
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
-                .andHoverOf(
-                    "${CC.SEC}--------------------",
+
+            if (broadcastPermission.isNotBlank()) {
+                fancyMessage.andHoverOf(
+                    "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
                     "${CC.SEC}Removed By: ${CC.PRI}$issuerName",
                     "${CC.SEC}Removed Reason: ${CC.WHITE}${punishment.removedReason}",
-                    "${CC.SEC}--------------------",
+                    "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
                 )
+            }
 
             QuickAccess.sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,

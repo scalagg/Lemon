@@ -92,7 +92,7 @@ object RedisHandler: JedisHandler {
         val permission = jsonAppender.getParam("permission")
 
         Bukkit.getOnlinePlayers()
-            .filter { permission.isNotBlank() && it.hasPermission(permission) }
+            .filter { permission.isBlank() || it.hasPermission(permission) }
             .forEach { message.sendToPlayer(it) }
     }
 

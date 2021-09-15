@@ -143,8 +143,8 @@ object QuickAccess {
         reason: String?,
         fallback: String = "Unfair Advantage"
     ): String {
-        val preParsedReason = reason?.removeSuffix("-s") ?: fallback
-        preParsedReason.removeSuffix(" ")
+        var preParsedReason = reason?.removeSuffix("-s") ?: fallback
+        preParsedReason = preParsedReason.removeSuffix(" ")
 
         return preParsedReason.ifBlank { fallback }
     }

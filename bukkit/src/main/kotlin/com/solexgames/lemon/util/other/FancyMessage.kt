@@ -15,11 +15,11 @@ import java.util.concurrent.CompletableFuture
  */
 class FancyMessage {
 
-    private val components = mutableListOf<TextComponent>()
+    private val components = mutableListOf<SerializableComponent>()
 
     fun withMessage(vararg messages: String): FancyMessage {
         components.add(
-            TextComponent(
+            SerializableComponent(
                 messages.joinToString(separator = "\n")
             )
         )
@@ -29,14 +29,9 @@ class FancyMessage {
 
     fun andHoverOf(vararg hover: String): FancyMessage {
         try {
-            val latestComponent = components[components.size]
+            val latestComponent = components[components.size - 1]
 
-            latestComponent.hoverEvent = HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                ComponentBuilder(
-                    hover.joinToString(separator = "\n")
-                ).create()
-            )
+            latestComponent.hoverMessage = hover.joinToString(separator = "\n")
 
             return this
         } catch (exception: Exception) {
@@ -46,7 +41,7 @@ class FancyMessage {
 
     fun andCommandOf(action: ClickEvent.Action, command: String): FancyMessage {
         try {
-            val latestComponent = components[components.size]
+            val latestComponent = components[components.size - 1]
             latestComponent.clickEvent = ClickEvent(action, command)
 
             return this
@@ -56,8 +51,27 @@ class FancyMessage {
     }
 
     fun sendToPlayer(player: Player) {
+        val mutableList = mutableListOf<TextComponent>()
+
+        components.forEach { serializable ->
+            val textComponent = TextComponent(serializable.value)
+
+            serializable.hoverMessage?.let {
+                textComponent.hoverEvent = HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT,
+                    ComponentBuilder(it).create()
+                )
+            }
+
+            serializable.clickEvent?.let {
+                textComponent.clickEvent = it
+            }
+
+            mutableList.add(textComponent)
+        }
+
         player.spigot().sendMessage(
-            *components.toTypedArray()
+            *mutableList.toTypedArray()
         )
     }
 
@@ -66,5 +80,10 @@ class FancyMessage {
     }
 
     class InvalidComponentException(message: String) : RuntimeException(message)
+
+    data class SerializableComponent(val value: String) {
+        var clickEvent: ClickEvent? = null
+        var hoverMessage: String? = null
+    }
 
 }

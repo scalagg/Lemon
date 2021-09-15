@@ -76,13 +76,12 @@ class LemonPlayer(
 
     fun recalculatePunishments(
         connecting: Boolean = false,
+        debug: Boolean = true
     ) {
         val punishments = Lemon.instance.punishmentHandler
             .fetchAllPunishmentsForTarget(uniqueId)
 
         punishments.thenAccept { list ->
-            val currentMap = activePunishments.toMutableMap()
-
             list.forEach { QuickAccess.attemptExpiration(it) }
 
             for (value in PunishmentCategory.VALUES) {
@@ -98,13 +97,11 @@ class LemonPlayer(
             }
 
             if (!connecting) {
-                currentMap.forEach {
-                    val activeValue = activePunishments[it.key]
+                activePunishments.forEach {
+                    if (it.value != null) {
+                        val message = getPunishmentMessage(it.value!!)
 
-                    if (it.value == null && activeValue != null) {
-                        val message = getPunishmentMessage(activeValue)
-
-                        when (activeValue.category.intensity) {
+                        when (it.value!!.category.intensity) {
                             PunishmentCategoryIntensity.MEDIUM -> Tasks.sync {
                                 bukkitPlayer?.ifPresent { player ->
                                     player.kickPlayer(message)
