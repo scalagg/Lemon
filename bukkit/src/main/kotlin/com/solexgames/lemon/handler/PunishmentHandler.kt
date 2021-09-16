@@ -283,7 +283,7 @@ object PunishmentHandler {
         val broadcastBody = "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has un${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
 
         punishment.save().thenRun {
-            issuer.sendMessage("$broadcastPrefix${CC.GREEN}You've un${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN} for ${CC.WHITE}${punishment.addedReason}${CC.GREEN}.")
+            issuer.sendMessage("$broadcastPrefix${CC.GREEN}You've un${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN} for ${CC.WHITE}${punishment.removedReason}${CC.GREEN}.")
 
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)

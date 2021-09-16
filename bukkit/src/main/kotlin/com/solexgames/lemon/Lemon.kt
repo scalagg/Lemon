@@ -188,7 +188,11 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun loadCommands() {
-        val commandManager = CubedCommandManager(this)
+        val commandManager = CubedCommandManager(
+            plugin = this,
+            primary = ChatColor.valueOf(lemonWebData.primary),
+            secondary = ChatColor.valueOf(lemonWebData.secondary)
+        )
 
         registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "com.solexgames.lemon.command")
@@ -294,7 +298,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
-        ClassUtils.getClassesInPackage(this, commandPackage).forEach { clazz ->
+        ClassUtils.getClassesInPackage(commandManager.plugin, commandPackage).forEach { clazz ->
             commandManager.registerCommand(clazz.newInstance() as BaseCommand)
         }
     }
@@ -327,34 +331,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             }
 
             return@registerContext lemonPlayer.get()
-        }
-
-        commandManager.commandContexts.registerContext(UUID::class.java) { c ->
-            val firstArgument = c.popFirstArg()
-
-            if (firstArgument.length == 32) {
-                return@registerContext UUIDUtil.formatUUID(firstArgument)
-                    ?: throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
-            } else if (firstArgument.length <= 16) {
-                return@registerContext CubedCacheUtil.fetchUuid(firstArgument)
-                    ?: throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-            }
-
-            return@registerContext try {
-                UUID.fromString(firstArgument)
-            } catch (ignored: Exception) {
-                throw ConditionFailedException("${CC.YELLOW}${firstArgument}${CC.RED} is not a valid uuid.")
-            }
-        }
-
-        commandManager.commandContexts.registerContext(Duration::class.java) { c ->
-            val firstArg = c.popFirstArg()
-
-            return@registerContext try {
-                Duration.parse(firstArg)
-            } catch (ignored: Exception) {
-                throw ConditionFailedException("Invalid duration parsed. (Example: 1h30m)")
-            }
         }
 
         commandManager.commandCompletions.registerAsyncCompletion("all-players") {
