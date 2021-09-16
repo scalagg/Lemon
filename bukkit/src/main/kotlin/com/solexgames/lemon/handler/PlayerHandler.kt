@@ -1,19 +1,29 @@
 package com.solexgames.lemon.handler
 
+import com.cryptomorin.xseries.XMaterial
 import com.solexgames.lemon.Lemon
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.util.CubedCacheUtil
+import com.solexgames.lemon.util.QuickAccess.startListening
+import com.solexgames.lemon.util.QuickAccess.startListeningAtEntity
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.InventoryUtils
+import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.player.PlayerSnapshot
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
 object PlayerHandler {
+
+    val inventory = mutableMapOf<Int, ItemStack>()
 
     var players: HashMap<UUID, LemonPlayer> = hashMapOf()
 
@@ -25,6 +35,19 @@ object PlayerHandler {
                 players.remove(it.uniqueId)
             }
         }, 20L * 60L, 20L * 60L)
+
+        inventory[0] =
+            ItemBuilder(XMaterial.BOOK)
+                .name("${CC.B_PRI}Inspect Player")
+                .addToLore(
+                    "${CC.GRAY}Click a player using",
+                    "${CC.GRAY}this book to take a look",
+                    "${CC.GRAY}at their inventory.",
+                ).build()
+
+        startListeningAtEntity(inventory[0]!!) {
+            PlayerSnapshot(it.rightClicked as Player)
+        }
     }
 
     fun findPlayer(uuid: UUID): Optional<LemonPlayer> {

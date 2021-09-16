@@ -1,11 +1,11 @@
 package com.solexgames.lemon.handler
 
+import com.google.common.primitives.Ints
 import com.solexgames.lemon.player.channel.Channel
 import com.solexgames.lemon.player.channel.ChannelOverride
 import com.solexgames.lemon.player.channel.impl.DefaultChannel
 import com.solexgames.lemon.player.channel.impl.staff.StaffChannel
 import com.solexgames.lemon.player.channel.impl.staff.StaffChannelType
-import net.minecraft.util.com.google.common.primitives.Ints
 import org.bukkit.entity.Player
 import java.util.*
 

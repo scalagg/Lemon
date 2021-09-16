@@ -259,6 +259,16 @@ object PunishmentHandler {
                         it["uniqueId"] = uuid.toString()
                     }
                 ).publishAsync()
+
+                if (punishment.category == PunishmentCategory.KICK) {
+                    RedisHandler.buildMessage(
+                        "cross-kick",
+                        mutableMapOf<String, String>().also { map ->
+                            map["uniqueId"] = punishment.target.toString()
+                            map["reason"] = punishment.addedReason
+                        }
+                    ).publishAsync()
+                }
             }
         }
     }

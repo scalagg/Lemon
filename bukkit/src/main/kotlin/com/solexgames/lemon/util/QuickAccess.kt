@@ -5,6 +5,7 @@ import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.punishment.Punishment
 import com.solexgames.lemon.util.other.Cooldown
 import com.solexgames.lemon.util.other.FancyMessage
+import me.lucko.helper.Events
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
@@ -13,6 +14,9 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -235,6 +239,19 @@ object QuickAccess {
         ).publishAsync()
     }
 
+    fun startListening(itemStack: ItemStack, lambda: (PlayerInteractEvent) -> Unit) {
+        Events.subscribe(PlayerInteractEvent::class.java)
+            .filter { it.action.name.contains("RIGHT") }
+            .filter { it.item != null && it.item.isSimilar(itemStack) }
+            .handler(lambda)
+    }
+
+    fun startListeningAtEntity(itemStack: ItemStack, lambda: (PlayerInteractAtEntityEvent) -> Unit) {
+        Events.subscribe(PlayerInteractAtEntityEvent::class.java)
+            .filter { it.rightClicked is Player }
+            .filter { it.player.itemInHand != null && it.player.itemInHand.isSimilar(itemStack) }
+            .handler(lambda)
+    }
 
     fun messageType(name: String): MessageType {
         return MessageType.valueOf(name)

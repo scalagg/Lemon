@@ -85,7 +85,7 @@ class LemonPlayer(
 
             for (value in PunishmentCategory.VALUES) {
                 val newList = list.filter {
-                    it.category == value && (it.category.instant || it.isActive)
+                    it.category == value && it.isActive
                 }
 
                 if (newList.isEmpty()) {

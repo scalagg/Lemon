@@ -33,7 +33,7 @@ class ChatCommand : BaseCommand() {
 
         sendStaffMessage(
             sender,
-            "$coloredName ${CC.D_AQUA}${if (toggledTo) "${CC.RED}disabled" else "${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
+            "$coloredName${CC.D_AQUA} has ${if (toggledTo) "${CC.RED}disabled" else "${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
             true, QuickAccess.MessageType.NOTIFICATION
         )
     }

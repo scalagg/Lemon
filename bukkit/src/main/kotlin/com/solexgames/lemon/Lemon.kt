@@ -14,6 +14,7 @@ import com.solexgames.lemon.adapt.LemonPlayerAdapter
 import com.solexgames.lemon.adapt.UUIDAdapter
 import com.solexgames.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import com.solexgames.lemon.handler.*
+import com.solexgames.lemon.listener.PlayerListener
 import com.solexgames.lemon.player.LemonPlayer
 import com.solexgames.lemon.player.board.ModModeBoardProvider
 import com.solexgames.lemon.player.cached.CachedLemonPlayer
@@ -189,12 +190,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadCommands() {
         val commandManager = CubedCommandManager(this)
 
-        listOf(MessageType.HELP, MessageType.INFO, MessageType.SYNTAX).forEach {
-            commandManager.getFormat(it).setColor(3, ChatColor.GRAY)
-            commandManager.getFormat(it).setColor(2, ChatColor.valueOf(lemonWebData.secondary))
-            commandManager.getFormat(it).setColor(1, ChatColor.valueOf(lemonWebData.primary))
-        }
-
         registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "com.solexgames.lemon.command")
 
@@ -221,12 +216,15 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         return ChatColor.valueOf(string).toString()
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun loadListeners() {
         ClassUtils.getClassesInPackage(this, "com.solexgames.lemon.listener").forEach {
             val listener = it.newInstance() as Listener
 
             server.pluginManager.registerEvents(listener, this)
         }
+
+        PlayerListener().loadLuckoEvents()
     }
 
     private fun loadBaseConfigurations() {

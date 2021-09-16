@@ -137,6 +137,19 @@ object RedisHandler: JedisHandler {
         }
     }
 
+    @Subscription(action = "cross-kick")
+    fun onCrossKick(jsonAppender: JsonAppender) {
+        val targetUuid = UUID.fromString(
+            jsonAppender.getParam("uniqueId")
+        )
+        val reason = jsonAppender.getParam("reason")
+
+        Bukkit.getPlayer(targetUuid)?.kickPlayer("""
+            ${CC.RED}You've been kicked from${Lemon.instance.settings.id}:
+            ${CC.WHITE}$reason
+        """.trimIndent())
+    }
+
     @Subscription(action = "rank-delete")
     fun onRankDelete(jsonAppender: JsonAppender) {
         val rankUuid = UUID.fromString(

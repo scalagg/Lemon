@@ -50,7 +50,7 @@ class PunishmentViewMenu(
 
             buttons[integer] = ItemBuilder(XMaterial.WHITE_WOOL)
                 .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
-                .data(getWoolColorByIntensity(it))
+                .data(14)
                 .amount(totalAmount)
                 .addToLore(
                     "${CC.GRAY}Viewing statistics for the",
@@ -95,13 +95,6 @@ class PunishmentViewMenu(
             HistoryViewType.STAFF_HIST -> {
                 Lemon.instance.punishmentHandler.fetchPunishmentsByExecutorOfCategory(uuid, category)
             }
-        }
-    }
-
-    private fun getWoolColorByIntensity(category: PunishmentCategory): Short {
-        return when (category.intensity) {
-            PunishmentCategoryIntensity.LIGHT -> 1
-            PunishmentCategoryIntensity.MEDIUM -> 14
         }
     }
 

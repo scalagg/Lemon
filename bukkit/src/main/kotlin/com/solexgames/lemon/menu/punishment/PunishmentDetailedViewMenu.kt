@@ -103,7 +103,6 @@ class PunishmentDetailedViewMenu(
             lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
             lines.add("${CC.SEC}Issued On: ${CC.PRI}${punishment.addedOn}")
             lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${punishment.addedReason}")
-            lines.add("")
 
             if (punishment.isRemoved) {
                 val removedBy = punishment.removedBy?.let {
@@ -112,6 +111,7 @@ class PunishmentDetailedViewMenu(
                     "${CC.D_RED}Console"
                 }
 
+                lines.add("")
                 lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
                 lines.add("${CC.SEC}Removed On: ${CC.PRI}${punishment.removedOn}")
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${punishment.removedReason}")
