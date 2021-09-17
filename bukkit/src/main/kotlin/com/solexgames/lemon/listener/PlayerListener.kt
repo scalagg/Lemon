@@ -1,6 +1,7 @@
 package com.solexgames.lemon.listener
 
 import com.solexgames.lemon.Lemon
+import com.solexgames.lemon.handler.FilterHandler
 import com.solexgames.lemon.util.QuickAccess.remaining
 import com.solexgames.lemon.handler.RedisHandler
 import com.solexgames.lemon.player.LemonPlayer
@@ -163,6 +164,21 @@ class PlayerListener : Listener {
         if (channelMatch == null) {
             cancel(event, "${CC.RED}Something's wrong with global chat, please contact a developer. (104)")
             return
+        }
+
+        if (channelMatch!!.getId() == "default") {
+            if (FilterHandler.checkIfMessageFiltered(event.message, player)) {
+                // they'll think the message sent ;O
+                player.sendMessage(
+                    channelMatch?.getFormatted(
+                        event.message, player.name,
+                        lemonPlayer.activeGrant!!.getRank(), player
+                    )
+                )
+
+                event.isCancelled = true
+                return
+            }
         }
 
         event.isCancelled = true

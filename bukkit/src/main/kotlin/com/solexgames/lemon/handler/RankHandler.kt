@@ -9,7 +9,7 @@ object RankHandler {
 
     val ranks = mutableMapOf<UUID, Rank>()
 
-    fun loadAllRanks() {
+    fun preLoadRanks() {
         Lemon.instance.mongoHandler.rankLayer.fetchAllEntries().whenComplete { t, _ ->
             t.forEach {
                 ranks[it.value.uuid] = it.value

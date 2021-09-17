@@ -17,4 +17,8 @@ class SettingsConfigProcessor {
         "/ver", "/icanhasbukkit"
     )
 
+    val blacklistedPhraseRegex = listOf(
+        "(n|i){1,32}((g{2,32}|q){1,32}|[gq]{2,32})[e3ra]{1,32}"
+    )
+
 }

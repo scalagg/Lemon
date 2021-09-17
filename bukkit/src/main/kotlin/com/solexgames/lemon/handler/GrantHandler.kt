@@ -93,21 +93,20 @@ object GrantHandler {
     }
 
     fun handleGrant(sender: CommandSender, grant: Grant) {
-        val name = CubedCacheUtil.fetchName(grant.target)
-
         grant.save().thenRun {
-            reloadPlayer(grant.uuid)
-        }
+            val name = CubedCacheUtil.fetchName(grant.target)
+            reloadPlayer(grant.target)
 
-        sender.sendMessage(arrayOf(
-            "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${grant.getRank().getColoredName()}${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
-            "${CC.SEC}Granted for scopes: ${CC.PRI}${
-                grant.scopes.joinToString(
-                    separator = "${CC.SEC}, ${CC.PRI}"
-                )
-            }${CC.SEC}.",
-            "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}."
-        ))
+            sender.sendMessage(arrayOf(
+                "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${grant.getRank().getColoredName()}${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
+                "${CC.SEC}Granted for scopes: ${CC.PRI}${
+                    grant.scopes.joinToString(
+                        separator = "${CC.SEC}, ${CC.PRI}"
+                    )
+                }${CC.SEC}.",
+                "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}."
+            ))
+        }
     }
 
 }

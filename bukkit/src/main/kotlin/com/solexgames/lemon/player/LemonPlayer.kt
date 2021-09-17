@@ -120,7 +120,7 @@ class LemonPlayer(
                     val punishmentInCategory = activePunishments[sortedCategory]
 
                     if (punishmentInCategory != null) {
-                        val message = getPunishmentMessage(punishmentInCategory)
+                        val message = getPunishmentMessage(punishmentInCategory, current = false)
 
                         handleOnConnection.add {
                             it.sendMessage(message)
@@ -133,14 +133,14 @@ class LemonPlayer(
         }
     }
 
-    fun getPunishmentMessage(punishment: Punishment): String {
+    fun getPunishmentMessage(punishment: Punishment, current: Boolean = true): String {
         return when (punishment.category) {
             KICK -> """
                 ${CC.RED}You were kicked from ${Lemon.instance.settings.id}:
                 ${CC.WHITE}${punishment.addedReason}
             """.trimIndent()
             MUTE -> """
-                ${CC.RED}You're muted for: ${CC.WHITE}${punishment.addedReason}
+                ${CC.RED}${if (current) "You've been" else "You're currently"} muted for: ${CC.WHITE}${punishment.addedReason}
                 ${CC.RED}This punishment will ${punishment.fancyDurationFromNowStringRaw}.
             """.trimIndent()
             BAN -> if (punishment.isPermanent) {

@@ -31,7 +31,6 @@ import com.solexgames.lemon.processor.RedisConfigProcessor
 import com.solexgames.lemon.processor.SettingsConfigProcessor
 import com.solexgames.lemon.task.ResourceUpdateRunnable
 import com.solexgames.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
-import com.solexgames.lemon.util.CubedCacheUtil
 import com.solexgames.lemon.util.validate.LemonWebData
 import com.solexgames.lemon.util.validate.LemonWebStatus
 import com.solexgames.redis.JedisBuilder
@@ -42,7 +41,6 @@ import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.MessageType
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.entity.EntitySerializer
 import net.evilblock.cubed.entity.animation.EntityAnimation
@@ -59,8 +57,6 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
-import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
-import net.evilblock.cubed.util.time.Duration
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -89,6 +85,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var grantHandler: GrantHandler
     lateinit var serverHandler: ServerHandler
     lateinit var chatHandler: ChatHandler
+    lateinit var filterHandler: FilterHandler
     lateinit var punishmentHandler: PunishmentHandler
 
     lateinit var mongoConfig: MongoDBConfigProcessor
@@ -247,9 +244,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private fun loadHandlers() {
         mongoHandler = DataStoreHandler
         playerHandler = PlayerHandler
+        filterHandler = FilterHandler
 
         rankHandler = RankHandler
-        rankHandler.loadAllRanks()
+        rankHandler.preLoadRanks()
 
         grantHandler = GrantHandler
         serverHandler = ServerHandler

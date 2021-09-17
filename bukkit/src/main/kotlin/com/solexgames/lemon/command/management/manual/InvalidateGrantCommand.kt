@@ -26,7 +26,7 @@ class InvalidateGrantCommand : BaseCommand() {
 
         sender.sendMessage("${CC.SEC}Starting grant invalidation...")
 
-        completableFuture.thenAccept {
+        completableFuture.thenRun {
             sender.sendMessage("${CC.GREEN}Finished grant invalidation.")
         }
     }

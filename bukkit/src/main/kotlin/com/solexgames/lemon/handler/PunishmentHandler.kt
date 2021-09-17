@@ -164,8 +164,7 @@ object PunishmentHandler {
         silent: Boolean = false, rePunishing: Boolean = false
     ) {
         Tasks.async {
-            val activePunishments = Lemon.instance.punishmentHandler
-                .fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
+            val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
             val targetName = QuickAccess.fetchColoredName(uuid)
             val targetWeight = QuickAccess.fetchRankWeight(uuid).getNow(0)
@@ -174,7 +173,7 @@ object PunishmentHandler {
             val issuerWeight = QuickAccess.weightOf(issuer)
 
             activePunishments.thenAccept {
-                if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("scandium.command.${category.name.toLowerCase()}.permanent")) {
+                if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.toLowerCase()}.permanent")) {
                     issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.toLowerCase()}s!")
                     return@thenAccept
                 }
