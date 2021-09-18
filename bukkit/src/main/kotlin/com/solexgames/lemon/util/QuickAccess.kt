@@ -246,6 +246,13 @@ object QuickAccess {
             .handler(lambda)
     }
 
+    fun startListening(itemStack: ItemStack, lambda: (PlayerInteractEvent) -> Unit, terminable: CompositeTerminable) {
+        Events.subscribe(PlayerInteractEvent::class.java)
+            .filter { it.action.name.contains("RIGHT") }
+            .filter { it.item != null && it.item.isSimilar(itemStack) }
+            .handler(lambda).bindWith(terminable)
+    }
+
     fun startListeningAtEntity(itemStack: ItemStack, lambda: (PlayerInteractAtEntityEvent) -> Unit) {
         Events.subscribe(PlayerInteractAtEntityEvent::class.java)
             .filter { it.rightClicked is Player }
