@@ -1,8 +1,8 @@
 name: Lemon
-version: ${git.remote.origin.url}/${git.commit.id.abbrev}
-main: com.solexgames.lemon.Lemon
+version: 1.0.0
+main: gg.scala.lemon.Lemon
 
-author: SolexGames
-website: https://solexgames.com
+author: Scala
+website: https://scala.gg
 
 depend: [Cubed, spark]
