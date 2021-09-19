@@ -116,14 +116,15 @@ object PlayerHandler {
         NametagHandler.reloadPlayer(player)
     }
 
-    fun fetchAlternateAccountsFor(lemonPlayer: LemonPlayer): CompletableFuture<Map<UUID, String>> {
+    fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>> {
         return Lemon.instance.mongoHandler.lemonPlayerLayer.fetchAllEntries().thenApply {
-            val accounts = mutableMapOf<UUID, String>()
+            val accounts = mutableListOf<LemonPlayer>()
+            val lemonPlayer = findPlayer(uuid).orElse(null)
 
             it.forEach { entry ->
                 lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
                     if (entry.value.pastIpAddresses.containsKey(address)) {
-                        accounts[entry.value.uniqueId] = address
+                        accounts.add(entry.value)
                         return@forEachIndexed
                     }
                 }

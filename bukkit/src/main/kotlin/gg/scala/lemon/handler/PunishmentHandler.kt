@@ -6,12 +6,14 @@ import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.attemptRemoval
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
+import org.bukkit.event.EventPriority
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -138,7 +140,7 @@ object PunishmentHandler {
                     return@thenAccept
                 }
 
-                QuickAccess.attemptRemoval(
+                attemptRemoval(
                     punishment = it[0],
                     reason = reason,
                     remover = issuerUuid
@@ -201,7 +203,7 @@ object PunishmentHandler {
                         return@thenAccept
                     }
 
-                    QuickAccess.attemptRemoval(
+                    attemptRemoval(
                         punishment = it[0],
                         remover = issuerUuid,
                         reason = "Re-${it[0].category.ing}"
