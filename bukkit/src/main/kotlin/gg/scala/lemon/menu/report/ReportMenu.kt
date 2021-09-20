@@ -24,39 +24,38 @@ class ReportMenu(private val target: Player) : Menu() {
     }
 
     override fun getButtons(player: Player): Map<Int, Button> {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
-        val buttons = mutableMapOf<Int, Button>()
-        var int = 0
+        return hashMapOf<Int, Button>().also { buttons ->
+            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+            var index = 0
 
-        ReportType.VALUES.forEach {
-            val finalDescription = mutableListOf<String>()
+            ReportType.VALUES.forEach {
+                val finalDescription = mutableListOf<String>()
 
-            it.examples.forEach { example ->
-                finalDescription.add("${CC.GRAY} ${Constants.DOUBLE_ARROW_RIGHT} ${CC.WHITE}$example")
-            }
+                it.examples.forEach { example ->
+                    finalDescription.add("${CC.GRAY} ${Constants.DOUBLE_ARROW_RIGHT} ${CC.WHITE}$example")
+                }
 
-            buttons[int++] = ItemBuilder(it.material)
-                .name("${CC.PRI}${it.fancyName}")
-                .setLore(finalDescription)
-                .toButton { _, _ ->
-                    sendStaffMessage(
-                        player,
-                        "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",
-                        true,
-                        QuickAccess.MessageType.NOTIFICATION
-                    ).whenComplete { _, throwable ->
-                        if (throwable != null) {
-                            player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")
-                        } else {
-                            lemonPlayer.cooldowns["report"] = Cooldown(60000L)
+                buttons[index++] = ItemBuilder(it.material)
+                    .name("${CC.PRI}${it.fancyName}")
+                    .setLore(finalDescription)
+                    .toButton { _, _ ->
+                        sendStaffMessage(
+                            player,
+                            "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",
+                            true,
+                            QuickAccess.MessageType.NOTIFICATION
+                        ).whenComplete { _, throwable ->
+                            if (throwable != null) {
+                                player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")
+                            } else {
+                                lemonPlayer.cooldowns["report"] = Cooldown(60000L)
 
-                            player.closeInventory()
-                            player.sendMessage("${CC.GREEN}Your report has been submitted.")
+                                player.closeInventory()
+                                player.sendMessage("${CC.GREEN}Your report has been submitted.")
+                            }
                         }
                     }
-                }
+            }
         }
-
-        return buttons
     }
 }

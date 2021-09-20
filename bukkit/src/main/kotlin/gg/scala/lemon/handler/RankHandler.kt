@@ -5,13 +5,13 @@ import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
 import java.util.*
 
-object RankHandler {
+class RankHandler {
 
     val ranks = mutableMapOf<UUID, Rank>()
 
-    fun preLoadRanks() {
-        Lemon.instance.mongoHandler.rankLayer.fetchAllEntries().whenComplete { t, _ ->
-            t.forEach {
+    fun loadRanks() {
+        Lemon.instance.mongoHandler.rankLayer.fetchAllEntries().whenComplete { entries, _ ->
+            entries.forEach {
                 ranks[it.value.uuid] = it.value
             }
 

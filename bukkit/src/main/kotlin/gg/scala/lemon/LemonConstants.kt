@@ -22,7 +22,7 @@ object LemonConstants {
     private val BASE_PREFIX = "${CC.PRI}${CC.BOLD}%s ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
 
     @JvmStatic
-    val STAFF = String.format(BASE_PREFIX, "Staff")
+    val STAFF_PREFIX = String.format(BASE_PREFIX, "Staff")
 
     @JvmStatic
     val STRING_METADATA_MAP_TYPE: Type = object : TypeToken<HashMap<String, Metadata>>() {}.type

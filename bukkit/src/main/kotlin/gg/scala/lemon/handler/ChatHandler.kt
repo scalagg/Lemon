@@ -9,7 +9,7 @@ import gg.scala.lemon.player.channel.impl.staff.StaffChannelType
 import org.bukkit.entity.Player
 import java.util.*
 
-object ChatHandler {
+class ChatHandler {
 
     val channels = mutableMapOf<String, Channel>()
     private val channelOverrides = ArrayList<ChannelOverride>()

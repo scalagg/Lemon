@@ -24,22 +24,20 @@ open class BetterConfirmMenu(
     }
 
     override fun getButtons(player: Player): Map<Int, Button> {
-        val buttons = HashMap<Int, Button>()
+        return hashMapOf<Int, Button>().also {
+            if (extraInfo.isEmpty()) {
+                it[3] = BetterBooleanButton(this, true, confirm)
+                it[5] = BetterBooleanButton(this, false, confirm)
+            } else {
+                it[2] = BetterBooleanButton(this, true, confirm)
+                it[4] = ExtraInfoButton()
+                it[6] = BetterBooleanButton(this, false, confirm)
+            }
 
-        if (extraInfo.isEmpty()) {
-            buttons[3] = BetterBooleanButton(this, true, confirm)
-            buttons[5] = BetterBooleanButton(this, false, confirm)
-        } else {
-            buttons[2] = BetterBooleanButton(this, true, confirm)
-            buttons[6] = BetterBooleanButton(this, false, confirm)
-            buttons[4] = ExtraInfoButton()
+            for (i in 0..8) {
+                it.putIfAbsent(i, LemonConstants.EMPTY)
+            }
         }
-
-        for (i in 0..8) {
-            buttons.putIfAbsent(i, LemonConstants.EMPTY)
-        }
-
-        return buttons
     }
 
     private inner class ExtraInfoButton : Button() {

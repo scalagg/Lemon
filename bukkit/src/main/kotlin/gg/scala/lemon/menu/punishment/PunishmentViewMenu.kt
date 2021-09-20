@@ -40,51 +40,50 @@ class PunishmentViewMenu(
     }
 
     override fun getButtons(player: Player): Map<Int, Button> {
-        val buttons = mutableMapOf<Int, Button>()
-        var integer = 10
+        return hashMapOf<Int, Button>().also {
+            var index = 10
 
-        PunishmentCategory.values().forEach {
-            val totalAmount = punishments.filter { punishment ->
-                punishment.category == it
-            }.size
+            PunishmentCategory.values().forEach {
+                val totalAmount = punishments.filter { punishment ->
+                    punishment.category == it
+                }.size
 
-            buttons[integer] = ItemBuilder(XMaterial.WHITE_WOOL)
-                .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
-                .data(14)
-                .amount(totalAmount)
-                .addToLore(
-                    "${CC.GRAY}Viewing statistics for the",
-                    "${CC.GRAY}${it.fancyVersion} category:",
-                    "",
-                    "${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
-                    "${CC.GRAY}Active: ${CC.YELLOW}${
-                        punishments.filter { punishment ->
-                            punishment.category == it && punishment.isActive
-                        }.size
-                    }",
-                    "${CC.GRAY}Inactive: ${CC.RED}${
-                        punishments.filter { punishment ->
-                            punishment.category == it && punishment.isRemoved
-                        }.size
-                    }",
-                    "",
-                    "${CC.YELLOW}Click to view more info."
-                ).toButton { _, _ ->
-                    fetchPunishments(it).whenComplete { list, _ ->
-                        PunishmentDetailedViewMenu(
-                            uuid, it, viewType, list
-                        ).openMenu(player)
+                buttons[index] = ItemBuilder(XMaterial.WHITE_WOOL)
+                    .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
+                    .data(14)
+                    .amount(totalAmount)
+                    .addToLore(
+                        "${CC.GRAY}Viewing statistics for the",
+                        "${CC.GRAY}${it.fancyVersion} category:",
+                        "",
+                        "${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
+                        "${CC.GRAY}Active: ${CC.YELLOW}${
+                            punishments.filter { punishment ->
+                                punishment.category == it && punishment.isActive
+                            }.size
+                        }",
+                        "${CC.GRAY}Inactive: ${CC.RED}${
+                            punishments.filter { punishment ->
+                                punishment.category == it && punishment.isRemoved
+                            }.size
+                        }",
+                        "",
+                        "${CC.YELLOW}Click to view more info."
+                    ).toButton { _, _ ->
+                        fetchPunishments(it).whenComplete { list, _ ->
+                            PunishmentDetailedViewMenu(
+                                uuid, it, viewType, list
+                            ).openMenu(player)
+                        }
                     }
-                }
 
-            integer += 2
+                index += 2
+            }
+
+            for (int in 0..26) {
+                buttons.putIfAbsent(int, LemonConstants.EMPTY)
+            }
         }
-
-        for (int in 0..26) {
-            buttons.putIfAbsent(int, LemonConstants.EMPTY)
-        }
-
-        return buttons
     }
 
     private fun fetchPunishments(category: PunishmentCategory): CompletableFuture<List<Punishment>> {

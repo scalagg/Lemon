@@ -4,14 +4,10 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
-import gg.scala.lemon.util.QuickAccess.startListening
-import gg.scala.lemon.util.QuickAccess.startListeningAtEntity
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.InventoryUtils
 import net.evilblock.cubed.util.bukkit.ItemBuilder
-import net.evilblock.cubed.util.bukkit.player.PlayerSnapshot
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -21,7 +17,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-object PlayerHandler {
+class PlayerHandler {
 
     val inventory = mutableMapOf<Int, ItemStack>()
 
@@ -45,9 +41,9 @@ object PlayerHandler {
                     "${CC.GRAY}at their inventory.",
                 ).build()
 
-        startListeningAtEntity(inventory[0]!!) {
-            PlayerSnapshot(it.rightClicked as Player)
-        }
+        // use Lemon.instance.entityInteractionHandler
+        // when going in/out of mod-mode to attach/unattach the handler
+        // and PlayerSnapshot is not for inspecting a player
     }
 
     fun findPlayer(uuid: UUID): Optional<LemonPlayer> {

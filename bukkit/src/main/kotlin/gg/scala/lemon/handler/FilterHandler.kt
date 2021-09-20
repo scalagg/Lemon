@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/17/2021
  */
-object FilterHandler {
+class FilterHandler {
 
     private val regexList = mutableListOf<Regex>()
 
@@ -50,7 +50,7 @@ object FilterHandler {
                     title = "Blacklisted Phrase",
                     description = "Message contains a phrase: ${CC.WHITE}$finalWord${CC.GRAY}.",
                     message = message, player = sender, type = type,
-                    target = target
+                    target = target,
                 )
             }
 
@@ -59,7 +59,7 @@ object FilterHandler {
                     title = "Blacklisted Link",
                     description = "Message contains a link: ${CC.WHITE}$finalWord${CC.GRAY}.",
                     message = message, player = sender, type = type,
-                    target = target
+                    target = target,
                 )
             }
         }
@@ -76,7 +76,8 @@ object FilterHandler {
             .withMessage("${CC.RED}[Filtered] ${
                 when (type) {
                     FilterType.PUBLIC -> {
-                        "${CC.YELLOW}${coloredName(player)}${CC.WHITE}:"
+                        // should have rank too
+                        "${CC.YELLOW}${player.displayName}${CC.WHITE}:"
                     }
                     FilterType.PRIVATE -> {
                         "${CC.GRAY}(${player.name} -> ${target!!.name})"

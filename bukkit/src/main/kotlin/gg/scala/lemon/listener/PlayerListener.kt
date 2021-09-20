@@ -322,6 +322,34 @@ class PlayerListener : Listener {
         onDisconnect(event.player)
     }
 
+    @EventHandler
+    fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
+        if (event.entity !is Player) return
+
+        val player = event.entity as Player
+
+        if (player.hasMetadata("vanished")) {
+            player.sendMessage("${CC.RED}You may not damage entities while in vanish.")
+        }
+        if (player.hasMetadata("mod-mode")) {
+            player.sendMessage("${CC.RED}You may not damage entities while in mod-mode.")
+        }
+    }
+
+    @EventHandler
+    fun onBlockBreak(event: BlockBreakEvent) {
+        if (event.player.hasMetadata("mod-mode")) {
+            event.player.sendMessage("${CC.RED}You may not break blocks while in mod-mode.")
+        }
+    }
+
+    @EventHandler
+    fun onBlockPlace(event: BlockPlaceEvent) {
+        if (event.player.hasMetadata("mod-mode")) {
+            event.player.sendMessage("${CC.RED}You may not place blocks while in mod-mode.")
+        }
+    }
+
     private fun cancel(event: PlayerEvent, message: String) {
         event.player.sendMessage(message)
         (event as Cancellable).isCancelled = true
@@ -332,34 +360,6 @@ class PlayerListener : Listener {
 
         lemonPlayer.ifPresent {
             Lemon.instance.playerHandler.players.remove(it.uniqueId)?.save()
-        }
-    }
-
-    fun loadLuckoEvents() {
-        Events.subscribe(EntityDamageByEntityEvent::class.java).handler {
-            if (it.damager.hasMetadata("vanished")) {
-                it.damager.sendMessage("${CC.RED}You may not damage players whilst being vanished.")
-                return@handler
-            }
-
-            if (it.damager.hasMetadata("mod-mode")) {
-                it.damager.sendMessage("${CC.RED}You may not damage players whilst being mod-moded.")
-                return@handler
-            }
-        }
-
-        Events.subscribe(BlockBreakEvent::class.java).handler {
-            if (it.player.hasMetadata("mod-mode")) {
-                it.player.sendMessage("${CC.RED}You may not break blocks whilst being mod-moded.")
-                return@handler
-            }
-        }
-
-        Events.subscribe(BlockPlaceEvent::class.java).handler {
-            if (it.player.hasMetadata("mod-mode")) {
-                it.player.sendMessage("${CC.RED}You may not place blocks whilst being mod-moded.")
-                return@handler
-            }
         }
     }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 8/27/2021
  */
-object GrantHandler {
+class GrantHandler {
 
     private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
         return Lemon.instance.mongoHandler.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {

@@ -14,7 +14,6 @@ import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import gg.scala.lemon.handler.*
-import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.cached.CachedLemonPlayer
@@ -57,6 +56,7 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
+import net.evilblock.cubed.util.bukkit.selection.impl.EntityInteractionHandler
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -99,6 +99,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var jedisSettings: JedisSettings
 
     lateinit var lemonWebData: LemonWebData
+    lateinit var entityInteractionHandler: EntityInteractionHandler
 
     private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
 
@@ -217,15 +218,12 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         return ChatColor.valueOf(string).toString()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun loadListeners() {
         ClassUtils.getClassesInPackage(this, "gg.scala.lemon.listener").forEach {
             val listener = it.newInstance() as Listener
 
             server.pluginManager.registerEvents(listener, this)
         }
-
-        PlayerListener().loadLuckoEvents()
     }
 
     private fun loadBaseConfigurations() {
@@ -242,17 +240,17 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun loadHandlers() {
-        mongoHandler = DataStoreHandler
-        playerHandler = PlayerHandler
-        filterHandler = FilterHandler
+        mongoHandler = DataStoreHandler()
+        playerHandler = PlayerHandler()
+        filterHandler = FilterHandler()
 
-        rankHandler = RankHandler
-        rankHandler.preLoadRanks()
+        rankHandler = RankHandler()
+        rankHandler.loadRanks()
 
-        grantHandler = GrantHandler
-        serverHandler = ServerHandler
-        chatHandler = ChatHandler
-        punishmentHandler = PunishmentHandler
+        grantHandler = GrantHandler()
+        serverHandler = ServerHandler()
+        chatHandler = ChatHandler()
+        punishmentHandler = PunishmentHandler()
 
         localInstance = ServerInstance(
             settings.id,
@@ -290,7 +288,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         jedisManager = JedisBuilder()
             .withSettings(jedisSettings)
             .withChannel("lemon:spigot")
-            .withHandler(RedisHandler).build()
+            .withHandler(RedisHandler()).build()
 
         setupDataStore()
     }

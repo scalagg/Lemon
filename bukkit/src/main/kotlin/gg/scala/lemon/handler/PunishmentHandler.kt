@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 8/26/2021
  */
-object PunishmentHandler {
+class PunishmentHandler {
 
     private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>> {
         return Lemon.instance.mongoHandler.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {

@@ -14,7 +14,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-object RedisHandler: JedisHandler {
+class RedisHandler: JedisHandler {
 
     @Subscription(action = "channel-message")
     fun onChannelMessage(jsonAppender: JsonAppender) {
@@ -179,12 +179,14 @@ object RedisHandler: JedisHandler {
         }
     }
 
-    @JvmStatic
-    fun buildMessage(packet: String, message: Map<String, String>): RedisMessage {
-        return RedisMessage(JsonAppender(packet).also {
-            message.forEach { (key, value) ->
-                it.put(key, value)
-            }
-        }.asJson)
+    companion object {
+        @JvmStatic
+        fun buildMessage(packet: String, message: Map<String, String>): RedisMessage {
+            return RedisMessage(JsonAppender(packet).also {
+                message.forEach { (key, value) ->
+                    it.put(key, value)
+                }
+            }.asJson)
+        }
     }
 }
