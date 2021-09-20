@@ -29,6 +29,10 @@ class PunishmentViewMenu(
     private val punishments: List<Punishment>
 ): Menu() {
 
+    init {
+        placeholder = true
+    }
+
     override fun getTitle(player: Player): String {
         val name = CubedCacheUtil.fetchName(uuid)!!
         val base = "History ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(name)}"
@@ -78,10 +82,6 @@ class PunishmentViewMenu(
                     }
 
                 index += 2
-            }
-
-            for (int in 0..26) {
-                buttons.putIfAbsent(int, LemonConstants.EMPTY)
             }
         }
     }

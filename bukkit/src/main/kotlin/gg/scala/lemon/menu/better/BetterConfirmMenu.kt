@@ -1,8 +1,6 @@
 package gg.scala.lemon.menu.better
 
-import gg.scala.lemon.LemonConstants
 import net.evilblock.cubed.menu.Button
-import net.evilblock.cubed.menu.buttons.TexturedHeadButton
 import net.evilblock.cubed.menu.menus.ConfirmMenu
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -19,6 +17,10 @@ open class BetterConfirmMenu(
     callback: (Boolean) -> Unit
 ) : ConfirmMenu(title, extraInfo, confirm, callback) {
 
+    init {
+        placeholder = true
+    }
+
     override fun getTitle(player: Player): String {
         return title
     }
@@ -32,10 +34,6 @@ open class BetterConfirmMenu(
                 it[2] = BetterBooleanButton(this, true, confirm)
                 it[4] = ExtraInfoButton()
                 it[6] = BetterBooleanButton(this, false, confirm)
-            }
-
-            for (i in 0..8) {
-                it.putIfAbsent(i, LemonConstants.EMPTY)
             }
         }
     }
