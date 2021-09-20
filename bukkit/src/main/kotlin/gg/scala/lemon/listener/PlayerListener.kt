@@ -167,7 +167,7 @@ class PlayerListener : Listener {
         }
 
         if (channelMatch!!.getId() == "default") {
-            if (FilterHandler.checkIfMessageFiltered(event.message, player)) {
+            if (Lemon.instance.filterHandler.checkIfMessageFiltered(event.message, player)) {
                 // they'll think the message sent ;O
                 player.sendMessage(
                     channelMatch?.getFormatted(

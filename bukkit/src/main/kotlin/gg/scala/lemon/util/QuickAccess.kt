@@ -80,6 +80,12 @@ object QuickAccess {
         }
     }
 
+    fun fetchIpAddress(uuid: UUID?): CompletableFuture<String?> {
+        return Lemon.instance.mongoHandler.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
+            return@thenApply it.previousIpAddress
+        }
+    }
+
     fun coloredName(player: Player): String? {
         return coloredName(player.uniqueId)
     }

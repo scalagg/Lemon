@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture
 class Punishment(
     val uuid: UUID,
     val target: UUID,
+    val targetCurrentIp: String?,
     val addedBy: UUID?,
     addedAt: Long,
     val addedOn: String,

@@ -34,6 +34,8 @@ class LemonPlayer(
 
     private val bungeePermissions = mutableListOf<String>()
 
+    var previousIpAddress: String? = null
+
     var pastIpAddresses = mutableMapOf<String, Long>()
     var pastLogins = mutableMapOf<String, Long>()
 

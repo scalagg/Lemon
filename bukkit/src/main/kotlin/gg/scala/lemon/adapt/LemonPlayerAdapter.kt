@@ -14,13 +14,15 @@ import java.util.*
 object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonPlayer> {
 
     @Throws(JsonParseException::class)
-    override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): LemonPlayer? {
+    override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): LemonPlayer {
         val jsonObject = src as JsonObject
         val lemonPlayer = LemonPlayer(
             UUID.fromString(jsonObject.get("uniqueId").asString),
             jsonObject.get("name").asString,
             null
         )
+
+        lemonPlayer.previousIpAddress = jsonObject.get("ipAddress").asString
 
         lemonPlayer.ignoring = Serializers.gson.fromJson(jsonObject.get("ignoring"), LemonConstants.UUID_ARRAY_LIST_TYPE)
 
@@ -41,6 +43,7 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
 
         jsonObject.add("name", JsonPrimitive(src.name))
         jsonObject.add("uniqueId", JsonPrimitive(src.uniqueId.toString()))
+        jsonObject.add("ipAddress", JsonPrimitive(src.ipAddress))
 
         jsonObject.add("ignoring", Serializers.gson.toJsonTree(src.ignoring))
         jsonObject.add("metadata", Serializers.gson.toJsonTree(src.metadata))
