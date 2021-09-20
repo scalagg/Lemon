@@ -1,5 +1,6 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -7,6 +8,7 @@ import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
@@ -25,11 +27,17 @@ class AltsCommand : BaseCommand() {
 
     @Syntax("<target>")
     @CommandAlias("alts")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.alts")
     fun onAlts(sender: Player, target: OnlinePlayer) {
-        val targetLemon = PlayerHandler.findPlayer(target.player.uniqueId).orElse(null)
+        val targetLemon = Lemon.instance.playerHandler.findPlayer(target.player.uniqueId).orElse(null)
 
-        PlayerHandler.fetchAlternateAccountsFor(target.player.uniqueId).thenAccept {
+        Lemon.instance.playerHandler.fetchAlternateAccountsFor(target.player.uniqueId).thenAccept {
+            if (it.isEmpty()) {
+                sender.sendMessage("${CC.RED}${targetLemon.getColoredName()}${CC.RED} does not have any alts.")
+                return@thenAccept
+            }
+
             val finalMessage = FancyMessage()
 
             it.forEach { lemonPlayer ->
@@ -42,13 +50,13 @@ class AltsCommand : BaseCommand() {
                 val matchingIpInfo = lastIpAddress == targetLastIpAddress
                 val previouslyMatched = lemonPlayer.pastIpAddresses.contains(targetLastIpAddress)
 
-                hoverList.add("${CC.SEC}Name: ${CC.PRI}${lemonPlayer.getColoredName()}")
                 hoverList.add("${CC.SEC}Last Seen: ${CC.PRI}${
-                    TimeUtil.formatIntoDateString(
-                        Date(lemonPlayer.getMetadata("last-connection")?.asLong() ?: System.currentTimeMillis())
+                    TimeUtil.formatIntoFullCalendarString(
+                        Date(lemonPlayer.getMetadata("last-connection")?.asString()?.toLong() ?: System.currentTimeMillis())
                     )
                 }")
                 hoverList.add("")
+
                 hoverList.add(
                     if (matchingIpInfo) {
                         "${CC.GREEN}Currently matching $newName${CC.GREEN}."
@@ -60,32 +68,34 @@ class AltsCommand : BaseCommand() {
                 )
 
                 hoverList.add("")
-                hoverList.add("$newName's ${CC.SEC}Current IP Info:")
-                hoverList.add(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Logins: ${CC.WHITE}${lemonPlayer.pastLogins.size}")
-                hoverList.add(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}First Login: ${CC.WHITE}${
-                    TimeUtil.formatIntoDateString(
-                        Date(lemonPlayer.getMetadata("first-connection")?.asLong() ?: 1L)
+                hoverList.add("${targetLemon.getColoredName()}'s ${CC.SEC}Current IP Info:")
+                hoverList.add(" ${CC.SEC}Logins: ${CC.WHITE}${targetLemon.pastLogins.size}")
+                hoverList.add(" ${CC.SEC}First Login: ${CC.WHITE}${
+                    TimeUtil.formatIntoFullCalendarString(
+                        Date(targetLemon.getMetadata("first-connection")?.asString()?.toLong() ?: 1L)
                     )
                 }")
-                hoverList.add(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Last Login: ${CC.WHITE}${
-                    TimeUtil.formatIntoDateString(
-                        Date(lemonPlayer.getMetadata("last-connection")?.asLong() ?: 1L)
+                hoverList.add(" ${CC.SEC}Last Login: ${CC.WHITE}${
+                    TimeUtil.formatIntoFullCalendarString(
+                        Date(targetLemon.getMetadata("last-connection")?.asString()?.toLong() ?: 1L)
                     )
                 }")
 
-                hoverList.add("")
-                hoverList.add("${targetLemon.getColoredName()}'s ${CC.SEC}Current IP Info:")
-                hoverList.add(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Logins: ${CC.WHITE}${targetLemon.pastLogins.size}")
-                hoverList.add(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}First Login: ${CC.WHITE}${
-                    TimeUtil.formatIntoDateString(
-                        Date(targetLemon.getMetadata("first-connection")?.asLong() ?: 1L)
-                    )
-                }")
-                hoverList.add(" ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Last Login: ${CC.WHITE}${
-                    TimeUtil.formatIntoDateString(
-                        Date(targetLemon.getMetadata("last-connection")?.asLong() ?: 1L)
-                    )
-                }")
+                if (matchingIpInfo) {
+                    hoverList.add("")
+                    hoverList.add("$newName's ${CC.SEC}Current IP Info:")
+                    hoverList.add(" ${CC.SEC}Logins: ${CC.WHITE}${lemonPlayer.pastLogins.size}")
+                    hoverList.add(" ${CC.SEC}First Login: ${CC.WHITE}${
+                        TimeUtil.formatIntoFullCalendarString(
+                            Date(lemonPlayer.getMetadata("first-connection")?.asString()?.toLong() ?: 1L)
+                        )
+                    }")
+                    hoverList.add(" ${CC.SEC}Last Login: ${CC.WHITE}${
+                        TimeUtil.formatIntoFullCalendarString(
+                            Date(lemonPlayer.getMetadata("last-connection")?.asString()?.toLong() ?: 1L)
+                        )
+                    }")
+                }
 
                 finalMessage
                     .withMessage("$newName${CC.WHITE}, ")
@@ -93,15 +103,20 @@ class AltsCommand : BaseCommand() {
             }
 
             sender.sendMessage("${coloredName(target.player)}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
+
+            val lastComponent = finalMessage.components[finalMessage.components.size - 1]
+
+            lastComponent.let { comp ->
+                comp.value = comp.value.substring(0, comp.value.length - 2)
+            }
+
             finalMessage.sendToPlayer(sender)
         }
     }
 
     private fun getNewName(lemonPlayer: LemonPlayer): String {
         lemonPlayer.recalculatePunishments(nothing = true)
-            .getNow(null)
         lemonPlayer.recalculateGrants()
-            .getNow(null)
 
         if (lemonPlayer.activePunishments[PunishmentCategory.BLACKLIST] != null) {
             return "${CC.D_RED}${lemonPlayer.name}"

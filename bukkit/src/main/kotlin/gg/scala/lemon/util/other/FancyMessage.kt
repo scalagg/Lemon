@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture
  */
 class FancyMessage {
 
-    private val components = mutableListOf<SerializableComponent>()
+    val components = mutableListOf<SerializableComponent>()
 
     fun withMessage(vararg messages: String): FancyMessage {
         components.add(
@@ -81,7 +81,7 @@ class FancyMessage {
 
     class InvalidComponentException(message: String) : RuntimeException(message)
 
-    data class SerializableComponent(val value: String) {
+    data class SerializableComponent(var value: String) {
         var clickEvent: ClickEvent? = null
         var hoverMessage: String? = null
     }
