@@ -19,6 +19,7 @@ import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
@@ -270,6 +271,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                 credentials
             )
             .build()
+
+        banana.registerClass(RedisHandler)
 
         setupDataStore()
     }
