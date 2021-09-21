@@ -3,6 +3,7 @@ package gg.scala.lemon.player
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.enums.PermissionCheck
+import gg.scala.lemon.player.event.impl.RankChangeEvent
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.player.note.Note
@@ -207,6 +208,10 @@ class LemonPlayer(
             if (shouldNotifyPlayer && !connecting) {
                 bukkitPlayer?.ifPresent {
                     notifyPlayerOfRankUpdate(it)
+
+                    RankChangeEvent(
+                        it, previousRank, activeGrant!!.rankId
+                    ).dispatch()
                 }
             }
 
