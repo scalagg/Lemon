@@ -1,4 +1,4 @@
 allprojects {
-    group 'com.solexgames.lemon'
+    group 'gg.scala.lemon'
     version '1.0.0'
 }

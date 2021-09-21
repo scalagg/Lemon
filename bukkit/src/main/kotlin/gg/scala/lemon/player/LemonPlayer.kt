@@ -228,7 +228,7 @@ class LemonPlayer(
                     separator = ","
                 )
             }
-        ).publishAsync("cocoa")
+        ).dispatch("cocoa")
     }
 
     private fun fetchPreviousRank(grants: List<Grant>): UUID? {

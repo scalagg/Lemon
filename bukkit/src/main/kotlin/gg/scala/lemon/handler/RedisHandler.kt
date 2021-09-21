@@ -1,124 +1,123 @@
 package gg.scala.lemon.handler
 
-import com.solexgames.redis.annotation.Subscription
-import com.solexgames.redis.handler.JedisHandler
-import com.solexgames.redis.json.JsonAppender
+import gg.scala.banana.annotate.Subscribe
+import gg.scala.banana.message.Message
+import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.messageType
 import gg.scala.lemon.util.other.FancyMessage
-import gg.scala.lemon.util.redis.RedisMessage
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-object RedisHandler: JedisHandler {
+object RedisHandler: BananaHandler {
 
-    @Subscription(action = "channel-message")
-    fun onChannelMessage(jsonAppender: JsonAppender) {
-        val message = jsonAppender.getParam("message")
-        val sender = jsonAppender.getParam("sender")
+    @Subscribe("channel-message")
+    fun onChannelMessage(message: Message) {
+        val newMessage = message["message"]!!
+        val sender = message["sender"]!!
 
         val rank = RankHandler.findRank(
-            UUID.fromString(jsonAppender.getParam("rank"))
+            UUID.fromString(message["rank"])
         ) ?: RankHandler.getDefaultRank()
 
-        val channel = ChatHandler.findChannel(jsonAppender.getParam("channel")) ?: return
+        val channel = ChatHandler.findChannel(message["channel"]!!) ?: return
 
         Bukkit.getOnlinePlayers().forEach {
             if (channel.hasPermission(it)) {
-                it.sendMessage(channel.getFormatted(message, sender, rank, it).replace("%s", jsonAppender.getParam("server")))
+                it.sendMessage(channel.getFormatted(newMessage, sender, rank, it).replace("%s", message["server"]!!))
             }
         }
     }
 
-    @Subscription(action = "staff-message")
-    fun onStaffMessage(jsonAppender: JsonAppender) {
-        val message = jsonAppender.getParam("message")
-        val permission = jsonAppender.getParam("permission")
-        val server = jsonAppender.getParam("server")
-        val fancySender = jsonAppender.getParam("sender-fancy")
+    @Subscribe("staff-message")
+    fun onStaffMessage(message: Message) {
+        val newMessage = message["message"]
+        val permission = message["permission"]
+        val server = message["server"]
+        val fancySender = message["sender-fancy"]
 
-        val withServer = jsonAppender.getParam("with-server")!!.toBoolean()
+        val withServer = message["with-server"]!!.toBoolean()
 
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
-        println("got message ${messageType(jsonAppender.getParam("messageType")).name}")
+        println("got message ${messageType(message["message-type"]!!).name}")
 
         when (
-            messageType(jsonAppender.getParam("messageType"))
+            messageType(message["message-type"]!!)
         ) {
             QuickAccess.MessageType.PLAYER_MESSAGE -> {
-                sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$message") {
+                sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$newMessage") {
                     return@sendMessage it.hasPermission(permission)
                 }
             }
             QuickAccess.MessageType.NOTIFICATION -> {
-                sendMessage("$baseMessage$message") {
+                sendMessage("$baseMessage$newMessage") {
                     return@sendMessage it.hasPermission(permission)
                 }
             }
         }
     }
 
-    @Subscription(action = "global-message")
-    fun onGlobalMessage(jsonAppender: JsonAppender) {
-        val message = jsonAppender.getParam("message")
-        val permission = jsonAppender.getParam("permission")
+    @Subscribe("global-message")
+    fun onGlobalMessage(message: Message) {
+        val newMessage = message["message"]
+        val permission = message["permission"]
 
-        if (permission.isNotBlank()) {
-            Bukkit.broadcast(message, permission)
+        if (permission!!.isNotBlank()) {
+            Bukkit.broadcast(newMessage, permission)
         } else {
-            Bukkit.broadcastMessage(message)
+            Bukkit.broadcastMessage(newMessage)
         }
     }
 
-    @Subscription(action = "player-message")
-    fun onPlayerMessage(jsonAppender: JsonAppender) {
-        val message = jsonAppender.getParam("message")
+    @Subscribe("player-message")
+    fun onPlayerMessage(message: Message) {
+        val newMessage = message["message"]
         val targetUuid = UUID.fromString(
-            jsonAppender.getParam("target")
+            message["target"]
         )
 
-        Bukkit.getPlayer(targetUuid)?.sendMessage(message)
+        Bukkit.getPlayer(targetUuid)?.sendMessage(newMessage)
     }
 
-    @Subscription(action = "global-fancy-message")
-    fun onGlobalFancyMessage(jsonAppender: JsonAppender) {
-        val message = Serializers.gson.fromJson(
-            jsonAppender.getParam("message"),
+    @Subscribe("global-fancy-message")
+    fun onGlobalFancyMessage(message: Message) {
+        val newMessage = Serializers.gson.fromJson(
+            message["message"],
             FancyMessage::class.java
         )
-        val permission = jsonAppender.getParam("permission")
+        val permission = message["permission"]
 
         Bukkit.getOnlinePlayers()
-            .filter { permission.isBlank() || it.hasPermission(permission) }
-            .forEach { message.sendToPlayer(it) }
+            .filter { permission!!.isBlank() || it.hasPermission(permission) }
+            .forEach { newMessage.sendToPlayer(it) }
     }
 
-    @Subscription(action = "player-fancy-message")
-    fun onPlayerFancyMessage(jsonAppender: JsonAppender) {
-        val message = Serializers.gson.fromJson(
-            jsonAppender.getParam("message"),
+    @Subscribe("player-fancy-message")
+    fun onPlayerFancyMessage(message: Message) {
+        val newMessage = Serializers.gson.fromJson(
+            message["message"],
             FancyMessage::class.java
         )
         val targetUuid = UUID.fromString(
-            jsonAppender.getParam("target")
+            message["target"]
         )
 
         val player = Bukkit.getPlayer(targetUuid)
 
         if (player != null) {
-            message.sendToPlayer(player)
+            newMessage.sendToPlayer(player)
         }
     }
 
-    @Subscription(action = "recalculate-grants")
-    fun onRecalculate(jsonAppender: JsonAppender) {
+    @Subscribe("recalculate-grants")
+    fun onRecalculate(message: Message) {
         val targetUuid = UUID.fromString(
-            jsonAppender.getParam("target")
+            message["target"]
         )
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
@@ -128,10 +127,10 @@ object RedisHandler: JedisHandler {
         }
     }
 
-    @Subscription(action = "recalculate-punishments")
-    fun onPunishmentHandling(jsonAppender: JsonAppender) {
+    @Subscribe("recalculate-punishments")
+    fun onPunishmentHandling(message: Message) {
         val targetUuid = UUID.fromString(
-            jsonAppender.getParam("uniqueId")
+            message["uniqueId"]
         )
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
@@ -139,12 +138,12 @@ object RedisHandler: JedisHandler {
         }
     }
 
-    @Subscription(action = "cross-kick")
-    fun onCrossKick(jsonAppender: JsonAppender) {
+    @Subscribe("cross-kick")
+    fun onCrossKick(message: Message) {
         val targetUuid = UUID.fromString(
-            jsonAppender.getParam("uniqueId")
+            message["uniqueId"]
         )
-        val reason = jsonAppender.getParam("reason")
+        val reason = message["reason"]
 
         Bukkit.getPlayer(targetUuid)?.kickPlayer("""
             ${CC.RED}You've been kicked from${Lemon.instance.settings.id}:
@@ -152,19 +151,19 @@ object RedisHandler: JedisHandler {
         """.trimIndent())
     }
 
-    @Subscription(action = "rank-delete")
-    fun onRankDelete(jsonAppender: JsonAppender) {
+    @Subscribe("rank-delete")
+    fun onRankDelete(message: Message) {
         val rankUuid = UUID.fromString(
-            jsonAppender.getParam("uniqueId")
+            message["uniqueId"]
         )
 
         RankHandler.ranks.remove(rankUuid)
     }
 
-    @Subscription(action = "rank-update")
-    fun onRankUpdate(jsonAppender: JsonAppender) {
+    @Subscribe("rank-update")
+    fun onRankUpdate(message: Message) {
         val completableFuture = DataStoreHandler.rankLayer
-            .fetchEntryByKey(jsonAppender.getParam("uniqueId"))
+            .fetchEntryByKey(message["uniqueId"])
 
         completableFuture.thenAccept {
             RankHandler.ranks[it.uuid] = it
@@ -179,11 +178,11 @@ object RedisHandler: JedisHandler {
         }
     }
 
-    fun buildMessage(packet: String, message: Map<String, String>): RedisMessage {
-        return RedisMessage(JsonAppender(packet).also {
+    fun buildMessage(packet: String, message: Map<String, String>): Message {
+        return Message(packet).also {
             message.forEach { (key, value) ->
-                it.put(key, value)
+                it[key] = value
             }
-        }.asJson)
+        }
     }
 }

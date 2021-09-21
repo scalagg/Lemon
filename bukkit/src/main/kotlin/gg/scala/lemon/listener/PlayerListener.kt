@@ -190,7 +190,7 @@ class PlayerListener : Listener {
                     put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
                     put("server", Lemon.instance.settings.id)
                 }
-            ).publishAsync()
+            ).dispatch()
         } else {
             for (target in Bukkit.getOnlinePlayers()) {
                 var canReceive = true

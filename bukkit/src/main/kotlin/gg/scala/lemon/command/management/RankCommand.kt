@@ -132,7 +132,7 @@ class RankCommand : BaseCommand() {
                 hashMapOf<String, String>().also {
                     it["uniqueId"] = rank.uuid.toString()
                 }
-            ).publishAsync()
+            ).dispatch()
 
             sender.sendMessage("${CC.SEC}You've deleted the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }

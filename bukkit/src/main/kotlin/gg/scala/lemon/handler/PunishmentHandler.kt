@@ -259,7 +259,7 @@ object PunishmentHandler {
                     mutableMapOf<String, String>().also {
                         it["uniqueId"] = uuid.toString()
                     }
-                ).publishAsync()
+                ).dispatch()
 
                 if (punishment.category == PunishmentCategory.KICK) {
                     RedisHandler.buildMessage(
@@ -268,7 +268,7 @@ object PunishmentHandler {
                             map["uniqueId"] = punishment.target.toString()
                             map["reason"] = punishment.addedReason
                         }
-                    ).publishAsync()
+                    ).dispatch()
                 }
             }
         }
@@ -308,7 +308,7 @@ object PunishmentHandler {
                     mutableMapOf<String, String>().also {
                         it["uniqueId"] = uuid.toString()
                     }
-                ).publishAsync()
+                ).dispatch()
             }
         }
     }

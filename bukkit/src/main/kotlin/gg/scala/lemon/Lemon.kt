@@ -9,16 +9,16 @@ import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnectio
 import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
-import com.solexgames.redis.JedisBuilder
-import com.solexgames.redis.JedisManager
-import com.solexgames.redis.JedisSettings
+import gg.scala.banana.Banana
+import gg.scala.banana.BananaBuilder
+import gg.scala.banana.credentials.BananaCredentials
+import gg.scala.banana.options.BananaOptions
 import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
-import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
@@ -30,7 +30,6 @@ import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.player.visibility.StaffVisibilityOverrideHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
-import gg.scala.lemon.processor.RedisConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
@@ -84,11 +83,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var settings: SettingsConfigProcessor
     lateinit var languageConfig: LanguageConfigProcessor
 
-    private lateinit var redisConfig: RedisConfigProcessor
     private lateinit var configFactory: ConfigFactory
 
-    lateinit var jedisManager: JedisManager
-    lateinit var jedisSettings: JedisSettings
+    lateinit var banana: Banana
+    lateinit var credentials: BananaCredentials
 
     lateinit var lemonWebData: LemonWebData
     lateinit var entityInteractionHandler: EntityInteractionHandler
@@ -170,7 +168,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Player will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
         )
 
-        Cubed.instance.uuidCache = RedisUUIDCache(jedisManager)
+        Cubed.instance.uuidCache = RedisUUIDCache(banana)
 
         Schedulers.sync().runLater({
             canJoin = true
@@ -227,7 +225,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     private fun loadExtraConfigurations() {
         languageConfig = configFactory.fromFile("language", LanguageConfigProcessor::class.java)
-        redisConfig = configFactory.fromFile("redis", RedisConfigProcessor::class.java)
+        credentials = configFactory.fromFile("redis", BananaCredentials::class.java)
         mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor::class.java)
     }
 
@@ -239,16 +237,16 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             settings.group
         )
 
-        redisConnection = if (!redisConfig.authentication) {
+        redisConnection = if (!credentials.authenticate) {
             NoAuthRedisConnection(
-                redisConfig.address,
-                redisConfig.port
+                credentials.address,
+                credentials.port
             )
         } else {
             AuthRedisConnection(
-                redisConfig.address,
-                redisConfig.port,
-                redisConfig.password
+                credentials.address,
+                credentials.port,
+                credentials.password
             )
         }
 
@@ -260,17 +258,18 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 //
 //        playerLayer = layerBuilder.build()
 
-        jedisSettings = JedisSettings(
-            redisConfig.address,
-            redisConfig.port,
-            redisConfig.authentication,
-            redisConfig.password
-        )
-
-        jedisManager = JedisBuilder()
-            .withSettings(jedisSettings)
-            .withChannel("lemon:spigot")
-            .withHandler(RedisHandler).build()
+        banana = BananaBuilder()
+            .options(
+                BananaOptions(
+                    channel = "lemon:spigot",
+                    async = true,
+                    gson = Serializers.gson
+                )
+            )
+            .credentials(
+                credentials
+            )
+            .build()
 
         setupDataStore()
     }

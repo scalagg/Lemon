@@ -67,7 +67,7 @@ class Rank(
                 hashMapOf<String, String>().also {
                     it["uniqueId"] = uuid.toString()
                 }
-            ).publishAsync()
+            ).dispatch()
 
             return@thenApply null
         }

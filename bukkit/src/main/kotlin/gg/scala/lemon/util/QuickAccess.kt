@@ -131,18 +131,20 @@ object QuickAccess {
         addServer: Boolean,
         messageType: MessageType
     ): CompletableFuture<Void> {
-        return RedisHandler.buildMessage(
-            "staff-message",
-            buildMap {
-                put("sender-fancy", nameOrConsole(sender))
-                put("message", message)
-                put("permission", "lemon.staff")
-                put("messageType", messageType.name)
+        return CompletableFuture.runAsync {
+            RedisHandler.buildMessage(
+                "staff-message",
+                buildMap {
+                    put("sender-fancy", nameOrConsole(sender))
+                    put("message", message)
+                    put("permission", "lemon.staff")
+                    put("messageType", messageType.name)
 
-                put("server", Lemon.instance.settings.id)
-                put("with-server", addServer.toString())
-            }
-        ).publishAsync()
+                    put("server", Lemon.instance.settings.id)
+                    put("with-server", addServer.toString())
+                }
+            ).dispatch()
+        }
     }
 
     fun parseReason(
@@ -172,7 +174,7 @@ object QuickAccess {
                 mutableMapOf<String, String>().also { map ->
                     map["uniqueId"] = punishment.target.toString()
                 }
-            ).publishAsync()
+            ).dispatch()
         }
     }
 
@@ -190,7 +192,7 @@ object QuickAccess {
                     mutableMapOf<String, String>().also { map ->
                         map["uniqueId"] = punishment.target.toString()
                     }
-                ).publishAsync()
+                ).dispatch()
             }
 
             false
@@ -199,46 +201,54 @@ object QuickAccess {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void> {
-        return RedisHandler.buildMessage(
-            "global-message",
-            buildMap {
-                put("message", message)
-                put("permission", permission ?: "")
-            }
-        ).publishAsync()
+        return CompletableFuture.runAsync {
+            RedisHandler.buildMessage(
+                "global-message",
+                buildMap {
+                    put("message", message)
+                    put("permission", permission ?: "")
+                }
+            ).dispatch()
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void> {
-        return RedisHandler.buildMessage(
-            "global-fancy-message",
-            buildMap {
-                put("message", gson.toJson(fancyMessage))
-                put("permission", permission ?: "")
-            }
-        ).publishAsync()
+        return CompletableFuture.runAsync {
+            RedisHandler.buildMessage(
+                "global-fancy-message",
+                buildMap {
+                    put("message", gson.toJson(fancyMessage))
+                    put("permission", permission ?: "")
+                }
+            ).dispatch()
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void> {
-        return RedisHandler.buildMessage(
-            "player-message",
-            buildMap {
-                put("message", message)
-                put("target", uuid.toString())
-            }
-        ).publishAsync()
+        return CompletableFuture.runAsync {
+            RedisHandler.buildMessage(
+                "player-message",
+                buildMap {
+                    put("message", message)
+                    put("target", uuid.toString())
+                }
+            ).dispatch()
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void> {
-        return RedisHandler.buildMessage(
-            "player-fancy-message",
-            buildMap {
-                put("message", gson.toJson(fancyMessage))
-                put("target", uuid.toString())
-            }
-        ).publishAsync()
+        return CompletableFuture.runAsync {
+            RedisHandler.buildMessage(
+                "player-fancy-message",
+                buildMap {
+                    put("message", gson.toJson(fancyMessage))
+                    put("target", uuid.toString())
+                }
+            ).dispatch()
+        }
     }
 
     fun messageType(name: String): MessageType {
