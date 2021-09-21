@@ -1,3 +1,38 @@
-# Project exclude paths
-/.gradle/
-/.idea
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+/target/
+dependency-reduced-pom.xml
+
+# Java
+#*.jar
+
+# JRebel
+rebel.xml
+
+# Keep libs
+#!lib/*.jar
+
+gradle
+.gradle
+**/build/
+!src/**/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties
