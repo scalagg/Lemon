@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture
  */
 object QuickAccess {
 
+    @JvmStatic
     fun nameOrConsole(sender: CommandSender): String {
         if (sender is ConsoleCommandSender) {
             return "${CC.D_RED}Console"
@@ -33,12 +34,14 @@ object QuickAccess {
         } ?: return "${CC.D_RED}Console"
     }
 
+    @JvmStatic
     fun nameOrConsole(uuid: UUID?): String {
         uuid ?: return "${CC.D_RED}Console"
 
         return CubedCacheUtil.fetchName(uuid)!!
     }
 
+    @JvmStatic
     fun coloredName(name: String?): String? {
         val lemonPlayer = name?.let { PlayerHandler.findOnlinePlayer(it) }
 
@@ -47,6 +50,7 @@ object QuickAccess {
         } ?: return name
     }
 
+    @JvmStatic
     fun coloredName(uuid: UUID): String? {
         val lemonPlayer = PlayerHandler.findPlayer(uuid).orElse(null)
 
@@ -55,6 +59,7 @@ object QuickAccess {
         }  ?: return null
     }
 
+    @JvmStatic
     fun fetchColoredName(uuid: UUID?): String {
         uuid ?: return "${CC.D_RED}Console"
 
@@ -67,6 +72,7 @@ object QuickAccess {
         return prominent.getRank().color + playerName
     }
 
+    @JvmStatic
     fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int> {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             val prominent = GrantRecalculationUtil.getProminentGrant(it) ?: return@thenApplyAsync 0
@@ -75,16 +81,19 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     fun fetchIpAddress(uuid: UUID?): CompletableFuture<String?> {
         return DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
             return@thenApply it.previousIpAddress
         }
     }
 
+    @JvmStatic
     fun coloredName(player: Player): String? {
         return coloredName(player.uniqueId)
     }
 
+    @JvmStatic
     fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true) {
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
@@ -104,26 +113,31 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     fun uuidOf(sender: CommandSender): UUID? {
         return if (sender is Player) {
             sender.uniqueId
         } else null
     }
 
+    @JvmStatic
     fun remaining(cooldown: Cooldown): String {
         return String.format("%.0f", (cooldown.getRemaining() / 1000).toFloat())
     }
 
+    @JvmStatic
     fun replaceEmpty(string: String): String {
         return string.ifBlank {
             "${CC.RED}None"
         }
     }
 
+    @JvmStatic
     fun senderUuid(sender: CommandSender): UUID? {
         return if (sender is ConsoleCommandSender) null else (sender as Player).uniqueId
     }
 
+    @JvmStatic
     @OptIn(ExperimentalStdlibApi::class)
     fun sendStaffMessage(
         sender: CommandSender,
@@ -147,6 +161,7 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     fun parseReason(
         reason: String?,
         fallback: String = "Unfair Advantage"
@@ -157,6 +172,7 @@ object QuickAccess {
         return preParsedReason.ifBlank { fallback }
     }
 
+    @JvmStatic
     fun attemptRemoval(
         punishment: Punishment,
         reason: String = "Expired",
@@ -178,6 +194,7 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     fun attemptExpiration(punishment: Punishment, reason: String = "Expired", remover: UUID? = null) : Boolean {
         return if (!punishment.isRemoved && punishment.hasExpired && !punishment.category.instant) {
             punishment.isRemoved = true
@@ -199,6 +216,7 @@ object QuickAccess {
         } else true
     }
 
+    @JvmStatic
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
@@ -212,6 +230,7 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
@@ -225,6 +244,7 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
@@ -238,6 +258,7 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
@@ -251,10 +272,12 @@ object QuickAccess {
         }
     }
 
+    @JvmStatic
     fun messageType(name: String): MessageType {
         return MessageType.valueOf(name)
     }
 
+    @JvmStatic
     fun weightOf(issuer: CommandSender): Int {
         if (issuer is ConsoleCommandSender) {
             return Int.MAX_VALUE
