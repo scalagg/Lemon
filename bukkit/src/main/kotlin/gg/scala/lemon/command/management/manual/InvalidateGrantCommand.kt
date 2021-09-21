@@ -1,6 +1,6 @@
 package gg.scala.lemon.command.management.manual
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.player.enums.InvalidationType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -19,9 +19,9 @@ class InvalidateGrantCommand : BaseCommand() {
     @CommandPermission("lemon.command.invalidategrants")
     fun onInvalidate(sender: CommandSender, invalidationType: InvalidationType, uuid: UUID) {
         val completableFuture = if (invalidationType == InvalidationType.ISSUED) {
-            Lemon.instance.grantHandler.invalidateAllGrantsBy(uuid, sender)
+            GrantHandler.invalidateAllGrantsBy(uuid, sender)
         } else {
-            Lemon.instance.grantHandler.invalidateAllGrantsFor(uuid, sender)
+            GrantHandler.invalidateAllGrantsFor(uuid, sender)
         }
 
         sender.sendMessage("${CC.SEC}Starting grant invalidation...")

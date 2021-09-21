@@ -1,6 +1,5 @@
 package gg.scala.lemon.command.moderation
 
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -13,9 +12,7 @@ import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.time.TimeUtil
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -30,9 +27,9 @@ class AltsCommand : BaseCommand() {
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.alts")
     fun onAlts(sender: Player, target: OnlinePlayer) {
-        val targetLemon = Lemon.instance.playerHandler.findPlayer(target.player.uniqueId).orElse(null)
+        val targetLemon = PlayerHandler.findPlayer(target.player.uniqueId).orElse(null)
 
-        Lemon.instance.playerHandler.fetchAlternateAccountsFor(target.player.uniqueId).thenAccept {
+        PlayerHandler.fetchAlternateAccountsFor(target.player.uniqueId).thenAccept {
             if (it.isEmpty()) {
                 sender.sendMessage("${CC.RED}${targetLemon.getColoredName()}${CC.RED} does not have any alts.")
                 return@thenAccept

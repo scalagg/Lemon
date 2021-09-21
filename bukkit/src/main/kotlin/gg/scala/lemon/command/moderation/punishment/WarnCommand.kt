@@ -1,6 +1,6 @@
 package gg.scala.lemon.command.moderation.punishment
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PunishmentHandler
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
@@ -18,6 +18,6 @@ class WarnCommand : BaseCommand() {
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.warn")
     fun onWarn(sender: CommandSender, uuid: UUID, reason: String) {
-        Lemon.instance.punishmentHandler.handleWarning(sender, uuid, reason)
+        PunishmentHandler.handleWarning(sender, uuid, reason)
     }
 }

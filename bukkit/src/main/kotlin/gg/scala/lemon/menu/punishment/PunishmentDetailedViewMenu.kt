@@ -1,7 +1,7 @@
 package gg.scala.lemon.menu.punishment
 
 import com.cryptomorin.xseries.XMaterial
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.punishment.Punishment
@@ -15,7 +15,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
-import net.evilblock.cubed.util.bukkit.Tasks.delayed
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
@@ -24,7 +23,6 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * @author GrowlyX
@@ -117,7 +115,7 @@ class PunishmentDetailedViewMenu(
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${punishment.removedReason}")
             }
 
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             val canRemove: Boolean = lemonPlayer.hasPermission(
                 "lemon.punishment.remove." + punishment.category.name.toLowerCase()
@@ -136,7 +134,7 @@ class PunishmentDetailedViewMenu(
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             val canRemove: Boolean = lemonPlayer.hasPermission(
                 "lemon.punishment.remove." + punishment.category.name.toLowerCase()

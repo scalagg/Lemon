@@ -1,9 +1,10 @@
 package gg.scala.lemon.command.management.manual
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.senderUuid
+import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.util.QuickAccess.senderUuid
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.annotation.Optional
@@ -38,7 +39,7 @@ class GrantManualCommand : BaseCommand() {
             duration.get()
         )
 
-        Lemon.instance.grantHandler.handleGrant(sender, grant)
+        GrantHandler.handleGrant(sender, grant)
     }
 
     @CommandAlias("grantmanualscope")
@@ -72,6 +73,6 @@ class GrantManualCommand : BaseCommand() {
             }
         }
 
-        Lemon.instance.grantHandler.handleGrant(sender, grant)
+        GrantHandler.handleGrant(sender, grant)
     }
 }

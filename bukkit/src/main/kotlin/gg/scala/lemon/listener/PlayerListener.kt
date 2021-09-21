@@ -1,14 +1,12 @@
 package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.FilterHandler
-import gg.scala.lemon.util.QuickAccess.remaining
-import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.other.Cooldown
-import me.lucko.helper.Events
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -36,7 +34,7 @@ class PlayerListener : Listener {
             return
         }
 
-        Lemon.instance.mongoHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
+        DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
             .whenComplete { lemonPlayer, throwable ->
                 val lemonPlayerFinal: LemonPlayer?
 
@@ -52,7 +50,7 @@ class PlayerListener : Listener {
                     lemonPlayerFinal = lemonPlayer
                 }
 
-                Lemon.instance.playerHandler.players[event.uniqueId] = lemonPlayerFinal
+                PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
             }
     }
 
@@ -61,7 +59,7 @@ class PlayerListener : Listener {
         ignoreCancelled = true
     )
     fun onPlayerPreLoginLow(event: AsyncPlayerPreLoginEvent) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.uniqueId).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
 
         if (lemonPlayer == null) {
             event.disallow(
@@ -78,8 +76,7 @@ class PlayerListener : Listener {
     fun onPlayerChat(event: AsyncPlayerChatEvent) {
         val player = event.player
 
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
-        val chatHandler = Lemon.instance.chatHandler
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
         val mutePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.MUTE)
 
@@ -102,9 +99,9 @@ class PlayerListener : Listener {
             return
         }
 
-        if (chatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass")) {
+        if (ChatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass")) {
             cancel(event, "${CC.RED}Global chat is currently muted.")
-        } else if (chatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass")) {
+        } else if (ChatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass")) {
             if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true) {
                 val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
 
@@ -112,7 +109,7 @@ class PlayerListener : Listener {
                 return
             }
 
-            lemonPlayer.cooldowns["slowChat"] = Cooldown(chatHandler.slowChatTime * 1000L)
+            lemonPlayer.cooldowns["slowChat"] = Cooldown(ChatHandler.slowChatTime * 1000L)
         } else {
             if (!lemonPlayer.hasPermission("lemon.cooldown.chat.bypass")) {
                 if (lemonPlayer.cooldowns["chat"]?.isActive() == true) {
@@ -136,7 +133,7 @@ class PlayerListener : Listener {
 
         var channelMatch: Channel? = null
 
-        chatHandler.channels.forEach { (_, channel) ->
+        ChatHandler.channels.forEach { (_, channel) ->
             if (channel.isPrefixed(event.message)) {
                 channelMatch = channel
                 return@forEach
@@ -144,18 +141,18 @@ class PlayerListener : Listener {
         }
 
         if (channelMatch == null) {
-            channelMatch = chatHandler.channels["default"]
+            channelMatch = ChatHandler.channels["default"]
         }
 
         lemonPlayer.getMetadata("channel")?.let {
-            val possibleChannel = chatHandler.channels[it.asString()]
+            val possibleChannel = ChatHandler.channels[it.asString()]
 
             if (possibleChannel != null) {
                 channelMatch = possibleChannel
             }
         }
 
-        val channelOverride = chatHandler.findChannelOverride(player)
+        val channelOverride = ChatHandler.findChannelOverride(player)
 
         channelOverride.ifPresent {
             channelMatch = it
@@ -167,7 +164,7 @@ class PlayerListener : Listener {
         }
 
         if (channelMatch!!.getId() == "default") {
-            if (Lemon.instance.filterHandler.checkIfMessageFiltered(event.message, player)) {
+            if (FilterHandler.checkIfMessageFiltered(event.message, player)) {
                 // they'll think the message sent ;O
                 player.sendMessage(
                     channelMatch?.getFormatted(
@@ -206,7 +203,7 @@ class PlayerListener : Listener {
                     continue
                 }
 
-                val lemonTarget = Lemon.instance.playerHandler.findPlayer(target).orElse(null)
+                val lemonTarget = PlayerHandler.findPlayer(target).orElse(null)
 
                 if (lemonTarget != null) {
                     if (lemonTarget.getSetting("global-chat-disabled")) {
@@ -236,7 +233,7 @@ class PlayerListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.player)
+        val lemonPlayer = PlayerHandler.findPlayer(event.player)
         event.joinMessage = null
 
         lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
@@ -260,7 +257,7 @@ class PlayerListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(event.player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null)
 
         if (lemonPlayer.cooldowns["command"]?.isActive() == true) {
             val formatted = lemonPlayer.cooldowns["command"]?.let { remaining(it) }
@@ -356,10 +353,10 @@ class PlayerListener : Listener {
     }
 
     private fun onDisconnect(player: Player) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
+        val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            Lemon.instance.playerHandler.players.remove(it.uniqueId)?.save()
+            PlayerHandler.players.remove(it.uniqueId)?.save()
         }
     }
 }

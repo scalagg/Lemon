@@ -2,11 +2,13 @@ package gg.scala.lemon.menu.grant
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.coloredName
+import gg.scala.lemon.handler.GrantHandler
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.SplitUtil
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
@@ -77,7 +79,7 @@ class GrantViewMenu(
 
                             clicker.sendMessage("${CC.SEC}Starting grant wipe for ${CC.PRI}$viewingFor${CC.SEC}...")
 
-                            Lemon.instance.grantHandler.invalidateAllGrantsBy(
+                            GrantHandler.invalidateAllGrantsBy(
                                 uuid,
                                 clicker
                             ).thenAccept {
@@ -147,7 +149,7 @@ class GrantViewMenu(
                 lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${grant.removedReason}")
             }
 
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             if (grant.isActive) {
                 lines.add("")
@@ -161,7 +163,7 @@ class GrantViewMenu(
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null) ?: return
+            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null) ?: return
 
             if (!grant.canRemove(lemonPlayer)) return
 

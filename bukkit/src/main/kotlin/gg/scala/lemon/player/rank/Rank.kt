@@ -1,6 +1,7 @@
 package gg.scala.lemon.player.rank
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
@@ -43,7 +44,7 @@ class Rank(
         }
 
         children.forEach {
-            Lemon.instance.rankHandler.findRank(it)?.let { rank ->
+            RankHandler.findRank(it)?.let { rank ->
                 rank.getCompoundedPermissions().forEach { permission ->
                     if (!compoundedPermissions.contains(permission)) {
                         compoundedPermissions.add(permission)
@@ -56,7 +57,7 @@ class Rank(
     }
 
     override fun save(): CompletableFuture<Void> {
-        return Lemon.instance.mongoHandler.rankLayer.saveEntry(uuid.toString(), this)
+        return DataStoreHandler.rankLayer.saveEntry(uuid.toString(), this)
     }
 
     fun saveAndPushUpdatesGlobally(): CompletableFuture<Void> {

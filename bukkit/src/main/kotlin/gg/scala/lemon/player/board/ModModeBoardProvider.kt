@@ -1,6 +1,7 @@
 package gg.scala.lemon.player.board
 
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.scoreboard.ScoreboardOverride
 import net.evilblock.cubed.util.CC
@@ -15,7 +16,7 @@ object ModModeBoardProvider: ScoreboardOverride() {
     }
 
     override fun getLines(board: LinkedList<String>, player: Player) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
+        val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
             board.add("${CC.GRAY}${CC.S}--------------------")
@@ -28,7 +29,7 @@ object ModModeBoardProvider: ScoreboardOverride() {
     }
 
     override fun shouldOverride(player: Player): Boolean {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player)
+        val lemonPlayer = PlayerHandler.findPlayer(player)
         var shouldOverride = false
 
         lemonPlayer.ifPresent {

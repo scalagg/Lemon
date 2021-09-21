@@ -2,11 +2,11 @@ package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.player.grant.Grant
+import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.reloadPlayer
 import gg.scala.lemon.util.QuickAccess.senderUuid
-import gg.scala.lemon.player.grant.Grant
-import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
@@ -17,10 +17,10 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 8/27/2021
  */
-class GrantHandler {
+object GrantHandler {
 
     private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
-        return Lemon.instance.mongoHandler.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {
+        return DataStoreHandler.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {
             val mutableList = mutableListOf<Grant>()
 
             it.forEach { entry ->
@@ -88,7 +88,7 @@ class GrantHandler {
     }
 
     fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant> {
-        return Lemon.instance.mongoHandler.grantLayer
+        return DataStoreHandler.grantLayer
             .fetchEntryByKey(uuid.toString())
     }
 

@@ -1,6 +1,6 @@
 package gg.scala.lemon.player.channel.impl
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
@@ -14,7 +14,7 @@ open class DefaultChannel: Channel {
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
-        val lemonPlayer = Lemon.instance.playerHandler.findOnlinePlayer(sender) ?: return ""
+        val lemonPlayer = PlayerHandler.findOnlinePlayer(sender) ?: return ""
         val player = Bukkit.getPlayer(sender)
 
         return "${rank.prefix}${lemonPlayer.getColoredName()}${rank.suffix}${getChatTag(player) ?: ""}${CC.WHITE}: ${colorIfHasPermission(player, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"

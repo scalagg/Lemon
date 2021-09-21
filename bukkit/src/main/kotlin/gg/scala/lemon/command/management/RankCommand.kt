@@ -1,9 +1,10 @@
 package gg.scala.lemon.command.management
 
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.replaceEmpty
+import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.util.QuickAccess.replaceEmpty
 import gg.scala.lemon.util.SplitUtil
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
@@ -31,7 +32,7 @@ class RankCommand : BaseCommand() {
     @Subcommand("list")
     @Description("View all ranks.")
     fun onList(sender: CommandSender) {
-        val rankList = Lemon.instance.rankHandler.getSorted()
+        val rankList = RankHandler.getSorted()
 
         if (rankList.isEmpty()) {
             throw ConditionFailedException("There are no ranks.")
@@ -69,7 +70,7 @@ class RankCommand : BaseCommand() {
 
         if (rank.children.isNotEmpty()) {
             rank.children.forEach {
-                val child = Lemon.instance.rankHandler.findRank(it)
+                val child = RankHandler.findRank(it)
 
                 if (child != null) {
                     sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${rank.getColoredName()}")
@@ -92,7 +93,7 @@ class RankCommand : BaseCommand() {
     @Description("Create a new rank.")
     @CommandPermission("lemon.command.rank.management")
     fun onCreate(sender: CommandSender, name: String) {
-        val existing = Lemon.instance.rankHandler.findRank(name)
+        val existing = RankHandler.findRank(name)
 
         if (existing != null) {
             throw ConditionFailedException("A rank with the name matching ${CC.YELLOW}$name${CC.RED} already exists.")
@@ -121,11 +122,11 @@ class RankCommand : BaseCommand() {
     @Description("Delete an existing rank.")
     @CommandPermission("lemon.command.rank.management")
     fun onDelete(sender: CommandSender, rank: Rank) {
-        if (rank.uuid == Lemon.instance.rankHandler.getDefaultRank().uuid) {
+        if (rank.uuid == RankHandler.getDefaultRank().uuid) {
             throw ConditionFailedException("You're not allowed to delete the ${CC.YELLOW}${rank.name}${CC.RED} rank.")
         }
 
-        Lemon.instance.mongoHandler.rankLayer.deleteEntry(rank.uuid.toString()).thenAccept {
+        DataStoreHandler.rankLayer.deleteEntry(rank.uuid.toString()).thenAccept {
             RedisHandler.buildMessage(
                 "rank-delete",
                 hashMapOf<String, String>().also {
@@ -213,7 +214,7 @@ class RankCommand : BaseCommand() {
         ))
 
         rank.children.forEach {
-            val child = Lemon.instance.rankHandler.findRank(it)
+            val child = RankHandler.findRank(it)
 
             if (child != null) {
                 sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${rank.getColoredName()}")

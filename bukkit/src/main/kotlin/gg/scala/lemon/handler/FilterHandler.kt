@@ -1,11 +1,8 @@
 package gg.scala.lemon.handler
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.util.CC
-import org.apache.commons.lang3.StringUtils
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -13,7 +10,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/17/2021
  */
-class FilterHandler {
+object FilterHandler {
 
     private val regexList = mutableListOf<Regex>()
 
@@ -90,7 +87,7 @@ class FilterHandler {
             )
 
         Bukkit.getOnlinePlayers().forEach {
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(it).orElse(null)
+            val lemonPlayer = PlayerHandler.findPlayer(it).orElse(null)
 
             if (lemonPlayer != null && it.hasPermission("lemon.staff") && !lemonPlayer.getSetting("filtered-messages-disabled")) {
                 fancyMessage.sendToPlayer(it)

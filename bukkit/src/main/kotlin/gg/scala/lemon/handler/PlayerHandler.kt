@@ -17,7 +17,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class PlayerHandler {
+object PlayerHandler {
 
     val inventory = mutableMapOf<Int, ItemStack>()
 
@@ -113,7 +113,7 @@ class PlayerHandler {
     }
 
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>> {
-        return Lemon.instance.mongoHandler.lemonPlayerLayer.fetchAllEntries().thenApply {
+        return DataStoreHandler.lemonPlayerLayer.fetchAllEntries().thenApply {
             val accounts = mutableListOf<LemonPlayer>()
             val lemonPlayer = findPlayer(uuid).orElse(null)
 
@@ -133,7 +133,7 @@ class PlayerHandler {
     fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer> {
         var currentList = ArrayList(Bukkit.getOnlinePlayers())
             .mapNotNull {
-                Lemon.instance.playerHandler.findPlayer(it.uniqueId).orElse(null)
+                PlayerHandler.findPlayer(it.uniqueId).orElse(null)
             }.sortedBy { -it.activeGrant!!.getRank().weight }
 
         if (currentList.size > 350) {

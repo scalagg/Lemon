@@ -9,14 +9,18 @@ import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnectio
 import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
-import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
+import com.solexgames.redis.JedisBuilder
+import com.solexgames.redis.JedisManager
+import com.solexgames.redis.JedisSettings
 import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
-import gg.scala.lemon.handler.*
+import gg.scala.lemon.handler.ChatHandler
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
-import gg.scala.lemon.player.cached.CachedLemonPlayer
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
@@ -32,9 +36,6 @@ import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.util.validate.LemonWebData
 import gg.scala.lemon.util.validate.LemonWebStatus
-import com.solexgames.redis.JedisBuilder
-import com.solexgames.redis.JedisManager
-import com.solexgames.redis.JedisSettings
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
@@ -79,15 +80,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         var canJoin: Boolean = false
     }
 
-    lateinit var mongoHandler: DataStoreHandler
-    lateinit var playerHandler: PlayerHandler
-    lateinit var rankHandler: RankHandler
-    lateinit var grantHandler: GrantHandler
-    lateinit var serverHandler: ServerHandler
-    lateinit var chatHandler: ChatHandler
-    lateinit var filterHandler: FilterHandler
-    lateinit var punishmentHandler: PunishmentHandler
-
     lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
     lateinit var languageConfig: LanguageConfigProcessor
@@ -101,7 +93,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     lateinit var lemonWebData: LemonWebData
     lateinit var entityInteractionHandler: EntityInteractionHandler
 
-    private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
+//    private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
 
     private lateinit var consoleLogger: ConsoleLogger
     private lateinit var localInstance: ServerInstance
@@ -240,17 +232,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     }
 
     private fun loadHandlers() {
-        mongoHandler = DataStoreHandler()
-        playerHandler = PlayerHandler()
-        filterHandler = FilterHandler()
-
-        rankHandler = RankHandler()
-        rankHandler.loadRanks()
-
-        grantHandler = GrantHandler()
-        serverHandler = ServerHandler()
-        chatHandler = ChatHandler()
-        punishmentHandler = PunishmentHandler()
+        RankHandler.loadRanks()
 
         localInstance = ServerInstance(
             settings.id,
@@ -270,13 +252,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             )
         }
 
-        val layerBuilder = RedisStorageBuilder<CachedLemonPlayer>()
-
-        layerBuilder.setType(CachedLemonPlayer::class.java)
-        layerBuilder.setSection("lemon:players")
-        layerBuilder.setConnection(redisConnection)
-
-        playerLayer = layerBuilder.build()
+//        val layerBuilder = RedisStorageBuilder<CachedLemonPlayer>()
+//
+//        layerBuilder.setType(CachedLemonPlayer::class.java)
+//        layerBuilder.setSection("lemon:players")
+//        layerBuilder.setConnection(redisConnection)
+//
+//        playerLayer = layerBuilder.build()
 
         jedisSettings = JedisSettings(
             redisConfig.address,
@@ -288,7 +270,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         jedisManager = JedisBuilder()
             .withSettings(jedisSettings)
             .withChannel("lemon:spigot")
-            .withHandler(RedisHandler()).build()
+            .withHandler(RedisHandler).build()
 
         setupDataStore()
     }
@@ -301,26 +283,26 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     fun registerCompletionsAndContexts(commandManager: CubedCommandManager) {
         commandManager.commandCompletions.registerAsyncCompletion("ranks") {
-            return@registerAsyncCompletion rankHandler.ranks.map { it.value.name }
+            return@registerAsyncCompletion RankHandler.ranks.map { it.value.name }
         }
 
         commandManager.commandContexts.registerContext(Rank::class.java) {
             val firstArgument = it.popFirstArg()
 
-            return@registerContext rankHandler.findRank(firstArgument)
+            return@registerContext RankHandler.findRank(firstArgument)
                 ?: throw ConditionFailedException("No rank matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
         }
 
         commandManager.commandContexts.registerContext(Channel::class.java) {
             val firstArgument = it.popFirstArg()
 
-            return@registerContext chatHandler.findChannel(firstArgument)
+            return@registerContext ChatHandler.findChannel(firstArgument)
                 ?: throw ConditionFailedException("No channel matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
         }
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val firstArgument = it.popFirstArg()
-            val lemonPlayer = playerHandler.findPlayer(firstArgument)
+            val lemonPlayer = PlayerHandler.findPlayer(firstArgument)
 
             if (!lemonPlayer.isPresent) {
                 throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")

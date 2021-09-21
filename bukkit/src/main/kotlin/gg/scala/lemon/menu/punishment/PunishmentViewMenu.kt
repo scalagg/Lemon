@@ -1,14 +1,13 @@
 package gg.scala.lemon.menu.punishment
 
 import com.cryptomorin.xseries.XMaterial
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.coloredName
-import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -89,10 +88,10 @@ class PunishmentViewMenu(
     private fun fetchPunishments(category: PunishmentCategory): CompletableFuture<List<Punishment>> {
         return when (viewType) {
             HistoryViewType.TARGET_HIST -> {
-                Lemon.instance.punishmentHandler.fetchPunishmentsForTargetOfCategory(uuid, category)
+                PunishmentHandler.fetchPunishmentsForTargetOfCategory(uuid, category)
             }
             HistoryViewType.STAFF_HIST -> {
-                Lemon.instance.punishmentHandler.fetchPunishmentsByExecutorOfCategory(uuid, category)
+                PunishmentHandler.fetchPunishmentsByExecutorOfCategory(uuid, category)
             }
         }
     }

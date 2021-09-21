@@ -13,7 +13,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
-import org.bukkit.event.EventPriority
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -21,10 +20,10 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 8/26/2021
  */
-class PunishmentHandler {
+object PunishmentHandler {
 
     private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>> {
-        return Lemon.instance.mongoHandler.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {
+        return DataStoreHandler.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {
             val mutableList = mutableListOf<Punishment>()
 
             it.forEach { entry ->
@@ -90,7 +89,7 @@ class PunishmentHandler {
     }
 
     fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment> {
-        return Lemon.instance.mongoHandler.punishmentLayer.fetchEntryByKey(uuid.toString())
+        return DataStoreHandler.punishmentLayer.fetchEntryByKey(uuid.toString())
     }
 
     /**
@@ -125,7 +124,7 @@ class PunishmentHandler {
         category: PunishmentCategory, silent: Boolean = false
     ) {
         Tasks.async {
-            val activePunishments = Lemon.instance.punishmentHandler
+            val activePunishments = PunishmentHandler
                 .fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
             val targetName = QuickAccess.fetchColoredName(uuid)

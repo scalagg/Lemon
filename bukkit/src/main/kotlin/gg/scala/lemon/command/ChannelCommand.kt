@@ -1,6 +1,7 @@
 package gg.scala.lemon.command
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.ChatHandler
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.acf.BaseCommand
@@ -20,7 +21,7 @@ class ChannelCommand : BaseCommand() {
 
     @Default
     fun onDefault(player: Player, @Optional channel: Channel?) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
         if (channel == null) {
             lemonPlayer.metadata["channel"]?.let {
@@ -46,7 +47,7 @@ class ChannelCommand : BaseCommand() {
     @Subcommand("list|showall")
     fun onShowAll(player: Player) {
         player.sendMessage("${CC.SEC}Channels: ${CC.PRI}${
-            Lemon.instance.chatHandler.channels.values
+            ChatHandler.channels.values
                 .map { it.getId() }
                 .joinToString(
                     separator = "${CC.YELLOW}, ${CC.PRI}"
@@ -56,7 +57,7 @@ class ChannelCommand : BaseCommand() {
 
     @Subcommand("reset")
     fun onReset(player: Player) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
         lemonPlayer.removeMetadata("channel")
 
         player.sendMessage("${CC.GREEN}You've reset your channel.")

@@ -1,8 +1,8 @@
 package gg.scala.lemon.player.channel
 
+import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.type.Permissible
 import gg.scala.lemon.util.type.Prefixable
-import gg.scala.lemon.player.rank.Rank
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 

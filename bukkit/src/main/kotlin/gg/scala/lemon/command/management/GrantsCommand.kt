@@ -1,11 +1,11 @@
 package gg.scala.lemon.command.management
 
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.menu.grant.GrantViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -38,7 +38,7 @@ class GrantsCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${colored}'s${CC.SEC} grants...")
 
-        Lemon.instance.grantHandler.fetchGrantsFor(uuid).thenAccept {
+        GrantHandler.fetchGrantsFor(uuid).thenAccept {
             if (it.isEmpty()) {
                 player.sendMessage("${CC.RED}No grants found for ${CC.YELLOW}$colored${CC.RED}.")
                 return@thenAccept
@@ -68,7 +68,7 @@ class GrantsCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${colored}'s${CC.SEC} grant history...")
 
-        Lemon.instance.grantHandler.fetchGrantsByExecutor(uuid).thenAccept {
+        GrantHandler.fetchGrantsByExecutor(uuid).thenAccept {
             if (it.isEmpty()) {
                 player.sendMessage("${CC.RED}No grants found by ${CC.YELLOW}$colored${CC.RED}.")
                 return@thenAccept

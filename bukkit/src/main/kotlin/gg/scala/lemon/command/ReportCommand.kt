@@ -1,8 +1,8 @@
 package gg.scala.lemon.command
 
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.remaining
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.menu.report.ReportMenu
+import gg.scala.lemon.util.QuickAccess.remaining
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -23,7 +23,7 @@ class ReportCommand : BaseCommand() {
     @Syntax("<player>")
     @CommandCompletion("@players-uv")
     fun onDefault(player: Player, target: OnlinePlayer) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
         if (lemonPlayer.cooldowns["report"]?.isActive() == true) {
             val remaining = lemonPlayer.cooldowns["report"]?.let { remaining(it) }

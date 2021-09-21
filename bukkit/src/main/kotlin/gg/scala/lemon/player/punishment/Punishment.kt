@@ -1,6 +1,6 @@
 package gg.scala.lemon.player.punishment
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.other.Expirable
@@ -30,7 +30,7 @@ class Punishment(
         get() = !isRemoved && !hasExpired
 
     override fun save(): CompletableFuture<Void> {
-        return Lemon.instance.mongoHandler.punishmentLayer.saveEntry(uuid.toString(), this)
+        return DataStoreHandler.punishmentLayer.saveEntry(uuid.toString(), this)
     }
 
     fun isIntensity(intensity: PunishmentCategoryIntensity): Boolean {

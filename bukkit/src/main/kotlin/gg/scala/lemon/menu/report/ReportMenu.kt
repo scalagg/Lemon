@@ -1,10 +1,10 @@
 package gg.scala.lemon.menu.report
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.enums.ReportType
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
-import gg.scala.lemon.player.enums.ReportType
 import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
@@ -25,8 +25,7 @@ class ReportMenu(private val target: Player) : Menu() {
 
     override fun getButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also { buttons ->
-            val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
-            var index = 0
+            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             ReportType.VALUES.forEach {
                 val finalDescription = mutableListOf<String>()
@@ -35,7 +34,7 @@ class ReportMenu(private val target: Player) : Menu() {
                     finalDescription.add("${CC.GRAY} ${Constants.DOUBLE_ARROW_RIGHT} ${CC.WHITE}$example")
                 }
 
-                buttons[index++] = ItemBuilder(it.material)
+                buttons[buttons.size] = ItemBuilder(it.material)
                     .name("${CC.PRI}${it.fancyName}")
                     .setLore(finalDescription)
                     .toButton { _, _ ->

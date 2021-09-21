@@ -1,6 +1,8 @@
 package gg.scala.lemon.player.grant
 
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
@@ -33,7 +35,7 @@ class Grant(
         get() = !isRemoved && !hasExpired
 
     fun getRank(): Rank {
-        return Lemon.instance.rankHandler.findRank(rankId) ?: Lemon.instance.rankHandler.getDefaultRank()
+        return RankHandler.findRank(rankId) ?: RankHandler.getDefaultRank()
     }
 
     /**
@@ -75,6 +77,6 @@ class Grant(
             )
         }
 
-        return Lemon.instance.mongoHandler.grantLayer.saveEntry(uuid.toString(), this)
+        return DataStoreHandler.grantLayer.saveEntry(uuid.toString(), this)
     }
 }

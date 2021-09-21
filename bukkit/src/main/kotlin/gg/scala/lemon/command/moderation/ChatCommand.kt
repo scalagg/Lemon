@@ -1,6 +1,6 @@
 package gg.scala.lemon.command.moderation
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
@@ -23,9 +23,9 @@ class ChatCommand : BaseCommand() {
     @CommandAlias("mutechat|mc")
     @CommandPermission("lemon.command.mutechat")
     fun onMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
-        Lemon.instance.chatHandler.chatMuted = !Lemon.instance.chatHandler.chatMuted
+        ChatHandler.chatMuted = !ChatHandler.chatMuted
 
-        val toggledTo = Lemon.instance.chatHandler.chatMuted
+        val toggledTo = ChatHandler.chatMuted
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 

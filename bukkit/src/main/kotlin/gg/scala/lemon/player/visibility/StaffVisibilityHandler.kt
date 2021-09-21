@@ -1,6 +1,6 @@
 package gg.scala.lemon.player.visibility
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
 import net.evilblock.cubed.visibility.VisibilityAction
 import net.evilblock.cubed.visibility.VisibilityAdapter
 import org.bukkit.entity.Player
@@ -11,8 +11,8 @@ import org.bukkit.entity.Player
 class StaffVisibilityHandler : VisibilityAdapter {
 
     override fun getAction(toRefresh: Player, refreshFor: Player): VisibilityAction {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(toRefresh).orElse(null)
-        val lemonPlayerTarget = Lemon.instance.playerHandler.findPlayer(refreshFor).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(toRefresh).orElse(null)
+        val lemonPlayerTarget = PlayerHandler.findPlayer(refreshFor).orElse(null)
 
         if (lemonPlayer != null && lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff")) {
             return VisibilityAction.HIDE

@@ -1,7 +1,7 @@
 package gg.scala.lemon.processor
 
-import net.evilblock.cubed.util.CC
 import gg.scala.lemon.LemonConstants
+import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.Coloured
 
 /**

@@ -1,31 +1,31 @@
 package gg.scala.lemon.handler
 
+import com.solexgames.redis.annotation.Subscription
+import com.solexgames.redis.handler.JedisHandler
+import com.solexgames.redis.json.JsonAppender
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.messageType
 import gg.scala.lemon.util.other.FancyMessage
 import gg.scala.lemon.util.redis.RedisMessage
-import com.solexgames.redis.annotation.Subscription
-import com.solexgames.redis.handler.JedisHandler
-import com.solexgames.redis.json.JsonAppender
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-class RedisHandler: JedisHandler {
+object RedisHandler: JedisHandler {
 
     @Subscription(action = "channel-message")
     fun onChannelMessage(jsonAppender: JsonAppender) {
         val message = jsonAppender.getParam("message")
         val sender = jsonAppender.getParam("sender")
 
-        val rank = Lemon.instance.rankHandler.findRank(
+        val rank = RankHandler.findRank(
             UUID.fromString(jsonAppender.getParam("rank"))
-        ) ?: Lemon.instance.rankHandler.getDefaultRank()
+        ) ?: RankHandler.getDefaultRank()
 
-        val channel = Lemon.instance.chatHandler.findChannel(jsonAppender.getParam("channel")) ?: return
+        val channel = ChatHandler.findChannel(jsonAppender.getParam("channel")) ?: return
 
         Bukkit.getOnlinePlayers().forEach {
             if (channel.hasPermission(it)) {
@@ -121,7 +121,7 @@ class RedisHandler: JedisHandler {
             jsonAppender.getParam("target")
         )
 
-        Lemon.instance.playerHandler.findPlayer(targetUuid).ifPresent {
+        PlayerHandler.findPlayer(targetUuid).ifPresent {
             it.recalculateGrants(
                 shouldCalculateNow = true
             )
@@ -134,7 +134,7 @@ class RedisHandler: JedisHandler {
             jsonAppender.getParam("uniqueId")
         )
 
-        Lemon.instance.playerHandler.findPlayer(targetUuid).ifPresent {
+        PlayerHandler.findPlayer(targetUuid).ifPresent {
             it.recalculatePunishments()
         }
     }
@@ -158,16 +158,16 @@ class RedisHandler: JedisHandler {
             jsonAppender.getParam("uniqueId")
         )
 
-        Lemon.instance.rankHandler.ranks.remove(rankUuid)
+        RankHandler.ranks.remove(rankUuid)
     }
 
     @Subscription(action = "rank-update")
     fun onRankUpdate(jsonAppender: JsonAppender) {
-        val completableFuture = Lemon.instance.mongoHandler.rankLayer
+        val completableFuture = DataStoreHandler.rankLayer
             .fetchEntryByKey(jsonAppender.getParam("uniqueId"))
 
         completableFuture.thenAccept {
-            Lemon.instance.rankHandler.ranks[it.uuid] = it
+            RankHandler.ranks[it.uuid] = it
         }
     }
 
@@ -179,14 +179,11 @@ class RedisHandler: JedisHandler {
         }
     }
 
-    companion object {
-        @JvmStatic
-        fun buildMessage(packet: String, message: Map<String, String>): RedisMessage {
-            return RedisMessage(JsonAppender(packet).also {
-                message.forEach { (key, value) ->
-                    it.put(key, value)
-                }
-            }.asJson)
-        }
+    fun buildMessage(packet: String, message: Map<String, String>): RedisMessage {
+        return RedisMessage(JsonAppender(packet).also {
+            message.forEach { (key, value) ->
+                it.put(key, value)
+            }
+        }.asJson)
     }
 }

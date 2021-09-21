@@ -1,7 +1,7 @@
 package gg.scala.lemon.player
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.metadata.Metadata
@@ -82,7 +82,7 @@ class LemonPlayer(
         connecting: Boolean = false,
         nothing: Boolean = false
     ): CompletableFuture<Void> {
-        return Lemon.instance.punishmentHandler
+        return PunishmentHandler
             .fetchAllPunishmentsForTarget(uniqueId).thenAccept { list ->
                 list.forEach { QuickAccess.attemptExpiration(it) }
 
@@ -172,7 +172,7 @@ class LemonPlayer(
         shouldCalculateNow: Boolean = false,
         connecting: Boolean = false
     ): CompletableFuture<Void> {
-        return Lemon.instance.grantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
+        return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
             if (grants == null || grants.isEmpty()) {
                 setupAutomaticGrant()
 
@@ -308,7 +308,7 @@ class LemonPlayer(
     }
 
     private fun setupAutomaticGrant() {
-        val rank = Lemon.instance.rankHandler.getDefaultRank()
+        val rank = RankHandler.getDefaultRank()
         activeGrant = Grant(
             UUID.randomUUID(),
             uniqueId,
@@ -320,7 +320,7 @@ class LemonPlayer(
             Long.MAX_VALUE
         )
 
-        Lemon.instance.grantHandler.registerGrant(activeGrant!!)
+        GrantHandler.registerGrant(activeGrant!!)
     }
 
     fun getColoredName(): String {
@@ -393,7 +393,7 @@ class LemonPlayer(
     override fun save(): CompletableFuture<Void> {
         finalizeMetaData()
 
-        return Lemon.instance.mongoHandler.lemonPlayerLayer.saveEntry(
+        return DataStoreHandler.lemonPlayerLayer.saveEntry(
             uniqueId.toString(), this
         )
     }

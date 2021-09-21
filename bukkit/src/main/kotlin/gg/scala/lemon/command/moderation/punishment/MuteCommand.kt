@@ -1,6 +1,5 @@
 package gg.scala.lemon.command.moderation.punishment
 
-import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlayerGlobally
 import gg.scala.lemon.player.punishment.category.PunishmentCategory

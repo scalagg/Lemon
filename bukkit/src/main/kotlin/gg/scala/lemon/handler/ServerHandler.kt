@@ -4,7 +4,7 @@ import gg.scala.lemon.task.ShutdownRunnable
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-class ServerHandler {
+object ServerHandler {
 
     var shutdownRunnable: ShutdownRunnable? = null
 

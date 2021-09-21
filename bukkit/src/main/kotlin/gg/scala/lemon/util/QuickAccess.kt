@@ -1,12 +1,10 @@
 package gg.scala.lemon.util
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.other.FancyMessage
-import me.lucko.helper.Events
-import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
@@ -15,9 +13,6 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerInteractAtEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -31,7 +26,7 @@ object QuickAccess {
             return "${CC.D_RED}Console"
         }
 
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(sender as Player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(sender as Player).orElse(null)
 
         lemonPlayer?.let {
             return it.getColoredName()
@@ -45,7 +40,7 @@ object QuickAccess {
     }
 
     fun coloredName(name: String?): String? {
-        val lemonPlayer = name?.let { Lemon.instance.playerHandler.findOnlinePlayer(it) }
+        val lemonPlayer = name?.let { PlayerHandler.findOnlinePlayer(it) }
 
         lemonPlayer?.let {
             return it.getColoredName()
@@ -53,7 +48,7 @@ object QuickAccess {
     }
 
     fun coloredName(uuid: UUID): String? {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(uuid).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(uuid).orElse(null)
 
         lemonPlayer?.let {
             return it.getColoredName()
@@ -63,17 +58,17 @@ object QuickAccess {
     fun fetchColoredName(uuid: UUID?): String {
         uuid ?: return "${CC.D_RED}Console"
 
-        val grants = Lemon.instance.grantHandler.fetchGrantsFor(uuid).get()
+        val grants = GrantHandler.fetchGrantsFor(uuid).get()
 
         val playerName = CubedCacheUtil.fetchName(uuid)
         val prominent = GrantRecalculationUtil.getProminentGrant(grants)
-            ?: return Lemon.instance.rankHandler.getDefaultRank().color + playerName
+            ?: return RankHandler.getDefaultRank().color + playerName
 
         return prominent.getRank().color + playerName
     }
 
     fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int> {
-        return Lemon.instance.grantHandler.fetchGrantsFor(uuid).thenApplyAsync {
+        return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             val prominent = GrantRecalculationUtil.getProminentGrant(it) ?: return@thenApplyAsync 0
 
             return@thenApplyAsync prominent.getRank().weight
@@ -81,7 +76,7 @@ object QuickAccess {
     }
 
     fun fetchIpAddress(uuid: UUID?): CompletableFuture<String?> {
-        return Lemon.instance.mongoHandler.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
+        return DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
             return@thenApply it.previousIpAddress
         }
     }
@@ -92,7 +87,7 @@ object QuickAccess {
 
     fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true) {
         Bukkit.getPlayer(uuid)?.let {
-            Lemon.instance.playerHandler.findPlayer(it).ifPresent { lemonPlayer ->
+            PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)
 
@@ -255,7 +250,7 @@ object QuickAccess {
             return Int.MAX_VALUE
         }
 
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(issuer as Player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(issuer as Player).orElse(null)
 
         lemonPlayer?.let {
             return it.activeGrant!!.getRank().weight

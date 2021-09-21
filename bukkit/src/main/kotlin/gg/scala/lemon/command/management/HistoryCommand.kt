@@ -1,12 +1,12 @@
 package gg.scala.lemon.command.management
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.menu.grant.GrantViewMenu
+import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.punishment.PunishmentViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -37,7 +37,7 @@ class HistoryCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${coloredName(name)}'s${CC.SEC} history...")
 
-        Lemon.instance.punishmentHandler.fetchAllPunishmentsForTarget(uuid).thenAccept {
+        PunishmentHandler.fetchAllPunishmentsForTarget(uuid).thenAccept {
             if (it.isEmpty() && Lemon.instance.lemonWebData.serverName != "SolexGames") {
                 player.sendMessage("${CC.RED}No punishments found for ${CC.YELLOW}${coloredName(name)}${CC.RED}.")
                 return@thenAccept
@@ -63,7 +63,7 @@ class HistoryCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${coloredName(name)}'s${CC.SEC} staff history...")
 
-        Lemon.instance.punishmentHandler.fetchAllPunishmentsByExecutor(uuid).thenAccept {
+        PunishmentHandler.fetchAllPunishmentsByExecutor(uuid).thenAccept {
             if (it.isEmpty() && Lemon.instance.lemonWebData.serverName != "SolexGames") {
                 player.sendMessage("${CC.RED}No punishments found by ${CC.YELLOW}${coloredName(name)}${CC.RED}.")
                 return@thenAccept

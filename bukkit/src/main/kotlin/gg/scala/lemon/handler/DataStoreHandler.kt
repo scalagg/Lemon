@@ -14,7 +14,7 @@ import net.evilblock.cubed.serializers.Serializers
  * @author GrowlyX
  * @since 9/7/2021
  */
-class DataStoreHandler {
+object DataStoreHandler {
 
     var lemonPlayerLayer: MongoStorageLayer<LemonPlayer>
     var punishmentLayer: MongoStorageLayer<Punishment>

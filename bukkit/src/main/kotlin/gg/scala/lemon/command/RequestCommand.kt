@@ -1,6 +1,6 @@
 package gg.scala.lemon.command
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.remaining
@@ -19,7 +19,7 @@ class RequestCommand : BaseCommand() {
 
     @CommandAlias("request")
     fun onDefault(player: Player, message: String) {
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
         if (lemonPlayer.cooldowns["request"]?.isActive() == true) {
             val remaining = lemonPlayer.cooldowns["request"]?.let { remaining(it) }

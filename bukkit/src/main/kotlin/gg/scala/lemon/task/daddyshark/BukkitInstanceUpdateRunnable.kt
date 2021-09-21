@@ -1,7 +1,6 @@
 package gg.scala.lemon.task.daddyshark
 
 import com.solexgames.daddyshark.commons.platform.DaddySharkPlatform
-import com.solexgames.daddyshark.commons.update.InstanceUpdateRunnable
 import me.lucko.spark.api.SparkProvider
 import me.lucko.spark.api.statistic.StatisticWindow
 import org.bukkit.Bukkit

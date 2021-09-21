@@ -1,6 +1,6 @@
 package gg.scala.lemon.command.moderation
 
-import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -29,7 +29,7 @@ class VanishCommand : BaseCommand() {
         }
 
         val playerToVanish = if (target != null) target.player else sender
-        val lemonPlayer = Lemon.instance.playerHandler.findPlayer(playerToVanish).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(playerToVanish).orElse(null)
         val youOrNot = if (target != null) "${CC.YELLOW}${playerToVanish.name}${CC.RED} does" else "You do"
         val youHave = if (target != null) "${coloredName(playerToVanish)}${CC.SEC} has" else "${CC.SEC}You've"
 
@@ -38,14 +38,14 @@ class VanishCommand : BaseCommand() {
         }
 
         if (!playerToVanish.hasMetadata("vanished")) {
-            Lemon.instance.playerHandler.vanishPlayer(
+            PlayerHandler.vanishPlayer(
                 playerToVanish,
                 power = priority ?: 0
             )
 
             sender.sendMessage("$youHave been ${CC.GREEN}vanished${CC.SEC} with a priority of ${CC.WHITE}${priority ?: 0}.")
         } else {
-            Lemon.instance.playerHandler.unvanishPlayer(playerToVanish)
+            PlayerHandler.unvanishPlayer(playerToVanish)
 
             sender.sendMessage("$youHave been ${CC.RED}un-vanished${CC.SEC}.")
         }
