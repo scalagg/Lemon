@@ -264,6 +264,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                 BananaOptions(
                     channel = "lemon:spigot",
                     async = true,
+                    debug = true,
                     gson = Serializers.gson
                 )
             )
@@ -273,6 +274,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             .build()
 
         banana.registerClass(RedisHandler)
+        banana.subscribe()
 
         setupDataStore()
     }
