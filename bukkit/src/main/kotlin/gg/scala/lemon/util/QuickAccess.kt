@@ -1,11 +1,13 @@
 package gg.scala.lemon.util
 
+import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -15,6 +17,7 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ForkJoinPool
 
 /**
  * @author GrowlyX, puugz
@@ -157,7 +160,7 @@ object QuickAccess {
                     put("server", Lemon.instance.settings.id)
                     put("with-server", addServer.toString())
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         }
     }
 
@@ -190,7 +193,7 @@ object QuickAccess {
                 mutableMapOf<String, String>().also { map ->
                     map["uniqueId"] = punishment.target.toString()
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         }
     }
 
@@ -209,7 +212,7 @@ object QuickAccess {
                     mutableMapOf<String, String>().also { map ->
                         map["uniqueId"] = punishment.target.toString()
                     }
-                ).dispatch()
+                ).dispatchToLemon()
             }
 
             false
@@ -226,7 +229,7 @@ object QuickAccess {
                     put("message", message)
                     put("permission", permission ?: "")
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         }
     }
 
@@ -240,7 +243,7 @@ object QuickAccess {
                     put("message", gson.toJson(fancyMessage))
                     put("permission", permission ?: "")
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         }
     }
 
@@ -254,7 +257,7 @@ object QuickAccess {
                     put("message", message)
                     put("target", uuid.toString())
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         }
     }
 
@@ -268,7 +271,7 @@ object QuickAccess {
                     put("message", gson.toJson(fancyMessage))
                     put("target", uuid.toString())
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         }
     }
 
@@ -289,11 +292,31 @@ object QuickAccess {
             return it.activeGrant!!.getRank().weight
         }
 
+        Message("").dispatchToLemon()
+
         return 0
     }
 
     enum class MessageType {
         PLAYER_MESSAGE,
         NOTIFICATION
+    }
+}
+
+fun Message.dispatchToLemon() {
+    ForkJoinPool.commonPool().execute {
+        Lemon.instance.banana.useResource {
+            it.publish("lemon:spigot", gson.toJson(this))
+            it.close()
+        }
+    }
+}
+
+fun Message.dispatchToCocoa() {
+    ForkJoinPool.commonPool().execute {
+        Lemon.instance.banana.useResource {
+            it.publish("cocoa", gson.toJson(this))
+            it.close()
+        }
     }
 }

@@ -8,6 +8,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.attemptRemoval
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
+import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -259,7 +260,7 @@ object PunishmentHandler {
                     mutableMapOf<String, String>().also {
                         it["uniqueId"] = uuid.toString()
                     }
-                ).dispatch()
+                ).dispatchToLemon()
 
                 if (punishment.category == PunishmentCategory.KICK) {
                     RedisHandler.buildMessage(
@@ -268,7 +269,7 @@ object PunishmentHandler {
                             map["uniqueId"] = punishment.target.toString()
                             map["reason"] = punishment.addedReason
                         }
-                    ).dispatch()
+                    ).dispatchToLemon()
                 }
             }
         }
@@ -308,7 +309,7 @@ object PunishmentHandler {
                     mutableMapOf<String, String>().also {
                         it["uniqueId"] = uuid.toString()
                     }
-                ).dispatch()
+                ).dispatchToLemon()
             }
         }
     }

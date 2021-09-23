@@ -6,6 +6,7 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess.remaining
+import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
@@ -190,7 +191,7 @@ class PlayerListener : Listener {
                     put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
                     put("server", Lemon.instance.settings.id)
                 }
-            ).dispatch()
+            ).dispatchToLemon()
         } else {
             for (target in Bukkit.getOnlinePlayers()) {
                 var canReceive = true
@@ -225,6 +226,16 @@ class PlayerListener : Listener {
                         player.name,
                         lemonPlayer.activeGrant!!.getRank(),
                         target
+                    )
+                )
+            }
+
+            // as Bukkit#getOnlinePlayers does not have console in it
+            if (Lemon.instance.settings.consoleChat) {
+                Bukkit.getConsoleSender().sendMessage(
+                    channelMatch?.getFormatted(
+                        event.message, player.name,
+                        lemonPlayer.activeGrant!!.getRank(), player
                     )
                 )
             }

@@ -13,6 +13,9 @@ class SettingsConfigProcessor {
     @Comment("What's the password to your network details?")
     val serverPassword: String = "server_password"
 
+    @Comment("Shall console be able to view chat messages?")
+    val consoleChat: Boolean = false
+
     val blacklistedCommands = listOf(
         "/ver", "/icanhasbukkit"
     )

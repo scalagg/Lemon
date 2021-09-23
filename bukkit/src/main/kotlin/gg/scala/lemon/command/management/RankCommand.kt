@@ -6,6 +6,7 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.QuickAccess.replaceEmpty
 import gg.scala.lemon.util.SplitUtil
+import gg.scala.lemon.util.dispatchToLemon
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -132,7 +133,7 @@ class RankCommand : BaseCommand() {
                 hashMapOf<String, String>().also {
                     it["uniqueId"] = rank.uuid.toString()
                 }
-            ).dispatch()
+            ).dispatchToLemon()
 
             sender.sendMessage("${CC.SEC}You've deleted the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }

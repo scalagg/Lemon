@@ -251,21 +251,11 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             )
         }
 
-//        val layerBuilder = RedisStorageBuilder<CachedLemonPlayer>()
-//
-//        layerBuilder.setType(CachedLemonPlayer::class.java)
-//        layerBuilder.setSection("lemon:players")
-//        layerBuilder.setConnection(redisConnection)
-//
-//        playerLayer = layerBuilder.build()
-
         banana = BananaBuilder()
             .options(
                 BananaOptions(
                     channel = "lemon:spigot",
-                    async = true,
-                    debug = true,
-                    gson = Serializers.gson
+                    gson = Serializers.gson,
                 )
             )
             .credentials(

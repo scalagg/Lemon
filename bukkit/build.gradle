@@ -22,8 +22,8 @@ dependencies {
 
     implementation 'gg.scala:banana:1.0-SNAPSHOT'
 
-    implementation fileTree(dir: "internal")
-    compileOnly fileTree(dir: "lib")
+    implementation fileTree("internal")
+    compileOnly fileTree("lib")
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 }

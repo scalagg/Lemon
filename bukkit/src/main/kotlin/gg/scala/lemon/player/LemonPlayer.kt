@@ -11,10 +11,7 @@ import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
-import gg.scala.lemon.util.GrantRecalculationUtil
-import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.SplitUtil
-import gg.scala.lemon.util.VaultUtil
+import gg.scala.lemon.util.*
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
@@ -233,7 +230,7 @@ class LemonPlayer(
                     separator = ","
                 )
             }
-        ).dispatch("cocoa")
+        ).dispatchToCocoa()
     }
 
     private fun fetchPreviousRank(grants: List<Grant>): UUID? {

@@ -44,8 +44,6 @@ object RedisHandler: BananaHandler {
 
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
-        println("got message ${messageType(message["message-type"]!!).name}")
-
         when (
             messageType(message["message-type"]!!)
         ) {
