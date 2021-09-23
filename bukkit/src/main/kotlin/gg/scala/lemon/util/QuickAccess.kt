@@ -12,6 +12,7 @@ import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
@@ -130,7 +131,7 @@ object QuickAccess {
 
     @JvmStatic
     fun replaceEmpty(string: String): String {
-        return string.ifBlank {
+        return ChatColor.stripColor(string).ifBlank {
             "${CC.RED}None"
         }
     }

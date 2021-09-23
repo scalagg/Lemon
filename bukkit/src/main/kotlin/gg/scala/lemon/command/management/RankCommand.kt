@@ -33,7 +33,7 @@ class RankCommand : BaseCommand() {
     @Subcommand("list")
     @Description("View all ranks.")
     fun onList(sender: CommandSender) {
-        val rankList = RankHandler.getSorted()
+        val rankList = RankHandler.sorted
 
         if (rankList.isEmpty()) {
             throw ConditionFailedException("There are no ranks.")

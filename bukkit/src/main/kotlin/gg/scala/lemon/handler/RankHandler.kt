@@ -8,6 +8,11 @@ object RankHandler {
 
     val ranks = mutableMapOf<UUID, Rank>()
 
+    val sorted: List<Rank>
+        get() {
+            return ranks.values.sortedByDescending { it.weight }
+        }
+
     fun loadRanks() {
         DataStoreHandler.rankLayer.fetchAllEntries().whenComplete { entries, _ ->
             entries.forEach {
@@ -42,10 +47,6 @@ object RankHandler {
             .sortedBy { -it.weight }
             .map { it.getColoredName() }
             .joinToString(separator = "${CC.WHITE}, ")
-    }
-
-    fun getSorted(): List<Rank> {
-        return ranks.values.sortedByDescending { it.weight }
     }
 
     private fun createDefaultRank(): Rank {
