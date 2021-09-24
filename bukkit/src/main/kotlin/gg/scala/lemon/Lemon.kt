@@ -217,7 +217,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         Events.subscribe(PlayerMoveEvent::class.java)
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
-            .handler { it.isCancelled = true }
+            .handler { it.player.teleport(it.from) }
     }
 
     private fun toCCColorFormat(string: String): String {

@@ -29,7 +29,7 @@ class ChatCommand : BaseCommand() {
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
-        Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}Chat has been ${if (toggledTo) "disabled" else "enabled"} by ${if (hidden) "staff" else coloredName}.")
+        Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}Chat has been ${if (toggledTo) "disabled" else "enabled"} by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
             sender,

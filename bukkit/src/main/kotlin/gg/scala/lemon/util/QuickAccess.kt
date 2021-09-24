@@ -156,7 +156,7 @@ object QuickAccess {
                     put("sender-fancy", sender?.let { nameOrConsole(it) } ?: "")
                     put("message", message)
                     put("permission", "lemon.staff")
-                    put("messageType", messageType.name)
+                    put("message-type", messageType.name)
 
                     put("server", Lemon.instance.settings.id)
                     put("with-server", addServer.toString())
