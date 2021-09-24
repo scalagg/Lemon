@@ -98,7 +98,7 @@ class GrantIssueDurationMenu(
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also {
             durations.forEach { duration ->
-                it[it.size] = DurationButton(uuid, name, rank, duration)
+                it[it.size] = DurationButton(duration)
             }
         }
     }
