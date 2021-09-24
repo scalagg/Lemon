@@ -111,10 +111,7 @@ class GrantIssueDurationMenu(
         }
     }
 
-    class DurationButton(
-        private val uuid: UUID,
-        private val name: String,
-        private val rank: Rank,
+    private inner class DurationButton(
         private val duration: Duration
     ) : Button() {
 
