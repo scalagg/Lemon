@@ -122,17 +122,17 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 //        }
 
         consoleLogger.log(
-            "Passed data validation checks, now loading Lemon with ${"SolexGames"}'s information..."
+            "Passed data validation checks, now loading Lemon with ${"Scala"}'s information..."
         ); lemonWebData = LemonWebData(
             LemonWebStatus.SUCCESS,
             "",
-            "SolexGames",
+            "Scala",
             "GREEN",
             "YELLOW",
-            "discord.gg/solexgames",
-            "SolexGamesCOM",
-            "solexgames.com",
-            "store.solexgames.com"
+            "",
+            "scalagg",
+            "scala.gg",
+            ""
         )
 
         runAfterDataValidation()
@@ -168,14 +168,12 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         )
 
         server.consoleSender.sendMessage(
-            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Player will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
+            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Players will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
         )
 
         Cubed.instance.uuidCache = RedisUUIDCache(banana)
 
-        Schedulers.sync().runLater({
-            canJoin = true
-        }, 60L)
+        Schedulers.sync().runLater({ canJoin = true }, 60L)
     }
 
     private fun loadCommands() {
@@ -187,8 +185,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "gg.scala.lemon.command")
-
-        logger.info("Loaded command manager")
     }
 
     private fun setupPlayerLookAndFeel() {
