@@ -50,7 +50,7 @@ class EnvironmentCommand : BaseCommand() {
                 it["setting"] = boolean.toString()
                 it["issuer"] = QuickAccess.nameOrConsole(sender)
             }
-        )
+        ).dispatchToLemon()
     }
 
     @Subcommand("fetch-all")
