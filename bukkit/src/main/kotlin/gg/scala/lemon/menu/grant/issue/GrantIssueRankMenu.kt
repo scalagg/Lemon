@@ -41,9 +41,7 @@ class GrantIssueRankMenu(
         }
     }
 
-    class RankButton(
-        private val uuid: UUID,
-        private val name: String,
+    private inner class RankButton(
         private val rank: Rank
     ) : Button() {
 
