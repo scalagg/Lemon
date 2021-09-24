@@ -38,26 +38,30 @@ object RedisHandler: BananaHandler {
         val newMessage = message["message"]
         val permission = message["permission"]
         val server = message["server"]
-        val fancySender = message["sender-fancy"]
+//        val fancySender = message["sender-fancy"]
 
         val withServer = message["with-server"]!!.toBoolean()
 
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
-        when (
-            messageType(message["message-type"]!!)
-        ) {
-            QuickAccess.MessageType.PLAYER_MESSAGE -> {
-                sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$newMessage") {
-                    return@sendMessage it.hasPermission(permission)
-                }
-            }
-            QuickAccess.MessageType.NOTIFICATION -> {
-                sendMessage("$baseMessage$newMessage") {
-                    return@sendMessage it.hasPermission(permission)
-                }
-            }
+        sendMessage("$baseMessage$newMessage") {
+            return@sendMessage it.hasPermission(permission)
         }
+
+//        when (
+//            messageType(message["message-type"]!!)
+//        ) {
+//            QuickAccess.MessageType.PLAYER_MESSAGE -> {
+//                sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$newMessage") {
+//                    return@sendMessage it.hasPermission(permission)
+//                }
+//            }
+//            QuickAccess.MessageType.NOTIFICATION -> {
+//                sendMessage("$baseMessage$newMessage") {
+//                    return@sendMessage it.hasPermission(permission)
+//                }
+//            }
+//        }
     }
 
     @Subscribe("global-message")
