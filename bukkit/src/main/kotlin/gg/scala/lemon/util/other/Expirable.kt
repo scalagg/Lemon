@@ -9,7 +9,6 @@ import java.util.*
  * @author puugz, GrowlyX
  * @since 23/08/2021 18:32
  */
-
 open class Expirable(
     val addedAt: Long,
     val duration: Long
@@ -67,6 +66,15 @@ open class Expirable(
                     expireDate.time - System.currentTimeMillis(), true, true
                 )
             }"
+        }
+
+    val durationFromNowStringRaw: String
+        get() = if (isPermanent) {
+            "not expire"
+        } else {
+            DurationFormatUtils.formatDurationWords(
+                expireDate.time - System.currentTimeMillis(), true, true
+            )
         }
 
     val hasExpired: Boolean

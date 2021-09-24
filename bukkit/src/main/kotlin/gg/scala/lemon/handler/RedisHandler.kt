@@ -72,6 +72,24 @@ object RedisHandler: BananaHandler {
         }
     }
 
+    @Subscribe("mass-whitelist")
+    fun onMassWhitelist(message: Message) {
+        val group = message["group"]!!
+        val issuer = message["issuer"]!!
+        val setting = message["setting"]!!
+
+        if (Lemon.instance.getLocalServerInstance().serverGroup.equals(group, true)) {
+            Bukkit.setWhitelist(setting.toBoolean())
+
+            Bukkit.broadcast(
+                "${CC.AQUA}[S] [External] ${CC.D_AQUA}Whitelist has been set to ${CC.AQUA}$setting${CC.D_AQUA}.",
+                "lemon.security.notifications"
+            )
+
+            println("[Security] $issuer has set whitelist to $setting.")
+        }
+    }
+
     @Subscribe("player-message")
     fun onPlayerMessage(message: Message) {
         val newMessage = message["message"]

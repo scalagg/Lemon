@@ -16,10 +16,7 @@ import gg.scala.banana.options.BananaOptions
 import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
-import gg.scala.lemon.handler.ChatHandler
-import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.handler.RankHandler
-import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
@@ -36,6 +33,7 @@ import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.util.validate.LemonWebData
 import gg.scala.lemon.util.validate.LemonWebStatus
+import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
@@ -57,13 +55,17 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
+import net.evilblock.cubed.util.bukkit.EventUtils
 import net.evilblock.cubed.util.bukkit.selection.impl.EntityInteractionHandler
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
@@ -203,6 +205,19 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         VisibilityHandler.registerAdapter("Staff", StaffVisibilityHandler())
         VisibilityHandler.registerOverride("Staff", StaffVisibilityOverrideHandler())
+
+        Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)
+        Schedulers.async().runRepeating(FrozenPlayerHandler.FrozenPlayerTick(), 0L, 20L)
+
+        Events.subscribe(PlayerInteractAtEntityEvent::class.java)
+            .filter { it.rightClicked is Player && it.rightClicked.hasMetadata("frozen") }
+            .handler {
+                it.player.sendMessage("${CC.RED}You cannot hurt players who are frozen!"); it.isCancelled = true
+            }
+
+        Events.subscribe(PlayerMoveEvent::class.java)
+            .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
+            .handler { it.isCancelled = true }
     }
 
     private fun toCCColorFormat(string: String): String {

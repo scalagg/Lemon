@@ -1,6 +1,9 @@
 package gg.scala.lemon.command.environment
 
+import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
@@ -8,7 +11,7 @@ import net.evilblock.cubed.util.CC
 import org.apache.commons.lang.time.DurationFormatUtils
 import org.bukkit.command.CommandSender
 
-@CommandAlias("environment")
+@CommandAlias("environment|env")
 @CommandPermission("lemon.command.environment")
 class EnvironmentCommand : BaseCommand() {
 
@@ -33,6 +36,21 @@ class EnvironmentCommand : BaseCommand() {
                 sender.sendMessage("${CC.GRAY} - ${CC.SEC}${it.serverId}")
             }
         }
+    }
+
+    @Syntax("<group> [boolean]")
+    @Subcommand("whitelist-all-group")
+    @Description("Whitelist/un-whitelist all servers in a particular group.")
+    fun onFetchAll(sender: CommandSender, @Single group: String, boolean: Boolean) {
+        sender.sendMessage("${CC.SEC}You've set the whitelist to ${CC.WHITE}$boolean${CC.SEC} on all servers in the group ${CC.PRI}$group${CC.SEC}.")
+
+        RedisHandler.buildMessage(
+            "mass-whitelist", hashMapOf<String, String>().also {
+                it["group"] = group
+                it["setting"] = boolean.toString()
+                it["issuer"] = QuickAccess.nameOrConsole(sender)
+            }
+        )
     }
 
     @Subcommand("fetch-all")

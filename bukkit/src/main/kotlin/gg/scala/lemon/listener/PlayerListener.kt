@@ -5,6 +5,8 @@ import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.Cooldown
@@ -76,8 +78,22 @@ class PlayerListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerChat(event: AsyncPlayerChatEvent) {
         val player = event.player
-
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+
+        if (player.hasMetadata("frozen")) {
+            event.isCancelled = true
+
+            // should use channels but /shrug
+            Bukkit.getOnlinePlayers()
+                .mapNotNull { PlayerHandler.findPlayer(player).orElse(null) }
+                .filter { it.hasPermission("lemon.frozen.messages") && !it.hasMetadata("frozen-messages-disabled") }
+                .forEach {
+                    it.bukkitPlayer?.sendMessage("${CC.D_RED}[Frozen] ${coloredName(player)}${CC.GRAY}: ${CC.WHITE}${event.message}")
+                }
+
+            player.sendMessage("${CC.RED}Your message has been sent to our staff.")
+            return
+        }
 
         val mutePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.MUTE)
 
@@ -367,6 +383,19 @@ class PlayerListener : Listener {
         val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
+            val isFrozen = player.hasMetadata("frozen")
+
+            if (isFrozen) {
+                QuickAccess.sendStaffMessage(
+                    null,
+                    "${CC.AQUA}${coloredName(player)}${CC.D_AQUA} logged out while frozen.",
+                    true,
+                    QuickAccess.MessageType.NOTIFICATION
+                )
+
+                FrozenPlayerHandler.expirables.remove(player.uniqueId)
+            }
+
             PlayerHandler.players.remove(it.uniqueId)?.save()
         }
     }

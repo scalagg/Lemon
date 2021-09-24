@@ -44,6 +44,24 @@ class LanguageConfigProcessor {
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}."
 
     @Coloured
+    var frozenPlayerHasTimeMessage = """
+        ${CC.RED}
+        ${CC.RED}You've been frozen by a staff member!
+        ${CC.SEC}You have ${CC.WHITE}%s${CC.SEC} to join ${CC.PRI}ts.scala.gg${CC.SEC}.
+        ${CC.GRAY}If you fail to comply with our staff team's orders, you will be banned.
+        ${CC.RED}
+    """.trimIndent()
+
+    @Coloured
+    var frozenPlayerTimeIsUpMessage = """
+        ${CC.RED}
+        ${CC.RED}You've been frozen by a staff member!
+        ${CC.D_RED}It has been 5 minutes! Please join as soon as possible.
+        ${CC.GRAY}If you fail to comply with our staff team's orders, you will be banned.
+        ${CC.RED}
+    """.trimIndent()
+
+    @Coloured
     var playerDataLoad = "${CC.RED}Your account did not load properly.\n${CC.GRAY}Please reconnect to resolve this issue."
 
     @Coloured

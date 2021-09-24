@@ -144,7 +144,7 @@ object QuickAccess {
     @JvmStatic
     @OptIn(ExperimentalStdlibApi::class)
     fun sendStaffMessage(
-        sender: CommandSender,
+        sender: CommandSender?,
         message: String,
         addServer: Boolean,
         messageType: MessageType
@@ -153,7 +153,7 @@ object QuickAccess {
             RedisHandler.buildMessage(
                 "staff-message",
                 buildMap {
-                    put("sender-fancy", nameOrConsole(sender))
+                    put("sender-fancy", sender?.let { nameOrConsole(it) } ?: "")
                     put("message", message)
                     put("permission", "lemon.staff")
                     put("messageType", messageType.name)

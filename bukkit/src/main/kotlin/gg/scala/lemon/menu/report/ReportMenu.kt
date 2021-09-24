@@ -40,7 +40,7 @@ class ReportMenu(private val target: Player) : Menu() {
                     .toButton { _, _ ->
                         sendStaffMessage(
                             player,
-                            "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.WHITE}${it.fancyName}${CC.RED}.",
+                            "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.YELLOW}${it.fancyName}${CC.RED}.",
                             true,
                             QuickAccess.MessageType.NOTIFICATION
                         ).whenComplete { _, throwable ->
