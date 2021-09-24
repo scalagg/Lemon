@@ -25,14 +25,23 @@ object PlayerHandler {
 
     init {
         Schedulers.async().runRepeating(Runnable {
-            players.values.stream().filter {
-                it.bukkitPlayer == null
+            players.values.filterNotNull {
+                it.bukkitPlayer
             }.forEach {
                 players.remove(it.uniqueId)
             }
         }, 20L * 60L, 20L * 60L)
 
         inventory[0] =
+            ItemBuilder(XMaterial.BOOK)
+                .name("${CC.B_PRI}Inspect Player")
+                .addToLore(
+                    "${CC.GRAY}Click a player using",
+                    "${CC.GRAY}this book to take a look",
+                    "${CC.GRAY}at their inventory.",
+                ).build()
+
+        inventory[8] =
             ItemBuilder(XMaterial.BOOK)
                 .name("${CC.B_PRI}Inspect Player")
                 .addToLore(
