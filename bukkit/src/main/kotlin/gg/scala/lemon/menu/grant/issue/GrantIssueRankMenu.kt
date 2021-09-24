@@ -34,9 +34,7 @@ class GrantIssueRankMenu(
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also {
             RankHandler.sorted.forEach { rank ->
-                it[it.size] = RankButton(
-                    uuid, name, rank
-                )
+                it[it.size] = RankButton(rank)
             }
         }
     }
