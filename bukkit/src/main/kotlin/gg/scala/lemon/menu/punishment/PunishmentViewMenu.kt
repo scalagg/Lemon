@@ -32,8 +32,9 @@ class PunishmentViewMenu(
         placeholder = true
     }
 
+    private val name = CubedCacheUtil.fetchName(uuid)
+
     override fun getTitle(player: Player): String {
-        val name = CubedCacheUtil.fetchName(uuid)!!
         val base = "History ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(name)}"
 
         return when (viewType) {
@@ -43,7 +44,7 @@ class PunishmentViewMenu(
     }
 
     override fun getButtons(player: Player): Map<Int, Button> {
-        return hashMapOf<Int, Button>().also {
+        return hashMapOf<Int, Button>().also { buttons ->
             var index = 10
 
             PunishmentCategory.values().forEach {
@@ -62,9 +63,9 @@ class PunishmentViewMenu(
                         "${CC.GRAY}Viewing statistics for the",
                         "${CC.GRAY}${it.fancyVersion} category:",
                         "",
-                        "${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
-                        "${CC.GRAY}Active: ${CC.YELLOW}${active}",
-                        "${CC.GRAY}Inactive: ${CC.RED}${
+                        " ${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
+                        " ${CC.GRAY}Active: ${CC.GREEN}${active}",
+                        " ${CC.GRAY}Inactive: ${CC.RED}${
                             punishments.filter { punishment ->
                                 punishment.category == it && punishment.isRemoved
                             }.size
@@ -73,6 +74,11 @@ class PunishmentViewMenu(
                         "${CC.YELLOW}Click to view more info."
                     ).toButton { _, _ ->
                         fetchPunishments(it).whenComplete { list, _ ->
+                            if (list.isEmpty()) {
+                                player.sendMessage("${CC.YELLOW}$name${CC.RED} has no recorded ${CC.YELLOW}${it.fancyVersion.toLowerCase()}s${CC.RED}.")
+                                return@whenComplete
+                            }
+
                             PunishmentDetailedViewMenu(
                                 uuid, it, viewType, list
                             ).openMenu(player)

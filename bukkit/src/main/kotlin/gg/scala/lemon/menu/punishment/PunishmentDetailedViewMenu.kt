@@ -164,7 +164,7 @@ class PunishmentDetailedViewMenu(
                         ), true
                     ) {
                         if (it) {
-                            QuickAccess.attemptExpiration(
+                            QuickAccess.attemptRemoval(
                                 punishment,
                                 reason = input,
                                 remover = player.uniqueId
