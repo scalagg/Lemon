@@ -15,14 +15,14 @@ class LanguageConfigProcessor {
         "${CC.RED}You are ${CC.DARK_RED}banned${CC.RED} from ${LemonConstants.SERVER_NAME} for %s.\n" +
                 "${CC.RED}You were banned for: ${CC.GRAY}%s (#%s)\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban at ${LemonConstants.STORE_LINK}"
+                "${CC.GOLD}You may also purchase an unban at ${LemonConstants.STORE_LINK}${CC.GOLD}."
 
     @Coloured
     val permBanMessage =
         "${CC.RED}You are permanently ${CC.DARK_RED}banned${CC.RED} from ${LemonConstants.SERVER_NAME}\n" +
                 "${CC.RED}You were banned for: ${CC.GRAY}%s (#%s)\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban at ${LemonConstants.STORE_LINK}"
+                "${CC.GOLD}You may also purchase an unban at ${LemonConstants.STORE_LINK}${CC.GOLD}."
 
     @Coloured
     val blacklistMessage =
@@ -35,14 +35,14 @@ class LanguageConfigProcessor {
         "${CC.RED}Your IP is temporarily ${CC.DARK_RED}banned${CC.RED} from ${LemonConstants.SERVER_NAME}\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}"
+                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}${CC.GOLD}."
 
     @Coloured
     val banRelationPermanentMessage =
         "${CC.RED}Your IP is temporarily ${CC.DARK_RED}banned${CC.RED} from ${LemonConstants.SERVER_NAME}\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}"
+                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}${CC.GOLD}."
 
     @Coloured
     val blacklistRelationMessage =
