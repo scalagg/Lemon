@@ -36,7 +36,10 @@ object RedisHandler: BananaHandler {
         }
     }
 
-    @Subscribe("staff-message")
+    @Subscribe(
+        value = "staff-message",
+        priority = 10
+    )
     fun onStaffMessage(message: Message) {
         val newMessage = message["message"]
         val permission = message["permission"]
@@ -48,7 +51,17 @@ object RedisHandler: BananaHandler {
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
         sendMessage("$baseMessage$newMessage") {
-            return@sendMessage it.hasPermission(permission) && !hasFlag(it, potentialFlag)
+            if (permission == null) return@sendMessage true
+
+            val lemonPlayer = PlayerHandler.findPlayer(it).orElse(null)
+
+            return@sendMessage if (lemonPlayer != null) {
+                val base = lemonPlayer.hasPermission(permission) && !lemonPlayer.getSetting("staff-messages-disabled")
+
+                if (potentialFlag != null) {
+                    lemonPlayer.hasPermission(permission) && !lemonPlayer.getSetting(potentialFlag)
+                } else base
+            } else false
         }
     }
 

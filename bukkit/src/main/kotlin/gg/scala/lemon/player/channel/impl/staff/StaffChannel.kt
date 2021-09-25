@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.channel.impl.staff
 
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
@@ -13,6 +14,14 @@ class StaffChannel(private val channel: StaffChannelType): Channel {
 
     override fun getPermission(): String {
         return "lemon.channel.${channel.name.toLowerCase()}"
+    }
+
+    override fun hasPermission(t: Player): Boolean {
+        val lemonPlayer = PlayerHandler.findPlayer(t).orElse(null)
+
+        return if (lemonPlayer != null) {
+            lemonPlayer.hasPermission(getPermission()) && !lemonPlayer.getSetting("staff-messages-disabled")
+        } else false
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {

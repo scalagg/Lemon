@@ -32,13 +32,13 @@ class VanishCommand : BaseCommand() {
         val youHave = if (target != null) "${coloredName(playerToVanish)}${CC.SEC} has" else "${CC.SEC}You've"
 
         if (!playerToVanish.isOp && lemonPlayer.activeGrant!!.getRank().weight < (priority ?: lemonPlayer.activeGrant!!.getRank().weight)) {
-            throw ConditionFailedException("${CC.RED}$youOrNot not have permission to vanish with a priority higher than their current rank!")
+            throw ConditionFailedException("${CC.RED}$youOrNot not have permission to vanish with that priority.")
         }
 
         if (!playerToVanish.hasMetadata("vanished")) {
             PlayerHandler.vanishPlayer(
                 playerToVanish,
-                power = priority ?: 0
+                power = priority ?: lemonPlayer.activeGrant!!.getRank().weight
             )
 
             sender.sendMessage("$youHave been ${CC.GREEN}vanished${CC.SEC} with a priority of ${CC.WHITE}${priority ?: lemonPlayer.activeGrant!!.getRank().weight}.")
