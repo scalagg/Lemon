@@ -50,21 +50,20 @@ class PunishmentViewMenu(
                 val totalAmount = punishments.filter { punishment ->
                     punishment.category == it
                 }.size
+                val active = punishments.filter { punishment ->
+                    punishment.category == it && punishment.isActive
+                }.size
 
                 buttons[index] = ItemBuilder(XMaterial.WHITE_WOOL)
-                    .name("${getChatColorByIntensity(it)}${it.fancyVersion + "s"}")
-                    .data(14)
+                    .name("${CC.RED}${it.fancyVersion + "s"}")
+                    .data(if (active >= 1) 5 else 14)
                     .amount(totalAmount)
                     .addToLore(
                         "${CC.GRAY}Viewing statistics for the",
                         "${CC.GRAY}${it.fancyVersion} category:",
                         "",
                         "${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
-                        "${CC.GRAY}Active: ${CC.YELLOW}${
-                            punishments.filter { punishment ->
-                                punishment.category == it && punishment.isActive
-                            }.size
-                        }",
+                        "${CC.GRAY}Active: ${CC.YELLOW}${active}",
                         "${CC.GRAY}Inactive: ${CC.RED}${
                             punishments.filter { punishment ->
                                 punishment.category == it && punishment.isRemoved
@@ -85,6 +84,10 @@ class PunishmentViewMenu(
         }
     }
 
+    override fun size(buttons: Map<Int, Button>): Int {
+        return 27
+    }
+
     private fun fetchPunishments(category: PunishmentCategory): CompletableFuture<List<Punishment>> {
         return when (viewType) {
             HistoryViewType.TARGET_HIST -> {
@@ -93,13 +96,6 @@ class PunishmentViewMenu(
             HistoryViewType.STAFF_HIST -> {
                 PunishmentHandler.fetchPunishmentsByExecutorOfCategory(uuid, category)
             }
-        }
-    }
-
-    private fun getChatColorByIntensity(category: PunishmentCategory): ChatColor {
-        return when (category.intensity) {
-            PunishmentCategoryIntensity.LIGHT -> ChatColor.GOLD
-            PunishmentCategoryIntensity.MEDIUM -> ChatColor.RED
         }
     }
 }

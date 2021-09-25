@@ -29,7 +29,9 @@ object RedisHandler: BananaHandler {
 
         Bukkit.getOnlinePlayers().forEach {
             if (channel.hasPermission(it)) {
-                it.sendMessage(channel.getFormatted(newMessage, sender, rank, it).replace("%s", message["server"]!!))
+                it.sendMessage(
+                    channel.getFormatted(newMessage, sender, rank, it).replace("%s", message["server"]!!)
+                )
             }
         }
     }
