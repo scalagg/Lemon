@@ -4,10 +4,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
-import net.evilblock.cubed.acf.annotation.Optional
-import net.evilblock.cubed.acf.annotation.Syntax
+import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -18,9 +15,10 @@ import org.bukkit.entity.Player
  */
 class VanishCommand : BaseCommand() {
 
-    @Syntax("[priority] [target]")
+    @Syntax("[priority] <target>")
     @CommandAlias("vanish|v|tv|togglevanish")
     @CommandPermission("lemon.command.vanish")
+    @CommandCompletion("0|10|100|1000 @all-players")
     fun onVanish(sender: Player, @Optional priority: Int?, @Optional target: OnlinePlayer?) {
         if (target != null) {
             if (!sender.uniqueId.equals(target.player.uniqueId) && !sender.hasPermission("lemon.command.vanish.other")) {

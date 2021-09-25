@@ -115,26 +115,21 @@ object PlayerHandler {
 
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>> {
         return DataStoreHandler.lemonPlayerLayer.fetchAllEntries().thenApply {
-            try {
-                val accounts = mutableListOf<LemonPlayer>()
-                val lemonPlayer = findPlayer(uuid).orElse(null)
+            val accounts = mutableListOf<LemonPlayer>()
+            val lemonPlayer = findPlayer(uuid).orElse(null)
 
-                it.forEach { entry ->
-                    if (entry.value.uniqueId != uuid) {
-                        lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
-                            if (entry.value.pastIpAddresses.containsKey(address)) {
-                                accounts.add(entry.value)
-                                return@forEachIndexed
-                            }
-                        }
+            for (entry in it) {
+                if (entry.value.uniqueId == uuid) continue
+
+                lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
+                    if (entry.value.pastIpAddresses.containsKey(address)) {
+                        accounts.add(entry.value)
+                        return@forEachIndexed
                     }
                 }
-
-                return@thenApply accounts
-            } catch (e: Throwable) {
-                e.printStackTrace()
-                return@thenApply mutableListOf()
             }
+
+            return@thenApply accounts
         }
     }
 
