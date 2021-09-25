@@ -52,7 +52,7 @@ class LemonPlayer(
     var activeGrant: Grant? = null
 
     @Transient
-    lateinit var attachment: PermissionAttachment
+    var attachment: PermissionAttachment? = null
 
     var metadata = mutableMapOf<String, Metadata>()
 
@@ -306,7 +306,11 @@ class LemonPlayer(
     }
 
     private fun setupPermissionAttachment(player: Player) {
-        this.attachment = player.addAttachment(Lemon.instance)
+        if (this.attachment != null) {
+            this.attachment!!.permissions.clear()
+        } else {
+            this.attachment = player.addAttachment(Lemon.instance)
+        }
     }
 
     private fun setupAutomaticGrant() {
