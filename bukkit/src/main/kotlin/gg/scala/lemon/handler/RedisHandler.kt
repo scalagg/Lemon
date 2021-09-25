@@ -4,6 +4,7 @@ import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.messageType
 import gg.scala.lemon.util.other.FancyMessage
@@ -37,31 +38,22 @@ object RedisHandler: BananaHandler {
     fun onStaffMessage(message: Message) {
         val newMessage = message["message"]
         val permission = message["permission"]
-        val server = message["server"]
-//        val fancySender = message["sender-fancy"]
 
+        val server = message["server"]
+        val potentialFlag = message["flag"]
         val withServer = message["with-server"]!!.toBoolean()
 
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
         sendMessage("$baseMessage$newMessage") {
-            return@sendMessage it.hasPermission(permission)
+            return@sendMessage it.hasPermission(permission) && !hasFlag(it, potentialFlag)
         }
+    }
 
-//        when (
-//            messageType(message["message-type"]!!)
-//        ) {
-//            QuickAccess.MessageType.PLAYER_MESSAGE -> {
-//                sendMessage("$baseMessage$fancySender${CC.WHITE}: ${CC.AQUA}$newMessage") {
-//                    return@sendMessage it.hasPermission(permission)
-//                }
-//            }
-//            QuickAccess.MessageType.NOTIFICATION -> {
-//                sendMessage("$baseMessage$newMessage") {
-//                    return@sendMessage it.hasPermission(permission)
-//                }
-//            }
-//        }
+    private fun hasFlag(player: Player, flag: String?): Boolean {
+        if (flag == null) return false
+
+        return PlayerHandler.findPlayer(player).orElse(null)?.getSetting(flag) ?: false
     }
 
     @Subscribe("global-message")

@@ -5,6 +5,7 @@ import gg.scala.lemon.player.enums.ReportType
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
+import gg.scala.lemon.util.QuickAccess.sendStaffMessageWithFlag
 import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
@@ -38,11 +39,12 @@ class ReportMenu(private val target: Player) : Menu() {
                     .name("${CC.PRI}${it.fancyName}")
                     .setLore(finalDescription)
                     .toButton { _, _ ->
-                        sendStaffMessage(
+                        sendStaffMessageWithFlag(
                             player,
                             "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.YELLOW}${it.fancyName}${CC.RED}.",
                             true,
-                            QuickAccess.MessageType.NOTIFICATION
+                            QuickAccess.MessageType.NOTIFICATION,
+                            "reports-disabled"
                         ).whenComplete { _, throwable ->
                             if (throwable != null) {
                                 player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")

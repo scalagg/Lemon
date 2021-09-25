@@ -25,9 +25,7 @@ object PlayerHandler {
 
     init {
         Schedulers.async().runRepeating(Runnable {
-            players.values.filterNotNull {
-                it.bukkitPlayer
-            }.forEach {
+            players.values.toList().forEach {
                 players.remove(it.uniqueId)
             }
         }, 20L * 60L, 20L * 60L)

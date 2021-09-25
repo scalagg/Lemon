@@ -166,6 +166,32 @@ object QuickAccess {
     }
 
     @JvmStatic
+    @OptIn(ExperimentalStdlibApi::class)
+    fun sendStaffMessageWithFlag(
+        sender: CommandSender?,
+        message: String,
+        addServer: Boolean,
+        messageType: MessageType,
+        flag: String
+    ): CompletableFuture<Void> {
+        return CompletableFuture.runAsync {
+            RedisHandler.buildMessage(
+                "staff-message",
+                buildMap {
+                    put("sender-fancy", sender?.let { nameOrConsole(it) } ?: "")
+                    put("message", message)
+                    put("permission", "lemon.staff")
+                    put("message-type", messageType.name)
+                    put("flag", flag)
+
+                    put("server", Lemon.instance.settings.id)
+                    put("with-server", addServer.toString())
+                }
+            ).dispatchToLemon()
+        }
+    }
+
+    @JvmStatic
     fun parseReason(
         reason: String?,
         fallback: String = "Unfair Advantage"

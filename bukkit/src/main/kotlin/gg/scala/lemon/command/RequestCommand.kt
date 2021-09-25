@@ -5,6 +5,7 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
+import gg.scala.lemon.util.QuickAccess.sendStaffMessageWithFlag
 import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -28,11 +29,12 @@ class RequestCommand : BaseCommand() {
             return
         }
 
-        sendStaffMessage(
+        sendStaffMessageWithFlag(
             player,
             "${CC.YELLOW}${coloredName(player)} ${CC.RED}submitted a request: ${CC.YELLOW}$message${CC.RED}.",
             true,
-            QuickAccess.MessageType.NOTIFICATION
+            QuickAccess.MessageType.NOTIFICATION,
+            "reports-disabled"
         ).whenComplete { _, throwable ->
             if (throwable != null) {
                 player.sendMessage("${CC.RED}Something went wrong while submitting your request, try again later.")

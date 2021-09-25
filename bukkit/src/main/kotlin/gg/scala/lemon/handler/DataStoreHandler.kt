@@ -46,7 +46,6 @@ object DataStoreHandler {
             this.rankLayer, this.grantLayer
         ).forEach {
             it.supplyWithCustomGson(Serializers.gson)
-            it.fetchEntryByKey("testing")
         }
     }
 }

@@ -4,12 +4,16 @@ import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.dispatchToLemon
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.visibility.VisibilityHandler
 import org.apache.commons.lang.time.DurationFormatUtils
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 @CommandAlias("environment|env")
 @CommandPermission("lemon.command.environment")
@@ -19,6 +23,15 @@ class EnvironmentCommand : BaseCommand() {
     @HelpCommand
     fun onHelp(help: CommandHelp) {
         help.showHelp()
+    }
+
+    @Subcommand("test")
+    fun onTest(player: Player) {
+        Bukkit.getOnlinePlayers().forEach {
+            VisibilityHandler.getDebugInfo(player, it).forEach { message ->
+                player.sendMessage(message)
+            }
+        }
     }
 
     @Subcommand("fetch-online")

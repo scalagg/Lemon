@@ -348,9 +348,9 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
-        if (event.entity !is Player) return
+        if (event.damager !is Player) return
 
-        val player = event.entity as Player
+        val player = event.damager as Player
 
         if (player.hasMetadata("vanished")) {
             player.sendMessage("${CC.RED}You may not damage entities while in vanish.")
