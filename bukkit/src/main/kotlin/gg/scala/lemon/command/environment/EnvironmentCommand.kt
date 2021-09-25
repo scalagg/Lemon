@@ -1,6 +1,5 @@
 package gg.scala.lemon.command.environment
 
-import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.QuickAccess
@@ -28,9 +27,15 @@ class EnvironmentCommand : BaseCommand() {
     @Subcommand("test")
     fun onTest(player: Player) {
         Bukkit.getOnlinePlayers().forEach {
+            player.sendMessage(" ")
             VisibilityHandler.getDebugInfo(player, it).forEach { message ->
                 player.sendMessage(message)
             }
+
+            VisibilityHandler.getDebugInfo(it, player).forEach { message ->
+                player.sendMessage(message)
+            }
+            player.sendMessage(" ")
         }
     }
 

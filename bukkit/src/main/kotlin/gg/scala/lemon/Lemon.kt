@@ -25,7 +25,6 @@ import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
-import gg.scala.lemon.player.visibility.StaffVisibilityOverrideHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
@@ -200,7 +199,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
 
         VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler())
-        VisibilityHandler.registerOverride("staff", StaffVisibilityOverrideHandler())
+//        VisibilityHandler.registerOverride("staff", StaffVisibilityOverrideHandler())
 
         Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)
         Schedulers.async().runRepeating(FrozenPlayerHandler.FrozenPlayerTick(), 0L, 20L)

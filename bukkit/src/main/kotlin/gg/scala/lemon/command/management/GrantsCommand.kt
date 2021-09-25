@@ -69,16 +69,20 @@ class GrantsCommand : BaseCommand() {
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${colored}'s${CC.SEC} grant history...")
 
         GrantHandler.fetchGrantsByExecutor(uuid).thenAccept {
-            if (it.isEmpty()) {
-                player.sendMessage("${CC.RED}No grants found by ${CC.YELLOW}$colored${CC.RED}.")
-                return@thenAccept
-            }
+            try {
+                if (it.isEmpty()) {
+                    player.sendMessage("${CC.RED}No grants found by ${CC.YELLOW}$colored${CC.RED}.")
+                    return@thenAccept
+                }
 
-            GrantViewMenu(
-                uuid,
-                HistoryViewType.STAFF_HIST,
-                it
-            ).openMenu(player)
+                GrantViewMenu(
+                    uuid,
+                    HistoryViewType.STAFF_HIST,
+                    it
+                ).openMenu(player)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

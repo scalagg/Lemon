@@ -266,7 +266,7 @@ class LemonPlayer(
             if (it.startsWith("%")) {
                 bungeePermissions.add(it.removePrefix("%"))
             } else {
-                attachment.setPermission(it, !it.startsWith("*"))
+                attachment!!.setPermission(it, !it.startsWith("*"))
 
                 VaultUtil.usePermissions { permission ->
                     permission.playerAdd(player, it)

@@ -115,26 +115,33 @@ object PlayerHandler {
 
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>> {
         return DataStoreHandler.lemonPlayerLayer.fetchAllEntries().thenApply {
-            val accounts = mutableListOf<LemonPlayer>()
-            val lemonPlayer = findPlayer(uuid).orElse(null)
+            try {
+                val accounts = mutableListOf<LemonPlayer>()
+                val lemonPlayer = findPlayer(uuid).orElse(null)
 
-            it.forEach { entry ->
-                lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
-                    if (entry.value.pastIpAddresses.containsKey(address)) {
-                        accounts.add(entry.value)
-                        return@forEachIndexed
+                it.forEach { entry ->
+                    if (entry.value.uniqueId != uuid) {
+                        lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
+                            if (entry.value.pastIpAddresses.containsKey(address)) {
+                                accounts.add(entry.value)
+                                return@forEachIndexed
+                            }
+                        }
                     }
                 }
-            }
 
-            return@thenApply accounts
+                return@thenApply accounts
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return@thenApply mutableListOf()
+            }
         }
     }
 
     fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer> {
         var currentList = ArrayList(Bukkit.getOnlinePlayers())
             .mapNotNull {
-                PlayerHandler.findPlayer(it.uniqueId).orElse(null)
+                findPlayer(it.uniqueId).orElse(null)
             }.sortedBy { -it.activeGrant!!.getRank().weight }
 
         if (currentList.size > 350) {
@@ -145,7 +152,7 @@ object PlayerHandler {
             return currentList
         }
 
-        return currentList.filter { !it.hasMetadata("vanished") && !it.hasMetadata("disguised") }
+        return currentList.filter { !it.hasMetadata("vanished") && !it.hasMetadata("disguised") && !it.hasMetadata("mod-mode") }
     }
 
 }
