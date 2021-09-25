@@ -2,6 +2,7 @@ package gg.scala.lemon.util
 
 import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.util.other.Cooldown
@@ -28,19 +29,19 @@ object QuickAccess {
     @JvmStatic
     fun nameOrConsole(sender: CommandSender): String {
         if (sender is ConsoleCommandSender) {
-            return "{LemonConstants.CONSOLE}"
+            return LemonConstants.CONSOLE
         }
 
         val lemonPlayer = PlayerHandler.findPlayer(sender as Player).orElse(null)
 
         lemonPlayer?.let {
             return it.getColoredName()
-        } ?: return "{LemonConstants.CONSOLE}"
+        } ?: return LemonConstants.CONSOLE
     }
 
     @JvmStatic
     fun nameOrConsole(uuid: UUID?): String {
-        uuid ?: return "{LemonConstants.CONSOLE}"
+        uuid ?: return LemonConstants.CONSOLE
 
         return CubedCacheUtil.fetchName(uuid)!!
     }
@@ -65,7 +66,7 @@ object QuickAccess {
 
     @JvmStatic
     fun fetchColoredName(uuid: UUID?): String {
-        uuid ?: return "{LemonConstants.CONSOLE}"
+        uuid ?: return LemonConstants.CONSOLE
 
         val grants = GrantHandler.fetchGrantsFor(uuid).get()
 

@@ -1,6 +1,7 @@
 package gg.scala.lemon.menu.punishment
 
 import com.cryptomorin.xseries.XMaterial
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.player.enums.HistoryViewType
@@ -76,7 +77,7 @@ class PunishmentDetailedViewMenu(
             val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
-                "{LemonConstants.CONSOLE}"
+                "${LemonConstants.CONSOLE}"
             }
 
             lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
@@ -106,7 +107,7 @@ class PunishmentDetailedViewMenu(
                 val removedBy = punishment.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
-                    "{LemonConstants.CONSOLE}"
+                    "${LemonConstants.CONSOLE}"
                 }
 
                 lines.add("")

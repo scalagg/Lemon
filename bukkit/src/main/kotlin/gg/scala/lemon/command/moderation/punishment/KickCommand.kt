@@ -18,14 +18,14 @@ class KickCommand : BaseCommand() {
     @Syntax("<player> [reason]")
     @CommandAlias("kick|lattabitch|k")
     @CommandPermission("lemon.command.kick")
-    @CommandCompletion("@all-players Annoying|Latta Bitch")
+    @CommandCompletion("@all-players Camping")
     fun onKick(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.KICK,
-            duration = 1L, reason = parseReason(reason),
+            duration = 1L, reason = parseReason(reason, fallback = "Camping"),
             silent = silent
         )
     }

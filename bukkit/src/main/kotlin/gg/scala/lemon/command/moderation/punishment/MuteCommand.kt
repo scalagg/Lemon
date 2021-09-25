@@ -28,7 +28,7 @@ class MuteCommand : BaseCommand() {
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.MUTE,
             duration = duration?.get() ?: Long.MAX_VALUE,
-            reason = parseReason(reason), silent = silent
+            reason = parseReason(reason, fallback = "Spamming"), silent = silent
         )
     }
 
@@ -43,7 +43,7 @@ class MuteCommand : BaseCommand() {
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.MUTE,
             duration = duration?.get() ?: Long.MAX_VALUE,
-            reason = parseReason(reason), silent = silent,
+            reason = parseReason(reason, fallback = "Spamming"), silent = silent,
             rePunishing = true
         )
     }

@@ -2,6 +2,7 @@ package gg.scala.lemon.menu.grant
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.menu.better.BetterConfirmMenu
@@ -104,7 +105,7 @@ class GrantViewMenu(
             val addedBy = grant.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
-                "{LemonConstants.CONSOLE}"
+                LemonConstants.CONSOLE
             }
 
             lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(grant.addedAt)))
@@ -140,7 +141,7 @@ class GrantViewMenu(
                 val removedBy = grant.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
-                    "{LemonConstants.CONSOLE}"
+                    "${LemonConstants.CONSOLE}"
                 }
 
                 lines.add("")
