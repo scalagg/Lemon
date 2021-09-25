@@ -12,6 +12,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.*
+import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
@@ -161,6 +162,30 @@ class LemonPlayer(
                 )
             }
             BLACKLIST -> Lemon.instance.languageConfig.blacklistMessage
+            IP_RELATIVE -> {
+                val coloredName = coloredName(
+                    CubedCacheUtil.fetchName(punishment.uuid)
+                )
+
+                if (punishment.category == BLACKLIST) {
+                    String.format(
+                        Lemon.instance.languageConfig.blacklistRelationMessage,
+                        coloredName,
+                    )
+                } else {
+                    if (punishment.isPermanent) {
+                        String.format(
+                            Lemon.instance.languageConfig.banRelationPermanentMessage,
+                            coloredName, coloredName
+                        )
+                    } else {
+                        String.format(
+                            Lemon.instance.languageConfig.banRelationTemporaryMessage,
+                            coloredName, coloredName
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -217,6 +242,38 @@ class LemonPlayer(
             }
 
             if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
+        }
+    }
+
+    fun checkForIpRelative() {
+        PlayerHandler.fetchAlternateAccountsFor(uniqueId).thenAccept { lemonPlayers ->
+            lemonPlayers.forEach {
+                val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
+                val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
+
+                val matchingIpInfo = lastIpAddress == targetLastIpAddress
+
+                if (matchingIpInfo) {
+                    for (punishmentCategory in PunishmentCategory.IP_REL) {
+                        val punishments = PunishmentHandler
+                            .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
+
+                        punishments.thenAccept { list ->
+                            if (list.isNotEmpty()) {
+                                activePunishments[IP_RELATIVE] = list[0]
+                            }
+                        }
+                    }
+                }
+            }
+
+            Tasks.asyncDelayed(20L) {
+                if (activePunishments[IP_RELATIVE] != null) {
+                    val message = getPunishmentMessage(activePunishments[IP_RELATIVE]!!)
+
+                    bukkitPlayer?.sendMessage(message)
+                }
+            }
         }
     }
 
@@ -443,6 +500,8 @@ class LemonPlayer(
         recalculatePunishments(
             connecting = true
         )
+
+        checkForIpRelative()
     }
 
     fun handleIfFirstCreated() {

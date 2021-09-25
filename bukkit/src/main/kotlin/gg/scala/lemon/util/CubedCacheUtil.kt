@@ -15,7 +15,7 @@ object CubedCacheUtil {
     }
 
     @JvmStatic
-    fun fetchName(uuid: UUID): String {
+    fun fetchName(uuid: UUID): String? {
         return Cubed.instance.uuidCache.name(uuid)
     }
 }

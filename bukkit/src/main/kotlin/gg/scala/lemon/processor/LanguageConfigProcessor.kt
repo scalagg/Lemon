@@ -31,7 +31,14 @@ class LanguageConfigProcessor {
                 "${CC.GOLD}You may also not purchase an unban for this type of ban."
 
     @Coloured
-    val banRelationMessage =
+    val banRelationTemporaryMessage =
+        "${CC.RED}Your IP is temporarily ${CC.DARK_RED}banned${CC.RED} from ${LemonConstants.SERVER_NAME}\n" +
+                "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
+                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}"
+
+    @Coloured
+    val banRelationPermanentMessage =
         "${CC.RED}Your IP is temporarily ${CC.DARK_RED}banned${CC.RED} from ${LemonConstants.SERVER_NAME}\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +

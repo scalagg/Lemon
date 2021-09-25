@@ -12,6 +12,8 @@ import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.util.StringUtil
+import java.util.concurrent.ThreadLocalRandom
 
 /**
  * @author GrowlyX
@@ -34,6 +36,34 @@ class ChatCommand : BaseCommand() {
         sendStaffMessage(
             sender,
             "$coloredName${CC.D_AQUA} has ${if (toggledTo) "${CC.RED}disabled" else "${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
+            true, QuickAccess.MessageType.NOTIFICATION
+        )
+    }
+
+    @Syntax("[-h]")
+    @CommandAlias("clearchat|cc")
+    @CommandPermission("lemon.command.clearchat")
+    fun onClearChat(sender: CommandSender, @Optional hiddenString: String?) {
+        val coloredName = nameOrConsole(sender)
+        val hidden = hiddenString != null && hiddenString == "-h"
+
+        Bukkit.getOnlinePlayers()
+            .filter { !it.hasPermission("lemon.staff") }
+            .forEach {
+                for (int in 0..250) {
+                    it.sendMessage(
+                        " ".repeat(
+                            ThreadLocalRandom.current().nextInt(1, 50)
+                        )
+                    )
+                }
+            }
+
+        Bukkit.broadcastMessage("${CC.GREEN}Chat has been cleared by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
+
+        sendStaffMessage(
+            sender,
+            "$coloredName${CC.D_AQUA} has cleared chat.",
             true, QuickAccess.MessageType.NOTIFICATION
         )
     }

@@ -100,6 +100,13 @@ class PlayerListener : Listener {
             return
         }
 
+        val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
+
+        if (ipRelativePunishment != null) {
+            cancel(event, "${CC.RED}You're not allowed to chat while being ip-punished.")
+            return
+        }
+
         val mutePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.MUTE)
 
         if (mutePunishment != null) {
@@ -299,6 +306,13 @@ class PlayerListener : Listener {
         }
 
         val command = event.message.split(" ")[0]
+
+        val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
+
+        if (ipRelativePunishment != null) {
+            cancel(event, "${CC.RED}You're not allowed to perform commands while being ip-punished.")
+            return
+        }
 
         val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
 

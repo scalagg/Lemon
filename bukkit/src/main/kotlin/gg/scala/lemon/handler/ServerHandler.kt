@@ -22,6 +22,7 @@ object ServerHandler {
             stopper.sendMessage("${CC.RED}There is currently no scheduled shutdown.")
             return
         }
+
         shutdownRunnable!!.cancel()
         shutdownRunnable = null
     }

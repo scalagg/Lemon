@@ -170,7 +170,6 @@ object PunishmentHandler {
 
             val targetName = QuickAccess.fetchColoredName(uuid)
             val targetWeight = QuickAccess.fetchRankWeight(uuid).getNow(0)
-            val targetIpInfo = QuickAccess.fetchIpAddress(uuid).getNow(null)
 
             val issuerUuid = QuickAccess.uuidOf(issuer)
             val issuerWeight = QuickAccess.weightOf(issuer)
@@ -211,16 +210,18 @@ object PunishmentHandler {
                     )
                 }
 
-                val punishment = Punishment(
-                    UUID.randomUUID(), uuid, targetIpInfo, issuerUuid,
-                    System.currentTimeMillis(), Lemon.instance.settings.id,
-                    reason, duration, category
-                )
+                QuickAccess.fetchIpAddress(uuid).thenAccept { ipAddress ->
+                    val punishment = Punishment(
+                        UUID.randomUUID(), uuid, ipAddress, issuerUuid,
+                        System.currentTimeMillis(), Lemon.instance.settings.id,
+                        reason, duration, category
+                    )
 
-                handlePostPunishmentCheck(
-                    punishment, silent, uuid,
-                    issuer, issuerUuid, targetName
-                )
+                    handlePostPunishmentCheck(
+                        punishment, silent, uuid,
+                        issuer, issuerUuid, targetName
+                    )
+                }
             }
         }
     }
