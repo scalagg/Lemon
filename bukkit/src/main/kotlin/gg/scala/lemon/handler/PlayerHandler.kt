@@ -152,7 +152,9 @@ object PlayerHandler {
             return currentList
         }
 
-        return currentList.filter { !it.hasMetadata("vanished") && !it.hasMetadata("disguised") && !it.hasMetadata("mod-mode") }
+        return currentList.filter {
+            !it.bukkitPlayer!!.hasMetadata("vanished") && !it.bukkitPlayer!!.hasMetadata("mod-mode")
+        }
     }
 
 }
