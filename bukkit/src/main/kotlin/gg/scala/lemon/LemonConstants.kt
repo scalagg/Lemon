@@ -3,18 +3,11 @@ package gg.scala.lemon
 import com.google.gson.reflect.TypeToken
 import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Constants
 import org.bukkit.Note
 import java.lang.reflect.Type
 import java.util.*
 
 object LemonConstants {
-
-    @JvmStatic
-    private val BASE_PREFIX = "${CC.PRI}${CC.BOLD}%s ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
-
-    @JvmStatic
-    val STAFF_PREFIX = String.format(BASE_PREFIX, "Staff")
 
     @JvmStatic
     val STRING_METADATA_MAP_TYPE: Type = object : TypeToken<HashMap<String, Metadata>>() {}.type
@@ -39,9 +32,6 @@ object LemonConstants {
 
     @JvmStatic
     val STORE_LINK = Lemon.instance.lemonWebData.store
-
-    @JvmStatic
-    val DEV = Lemon.instance.lemonWebData.serverName == "SolexGames"
 
     @JvmStatic
     val CONSOLE: String
