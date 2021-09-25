@@ -44,6 +44,9 @@ object LemonConstants {
     val DEV = Lemon.instance.lemonWebData.serverName == "SolexGames"
 
     @JvmStatic
+    val CONSOLE = Lemon.instance.languageConfig.consoleName
+
+    @JvmStatic
     val NO_PERMISSION_SUB: String = "${CC.RED}You do not have permission to perform this subcommand!"
 
 }

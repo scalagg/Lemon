@@ -104,7 +104,7 @@ class GrantViewMenu(
             val addedBy = grant.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
-                "${CC.D_RED}Console"
+                "{LemonConstants.CONSOLE}"
             }
 
             lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(grant.addedAt)))
@@ -140,7 +140,7 @@ class GrantViewMenu(
                 val removedBy = grant.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
-                    "${CC.D_RED}Console"
+                    "{LemonConstants.CONSOLE}"
                 }
 
                 lines.add("")

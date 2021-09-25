@@ -28,19 +28,19 @@ object QuickAccess {
     @JvmStatic
     fun nameOrConsole(sender: CommandSender): String {
         if (sender is ConsoleCommandSender) {
-            return "${CC.D_RED}Console"
+            return "{LemonConstants.CONSOLE}"
         }
 
         val lemonPlayer = PlayerHandler.findPlayer(sender as Player).orElse(null)
 
         lemonPlayer?.let {
             return it.getColoredName()
-        } ?: return "${CC.D_RED}Console"
+        } ?: return "{LemonConstants.CONSOLE}"
     }
 
     @JvmStatic
     fun nameOrConsole(uuid: UUID?): String {
-        uuid ?: return "${CC.D_RED}Console"
+        uuid ?: return "{LemonConstants.CONSOLE}"
 
         return CubedCacheUtil.fetchName(uuid)!!
     }
@@ -65,7 +65,7 @@ object QuickAccess {
 
     @JvmStatic
     fun fetchColoredName(uuid: UUID?): String {
-        uuid ?: return "${CC.D_RED}Console"
+        uuid ?: return "{LemonConstants.CONSOLE}"
 
         val grants = GrantHandler.fetchGrantsFor(uuid).get()
 

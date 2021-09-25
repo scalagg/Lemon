@@ -74,4 +74,7 @@ class LanguageConfigProcessor {
     @Coloured
     var serverNotLoaded = "${CC.RED}The server is still loading.\n${CC.GRAY}Please reconnect in a few seconds."
 
+    @Coloured
+    val consoleName = "${CC.BD_RED}Console"
+
 }
