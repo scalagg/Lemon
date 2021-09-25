@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 class ModModeNametagProvider: NametagProvider("mod-mode", 50) {
 
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo? {
-        return if (toRefresh.hasMetadata("mod-mode")) {
+        return if (toRefresh.hasMetadata("mod-mode") && refreshFor.hasPermission("lemon.staff")) {
             createNametag("${CC.GRAY}[M] ", "")
         } else null
     }

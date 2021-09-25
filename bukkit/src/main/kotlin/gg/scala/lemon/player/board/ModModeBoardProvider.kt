@@ -22,21 +22,14 @@ object ModModeBoardProvider: ScoreboardOverride() {
             board.add("${CC.GRAY}${CC.S}--------------------")
             board.add(getVanishStatus(it))
             board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size} ${CC.WHITE}(${CC.PRI}${Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]}${CC.WHITE})")
-            board.add("Channel: ${CC.PRI}${"Regular"}")
+            board.add("Channel: ${CC.PRI}${it.getMetadata("channel")?.asString() ?: "${CC.RED}None"}")
             board.add("TPS: ${CC.PRI}${String.format("%.2f", Lemon.instance.getLocalServerInstance().ticksPerSecond)}")
             board.add("${CC.GRAY}${CC.S}--------------------")
         }
     }
 
     override fun shouldOverride(player: Player): Boolean {
-        val lemonPlayer = PlayerHandler.findPlayer(player)
-        var shouldOverride = false
-
-        lemonPlayer.ifPresent {
-            shouldOverride = it.getSetting("mod-mode")
-        }
-
-        return shouldOverride
+        return player.hasMetadata("mod-mode")
     }
 
     private fun getVanishStatus(lemonPlayer: LemonPlayer): String {

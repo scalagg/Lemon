@@ -5,7 +5,7 @@ import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
 import org.bukkit.entity.Player
 
-class DefaultNametagProvider: NametagProvider("default-fallback", 10) {
+class DefaultNametagProvider: NametagProvider("default", 10) {
 
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo {
         val lemonPlayer = PlayerHandler.findPlayer(toRefresh).orElse(null)

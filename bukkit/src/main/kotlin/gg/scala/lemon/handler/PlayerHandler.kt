@@ -131,7 +131,7 @@ object PlayerHandler {
                 }
 
                 return@thenApply accounts
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 e.printStackTrace()
                 return@thenApply mutableListOf()
             }

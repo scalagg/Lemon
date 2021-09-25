@@ -199,7 +199,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
 
         VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler())
-//        VisibilityHandler.registerOverride("staff", StaffVisibilityOverrideHandler())
 
         Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)
         Schedulers.async().runRepeating(FrozenPlayerHandler.FrozenPlayerTick(), 0L, 20L)

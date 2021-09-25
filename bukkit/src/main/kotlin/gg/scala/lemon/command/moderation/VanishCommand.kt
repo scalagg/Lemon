@@ -33,7 +33,7 @@ class VanishCommand : BaseCommand() {
         val youOrNot = if (target != null) "${CC.YELLOW}${playerToVanish.name}${CC.RED} does" else "You do"
         val youHave = if (target != null) "${coloredName(playerToVanish)}${CC.SEC} has" else "${CC.SEC}You've"
 
-        if (!playerToVanish.isOp && lemonPlayer.activeGrant!!.getRank().weight > (priority ?: 0)) {
+        if (!playerToVanish.isOp && lemonPlayer.activeGrant!!.getRank().weight < (priority ?: lemonPlayer.activeGrant!!.getRank().weight)) {
             throw ConditionFailedException("${CC.RED}$youOrNot not have permission to vanish with a priority higher than their current rank!")
         }
 
@@ -43,7 +43,7 @@ class VanishCommand : BaseCommand() {
                 power = priority ?: 0
             )
 
-            sender.sendMessage("$youHave been ${CC.GREEN}vanished${CC.SEC} with a priority of ${CC.WHITE}${priority ?: 0}.")
+            sender.sendMessage("$youHave been ${CC.GREEN}vanished${CC.SEC} with a priority of ${CC.WHITE}${priority ?: lemonPlayer.activeGrant!!.getRank().weight}.")
         } else {
             PlayerHandler.unvanishPlayer(playerToVanish)
 
