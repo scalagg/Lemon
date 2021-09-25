@@ -80,6 +80,11 @@ class PlayerListener : Listener {
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
+        if (lemonPlayer == null) {
+            cancel(event, "Something went wrong, please reconnect.")
+            return
+        }
+
         if (player.hasMetadata("frozen")) {
             event.isCancelled = true
 
@@ -284,7 +289,7 @@ class PlayerListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
-        val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null) ?: return
 
         if (lemonPlayer.cooldowns["command"]?.isActive() == true) {
             val formatted = lemonPlayer.cooldowns["command"]?.let { remaining(it) }

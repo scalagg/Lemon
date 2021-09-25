@@ -24,12 +24,6 @@ object PlayerHandler {
     var players: HashMap<UUID, LemonPlayer> = hashMapOf()
 
     init {
-        Schedulers.async().runRepeating(Runnable {
-            players.values.toList().forEach {
-                players.remove(it.uniqueId)
-            }
-        }, 20L * 60L, 20L * 60L)
-
         inventory[0] =
             ItemBuilder(XMaterial.BOOK)
                 .name("${CC.B_PRI}Inspect Player")
