@@ -1,6 +1,9 @@
 package gg.scala.lemon.player
 
+import com.google.zxing.WriterException
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
@@ -15,13 +18,21 @@ import gg.scala.lemon.util.*
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.type.Savable
+import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.totp.ImageMapRenderer
+import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.map.MapRenderer
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 class LemonPlayer(
     var uniqueId: UUID,
@@ -246,6 +257,94 @@ class LemonPlayer(
 
             if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
         }
+    }
+
+    fun validatePlayerForAuth() {
+        val isAuthExempt = getSetting("auth-exempt")
+
+        if (isAuthExempt) {
+            authenticateInternal()
+            return
+        }
+
+        var authSecret = getMetadata("auth-secret")?.asString()
+        val shouldForce2fa = hasPermission("lemon.2fa.forced")
+
+        if (authSecret != null) {
+            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress) {
+                authenticateInternal()
+
+                if (LemonConstants.LOBBY) {
+                    bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been automatically authenticated.")
+                }
+            } else {
+                bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate yourself using ${CC.WHITE}/auth <code>${CC.SEC}.")
+
+                Schedulers.sync().callLater({
+                    // TODO: 9/26/2021 sit on fucking bat
+                }, 1L)
+            }
+        } else if (shouldForce2fa) {
+            authSecret = metadata.put(
+                "auth-secret",
+                Metadata(TimeBasedOneTimePasswordUtil.generateBase32Secret())
+            )!!.asString()
+
+            Schedulers.sync().callLater({
+                handleAuthMap(authSecret)
+                // TODO: 9/26/2021 sit on fucking bat
+            }, 1L)
+        }
+    }
+
+    private fun authenticateInternal() {
+        bukkitPlayer?.setMetadata(
+            "authenticated",
+            FixedMetadataValue(Lemon.instance, true)
+        )
+    }
+
+    fun handleAuthMap(authSecret: String) {
+        val mapRenderer: ImageMapRenderer
+
+        try {
+            mapRenderer = ImageMapRenderer(
+                name, authSecret, LemonConstants.WEB_LINK
+            )
+        } catch (e: WriterException) {
+            println("[Lemon] [2FA] An error occurred: ${e.message}")
+
+            bukkitPlayer?.sendMessage(arrayOf(
+                "${CC.RED}While setting your 2FA, an error occurred.",
+                "${CC.RED}This error has been reported, sorry for the inconvenience."
+            ))
+            return
+        }
+
+        val notNullPlayer = bukkitPlayer!!
+
+        val stack = ItemStack(Material.MAP)
+        val view = Bukkit.createMap(notNullPlayer.world)
+
+        stack.durability = view.id
+        stack.amount = 0
+
+        notNullPlayer.inventory.heldItemSlot = 4
+        notNullPlayer.itemInHand = stack
+
+        val down = notNullPlayer.location
+        down.pitch = 90F
+
+        notNullPlayer.teleport(down)
+
+        view.renderers.forEach {
+            view.removeRenderer(it)
+        }
+
+        view.addRenderer(mapRenderer)
+
+        notNullPlayer.sendMap(view)
+        notNullPlayer.updateInventory()
     }
 
     fun checkForIpRelative() {
@@ -511,7 +610,8 @@ class LemonPlayer(
 
     fun handleIfFirstCreated() {
         updateOrAddMetadata(
-            "first-connection", Metadata(System.currentTimeMillis())
+            "first-connection",
+            Metadata(System.currentTimeMillis())
         )
 
         finalizeMetaData()
