@@ -7,7 +7,9 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.attemptRemoval
+import gg.scala.lemon.util.QuickAccess.fetchIpAddress
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
+import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
 import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.util.CC
@@ -210,7 +212,7 @@ object PunishmentHandler {
                     )
                 }
 
-                QuickAccess.fetchIpAddress(uuid).thenAccept { ipAddress ->
+                fetchIpAddress(uuid).thenAccept { ipAddress ->
                     val punishment = Punishment(
                         UUID.randomUUID(), uuid, ipAddress, issuerUuid,
                         System.currentTimeMillis(), Lemon.instance.settings.id,
@@ -252,7 +254,7 @@ object PunishmentHandler {
                 )
             }
 
-            QuickAccess.sendGlobalFancyBroadcast(
+            sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
                 permission = broadcastPermission
             ).thenRun {
@@ -301,7 +303,7 @@ object PunishmentHandler {
                 )
             }
 
-            QuickAccess.sendGlobalFancyBroadcast(
+            sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
                 permission = broadcastPermission
             ).thenRun {

@@ -8,12 +8,15 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.remaining
+import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import org.bukkit.entity.ExperienceOrb
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -22,6 +25,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 
 @ExperimentalStdlibApi
@@ -83,8 +87,8 @@ class PlayerListener : Listener {
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-        if (lemonPlayer == null) {
-            cancel(event, "Something went wrong, please reconnect.")
+        if (shouldBlock(player)) {
+            cancel(event, "You must authenticate before chatting.")
             return
         }
 
@@ -297,6 +301,32 @@ class PlayerListener : Listener {
         }
     }
 
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
+    fun onInteract(event: PlayerInteractEvent) {
+        if (shouldBlock(event.player)) {
+            event.isCancelled = true
+            return
+        }
+    }
+
+    @EventHandler
+    fun onEntityTarget(event: EntityTargetEvent) {
+        if (event.reason == EntityTargetEvent.TargetReason.CUSTOM) {
+            return
+        }
+
+        val entity = event.entity
+        val target = event.target
+
+        if (
+            (entity is ExperienceOrb || entity is LivingEntity) && target is Player && target.hasMetadata("vanished")
+        ) {
+            event.isCancelled = true
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
         val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null) ?: return
@@ -309,6 +339,11 @@ class PlayerListener : Listener {
         }
 
         val command = event.message.split(" ")[0]
+
+        if ((!command.startsWith("auth") || !command.startsWith("2fa")) && shouldBlock(event.player)) {
+            cancel(event, "You must authenticate before performing commands.")
+            return
+        }
 
         val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
 
@@ -384,6 +419,11 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
+        if (shouldBlock(event.player)) {
+            event.isCancelled = true
+            return
+        }
+
         if (event.player.hasMetadata("mod-mode")) {
             event.player.sendMessage("${CC.RED}You may not break blocks while in mod-mode.")
         }
@@ -391,6 +431,11 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
+        if (shouldBlock(event.player)) {
+            event.isCancelled = true
+            return
+        }
+
         if (event.player.hasMetadata("mod-mode")) {
             event.player.sendMessage("${CC.RED}You may not place blocks while in mod-mode.")
         }

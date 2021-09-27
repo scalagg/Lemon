@@ -27,12 +27,10 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.map.MapRenderer
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
 
 class LemonPlayer(
     var uniqueId: UUID,
@@ -259,8 +257,13 @@ class LemonPlayer(
         }
     }
 
-    fun validatePlayerForAuth() {
-        val isAuthExempt = getSetting("auth-exempt")
+    fun isAuthExempt() = getSetting("auth-exempt")
+    fun hasAuthenticatedThisSession() = bukkitPlayer?.hasMetadata("authenticated") == true
+    fun hasSetupAuthentication() = getMetadata("auth-secret") != null
+    fun getAuthSecret() = getMetadata("auth-secret")?.asString() ?: ""
+
+    fun validatePlayerAuthentication() {
+        val isAuthExempt = isAuthExempt()
 
         if (isAuthExempt) {
             authenticateInternal()
@@ -278,10 +281,12 @@ class LemonPlayer(
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been automatically authenticated.")
                 }
             } else {
-                bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate yourself using ${CC.WHITE}/auth <code>${CC.SEC}.")
-
                 Schedulers.sync().callLater({
-                    // TODO: 9/26/2021 sit on fucking bat
+                    bukkitPlayer?.let {
+                        it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate yourself using ${CC.WHITE}/auth <code>${CC.SEC}.")
+
+                        BatUtil.sitOnBat(it)
+                    }
                 }, 1L)
             }
         } else if (shouldForce2fa) {
@@ -292,7 +297,12 @@ class LemonPlayer(
 
             Schedulers.sync().callLater({
                 handleAuthMap(authSecret)
-                // TODO: 9/26/2021 sit on fucking bat
+
+                bukkitPlayer?.let {
+                    it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
+
+                    BatUtil.sitOnBat(it)
+                }
             }, 1L)
         }
     }
@@ -606,6 +616,7 @@ class LemonPlayer(
         )
 
         checkForIpRelative()
+        validatePlayerAuthentication()
     }
 
     fun handleIfFirstCreated() {

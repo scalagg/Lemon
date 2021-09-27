@@ -4,6 +4,7 @@ import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.other.FancyMessage
@@ -323,6 +324,17 @@ object QuickAccess {
         Message("").dispatchToLemon()
 
         return 0
+    }
+
+    @JvmStatic
+    fun shouldBlock(player: Player): Boolean {
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+
+        if (!lemonPlayer.hasPermission("lemon.2fa.forced")) return false
+        if (lemonPlayer.isAuthExempt()) return false
+        if (lemonPlayer.hasAuthenticatedThisSession()) return false
+
+        return true
     }
 
     enum class MessageType {

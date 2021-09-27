@@ -9,7 +9,7 @@ import java.util.*
 object SplitUtil {
 
     @JvmStatic
-    fun split(any: Any, splitAt: String): List<String> {
+    fun split(any: Any?, splitAt: String): List<String> {
         return any.toString().split(splitAt)
     }
 
