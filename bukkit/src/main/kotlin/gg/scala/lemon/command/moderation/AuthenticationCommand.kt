@@ -56,6 +56,8 @@ class AuthenticationCommand : BaseCommand() {
 
         player.inventory.remove(XMaterial.MAP.parseMaterial())
 
+        lemonPlayer.authenticateInternal()
+
         BatUtil.makePlayerUnSitOnBat(player)
     }
 
@@ -69,7 +71,7 @@ class AuthenticationCommand : BaseCommand() {
             throw ConditionFailedException("You're exempt from authentication.")
         }
 
-        if (!lemonPlayer.hasSetupAuthentication()) {
+        if (lemonPlayer.hasSetupAuthentication()) {
             throw ConditionFailedException("You've already setup authentication, if you're looking to reset it, contact a manager.")
         }
 

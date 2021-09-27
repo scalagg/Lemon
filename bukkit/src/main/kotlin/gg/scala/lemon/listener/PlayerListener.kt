@@ -88,7 +88,7 @@ class PlayerListener : Listener {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
         if (shouldBlock(player)) {
-            cancel(event, "You must authenticate before chatting.")
+            cancel(event, "${CC.RED}You must authenticate before chatting.")
             return
         }
 
@@ -340,10 +340,10 @@ class PlayerListener : Listener {
 
         val command = event.message.split(" ")[0]
 
-        if ((!command.startsWith("auth") || !command.startsWith("2fa")) && shouldBlock(event.player)) {
-            cancel(event, "You must authenticate before performing commands.")
-            return
-        }
+//        if (!command.startsWith("auth", true) && !command.startsWith("2fa", true) && !command.startsWith("setup", true) && shouldBlock(event.player)) {
+//            cancel(event, "${CC.RED}You must authenticate before performing commands.")
+//            return
+//        }
 
         val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
 

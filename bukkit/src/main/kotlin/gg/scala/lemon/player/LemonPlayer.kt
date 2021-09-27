@@ -265,13 +265,16 @@ class LemonPlayer(
     fun validatePlayerAuthentication() {
         val isAuthExempt = isAuthExempt()
 
+        if (!hasPermission("lemon.2fa.forced")) {
+            return
+        }
+
         if (isAuthExempt) {
             authenticateInternal()
             return
         }
 
-        var authSecret = getMetadata("auth-secret")?.asString()
-        val shouldForce2fa = hasPermission("lemon.2fa.forced")
+        var authSecret = getMetadata("auth-secret")
 
         if (authSecret != null) {
             if (this.previousIpAddress != null && this.previousIpAddress == ipAddress) {
@@ -289,15 +292,9 @@ class LemonPlayer(
                     }
                 }, 1L)
             }
-        } else if (shouldForce2fa) {
-            authSecret = metadata.put(
-                "auth-secret",
-                Metadata(TimeBasedOneTimePasswordUtil.generateBase32Secret())
-            )!!.asString()
+        } else {
 
             Schedulers.sync().callLater({
-                handleAuthMap(authSecret)
-
                 bukkitPlayer?.let {
                     it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
 
@@ -307,7 +304,7 @@ class LemonPlayer(
         }
     }
 
-    private fun authenticateInternal() {
+    fun authenticateInternal() {
         bukkitPlayer?.setMetadata(
             "authenticated",
             FixedMetadataValue(Lemon.instance, true)
