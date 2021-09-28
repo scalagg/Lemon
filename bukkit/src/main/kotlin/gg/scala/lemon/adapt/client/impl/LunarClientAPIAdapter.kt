@@ -14,6 +14,10 @@ class LunarClientAPIAdapter : PlayerClientAdapter {
 
     override fun getClientName() = "Lunar Client"
 
+    override fun shouldHandle(player: Player): Boolean {
+        return LunarClientAPI.getInstance().isRunningLunarClient(player)
+    }
+
     override fun enableStaffModules(player: Player) {
         LunarClientAPI.getInstance().giveAllStaffModules(player)
     }

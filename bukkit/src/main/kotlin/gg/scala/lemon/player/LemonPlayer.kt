@@ -33,6 +33,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 class LemonPlayer(
     var uniqueId: UUID,
@@ -277,6 +278,12 @@ class LemonPlayer(
         return getMetadata("auth-secret")?.asString() ?: ""
     }
 
+    private fun needsToReAuthenticate(): Boolean {
+        val meta = getMetadata("last-auth")
+
+        return meta == null || System.currentTimeMillis() > meta.asLong() + TimeUnit.HOURS.toMillis(12L)
+    }
+
     fun validatePlayerAuthentication() {
         if (!hasPermission("lemon.2fa.forced")) {
             return
@@ -290,7 +297,7 @@ class LemonPlayer(
         val authSecret = getMetadata("auth-secret")
 
         if (authSecret != null) {
-            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress) {
+            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress || needsToReAuthenticate()) {
                 authenticateInternal()
 
                 if (LemonConstants.LOBBY) {
@@ -314,6 +321,11 @@ class LemonPlayer(
         bukkitPlayer?.setMetadata(
             "authenticated",
             FixedMetadataValue(Lemon.instance, true)
+        )
+
+        updateOrAddMetadata(
+            "last-auth",
+            Metadata(System.currentTimeMillis())
         )
     }
 

@@ -21,7 +21,7 @@ dependencies {
     implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
     implementation fileTree("internal")
-    compileOnly fileTree("lib")
+    compileOnly fileTree(dir: "lib")
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 }

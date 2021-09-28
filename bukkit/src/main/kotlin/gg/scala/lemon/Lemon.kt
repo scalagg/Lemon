@@ -221,9 +221,9 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         ClassUtils.getClassesInPackage(
             this, "gg.scala.lemon.adapt.client"
         ).filter {
-            Bukkit.getPluginManager().getPlugin(
-                it.simpleName.removeSuffix("Adapter")
-            ) != null
+            Bukkit.getPluginManager().plugins.firstOrNull { plugin ->
+                plugin.name.contains(it.simpleName.replace("Adapter", ""))
+            } != null
         }.forEach {
             val clientAdapter = it.newInstance() as PlayerClientAdapter
             clientAdapters.add(clientAdapter)

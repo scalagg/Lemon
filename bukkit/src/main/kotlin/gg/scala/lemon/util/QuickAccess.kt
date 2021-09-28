@@ -3,6 +3,7 @@ package gg.scala.lemon.util
 import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
@@ -320,8 +321,6 @@ object QuickAccess {
         lemonPlayer?.let {
             return it.activeGrant!!.getRank().weight
         }
-
-        Message("").dispatchToLemon()
 
         return 0
     }

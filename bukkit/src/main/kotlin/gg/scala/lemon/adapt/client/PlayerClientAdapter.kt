@@ -10,6 +10,8 @@ interface PlayerClientAdapter {
 
     fun getClientName(): String
 
+    fun shouldHandle(player: Player): Boolean
+
     fun enableStaffModules(player: Player)
     fun disableStaffModules(player: Player)
 
