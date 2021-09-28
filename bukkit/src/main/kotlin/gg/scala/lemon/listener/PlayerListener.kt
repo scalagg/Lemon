@@ -82,20 +82,14 @@ class PlayerListener : Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerChat(event: AsyncPlayerChatEvent) {
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-        if (shouldBlock(player)) {
-            cancel(event, "${CC.RED}You must authenticate before chatting.")
-            return
-        }
-
         if (player.hasMetadata("frozen")) {
             event.isCancelled = true
 
-            // should use channels but /shrug
             Bukkit.getOnlinePlayers()
                 .mapNotNull { PlayerHandler.findPlayer(player).orElse(null) }
                 .filter { it.hasPermission("lemon.frozen.messages") && !it.hasMetadata("frozen-messages-disabled") }
@@ -104,6 +98,12 @@ class PlayerListener : Listener {
                 }
 
             player.sendMessage("${CC.RED}Your message has been sent to our staff.")
+            return
+        }
+
+        if (lemonPlayer.hasPermission("lemon.2fa.forced") && !lemonPlayer.isAuthExempt() && !player.hasMetadata("authenticated")) {
+            event.isCancelled = true
+            event.player.sendMessage("${CC.RED}You must authenticate before chatting.")
             return
         }
 
@@ -340,10 +340,10 @@ class PlayerListener : Listener {
 
         val command = event.message.split(" ")[0]
 
-//        if (!command.startsWith("auth", true) && !command.startsWith("2fa", true) && !command.startsWith("setup", true) && shouldBlock(event.player)) {
-//            cancel(event, "${CC.RED}You must authenticate before performing commands.")
-//            return
-//        }
+        if (!command.startsWith("/auth", true) && !command.startsWith("/2fa", true) && !command.startsWith("/setup", true) && shouldBlock(event.player)) {
+            cancel(event, "${CC.RED}You must authenticate before performing commands.")
+            return
+        }
 
         val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
 

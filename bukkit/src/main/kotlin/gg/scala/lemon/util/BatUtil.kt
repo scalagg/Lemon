@@ -13,15 +13,16 @@ import org.bukkit.metadata.FixedMetadataValue
 object BatUtil {
 
     @JvmStatic private val entityBatClass = MinecraftReflection.getNMSClass("EntityBat")!!
+    @JvmStatic private val entityClass = MinecraftReflection.getNMSClass("Entity")!!
 
     @JvmStatic private val spawnEntityPacket = MinecraftReflection.getNMSClass("PacketPlayOutSpawnEntityLiving")!!
     @JvmStatic private val attachPacket = MinecraftReflection.getNMSClass("PacketPlayOutAttachEntity")!!
     @JvmStatic private val destroyPacket = MinecraftReflection.getNMSClass("PacketPlayOutEntityDestroy")!!
 
-    @JvmStatic private val entityBatSetLocation = entityBatClass.getMethod("setLocation")
-    @JvmStatic private val entityBatSetVisibility = entityBatClass.getMethod("setInvisible")
-    @JvmStatic private val entityBatSetHealth = entityBatClass.getMethod("setHealth")
-    @JvmStatic private val entityBatId = entityBatClass.getMethod("getId")
+    @JvmStatic private val entityBatSetLocation = entityClass.getMethod("setLocation")
+    @JvmStatic private val entityBatSetVisibility = entityClass.getMethod("setInvisible")
+    @JvmStatic private val entityBatSetHealth = entityClass.getMethod("setHealth")
+    @JvmStatic private val entityBatId = entityClass.getMethod("getId")
 
     /**
      * Attaches a player onto a bat via reflection.

@@ -43,7 +43,7 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
 
         jsonObject.add("name", JsonPrimitive(src.name))
         jsonObject.add("uniqueId", JsonPrimitive(src.uniqueId.toString()))
-        jsonObject.add("ipAddress", JsonPrimitive(src.ipAddress))
+        jsonObject.add("ipAddress", JsonPrimitive(if (src.savePreviousIpAddressAsCurrent) src.previousIpAddress else src.ipAddress))
 
         jsonObject.add("ignoring", Serializers.gson.toJsonTree(src.ignoring))
         jsonObject.add("metadata", Serializers.gson.toJsonTree(src.metadata))

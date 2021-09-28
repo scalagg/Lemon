@@ -1,12 +1,9 @@
 package gg.scala.lemon.command.moderation
 
-import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
-import gg.scala.lemon.util.BatUtil
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -15,6 +12,7 @@ import net.evilblock.cubed.acf.annotation.Description
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 
@@ -54,11 +52,12 @@ class AuthenticationCommand : BaseCommand() {
             FixedMetadataValue(Lemon.instance, true)
         )
 
-        player.inventory.remove(XMaterial.MAP.parseMaterial())
+        lemonPlayer.savePreviousIpAddressAsCurrent = false
 
+        lemonPlayer.removeMap()
         lemonPlayer.authenticateInternal()
 
-        BatUtil.makePlayerUnSitOnBat(player)
+//        BatUtil.makePlayerUnSitOnBat(player)
     }
 
     @CommandAlias("setup2fa")

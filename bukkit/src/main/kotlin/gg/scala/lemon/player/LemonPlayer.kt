@@ -1,5 +1,6 @@
 package gg.scala.lemon.player
 
+import com.cryptomorin.xseries.XMaterial
 import com.google.zxing.WriterException
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
@@ -20,6 +21,7 @@ import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.type.Savable
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.totp.ImageMapRenderer
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
@@ -72,7 +74,9 @@ class LemonPlayer(
     val bukkitPlayer: Player?
         get() = Bukkit.getPlayer(uniqueId)
 
-    val classInit = System.currentTimeMillis()
+    var savePreviousIpAddressAsCurrent = false
+
+    private val classInit = System.currentTimeMillis()
 
     init {
         cooldowns["command"] = Cooldown(0L)
@@ -257,48 +261,66 @@ class LemonPlayer(
         }
     }
 
-    fun isAuthExempt() = getSetting("auth-exempt")
-    fun hasAuthenticatedThisSession() = bukkitPlayer?.hasMetadata("authenticated") == true
-    fun hasSetupAuthentication() = getMetadata("auth-secret") != null
-    fun getAuthSecret() = getMetadata("auth-secret")?.asString() ?: ""
+    fun isAuthExempt(): Boolean {
+        return getSetting("auth-exempt")
+    }
+
+    fun hasAuthenticatedThisSession(): Boolean {
+        return bukkitPlayer?.hasMetadata("authenticated") == true
+    }
+
+    fun hasSetupAuthentication(): Boolean {
+        return getMetadata("auth-secret") != null
+    }
+
+    fun getAuthSecret(): String {
+        return getMetadata("auth-secret")?.asString() ?: ""
+    }
 
     fun validatePlayerAuthentication() {
         val isAuthExempt = isAuthExempt()
+        println("called")
 
         if (!hasPermission("lemon.2fa.forced")) {
+            println("not staff")
             return
         }
 
         if (isAuthExempt) {
+            println("exempted")
             authenticateInternal()
             return
         }
 
-        var authSecret = getMetadata("auth-secret")
+        val authSecret = getMetadata("auth-secret")
 
         if (authSecret != null) {
+            println("authsecret not null")
             if (this.previousIpAddress != null && this.previousIpAddress == ipAddress) {
                 authenticateInternal()
+                println("same ipaddress")
 
                 if (LemonConstants.LOBBY) {
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been automatically authenticated.")
                 }
             } else {
+                savePreviousIpAddressAsCurrent = true
+                println("diff ipadd")
                 Schedulers.sync().callLater({
                     bukkitPlayer?.let {
                         it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate yourself using ${CC.WHITE}/auth <code>${CC.SEC}.")
 
-                        BatUtil.sitOnBat(it)
+//                        BatUtil.sitOnBat(it)
                     }
                 }, 1L)
             }
         } else {
-
+            println("not setup ")
             Schedulers.sync().callLater({
                 bukkitPlayer?.let {
                     it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
 
-                    BatUtil.sitOnBat(it)
+//                    BatUtil.sitOnBat(it)
                 }
             }, 1L)
         }
@@ -330,7 +352,9 @@ class LemonPlayer(
 
         val notNullPlayer = bukkitPlayer!!
 
-        val stack = ItemStack(Material.MAP)
+        val stack = ItemBuilder(XMaterial.MAP)
+            .name("${CC.B_PRI}2FA QR Code")
+            .build()
         val view = Bukkit.createMap(notNullPlayer.world)
 
         stack.durability = view.id
@@ -631,8 +655,16 @@ class LemonPlayer(
         handlePostLoad()
     }
 
-    private fun Player.ifPresent(block: (Player) -> Unit) {
-        block.invoke(this)
+    private fun Player?.ifPresent(block: (Player) -> Unit) {
+        if (this != null) {
+            block.invoke(this)
+        }
+    }
+
+    fun removeMap() {
+        bukkitPlayer?.inventory?.removeAll {
+            it != null && it.type == Material.MAP
+        }
     }
 
 }
