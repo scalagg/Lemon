@@ -12,7 +12,6 @@ import net.evilblock.cubed.acf.annotation.Description
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 
@@ -56,6 +55,8 @@ class AuthenticationCommand : BaseCommand() {
 
         lemonPlayer.removeMap()
         lemonPlayer.authenticateInternal()
+
+        player.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been authenticated.")
 
 //        BatUtil.makePlayerUnSitOnBat(player)
     }

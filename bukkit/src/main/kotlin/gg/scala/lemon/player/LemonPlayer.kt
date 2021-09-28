@@ -278,16 +278,11 @@ class LemonPlayer(
     }
 
     fun validatePlayerAuthentication() {
-        val isAuthExempt = isAuthExempt()
-        println("called")
-
         if (!hasPermission("lemon.2fa.forced")) {
-            println("not staff")
             return
         }
 
-        if (isAuthExempt) {
-            println("exempted")
+        if (isAuthExempt()) {
             authenticateInternal()
             return
         }
@@ -295,33 +290,22 @@ class LemonPlayer(
         val authSecret = getMetadata("auth-secret")
 
         if (authSecret != null) {
-            println("authsecret not null")
             if (this.previousIpAddress != null && this.previousIpAddress == ipAddress) {
                 authenticateInternal()
-                println("same ipaddress")
 
                 if (LemonConstants.LOBBY) {
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been automatically authenticated.")
                 }
             } else {
                 savePreviousIpAddressAsCurrent = true
-                println("diff ipadd")
-                Schedulers.sync().callLater({
-                    bukkitPlayer?.let {
-                        it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate yourself using ${CC.WHITE}/auth <code>${CC.SEC}.")
 
-//                        BatUtil.sitOnBat(it)
-                    }
+                Schedulers.sync().callLater({
+                    bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate using ${CC.WHITE}/auth <code>${CC.SEC}.")
                 }, 1L)
             }
         } else {
-            println("not setup ")
             Schedulers.sync().callLater({
-                bukkitPlayer?.let {
-                    it.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
-
-//                    BatUtil.sitOnBat(it)
-                }
+                bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
             }, 1L)
         }
     }
@@ -637,7 +621,10 @@ class LemonPlayer(
         )
 
         checkForIpRelative()
-        validatePlayerAuthentication()
+
+        handleOnConnection.add {
+            validatePlayerAuthentication()
+        }
     }
 
     fun handleIfFirstCreated() {

@@ -14,7 +14,7 @@ object LemonConstants {
     @JvmStatic
     val AUTH_PREFIX: String
         get() {
-            return "${CC.PRI}${CC.BOLD}2FA ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
+            return "${CC.PRI}${CC.BOLD}Staff ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
         }
 
     @JvmStatic

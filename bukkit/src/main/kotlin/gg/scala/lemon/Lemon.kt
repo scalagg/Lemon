@@ -15,6 +15,7 @@ import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
 import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
+import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
@@ -98,6 +99,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private lateinit var consoleLogger: ConsoleLogger
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
+
+    val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
     override fun enable() {
         instance = this
@@ -212,6 +215,23 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         Events.subscribe(PlayerMoveEvent::class.java)
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
+
+        // filter through the different client implementations
+        // & register the ones which have the plugins enabled
+        ClassUtils.getClassesInPackage(
+            this, "gg.scala.lemon.adapt.client"
+        ).filter {
+            Bukkit.getPluginManager().getPlugin(
+                it.simpleName.removeSuffix("Adapter")
+            ) != null
+        }.forEach {
+            val clientAdapter = it.newInstance() as PlayerClientAdapter
+            clientAdapters.add(clientAdapter)
+
+            getConsoleLogger().log(
+                "${clientAdapter.getClientName()} implementation has been enabled."
+            )
+        }
     }
 
     private fun toCCColorFormat(string: String): String {
