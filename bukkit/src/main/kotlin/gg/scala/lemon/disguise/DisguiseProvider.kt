@@ -46,7 +46,7 @@ internal object DisguiseProvider {
     private val playOutPacketRespawn = MinecraftReflection.getNMSClass("PacketPlayOutRespawn")!!
 
     private val enumDifficulty = MinecraftReflection.getNMSClass("EnumDifficulty")!!
-    private val enumGameMode = MinecraftReflection.getNMSClass("EnumGamemode")!!
+    private val enumGameMode = MinecraftReflection.getNMSClass("WorldSettings$${"EnumGamemode"}")!!
 
     private val worldType = MinecraftReflection.getNMSClass("WorldType")!!
     private val worldTypeGetType = worldType.getMethod("getType", String::class.java)

@@ -34,7 +34,6 @@ import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
-import gg.scala.lemon.util.ClientUtil.handleApplicableClient
 import gg.scala.lemon.util.validate.LemonWebData
 import gg.scala.lemon.util.validate.LemonWebStatus
 import me.lucko.helper.Events
@@ -162,10 +161,12 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         }
 
         loadExtraConfigurations()
-        setupPlayerLookAndFeel()
+
         loadListeners()
         loadHandlers()
         loadCommands()
+
+        setupPlayerLookAndFeel()
 
         server.scheduler.runTaskTimerAsynchronously(this, ResourceUpdateRunnable(), 0L, 20L)
 
