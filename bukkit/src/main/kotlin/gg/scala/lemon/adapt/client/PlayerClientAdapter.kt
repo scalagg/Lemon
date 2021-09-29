@@ -15,6 +15,9 @@ interface PlayerClientAdapter {
     fun enableStaffModules(player: Player)
     fun disableStaffModules(player: Player)
 
+    fun updateNametag(player: Player, tagLines: List<String>)
+    fun resetNametag(player: Player)
+
     fun sendTitle(player: Player, title: String, subtitle: String)
 
 }

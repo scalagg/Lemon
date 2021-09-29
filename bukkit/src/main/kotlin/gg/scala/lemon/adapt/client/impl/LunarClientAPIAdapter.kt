@@ -3,6 +3,7 @@ package gg.scala.lemon.adapt.client.impl
 import com.lunarclient.bukkitapi.LunarClientAPI
 import com.lunarclient.bukkitapi.`object`.TitleType
 import gg.scala.lemon.adapt.client.PlayerClientAdapter
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.time.Duration
 
@@ -24,6 +25,20 @@ class LunarClientAPIAdapter : PlayerClientAdapter {
 
     override fun disableStaffModules(player: Player) {
         LunarClientAPI.getInstance().disableAllStaffModules(player)
+    }
+
+    override fun updateNametag(player: Player, tagLines: List<String>) {
+        Bukkit.getOnlinePlayers().forEach {
+            LunarClientAPI.getInstance()
+                .overrideNametag(player, tagLines, it)
+        }
+    }
+
+    override fun resetNametag(player: Player) {
+        Bukkit.getOnlinePlayers().forEach {
+            LunarClientAPI.getInstance()
+                .resetNametag(player, it)
+        }
     }
 
     override fun sendTitle(player: Player, title: String, subtitle: String) {

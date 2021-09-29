@@ -16,6 +16,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.*
+import gg.scala.lemon.util.ClientUtil.handleApplicableClient
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.type.Savable
@@ -31,6 +32,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
+import java.lang.RuntimeException
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -518,7 +520,9 @@ class LemonPlayer(
     }
 
     fun getColoredName(): String {
-        return activeGrant!!.getRank().color + name
+        val bukkitPlayer = bukkitPlayer!!
+
+        return QuickAccess.realRank(bukkitPlayer).color + bukkitPlayer.name
     }
 
     fun getSetting(id: String): Boolean {
@@ -636,6 +640,22 @@ class LemonPlayer(
 
         handleOnConnection.add {
             validatePlayerAuthentication()
+            handleAutomaticStaffModules(it)
+        }
+    }
+
+    private fun handleAutomaticStaffModules(player: Player) {
+        if (
+            player.hasPermission("lemon.staff")
+        ) {
+           handleApplicableClient(player) {
+               try {
+                   it.enableStaffModules(player)
+
+                   player.sendMessage("${CC.GREEN}We've automatically enabled ${it.getClientName()} staff modules for you.")
+               } catch (ignored: RuntimeException) {
+               }
+           }
         }
     }
 

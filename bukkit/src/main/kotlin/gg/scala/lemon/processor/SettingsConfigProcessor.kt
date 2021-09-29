@@ -16,6 +16,9 @@ class SettingsConfigProcessor {
     @Comment("Shall console be able to view chat messages?")
     val consoleChat: Boolean = false
 
+    @Comment("Should we enable our disguise system on this server?")
+    val disguiseEnabled: Boolean = true
+
     val blacklistedCommands = listOf(
         "/ver", "/icanhasbukkit"
     )

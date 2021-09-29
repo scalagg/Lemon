@@ -17,6 +17,9 @@ import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
+import gg.scala.lemon.disguise.DisguiseProvider
+import gg.scala.lemon.disguise.information.DisguiseInfoProvider
+import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
@@ -31,6 +34,7 @@ import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
+import gg.scala.lemon.util.ClientUtil.handleApplicableClient
 import gg.scala.lemon.util.validate.LemonWebData
 import gg.scala.lemon.util.validate.LemonWebStatus
 import me.lucko.helper.Events
@@ -45,6 +49,7 @@ import net.evilblock.cubed.entity.animation.EntityAnimation
 import net.evilblock.cubed.menu.template.MenuTemplate
 import net.evilblock.cubed.menu.template.MenuTemplateButton
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.nametag.update.NametagUpdateEvent
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serialize.BlockVectorAdapter
 import net.evilblock.cubed.serialize.ItemStackAdapter
@@ -187,6 +192,10 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "gg.scala.lemon.command")
+
+        if (settings.disguiseEnabled) {
+            registerCommandsInPackage(commandManager, "gg.scala.lemon.disguise.command")
+        }
     }
 
     private fun setupPlayerLookAndFeel() {
@@ -203,6 +212,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler())
 
+        if (settings.disguiseEnabled) {
+            DisguiseInfoProvider.initialLoad()
+            DisguiseProvider.initialLoad()
+
+            server.pluginManager.registerEvents(DisguiseListener, this)
+        }
+
         Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)
         Schedulers.async().runRepeating(FrozenPlayerHandler.FrozenPlayerTick(), 0L, 20L)
 
@@ -215,6 +231,34 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         Events.subscribe(PlayerMoveEvent::class.java)
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
+
+        Events.subscribe(NametagUpdateEvent::class.java).handler {
+            val player = it.player
+
+            clientAdapters.forEach { adapter ->
+                if (player.hasMetadata("mod-mode")) {
+                    adapter.updateNametag(
+                        player, listOf(
+                            player.playerListName,
+                            "${CC.GRAY}[Mod Mode]"
+                        )
+                    )
+                    return@forEach
+                }
+
+                if (player.hasMetadata("vanished")) {
+                    adapter.updateNametag(
+                        player, listOf(
+                            player.playerListName,
+                            "${CC.GRAY}[Vanished]"
+                        )
+                    )
+                    return@forEach
+                }
+
+                adapter.resetNametag(player)
+            }
+        }
 
         // filter through the different client implementations
         // & register the ones which have the plugins enabled

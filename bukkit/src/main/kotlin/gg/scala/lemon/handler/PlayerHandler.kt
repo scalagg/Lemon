@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.QuickAccess
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
@@ -134,10 +135,12 @@ object PlayerHandler {
     }
 
     fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer> {
-        var currentList = ArrayList(Bukkit.getOnlinePlayers())
+        var currentList = Bukkit.getOnlinePlayers()
             .mapNotNull {
                 findPlayer(it.uniqueId).orElse(null)
-            }.sortedBy { -it.activeGrant!!.getRank().weight }
+            }.sortedBy {
+                -QuickAccess.realRank(it.bukkitPlayer!!).weight
+            }
 
         if (currentList.size > 350) {
             currentList = currentList.subList(0, 350) as ArrayList<LemonPlayer>

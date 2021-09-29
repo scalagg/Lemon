@@ -7,6 +7,7 @@ import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
+import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.nametag.NametagHandler
@@ -334,6 +335,16 @@ object QuickAccess {
         if (lemonPlayer.hasAuthenticatedThisSession()) return false
 
         return true
+    }
+
+    fun realRank(player: Player): Rank {
+        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+
+        return if (!player.hasMetadata("disguised")) {
+            lemonPlayer.activeGrant!!.getRank()
+        } else {
+            RankHandler.getDefaultRank()
+        }
     }
 
     enum class MessageType {

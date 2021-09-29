@@ -7,6 +7,7 @@ import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
+import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.lemon.util.dispatchToLemon
@@ -218,7 +219,7 @@ class PlayerListener : Listener {
                 buildMap {
                     put("channel", channelMatch!!.getId())
                     put("message", event.message)
-                    put("sender", player.name)
+                    put("sender", lemonPlayer.name)
                     put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
                     put("server", Lemon.instance.settings.id)
                 }
@@ -255,7 +256,7 @@ class PlayerListener : Listener {
                     channelMatch?.getFormatted(
                         event.message,
                         player.name,
-                        lemonPlayer.activeGrant!!.getRank(),
+                        realRank(player),
                         target
                     )
                 )
