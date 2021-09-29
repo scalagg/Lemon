@@ -61,7 +61,7 @@ internal object DisguiseProvider {
 
     fun initialLoad() {
         val clazz = Class.forName(
-            "org.bukkit.craftbukkit.$serverVersion.EntityHuman"
+            "net.minecraft.server.$serverVersion.EntityHuman"
         )
 
         // newer versions have a different field
