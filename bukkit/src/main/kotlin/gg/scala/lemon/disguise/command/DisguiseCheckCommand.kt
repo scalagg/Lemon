@@ -4,6 +4,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
@@ -17,18 +18,20 @@ import org.bukkit.entity.Player
 class DisguiseCheckCommand : BaseCommand() {
 
     @CommandAlias("dgc|checkdisguise")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.disguise.check")
     fun onCheckDisguise(player: Player, target: OnlinePlayer) {
         val lemonPlayer = PlayerHandler.findPlayer(target.player).orElse(null)
 
         if (target.player.hasMetadata("disguised")) {
-            player.sendMessage("${CC.PRI}${lemonPlayer.name}${CC.GREEN} is disguised as ${lemonPlayer.getColoredName()}${CC.GREEN}!")
+            player.sendMessage("${CC.YELLOW}${lemonPlayer.name}${CC.GREEN} is disguised as ${lemonPlayer.getColoredName()}${CC.GREEN}.")
         } else {
             player.sendMessage("${lemonPlayer.getColoredName()}'s${CC.RED} not disguised!")
         }
     }
 
     @CommandAlias("dgl|disguiselist")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.disguise.list")
     fun onDisguiseList(player: Player) {
         val disguised = Bukkit.getOnlinePlayers()

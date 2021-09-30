@@ -19,9 +19,9 @@ import org.bukkit.entity.Player
 
 class ReportCommand : BaseCommand() {
 
-    @CommandAlias("report")
     @Syntax("<player>")
-    @CommandCompletion("@players-uv")
+    @CommandAlias("report")
+    @CommandCompletion("@all-players")
     fun onDefault(player: Player, target: OnlinePlayer) {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 

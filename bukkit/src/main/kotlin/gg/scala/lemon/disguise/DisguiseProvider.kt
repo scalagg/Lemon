@@ -21,7 +21,6 @@ import net.evilblock.cubed.util.Reflection
 import net.evilblock.cubed.util.bukkit.Tasks.sync
 import net.evilblock.cubed.util.nms.MinecraftProtocol
 import net.evilblock.cubed.util.nms.MinecraftReflection
-import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
@@ -45,21 +44,29 @@ internal object DisguiseProvider {
 
     private lateinit var entityGameProfileField: Field
 
-
     private val enumDifficulty = MinecraftReflection.getNMSClass("EnumDifficulty")!!
     private val enumGameMode = MinecraftReflection.getNMSClass("WorldSettings$${"EnumGamemode"}")!!
 
     private val worldType = MinecraftReflection.getNMSClass("WorldType")!!
-    private val worldTypeGetType = worldType.getMethod("getType", String::class.java)
 
     private val ENUM_GAME_MODE_CLASS: Class<*> = MinecraftReflection.getNMSClass("WorldSettings\$EnumGamemode")!!
     private val I_CHAT_BASE_COMPONENT_CLASS: Class<*> = MinecraftReflection.getNMSClass("IChatBaseComponent")!!
 
-    private val PACKET_PLAY_OUT_PLAYER_INFO_CLASS: Class<*> = MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo")!!
-    private val PLAYER_INFO_DATA_CLASS: Class<*> = PACKET_PLAY_OUT_PLAYER_INFO_CLASS.declaredClasses.find { it.simpleName == "PlayerInfoData" }!!
-    private val PLAYER_INFO_DATA_CONSTRUCTOR: Constructor<*> = Reflection.getDeclaredConstructor(PLAYER_INFO_DATA_CLASS, PACKET_PLAY_OUT_PLAYER_INFO_CLASS, MinecraftReflection.getGameProfileClass(), Int::class.java, ENUM_GAME_MODE_CLASS, I_CHAT_BASE_COMPONENT_CLASS)!!
+    private val PACKET_PLAY_OUT_PLAYER_INFO_CLASS: Class<*> =
+        MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo")!!
 
-    val ENUM_PLAYER_INFO_ACTION_CLASS: Class<*> = MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo\$EnumPlayerInfoAction")!!
+    private val PLAYER_INFO_DATA_CLASS: Class<*> =
+        PACKET_PLAY_OUT_PLAYER_INFO_CLASS.declaredClasses.find { it.simpleName == "PlayerInfoData" }!!
+
+    private val PLAYER_INFO_DATA_CONSTRUCTOR: Constructor<*> = Reflection.getDeclaredConstructor(
+        PLAYER_INFO_DATA_CLASS,
+
+        PACKET_PLAY_OUT_PLAYER_INFO_CLASS,
+        MinecraftReflection.getGameProfileClass(),
+        Int::class.java,
+        ENUM_GAME_MODE_CLASS,
+        I_CHAT_BASE_COMPONENT_CLASS
+    )!!
 
     internal var initialized = false
 
@@ -118,7 +125,7 @@ internal object DisguiseProvider {
 
             handleDisguiseInternal(player, disguiseInfo)
 
-            player.sendMessage("${CC.SEC}You've disguised yourself as ${CC.PRI}${disguiseInfo.username}${CC.SEC}.")
+            player.sendMessage("${CC.SEC}You've disguised yourself as ${CC.PRI}${disguiseInfo.username}${CC.SEC}. ${CC.GRAY}(with the same skin)")
         }
     }
 
@@ -141,7 +148,7 @@ internal object DisguiseProvider {
 
         handleUnDisguiseInternal(player, disguiseInfo)
 
-        player.sendMessage("${CC.GREEN}You've undisguised.")
+        player.sendMessage("${CC.GREEN}You've undisguised yourself.")
     }
 
     internal fun handleUnDisguiseInternal(
@@ -227,58 +234,65 @@ internal object DisguiseProvider {
     private fun reloadPlayerInternal(
         player: Player, handle: Any
     ) {
-        VisibilityHandler.updateToAll(player)
-        QuickAccess.reloadPlayer(player.uniqueId)
-
         val previousLocation = player.location.clone()
         val gameMode = Reflection.getEnum(
             enumGameMode, player.gameMode.name
         )
 
         val playerInfoAddPacket = MinecraftProtocol.newPacket("PacketPlayOutPlayerInfo")
-        Reflection.setDeclaredFieldValue(playerInfoAddPacket, "a", Reflection.getEnum(NpcProtocol.ENUM_PLAYER_INFO_ACTION_CLASS, "ADD_PLAYER")!!)
-        Reflection.setDeclaredFieldValue(playerInfoAddPacket, "b", arrayListOf(
-            PLAYER_INFO_DATA_CONSTRUCTOR.newInstance(
-                playerInfoAddPacket,
-                MinecraftReflection.getGameProfile(player),
-                MinecraftReflection.getPing(player),
-                gameMode,
-                player.playerListName
+        Reflection.setDeclaredFieldValue(
+            playerInfoAddPacket,
+            "a",
+            Reflection.getEnum(NpcProtocol.ENUM_PLAYER_INFO_ACTION_CLASS, "ADD_PLAYER")!!
+        )
+        Reflection.setDeclaredFieldValue(
+            playerInfoAddPacket, "b", arrayListOf(
+                PLAYER_INFO_DATA_CONSTRUCTOR.newInstance(
+                    playerInfoAddPacket,
+                    MinecraftReflection.getGameProfile(player),
+                    MinecraftReflection.getPing(player),
+                    gameMode,
+                    handle.javaClass.getField("listName").get(handle)
+                )
             )
-        ))
+        )
 
         val playerInfoRemovePacket = MinecraftProtocol.newPacket("PacketPlayOutPlayerInfo")
-        Reflection.setDeclaredFieldValue(playerInfoRemovePacket, "a", Reflection.getEnum(NpcProtocol.ENUM_PLAYER_INFO_ACTION_CLASS, "REMOVE_PLAYER")!!)
-        Reflection.setDeclaredFieldValue(playerInfoRemovePacket, "b", arrayListOf(
-            PLAYER_INFO_DATA_CONSTRUCTOR.newInstance(
-                playerInfoRemovePacket,
-                MinecraftReflection.getGameProfile(player),
-                MinecraftReflection.getPing(player),
-                gameMode,
-                player.playerListName
+        Reflection.setDeclaredFieldValue(
+            playerInfoRemovePacket,
+            "a",
+            Reflection.getEnum(NpcProtocol.ENUM_PLAYER_INFO_ACTION_CLASS, "REMOVE_PLAYER")!!
+        )
+        Reflection.setDeclaredFieldValue(
+            playerInfoRemovePacket, "b", arrayListOf(
+                PLAYER_INFO_DATA_CONSTRUCTOR.newInstance(
+                    playerInfoRemovePacket,
+                    MinecraftReflection.getGameProfile(player),
+                    MinecraftReflection.getPing(player),
+                    gameMode,
+                    handle.javaClass.getField("listName").get(handle)
+                )
             )
-        ))
+        )
 
         val playerInfoRespawnPacket = MinecraftProtocol.newPacket("PacketPlayOutRespawn")
         Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "a", player.world.environment.id)
-        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "b", Reflection.getEnum(
-            enumDifficulty, player.world.difficulty.name
-        )!!)
+        Reflection.setDeclaredFieldValue(
+            playerInfoRespawnPacket, "b", Reflection.getEnum(
+                enumDifficulty, player.world.difficulty.name
+            )!!
+        )
 
         Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "c", gameMode!!)
-        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "d", worldTypeGetType.invoke(
-            null,
-            player.world.worldType.name
-        )!!)
+        Reflection.setDeclaredFieldValue(
+            playerInfoRespawnPacket,
+            "d",
+            worldType.getField(player.world.worldType.name).get(null)!!
+        )
 
-        listOf(playerInfoAddPacket, playerInfoRemovePacket, playerInfoRespawnPacket).forEach {
-            MinecraftProtocol.send(player, it)
-        }
-
-        BukkitUtil.updatePlayerList {
-            it.remove(handle)
-            it.add(MinecraftReflection.getHandle(player))
-        }
+        MinecraftProtocol.send(player, playerInfoRemovePacket)
+        MinecraftProtocol.send(player, playerInfoAddPacket)
+        MinecraftProtocol.send(player, playerInfoRespawnPacket)
 
         player.inventory.armorContents = player.inventory.armorContents
         player.inventory.contents = player.inventory.contents
@@ -295,9 +309,28 @@ internal object DisguiseProvider {
         player.gameMode = player.gameMode
 
         player.inventory.itemInHand = player.itemInHand
-        player.updateInventory()
 
+        player.updateInventory()
         player.teleport(previousLocation)
+
+        val usernameField = handle.javaClass.getMethod("getUniqueID")
+
+        BukkitUtil.updatePlayerList {
+            val fetchedHandle = it.firstOrNull { any ->
+                usernameField.invoke(any) == player.uniqueId
+            }
+
+            it.remove(fetchedHandle ?: handle)
+            it.add(MinecraftReflection.getHandle(player))
+        }
+
+        PlayerHandler.findPlayer(player).ifPresent {
+            // as they SHOULD already be authenticated
+            // if they are executing disguise commands.
+            it.authenticateInternal()
+        }
+
+        QuickAccess.reloadPlayer(player.uniqueId)
     }
 
     fun fetchDisguiseInfo(name: String, uuid: UUID): DisguiseInfo? {
@@ -308,7 +341,7 @@ internal object DisguiseProvider {
             )
 
             val json = JsonParser().parse(InputStreamReader(url.openStream())).asJsonObject.get("properties")
-                    .asJsonArray.get(0).asJsonObject
+                .asJsonArray.get(0).asJsonObject
 
             val skin: String = json.get("value").asString
             val signature: String = json.get("signature").asString

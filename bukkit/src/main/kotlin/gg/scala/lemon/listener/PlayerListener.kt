@@ -1,7 +1,6 @@
 package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
@@ -45,24 +44,20 @@ class PlayerListener : Listener {
 
         DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
             .whenComplete { lemonPlayer, throwable ->
-                try {
-                    val lemonPlayerFinal: LemonPlayer?
-                    throwable?.printStackTrace()
+                val lemonPlayerFinal: LemonPlayer?
+                throwable?.printStackTrace()
 
-                    if (lemonPlayer == null || throwable != null) {
-                        lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
-                        lemonPlayerFinal.handleIfFirstCreated()
-                    } else {
-                        lemonPlayer.ipAddress = event.address.hostAddress
-                        lemonPlayer.handlePostLoad()
+                if (lemonPlayer == null || throwable != null) {
+                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+                    lemonPlayerFinal.handleIfFirstCreated()
+                } else {
+                    lemonPlayer.ipAddress = event.address.hostAddress
+                    lemonPlayer.handlePostLoad()
 
-                        lemonPlayerFinal = lemonPlayer
-                    }
-
-                    PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                    lemonPlayerFinal = lemonPlayer
                 }
+
+                PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
             }
     }
 
@@ -74,9 +69,9 @@ class PlayerListener : Listener {
         val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
 
         if (lemonPlayer == null) {
-//            event.disallow(
-//                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
-//            )
+            event.disallow(
+                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
+            )
         } else {
             if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff) {
                 event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
@@ -260,7 +255,7 @@ class PlayerListener : Listener {
                 target.sendMessage(
                     channelMatch?.getFormatted(
                         event.message,
-                        player.name,
+                        player.uniqueId.toString(),
                         realRank(player),
                         target
                     )
@@ -342,7 +337,11 @@ class PlayerListener : Listener {
 
         val command = event.message.split(" ")[0]
 
-        if (!command.startsWith("/auth", true) && !command.startsWith("/2fa", true) && !command.startsWith("/setup", true) && shouldBlock(event.player)) {
+        if (!command.startsWith("/auth", true) && !command.startsWith("/2fa", true) && !command.startsWith(
+                "/setup",
+                true
+            ) && shouldBlock(event.player)
+        ) {
             cancel(event, "${CC.RED}You must authenticate before performing commands.")
             return
         }
@@ -357,20 +356,24 @@ class PlayerListener : Listener {
         val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
 
         if (blacklistPunishment != null && command != "/register") {
-            cancel(event, """
+            cancel(
+                event, """
                 ${CC.RED}You cannot perform commands while being blacklisted.
                 ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
-            """.trimIndent())
+            """.trimIndent()
+            )
             return
         }
 
         val banPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BAN)
 
         if (banPunishment != null && command != "/register") {
-            cancel(event, """
+            cancel(
+                event, """
                 ${CC.RED}You cannot perform commands while being banned.
                 ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
-            """.trimIndent())
+            """.trimIndent()
+            )
             return
         }
 

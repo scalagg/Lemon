@@ -105,6 +105,9 @@ object QuickAccess {
     fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true) {
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
+                it.displayName = lemonPlayer.getColoredName()
+                it.playerListName = lemonPlayer.getColoredName()
+
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)
 
@@ -113,8 +116,6 @@ object QuickAccess {
                         shouldCalculateNow = true
                     )
                 }
-
-                it.displayName = lemonPlayer.getColoredName()
 
                 lemonPlayer.pushCocoaUpdates()
             }
@@ -338,9 +339,9 @@ object QuickAccess {
     }
 
     fun realRank(player: Player): Rank {
-        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+        val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
 
-        return if (lemonPlayer != null && !player.hasMetadata("disguised")) {
+        return if (lemonPlayer != null && (player.name == lemonPlayer.name || !player.hasMetadata("disguised"))) {
             lemonPlayer.activeGrant!!.getRank()
         } else {
             RankHandler.getDefaultRank()

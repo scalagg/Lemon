@@ -20,6 +20,9 @@ enum class PunishmentCategory(val inf: String, val color: String, var fancyVersi
         val PERSISTENT = listOf(MUTE, BAN, BLACKLIST)
 
         @JvmStatic
+        val VALUES_2 = listOf(KICK, MUTE, BAN, BLACKLIST)
+
+        @JvmStatic
         val IP_REL = listOf(BLACKLIST, BAN)
     }
 

@@ -47,7 +47,7 @@ class PunishmentViewMenu(
         return hashMapOf<Int, Button>().also { buttons ->
             var index = 10
 
-            PunishmentCategory.values().forEach {
+            PunishmentCategory.VALUES_2.forEach {
                 val totalAmount = punishments.filter { punishment ->
                     punishment.category == it
                 }.size
