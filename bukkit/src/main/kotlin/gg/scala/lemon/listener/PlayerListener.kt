@@ -1,6 +1,7 @@
 package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
@@ -44,20 +45,24 @@ class PlayerListener : Listener {
 
         DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
             .whenComplete { lemonPlayer, throwable ->
-                val lemonPlayerFinal: LemonPlayer?
-                throwable?.printStackTrace()
+                try {
+                    val lemonPlayerFinal: LemonPlayer?
+                    throwable?.printStackTrace()
 
-                if (lemonPlayer == null || throwable != null) {
-                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
-                    lemonPlayerFinal.handleIfFirstCreated()
-                } else {
-                    lemonPlayer.ipAddress = event.address.hostAddress
-                    lemonPlayer.handlePostLoad()
+                    if (lemonPlayer == null || throwable != null) {
+                        lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+                        lemonPlayerFinal.handleIfFirstCreated()
+                    } else {
+                        lemonPlayer.ipAddress = event.address.hostAddress
+                        lemonPlayer.handlePostLoad()
 
-                    lemonPlayerFinal = lemonPlayer
+                        lemonPlayerFinal = lemonPlayer
+                    }
+
+                    PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-
-                PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
             }
     }
 
@@ -69,9 +74,9 @@ class PlayerListener : Listener {
         val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
 
         if (lemonPlayer == null) {
-            event.disallow(
-                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
-            )
+//            event.disallow(
+//                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
+//            )
         } else {
             if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff) {
                 event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED

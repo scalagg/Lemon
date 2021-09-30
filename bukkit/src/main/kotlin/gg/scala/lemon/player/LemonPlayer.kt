@@ -350,9 +350,7 @@ class LemonPlayer(
 
         val notNullPlayer = bukkitPlayer!!
 
-        val stack = ItemBuilder(XMaterial.MAP)
-            .name("${CC.B_PRI}2FA QR Code")
-            .build()
+        val stack = ItemStack(Material.MAP)
         val view = Bukkit.createMap(notNullPlayer.world)
 
         stack.durability = view.id
@@ -681,8 +679,10 @@ class LemonPlayer(
     }
 
     fun removeMap() {
-        bukkitPlayer?.inventory?.removeAll {
-            it != null && it.type == Material.MAP
+        bukkitPlayer?.inventory?.contents?.forEachIndexed { index, itemStack ->
+            if (itemStack != null && itemStack.type == Material.MAP) {
+                bukkitPlayer?.inventory?.setItem(index, ItemStack(Material.AIR))
+            }
         }
     }
 

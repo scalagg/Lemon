@@ -18,7 +18,9 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/6/2021
  */
-class ReportMenu(private val target: Player) : Menu() {
+class ReportMenu(
+    private val target: Player
+) : Menu() {
 
     override fun getTitle(player: Player): String {
         return "Reporting ${Constants.DOUBLE_ARROW_RIGHT} ${target.name}"

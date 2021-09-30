@@ -340,7 +340,7 @@ object QuickAccess {
     fun realRank(player: Player): Rank {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-        return if (!player.hasMetadata("disguised")) {
+        return if (lemonPlayer != null && !player.hasMetadata("disguised")) {
             lemonPlayer.activeGrant!!.getRank()
         } else {
             RankHandler.getDefaultRank()

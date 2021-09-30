@@ -9,6 +9,7 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 
 /**
  * @author GrowlyX
@@ -38,6 +39,16 @@ object DisguiseListener : Listener {
                     event.player.sendMessage("${CC.SEC}You've been disguised as ${CC.PRI}${disguiseInfo.username}${CC.SEC}.")
                 }
             }
+        }
+    }
+
+    @EventHandler
+    fun onLeave(event: PlayerQuitEvent) {
+        val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null)
+
+        if (lemonPlayer != null) {
+            DisguiseProvider.originalGameProfiles.remove(event.player.uniqueId)
+            DisguiseProvider.uuidToDisguiseInfo.remove(event.player.uniqueId)
         }
     }
 }

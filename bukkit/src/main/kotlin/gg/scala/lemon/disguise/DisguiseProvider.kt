@@ -14,20 +14,22 @@ import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.BukkitUtil
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.acf.ConditionFailedException
+import net.evilblock.cubed.entity.npc.protocol.NpcProtocol
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Reflection
 import net.evilblock.cubed.util.bukkit.Tasks.sync
+import net.evilblock.cubed.util.nms.MinecraftProtocol
 import net.evilblock.cubed.util.nms.MinecraftReflection
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.io.InputStreamReader
+import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.net.URL
 import java.util.*
-
 
 /**
  * @author GrowlyX
@@ -35,15 +37,14 @@ import java.util.*
  */
 internal object DisguiseProvider {
 
-    private val originalGameProfiles = mutableMapOf<UUID, Any>()
-    private val uuidToDisguiseInfo = mutableMapOf<UUID, DisguiseInfo>()
+    internal val originalGameProfiles = mutableMapOf<UUID, Any>()
+    internal val uuidToDisguiseInfo = mutableMapOf<UUID, DisguiseInfo>()
 
     private val serverVersion = Bukkit.getServer().javaClass.getPackage()
         .name.replace(".", ",").split(",").toTypedArray()[3]
 
     private lateinit var entityGameProfileField: Field
 
-    private val playOutPacketRespawn = MinecraftReflection.getNMSClass("PacketPlayOutRespawn")!!
 
     private val enumDifficulty = MinecraftReflection.getNMSClass("EnumDifficulty")!!
     private val enumGameMode = MinecraftReflection.getNMSClass("WorldSettings$${"EnumGamemode"}")!!
@@ -51,11 +52,14 @@ internal object DisguiseProvider {
     private val worldType = MinecraftReflection.getNMSClass("WorldType")!!
     private val worldTypeGetType = worldType.getMethod("getType", String::class.java)
 
-    private val playOutPacketInfo = MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo")!!
-    private val playOutPacketInfoAction = MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo$${"EnumPlayerInfoAction"}")!!
+    private val ENUM_GAME_MODE_CLASS: Class<*> = MinecraftReflection.getNMSClass("WorldSettings\$EnumGamemode")!!
+    private val I_CHAT_BASE_COMPONENT_CLASS: Class<*> = MinecraftReflection.getNMSClass("IChatBaseComponent")!!
 
-    private val playOutPacketInfoActionRemovePlayer = Reflection.getEnum(playOutPacketInfoAction, "REMOVE_PLAYER")
-    private val playOutPacketInfoActionAddPlayer = Reflection.getEnum(playOutPacketInfoAction, "ADD_PLAYER")
+    private val PACKET_PLAY_OUT_PLAYER_INFO_CLASS: Class<*> = MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo")!!
+    private val PLAYER_INFO_DATA_CLASS: Class<*> = PACKET_PLAY_OUT_PLAYER_INFO_CLASS.declaredClasses.find { it.simpleName == "PlayerInfoData" }!!
+    private val PLAYER_INFO_DATA_CONSTRUCTOR: Constructor<*> = Reflection.getDeclaredConstructor(PLAYER_INFO_DATA_CLASS, PACKET_PLAY_OUT_PLAYER_INFO_CLASS, MinecraftReflection.getGameProfileClass(), Int::class.java, ENUM_GAME_MODE_CLASS, I_CHAT_BASE_COMPONENT_CLASS)!!
+
+    val ENUM_PLAYER_INFO_ACTION_CLASS: Class<*> = MinecraftReflection.getNMSClass("PacketPlayOutPlayerInfo\$EnumPlayerInfoAction")!!
 
     internal var initialized = false
 
@@ -64,14 +68,13 @@ internal object DisguiseProvider {
             "net.minecraft.server.$serverVersion.EntityHuman"
         )
 
-        // newer versions have a different field
-        // name, so this is why all this is here.
-        val maxVersion = Bukkit.getServer().javaClass.getPackage().name.split("\\.")
-            .toTypedArray()[3].replace("(v|R[0-9]+)".toRegex(), "").split("_").toTypedArray()[0].toInt()
-        val minVersion = Bukkit.getServer().javaClass.getPackage().name.split("\\.")
-            .toTypedArray()[3].replace("(v|R[0-9]+)".toRegex(), "").split("_").toTypedArray()[1].toInt()
+        val version = Bukkit.getServer().javaClass.getPackage().name
+            .replace(".", ",").split(",").toTypedArray()[3]
 
-        entityGameProfileField = if (maxVersion >= 1 && minVersion >= 9) {
+        val subVersion = version.replace("v1_", "")
+            .replace("_R\\d".toRegex(), "").toInt()
+
+        entityGameProfileField = if (subVersion >= 9) {
             clazz.getDeclaredField("bS")
         } else {
             clazz.getDeclaredField("bH")
@@ -227,36 +230,49 @@ internal object DisguiseProvider {
         VisibilityHandler.updateToAll(player)
         QuickAccess.reloadPlayer(player.uniqueId)
 
-        val playerConnection = handle.javaClass
-            .getField("playerConnection").get(handle)
-
-        val sendPacketMethod =  playerConnection.javaClass.getMethod("sendPacket")
-
         val previousLocation = player.location.clone()
-
-        val addPlayerPacket = Reflection.callConstructor(
-            playOutPacketInfo, playOutPacketInfoActionAddPlayer, handle
-        )
-        val removePlayerPacket = Reflection.callConstructor(
-            playOutPacketInfo, playOutPacketInfoActionRemovePlayer, handle
-        )
-        val respawnPacket = Reflection.callConstructor(
-            playOutPacketRespawn,
-            player.world.environment.id,
-
-            Reflection.getEnum(
-                enumDifficulty, player.world.difficulty.name
-            ),
-            worldTypeGetType.invoke(
-                player.world.worldType.name
-            ),
-            Reflection.getEnum(
-                enumGameMode, player.gameMode.name
-            ),
+        val gameMode = Reflection.getEnum(
+            enumGameMode, player.gameMode.name
         )
 
-        listOf(addPlayerPacket, removePlayerPacket, respawnPacket).forEach {
-            sendPacketMethod.invoke(playerConnection, it)
+        val playerInfoAddPacket = MinecraftProtocol.newPacket("PacketPlayOutPlayerInfo")
+        Reflection.setDeclaredFieldValue(playerInfoAddPacket, "a", Reflection.getEnum(NpcProtocol.ENUM_PLAYER_INFO_ACTION_CLASS, "ADD_PLAYER")!!)
+        Reflection.setDeclaredFieldValue(playerInfoAddPacket, "b", arrayListOf(
+            PLAYER_INFO_DATA_CONSTRUCTOR.newInstance(
+                playerInfoAddPacket,
+                MinecraftReflection.getGameProfile(player),
+                MinecraftReflection.getPing(player),
+                gameMode,
+                player.playerListName
+            )
+        ))
+
+        val playerInfoRemovePacket = MinecraftProtocol.newPacket("PacketPlayOutPlayerInfo")
+        Reflection.setDeclaredFieldValue(playerInfoRemovePacket, "a", Reflection.getEnum(NpcProtocol.ENUM_PLAYER_INFO_ACTION_CLASS, "REMOVE_PLAYER")!!)
+        Reflection.setDeclaredFieldValue(playerInfoRemovePacket, "b", arrayListOf(
+            PLAYER_INFO_DATA_CONSTRUCTOR.newInstance(
+                playerInfoRemovePacket,
+                MinecraftReflection.getGameProfile(player),
+                MinecraftReflection.getPing(player),
+                gameMode,
+                player.playerListName
+            )
+        ))
+
+        val playerInfoRespawnPacket = MinecraftProtocol.newPacket("PacketPlayOutRespawn")
+        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "a", player.world.environment.id)
+        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "b", Reflection.getEnum(
+            enumDifficulty, player.world.difficulty.name
+        )!!)
+
+        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "c", gameMode!!)
+        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "d", worldTypeGetType.invoke(
+            null,
+            player.world.worldType.name
+        )!!)
+
+        listOf(playerInfoAddPacket, playerInfoRemovePacket, playerInfoRespawnPacket).forEach {
+            MinecraftProtocol.send(player, it)
         }
 
         BukkitUtil.updatePlayerList {
