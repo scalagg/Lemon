@@ -21,6 +21,8 @@ import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
+import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
@@ -218,6 +220,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             DisguiseProvider.initialLoad()
 
             server.pluginManager.registerEvents(DisguiseListener, this)
+        }
+
+        if (settings.logDataToFile) {
+            ChatAsyncFileLogger.start()
+            CommandAsyncFileLogger.start()
+
+            logger.info("Started log queue for chat & commands")
         }
 
         Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)

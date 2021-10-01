@@ -2,6 +2,8 @@ package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
+import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -12,10 +14,12 @@ import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.Cooldown
+import net.evilblock.cubed.logging.listener.ConsoleCommandLogListeners
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -28,6 +32,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
+import org.bukkit.event.server.ServerCommandEvent
 
 @ExperimentalStdlibApi
 class PlayerListener : Listener {
@@ -262,15 +267,17 @@ class PlayerListener : Listener {
                 )
             }
 
+            val selfMessage = channelMatch?.getFormatted(
+                event.message, player.name,
+                lemonPlayer.activeGrant!!.getRank(), player
+            )!!
+
             // as Bukkit#getOnlinePlayers does not have console in it
             if (Lemon.instance.settings.consoleChat) {
-                Bukkit.getConsoleSender().sendMessage(
-                    channelMatch?.getFormatted(
-                        event.message, player.name,
-                        lemonPlayer.activeGrant!!.getRank(), player
-                    )
-                )
+                Bukkit.getConsoleSender().sendMessage(selfMessage)
             }
+
+            ChatAsyncFileLogger.queueForUpdates(selfMessage)
         }
     }
 
@@ -391,8 +398,21 @@ class PlayerListener : Listener {
             }
         }
 
+        CommandAsyncFileLogger.queueForUpdates(
+            "${event.player.name}: ${event.message}"
+        )
+
         if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass")) {
             lemonPlayer.cooldowns["command"] = Cooldown(1000L)
+        }
+    }
+
+    @EventHandler
+    fun onConsoleCommand(event: ServerCommandEvent) {
+        if (event.sender is ConsoleCommandSender) {
+            CommandAsyncFileLogger.queueForUpdates(
+                "Console: ${event.command}"
+            )
         }
     }
 
