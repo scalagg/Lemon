@@ -255,7 +255,7 @@ class PlayerListener : Listener {
                 target.sendMessage(
                     channelMatch?.getFormatted(
                         event.message,
-                        player.uniqueId.toString(),
+                        player.name,
                         realRank(player),
                         target
                     )

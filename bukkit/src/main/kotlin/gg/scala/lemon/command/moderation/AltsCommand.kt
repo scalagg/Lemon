@@ -47,13 +47,13 @@ class AltsCommand : BaseCommand() {
                 val matchingIpInfo = lastIpAddress == targetLastIpAddress
                 val previouslyMatched = lemonPlayer.pastIpAddresses.contains(targetLastIpAddress)
 
-                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}---------------------")
+                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------")
                 hoverList.add("${CC.SEC}Last Seen: ${CC.PRI}${
                     TimeUtil.formatIntoFullCalendarString(
                         Date(lemonPlayer.getMetadata("last-connection")?.asString()?.toLong() ?: System.currentTimeMillis())
                     )
                 }")
-                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}---------------------")
+                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------")
 
                 hoverList.add(
                     if (matchingIpInfo) {
@@ -79,7 +79,7 @@ class AltsCommand : BaseCommand() {
                     }
                 }
 
-                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}---------------------")
+                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------")
                 hoverList.add("${targetLemon.getColoredName()}'s ${CC.SEC}Current IP Info:")
                 hoverList.add(" ${CC.SEC}Logins: ${CC.WHITE}${targetLemon.pastLogins.size}")
                 hoverList.add(" ${CC.SEC}First Login: ${CC.WHITE}${
@@ -109,7 +109,7 @@ class AltsCommand : BaseCommand() {
                     }")
                 }
 
-                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}---------------------")
+                hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------")
 
                 finalMessage
                     .withMessage("$newName${CC.WHITE}, ")

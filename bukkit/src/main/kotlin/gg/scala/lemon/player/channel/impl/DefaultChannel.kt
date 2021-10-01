@@ -6,7 +6,6 @@ import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.*
 
 open class DefaultChannel: Channel {
 
@@ -15,9 +14,7 @@ open class DefaultChannel: Channel {
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
-        val bukkitPlayer = Bukkit.getPlayer(
-            UUID.fromString(sender)
-        )
+        val bukkitPlayer = Bukkit.getPlayer(sender)
         val lemonPlayer = PlayerHandler.findPlayer(bukkitPlayer).orElse(null)
 
         return "${rank.prefix}${lemonPlayer.getColoredName()}${rank.suffix}${getChatTag(bukkitPlayer) ?: ""}${CC.WHITE}: ${colorIfHasPermission(bukkitPlayer, message).replace(receiver.name, "${CC.YELLOW}${receiver.name}${CC.RESET}")}"
