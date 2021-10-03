@@ -4,17 +4,15 @@ import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.QuickAccess.messageType
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks.sync
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-object RedisHandler: BananaHandler {
+object RedisHandler : BananaHandler {
 
     @Subscribe("channel-message")
     fun onChannelMessage(message: Message) {
@@ -172,10 +170,14 @@ object RedisHandler: BananaHandler {
         )
         val reason = message["reason"]
 
-        Bukkit.getPlayer(targetUuid)?.kickPlayer("""
-            ${CC.RED}You've been kicked from${Lemon.instance.settings.id}:
-            ${CC.WHITE}$reason
-        """.trimIndent())
+        sync {
+            Bukkit.getPlayer(targetUuid)?.kickPlayer(
+                """
+                    ${CC.RED}You've been kicked from${Lemon.instance.settings.id}:
+                    ${CC.WHITE}$reason
+                """.trimIndent()
+            )
+        }
     }
 
     @Subscribe("rank-delete")

@@ -638,7 +638,25 @@ class LemonPlayer(
 
         handleOnConnection.add {
             validatePlayerAuthentication()
+
+            checkChannelPermission(it)
             handleAutomaticStaffModules(it)
+        }
+    }
+
+    /**
+     * Validates that the player still has the
+     * permission required to access their current channel.
+     */
+    private fun checkChannelPermission(player: Player) {
+        metadata["channel"]?.let { metadata ->
+            val channel = ChatHandler.findChannel(metadata.asString())
+
+            if (channel != null) {
+                if (!channel.hasPermission(player)) {
+                    removeMetadata("channel")
+                }
+            }
         }
     }
 
