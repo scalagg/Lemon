@@ -48,6 +48,7 @@ class ChannelCommand : BaseCommand() {
     fun onShowAll(player: Player) {
         player.sendMessage("${CC.SEC}Channels: ${CC.PRI}${
             ChatHandler.channels.values
+                .filter { it.hasPermission(player) }
                 .map { it.getId() }
                 .joinToString(
                     separator = "${CC.YELLOW}, ${CC.PRI}"
