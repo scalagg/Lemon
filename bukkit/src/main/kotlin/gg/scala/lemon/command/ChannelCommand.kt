@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/9/2021
  */
-@CommandAlias("channel|chat")
+@CommandAlias("channel")
 class ChannelCommand : BaseCommand() {
 
     @Default
