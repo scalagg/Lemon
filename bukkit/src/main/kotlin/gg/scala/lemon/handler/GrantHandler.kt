@@ -7,6 +7,7 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.reloadPlayer
 import gg.scala.lemon.util.QuickAccess.senderUuid
+import gg.scala.lemon.util.dispatchToLemon
 import net.evilblock.cubed.util.CC
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
@@ -95,7 +96,13 @@ object GrantHandler {
     fun handleGrant(sender: CommandSender, grant: Grant) {
         grant.save().thenRun {
             val name = CubedCacheUtil.fetchName(grant.target)
-            reloadPlayer(grant.target)
+
+            RedisHandler.buildMessage(
+                "reload-player",
+                hashMapOf<String, String>().also {
+                    it["uniqueId"] = grant.target.toString()
+                }
+            ).dispatchToLemon()
 
             sender.sendMessage(arrayOf(
                 "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${grant.getRank().getColoredName()}${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",

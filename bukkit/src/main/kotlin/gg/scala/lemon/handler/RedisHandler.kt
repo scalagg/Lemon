@@ -4,6 +4,7 @@ import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -160,6 +161,17 @@ object RedisHandler : BananaHandler {
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
             it.recalculatePunishments()
+        }
+    }
+
+    @Subscribe("reload-player")
+    fun onReloadPlayer(message: Message) {
+        val targetUuid = UUID.fromString(
+            message["uniqueId"]
+        )
+
+        PlayerHandler.findPlayer(targetUuid).ifPresent {
+            QuickAccess.reloadPlayer(targetUuid, recalculateGrants = true)
         }
     }
 
