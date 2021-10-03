@@ -3,6 +3,8 @@ package gg.scala.lemon.task
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.util.QuickAccess
+import me.lucko.helper.Schedulers
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 
 /**
@@ -23,7 +25,5 @@ class ResourceUpdateRunnable : Runnable {
                 it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
             }
         }
-
-        System.gc()
     }
 }

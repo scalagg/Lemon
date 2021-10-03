@@ -74,7 +74,7 @@ object PlayerHandler {
             .filter { it.player.hasMetadata("mod-mode") }
             .handler {
                 val isHoldingPushForward =  it.item.isSimilar(inventory[1])
-                val isHoldingToggleVanish =  it.item.isSimilar(inventory[7])
+                val isHoldingToggleVanish =  it.item.hasItemMeta() && it.item.itemMeta.displayName.contains("Vanish")
 
                 if (isHoldingToggleVanish) {
                     Bukkit.dispatchCommand(
