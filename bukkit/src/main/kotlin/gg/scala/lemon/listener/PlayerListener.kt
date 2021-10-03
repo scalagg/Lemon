@@ -73,14 +73,8 @@ class PlayerListener : Listener {
     fun onPlayerPreLoginLow(event: AsyncPlayerPreLoginEvent) {
         val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
 
-        if (lemonPlayer == null) {
-            event.disallow(
-                AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad
-            )
-        } else {
-            if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff) {
-                event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
-            }
+        if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff) {
+            event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
         }
     }
 
@@ -285,6 +279,11 @@ class PlayerListener : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val lemonPlayer = PlayerHandler.findPlayer(event.player)
         event.joinMessage = null
+
+        if (!lemonPlayer.isPresent) {
+            event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
+            return
+        }
 
         lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
 

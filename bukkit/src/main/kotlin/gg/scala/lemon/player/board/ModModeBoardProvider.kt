@@ -5,6 +5,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.scoreboard.ScoreboardOverride
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.nms.MinecraftReflection
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -21,8 +22,9 @@ object ModModeBoardProvider: ScoreboardOverride() {
         lemonPlayer.ifPresent {
             board.add("${CC.GRAY}${CC.S}--------------------")
             board.add(getVanishStatus(it))
-            board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size} ${CC.WHITE}(${CC.PRI}${Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]}${CC.WHITE})")
-            board.add("Channel: ${CC.PRI}${it.getMetadata("channel")?.asString() ?: "${CC.RED}None"}")
+            board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size} ${CC.GRAY}(${Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]})")
+            board.add("Channel: ${CC.PRI}${it.getMetadata("channel")?.asString() ?: "${CC.PRI}Regular"}")
+            board.add("Ping: ${CC.PRI}${MinecraftReflection.getPing(player)}ms")
             board.add("TPS: ${CC.PRI}${String.format("%.2f", Lemon.instance.getLocalServerInstance().ticksPerSecond)}")
             board.add("${CC.GRAY}${CC.S}--------------------")
         }
