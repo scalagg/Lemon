@@ -23,5 +23,7 @@ class ResourceUpdateRunnable : Runnable {
                 it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
             }
         }
+
+        System.gc()
     }
 }
