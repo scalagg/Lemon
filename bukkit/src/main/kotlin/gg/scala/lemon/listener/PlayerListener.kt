@@ -53,10 +53,10 @@ class PlayerListener : Listener {
                 throwable?.printStackTrace()
 
                 if (lemonPlayer == null || throwable != null) {
-                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress)
+                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress ?: "")
                     lemonPlayerFinal.handleIfFirstCreated()
                 } else {
-                    lemonPlayer.ipAddress = event.address.hostAddress
+                    lemonPlayer.ipAddress = event.address.hostAddress ?: ""
                     lemonPlayer.handlePostLoad()
 
                     lemonPlayerFinal = lemonPlayer
