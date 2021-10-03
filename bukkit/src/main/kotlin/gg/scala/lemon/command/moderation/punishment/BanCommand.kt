@@ -5,6 +5,7 @@ import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlaye
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess.parseReason
 import net.evilblock.cubed.acf.BaseCommand
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.time.Duration
@@ -17,18 +18,23 @@ import java.util.*
  */
 class BanCommand : BaseCommand() {
 
-    @CommandAlias("ban|tempban|tban|b")
+    @CommandAlias("ban|tban|tempban|b")
     @CommandPermission("lemon.command.ban")
     @Syntax("<player> <duration> [reason]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
+        val durationFinal = duration?.get() ?: Long.MAX_VALUE
+
+        if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.ban.permanent")) {
+            throw ConditionFailedException("You do not have permission to issue permanent bans.")
+        }
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BAN,
-            duration = duration?.get() ?: Long.MAX_VALUE,
-            reason = parseReason(reason), silent = silent
+            duration = durationFinal, reason = parseReason(reason),
+            silent = silent
         )
     }
 
@@ -38,13 +44,17 @@ class BanCommand : BaseCommand() {
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onReBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
+        val durationFinal = duration?.get() ?: Long.MAX_VALUE
+
+        if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.ban.permanent")) {
+            throw ConditionFailedException("You do not have permission to issue permanent bans.")
+        }
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BAN,
-            duration = duration?.get() ?: Long.MAX_VALUE,
-            reason = parseReason(reason), silent = silent,
-            rePunishing = true
+            duration = durationFinal, reason = parseReason(reason),
+            silent = silent, rePunishing = true
         )
     }
 

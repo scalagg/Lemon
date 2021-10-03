@@ -247,9 +247,8 @@ object PunishmentHandler {
             if (broadcastPermission.isNotBlank()) {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
-                    "${CC.SEC}Issued By: ${CC.PRI}$issuerName",
-                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason} ${CC.GRAY}(${punishment.expirationString})",
-                    "${CC.SEC}Issued On: ${CC.WHITE}${punishment.addedOn}",
+                    "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",
+                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
                     "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
                 )
             }
@@ -296,9 +295,10 @@ object PunishmentHandler {
             if (broadcastPermission.isNotBlank()) {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
-                    "${CC.SEC}Removed By: ${CC.PRI}$issuerName",
+                    "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",
+                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
+                    "${CC.SEC}Removed By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.removedOn})",
                     "${CC.SEC}Removed Reason: ${CC.WHITE}${punishment.removedReason}",
-                    "${CC.SEC}Removed On: ${CC.WHITE}${punishment.removedOn}",
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
                 )
             }
