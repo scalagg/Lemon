@@ -487,6 +487,8 @@ class PlayerListener : Listener {
                 FrozenPlayerHandler.expirables.remove(player.uniqueId)
             }
 
+            PlayerHandler.unModModePlayerSilent(player)
+
             PlayerHandler.players.remove(it.uniqueId)?.save()
         }
     }
