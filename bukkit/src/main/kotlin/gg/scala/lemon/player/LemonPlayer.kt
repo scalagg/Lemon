@@ -153,32 +153,33 @@ class LemonPlayer(
             }
     }
 
-    fun getPunishmentMessage(punishment: Punishment, current: Boolean = true, ipRel: Boolean = false): String {
-        if (ipRel) {
-            val coloredName = CC.YELLOW + coloredName(
-                CubedCacheUtil.fetchName(punishment.target)
+    fun getIpRelMessage(
+        coloredName: String, punishment: Punishment
+    ): String {
+        if (punishment.category == BLACKLIST) {
+            return String.format(
+                Lemon.instance.languageConfig.blacklistRelationMessage,
+                coloredName,
             )
-
-            if (punishment.category == BLACKLIST) {
-                return String.format(
-                    Lemon.instance.languageConfig.blacklistRelationMessage,
-                    coloredName,
+        } else {
+            return if (punishment.isPermanent) {
+                String.format(
+                    Lemon.instance.languageConfig.banRelationPermanentMessage,
+                    coloredName, coloredName
                 )
             } else {
-                return if (punishment.isPermanent) {
-                    String.format(
-                        Lemon.instance.languageConfig.banRelationPermanentMessage,
-                        coloredName, coloredName
-                    )
-                } else {
-                    String.format(
-                        Lemon.instance.languageConfig.banRelationTemporaryMessage,
-                        coloredName, coloredName
-                    )
-                }
+                String.format(
+                    Lemon.instance.languageConfig.banRelationTemporaryMessage,
+                    coloredName, coloredName
+                )
             }
         }
+    }
 
+    fun getPunishmentMessage(
+        punishment: Punishment,
+        current: Boolean = true
+    ): String {
         return when (punishment.category) {
             KICK -> """
                 ${CC.RED}You were kicked from ${Lemon.instance.settings.id}:
@@ -396,13 +397,19 @@ class LemonPlayer(
                 }
             }
 
-            Tasks.asyncDelayed(20L) {
-                if (activePunishments[IP_RELATIVE] != null) {
-                    val message = getPunishmentMessage(
-                        activePunishments[IP_RELATIVE]!!, ipRel = true
-                    )
+            val ipRelPunishment = activePunishments[IP_RELATIVE]
 
-                    bukkitPlayer?.sendMessage(message)
+            if (ipRelPunishment != null) {
+                handleOnConnection.add {
+                    CompletableFuture.supplyAsync {
+                        QuickAccess.fetchColoredName(ipRelPunishment.target)
+                    }.thenAccept { coloredName ->
+                        val message = getIpRelMessage(
+                            coloredName, ipRelPunishment
+                        )
+
+                        it.sendMessage(message)
+                    }
                 }
             }
         }
