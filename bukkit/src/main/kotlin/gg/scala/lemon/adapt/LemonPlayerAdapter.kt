@@ -14,28 +14,33 @@ import java.util.*
 object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonPlayer> {
 
     @Throws(JsonParseException::class)
-    override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): LemonPlayer {
-        val jsonObject = src as JsonObject
-        val lemonPlayer = LemonPlayer(
-            UUID.fromString(jsonObject.get("uniqueId").asString),
-            jsonObject.get("name").asString,
-            null
-        )
+    override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): LemonPlayer? {
+        try {
+            val jsonObject = src as JsonObject
+            val lemonPlayer = LemonPlayer(
+                UUID.fromString(jsonObject.get("uniqueId").asString),
+                jsonObject.get("name").asString,
+                null
+            )
 
-        lemonPlayer.previousIpAddress = jsonObject.get("ipAddress").asString
+            lemonPlayer.previousIpAddress = jsonObject.get("ipAddress").asString
 
-        lemonPlayer.ignoring = Serializers.gson.fromJson(jsonObject.get("ignoring"), LemonConstants.UUID_ARRAY_LIST_TYPE)
+            lemonPlayer.ignoring = Serializers.gson.fromJson(jsonObject.get("ignoring"), LemonConstants.UUID_ARRAY_LIST_TYPE)
 
-        lemonPlayer.metadata = Serializers.gson.fromJson(
-            jsonObject.get("metadata"),
-            LemonConstants.STRING_METADATA_MAP_TYPE
-        )
+            lemonPlayer.metadata = Serializers.gson.fromJson(
+                jsonObject.get("metadata"),
+                LemonConstants.STRING_METADATA_MAP_TYPE
+            )
 
-        lemonPlayer.notes = Serializers.gson.fromJson(jsonObject.get("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE)
-        lemonPlayer.pastIpAddresses = Serializers.gson.fromJson(jsonObject.get("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
-        lemonPlayer.pastLogins = Serializers.gson.fromJson(jsonObject.get("pastLogins"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
+            lemonPlayer.notes = Serializers.gson.fromJson(jsonObject.get("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE)
+            lemonPlayer.pastIpAddresses = Serializers.gson.fromJson(jsonObject.get("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
+            lemonPlayer.pastLogins = Serializers.gson.fromJson(jsonObject.get("pastLogins"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
 
-        return lemonPlayer
+            return lemonPlayer
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     override fun serialize(src: LemonPlayer, type: Type, context: JsonSerializationContext): JsonElement {

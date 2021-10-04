@@ -33,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
+import java.util.concurrent.CompletableFuture
 
 @ExperimentalStdlibApi
 class PlayerListener : Listener {
@@ -47,23 +48,25 @@ class PlayerListener : Listener {
             return
         }
 
-        DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
-            .whenComplete { lemonPlayer, throwable ->
-                val lemonPlayerFinal: LemonPlayer?
-                throwable?.printStackTrace()
+        CompletableFuture.supplyAsync({
+            DataStoreHandler.lemonPlayerLayer
+                .fetchEntryByKeySync(event.uniqueId.toString())
+        }, Lemon.instance.executor).whenComplete { lemonPlayer, throwable ->
+            val lemonPlayerFinal: LemonPlayer?
+            throwable?.printStackTrace()
 
-                if (lemonPlayer == null || throwable != null) {
-                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress ?: "")
-                    lemonPlayerFinal.handleIfFirstCreated()
-                } else {
-                    lemonPlayer.ipAddress = event.address.hostAddress ?: ""
-                    lemonPlayer.handlePostLoad()
+            if (lemonPlayer == null || throwable != null) {
+                lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress ?: "")
+                lemonPlayerFinal.handleIfFirstCreated()
+            } else {
+                lemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                lemonPlayer.handlePostLoad()
 
-                    lemonPlayerFinal = lemonPlayer
-                }
-
-                PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
+                lemonPlayerFinal = lemonPlayer
             }
+
+            PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
+        }
     }
 
     @EventHandler(
@@ -280,10 +283,11 @@ class PlayerListener : Listener {
         val lemonPlayer = PlayerHandler.findPlayer(event.player)
         event.joinMessage = null
 
-        if (!lemonPlayer.isPresent) {
-            event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
-            return
-        }
+        // db could be slow,
+//        if (!lemonPlayer.isPresent) {
+//            event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
+//            return
+//        }
 
         lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
 

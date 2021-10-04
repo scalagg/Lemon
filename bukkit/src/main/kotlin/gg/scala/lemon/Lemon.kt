@@ -77,6 +77,7 @@ import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import java.util.UUID
+import java.util.concurrent.Executors
 
 class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
@@ -107,6 +108,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     private lateinit var redisConnection: RedisConnection
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
+
+    val executor = Executors.newFixedThreadPool(1)
 
     override fun enable() {
         instance = this
@@ -176,6 +179,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             BukkitInstanceUpdateRunnable(this),
             0L, DaddySharkConstants.UPDATE_DELAY_MILLI
         )
+
+//        Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
 
         server.consoleSender.sendMessage(
             "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Players will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
