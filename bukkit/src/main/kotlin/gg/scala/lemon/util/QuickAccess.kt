@@ -147,7 +147,6 @@ object QuickAccess {
     }
 
     @JvmStatic
-    @OptIn(ExperimentalStdlibApi::class)
     fun sendStaffMessage(
         sender: CommandSender?,
         message: String,
@@ -157,21 +156,20 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "staff-message",
-                buildMap {
-                    put("sender-fancy", sender?.let { nameOrConsole(it) } ?: "")
-                    put("message", message)
-                    put("permission", "lemon.staff")
-                    put("message-type", messageType.name)
+                hashMapOf<String, String>().also {
+                    it["sender-fancy"] = sender?.let { nameOrConsole(sender) } ?: ""
+                    it["message"] = message
+                    it["permission"] = "lemon.staff"
+                    it["message-type"] = messageType.name
 
-                    put("server", Lemon.instance.settings.id)
-                    put("with-server", addServer.toString())
+                    it["server"] = Lemon.instance.settings.id
+                    it["with-server"] = addServer.toString()
                 }
             ).dispatchToLemon()
         }
     }
 
     @JvmStatic
-    @OptIn(ExperimentalStdlibApi::class)
     fun sendStaffMessageWithFlag(
         sender: CommandSender?,
         message: String,
@@ -182,15 +180,15 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "staff-message",
-                buildMap {
-                    put("sender-fancy", sender?.let { nameOrConsole(it) } ?: "")
-                    put("message", message)
-                    put("permission", "lemon.staff")
-                    put("message-type", messageType.name)
-                    put("flag", flag)
+                hashMapOf<String, String>().also {
+                    it["sender-fancy"] = sender?.let { nameOrConsole(sender) } ?: ""
+                    it["message"] = message
+                    it["permission"] = "lemon.staff"
+                    it["message-type"] = messageType.name
+                    it["flag"] = flag
 
-                    put("server", Lemon.instance.settings.id)
-                    put("with-server", addServer.toString())
+                    it["server"] = Lemon.instance.settings.id
+                    it["with-server"] = addServer.toString()
                 }
             ).dispatchToLemon()
         }
@@ -252,56 +250,52 @@ object QuickAccess {
     }
 
     @JvmStatic
-    @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-message",
-                buildMap {
-                    put("message", message)
-                    put("permission", permission ?: "")
+                hashMapOf<String, String>().also {
+                    it["message"] = message
+                    it["permission"] = permission ?: ""
                 }
             ).dispatchToLemon()
         }
     }
 
     @JvmStatic
-    @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-fancy-message",
-                buildMap {
-                    put("message", gson.toJson(fancyMessage))
-                    put("permission", permission ?: "")
+                hashMapOf<String, String>().also {
+                    it["message"] = gson.toJson(fancyMessage)
+                    it["permission"] = permission ?: ""
                 }
             ).dispatchToLemon()
         }
     }
 
     @JvmStatic
-    @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "player-message",
-                buildMap {
-                    put("message", message)
-                    put("target", uuid.toString())
+                hashMapOf<String, String>().also {
+                    it["message"] = message
+                    it["target"] = uuid.toString()
                 }
             ).dispatchToLemon()
         }
     }
 
     @JvmStatic
-    @OptIn(ExperimentalStdlibApi::class)
     fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void> {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "player-fancy-message",
-                buildMap {
-                    put("message", gson.toJson(fancyMessage))
-                    put("target", uuid.toString())
+                hashMapOf<String, String>().also {
+                    it["message"] = gson.toJson(fancyMessage)
+                    it["target"] = uuid.toString()
                 }
             ).dispatchToLemon()
         }

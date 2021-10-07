@@ -193,7 +193,6 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         Schedulers.sync().runLater({ canJoin = true }, 60L)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun loadListeners()
     {
         server.pluginManager.registerEvents(PlayerListener, this)

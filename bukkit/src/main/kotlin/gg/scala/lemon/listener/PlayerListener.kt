@@ -35,7 +35,6 @@ import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
 import java.util.concurrent.CompletableFuture
 
-@ExperimentalStdlibApi
 object PlayerListener : Listener {
 
     @EventHandler(
@@ -218,12 +217,12 @@ object PlayerListener : Listener {
         if (channelMatch?.isGlobal() == true) {
             RedisHandler.buildMessage(
                 "channel-message",
-                buildMap {
-                    put("channel", channelMatch!!.getId())
-                    put("message", event.message)
-                    put("sender", lemonPlayer.name)
-                    put("rank", lemonPlayer.activeGrant!!.getRank().uuid.toString())
-                    put("server", Lemon.instance.settings.id)
+                hashMapOf<String, String>().also {
+                    it["channel"] = channelMatch!!.getId()
+                    it["message"] = event.message
+                    it["sender"] = lemonPlayer.name
+                    it["rank"] = lemonPlayer.activeGrant!!.getRank().uuid.toString()
+                    it["server"] = Lemon.instance.settings.id
                 }
             ).dispatchToLemon()
         } else {
