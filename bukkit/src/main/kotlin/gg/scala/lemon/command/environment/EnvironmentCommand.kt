@@ -24,21 +24,6 @@ class EnvironmentCommand : BaseCommand() {
         help.showHelp()
     }
 
-    @Subcommand("test")
-    fun onTest(player: Player) {
-        Bukkit.getOnlinePlayers().forEach {
-            player.sendMessage(" ")
-            VisibilityHandler.getDebugInfo(player, it).forEach { message ->
-                player.sendMessage(message)
-            }
-
-            VisibilityHandler.getDebugInfo(it, player).forEach { message ->
-                player.sendMessage(message)
-            }
-            player.sendMessage(" ")
-        }
-    }
-
     @Subcommand("fetch-online")
     @Description("Fetch online servers.")
     fun onFetchOnline(sender: CommandSender, group: String) {
