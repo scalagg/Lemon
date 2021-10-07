@@ -35,8 +35,10 @@ class LemonCommand : BaseCommand()
         sender.sendMessage("Jedis:")
         sender.sendMessage(" Subscriptions: ${Lemon.instance.banana.subscriptions.size}")
         sender.sendMessage(" Handling Async: ${Lemon.instance.banana.options.async}")
-        sender.sendMessage(" Ignoring Existant Handlers: ${Lemon.instance.banana.options.ignoreNonExistentHandlers}")
+        sender.sendMessage(" Ignoring Non-Existent Handlers: ${Lemon.instance.banana.options.ignoreNonExistentHandlers}")
         sender.sendMessage("")
+        sender.sendMessage("System:")
+        sender.sendMessage(" Threads: ${Thread.getAllStackTraces().values.size}")
     }
 
     @Subcommand("visibility-dump")
