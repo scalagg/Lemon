@@ -34,7 +34,8 @@ import java.util.*
  * @author GrowlyX
  * @since 9/29/2021
  */
-internal object DisguiseProvider {
+internal object DisguiseProvider
+{
 
     internal val originalGameProfiles = mutableMapOf<UUID, Any>()
     internal val uuidToDisguiseInfo = mutableMapOf<UUID, DisguiseInfo>()
@@ -70,7 +71,8 @@ internal object DisguiseProvider {
 
     internal var initialized = false
 
-    fun initialLoad() {
+    fun initialLoad()
+    {
         val clazz = Class.forName(
             "net.minecraft.server.$serverVersion.EntityHuman"
         )
@@ -81,9 +83,11 @@ internal object DisguiseProvider {
         val subVersion = version.replace("v1_", "")
             .replace("_R\\d".toRegex(), "").toInt()
 
-        entityGameProfileField = if (subVersion >= 9) {
+        entityGameProfileField = if (subVersion >= 9)
+        {
             clazz.getDeclaredField("bS")
-        } else {
+        } else
+        {
             clazz.getDeclaredField("bH")
         }
         entityGameProfileField.isAccessible = true
@@ -91,8 +95,10 @@ internal object DisguiseProvider {
         initialized = true
     }
 
-    fun handleRandomDisguise(player: Player) {
-        if (!initialized || !DisguiseInfoProvider.initialized) {
+    fun handleRandomDisguise(player: Player)
+    {
+        if (!initialized || !DisguiseInfoProvider.initialized)
+        {
             // ACF will automatically catch this and re-throw
             // it while sending the player an error message.
             throw RuntimeException(
@@ -100,12 +106,14 @@ internal object DisguiseProvider {
             )
         }
 
-        if (player.hasMetadata("disguised")) {
+        if (player.hasMetadata("disguised"))
+        {
             throw ConditionFailedException("You're already disguised.")
         }
 
         useRandomAvailableDisguise { disguiseInfo ->
-            if (disguiseInfo == null) {
+            if (disguiseInfo == null)
+            {
                 player.sendMessage("${CC.RED}No available disguise could be found for you.")
                 return@useRandomAvailableDisguise
             }
@@ -129,7 +137,8 @@ internal object DisguiseProvider {
         }
     }
 
-    fun handleUnDisguise(player: Player) {
+    fun handleUnDisguise(player: Player)
+    {
         val disguiseInfo = uuidToDisguiseInfo[player.uniqueId]
             ?: throw ConditionFailedException("You're not currently disguised.")
 
@@ -154,7 +163,8 @@ internal object DisguiseProvider {
     internal fun handleUnDisguiseInternal(
         player: Player, disguiseInfo: DisguiseInfo,
         disconnecting: Boolean = false
-    ) {
+    )
+    {
         val originalGameProfile = originalGameProfiles[player.uniqueId]
         val handle = MinecraftReflection.getHandle(player)
 
@@ -170,7 +180,8 @@ internal object DisguiseProvider {
             "disguised", Lemon.instance
         )
 
-        if (!disconnecting) {
+        if (!disconnecting)
+        {
             lemonPlayer.removeMetadata("disguised")
 
             reloadPlayerInternal(player, handle)
@@ -184,7 +195,8 @@ internal object DisguiseProvider {
     internal fun handleDisguiseInternal(
         player: Player, disguiseInfo: DisguiseInfo,
         connecting: Boolean = false
-    ) {
+    )
+    {
         val gameProfile = GameProfile(
             // we're not going to change the player's original
             // uuid as if we did, it would cause a toon of issues.
@@ -213,7 +225,8 @@ internal object DisguiseProvider {
             FixedMetadataValue(Lemon.instance, true)
         )
 
-        if (!connecting) {
+        if (!connecting)
+        {
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             lemonPlayer.updateOrAddMetadata(
@@ -233,7 +246,8 @@ internal object DisguiseProvider {
 
     private fun reloadPlayerInternal(
         player: Player, handle: Any
-    ) {
+    )
+    {
         val previousLocation = player.location.clone()
         val gameMode = Reflection.getEnum(
             enumGameMode, player.gameMode.name
@@ -333,8 +347,10 @@ internal object DisguiseProvider {
         QuickAccess.reloadPlayer(player.uniqueId)
     }
 
-    fun fetchDisguiseInfo(name: String, uuid: UUID): DisguiseInfo? {
-        return try {
+    fun fetchDisguiseInfo(name: String, uuid: UUID): DisguiseInfo?
+    {
+        return try
+        {
             val url = URL(
                 "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.toString()
                     .replace("-", "") + "?unsigned=false"
@@ -347,7 +363,8 @@ internal object DisguiseProvider {
             val signature: String = json.get("signature").asString
 
             DisguiseInfo(uuid, name, skin, signature)
-        } catch (exception: Exception) {
+        } catch (exception: Exception)
+        {
             null
         }
     }

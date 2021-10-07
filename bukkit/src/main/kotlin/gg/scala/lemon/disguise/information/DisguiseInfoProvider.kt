@@ -7,21 +7,21 @@ import com.solexgames.datastore.commons.storage.impl.MongoStorageBuilder
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.serializers.Serializers
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ThreadLocalRandom
 
 /**
  * @author GrowlyX
  * @since 9/29/2021
  */
-object DisguiseInfoProvider {
+object DisguiseInfoProvider
+{
 
     internal lateinit var disguiseLayer: MongoStorageLayer<DisguiseInfo>
     internal lateinit var activeDisguises: RedisStorageLayer<DisguiseInfo>
 
     var initialized = false
 
-    fun initialLoad() {
+    fun initialLoad()
+    {
         val mongoConnection = UriMongoConnection(Lemon.instance.mongoConfig.uri)
         val database = Lemon.instance.mongoConfig.database
 
@@ -49,7 +49,8 @@ object DisguiseInfoProvider {
      *
      * @author GrowlyX
      */
-    fun useRandomAvailableDisguise(lambda: (DisguiseInfo?) -> Unit) {
+    fun useRandomAvailableDisguise(lambda: (DisguiseInfo?) -> Unit)
+    {
         disguiseLayer.fetchAllEntries().thenAccept { allDisguises ->
             activeDisguises.fetchAllEntries().thenAccept {
                 val newMap = allDisguises.toMutableMap()
@@ -60,9 +61,11 @@ object DisguiseInfoProvider {
                     allDisguises.remove(it.value.uuid.toString())
                 }
 
-                if (allDisguises.isEmpty()) {
+                if (allDisguises.isEmpty())
+                {
                     lambda.invoke(DisguiseInfo.NOTHING)
-                } else {
+                } else
+                {
                     lambda.invoke(
                         allDisguises.values.random()
                     )
