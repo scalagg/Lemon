@@ -5,6 +5,7 @@ import com.solexgames.datastore.commons.layer.impl.MongoStorageLayer
 import com.solexgames.datastore.commons.storage.impl.MongoStorageBuilder
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
@@ -20,6 +21,7 @@ object DataStoreHandler {
     var punishmentLayer: MongoStorageLayer<Punishment>
     var rankLayer: MongoStorageLayer<Rank>
     var grantLayer: MongoStorageLayer<Grant>
+    var commentLayer: MongoStorageLayer<Comment>
 
     init {
         val mongoConnection = UriMongoConnection(Lemon.instance.mongoConfig.uri)
@@ -40,6 +42,10 @@ object DataStoreHandler {
         this.grantLayer = MongoStorageBuilder<Grant>()
             .setDatabase(database).setCollection("lemon_grants")
             .setConnection(mongoConnection).setType(Grant::class.java).build()
+
+        this.commentLayer = MongoStorageBuilder<Comment>()
+            .setDatabase(database).setCollection("lemon_comments")
+            .setConnection(mongoConnection).setType(Comment::class.java).build()
 
         listOf(
             this.lemonPlayerLayer, this.punishmentLayer,

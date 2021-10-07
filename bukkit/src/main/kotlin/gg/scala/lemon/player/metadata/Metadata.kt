@@ -4,8 +4,6 @@ import java.util.*
 
 class Metadata(private var value: Any?) {
 
-    constructor() : this(null)
-
     fun asInt(): Int {
         return value as Int
     }
