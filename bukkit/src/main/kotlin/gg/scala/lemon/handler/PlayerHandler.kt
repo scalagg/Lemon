@@ -177,26 +177,32 @@ object PlayerHandler {
         NametagHandler.reloadPlayer(player)
     }
 
-    fun modModePlayer(player: Player) {
-        snapshots[player.uniqueId] = PlayerSnapshot(player)
+    fun modModePlayer(player: Player, target: Player) {
+        snapshots[target.uniqueId] = PlayerSnapshot(target)
 
-        player.inventory.clear()
+        target.inventory.clear()
 
         inventory.forEach {
-            player.inventory.setItem(it.key, it.value)
+            target.inventory.setItem(it.key, it.value)
         }
 
-        player.inventory.setItem(7, vanishItems[player.hasMetadata("vanished")])
+        target.inventory.setItem(7, vanishItems[target.hasMetadata("vanished")])
 
-        player.setMetadata("mod-mode", FixedMetadataValue(Lemon.instance, true))
-        player.sendMessage("${CC.SEC}You are now ${CC.GREEN}in mod mode${CC.SEC}.")
+        target.setMetadata("mod-mode", FixedMetadataValue(Lemon.instance, true))
+
+        player.sendMessage("${CC.SEC}${
+            if (player == target) "You are" else CC.SEC + target.name + " is"
+        } now ${CC.GREEN}in mod mode${CC.SEC}.")
     }
 
-    fun unModModePlayer(player: Player) {
-        unModModePlayerSilent(player)
+    fun unModModePlayer(player: Player, target: Player) {
+        unModModePlayerSilent(target)
 
-        player.removeMetadata("mod-mode", Lemon.instance)
-        player.sendMessage("${CC.SEC}You are ${CC.RED}no longer in mod mode${CC.SEC}.")
+        target.removeMetadata("mod-mode", Lemon.instance)
+
+        player.sendMessage("${CC.SEC}${
+            if (player == target) "You are" else CC.SEC + target.name + " is"
+        } no longer ${CC.RED}in mod mode${CC.SEC}.")
     }
 
     fun unModModePlayerSilent(player: Player) {
