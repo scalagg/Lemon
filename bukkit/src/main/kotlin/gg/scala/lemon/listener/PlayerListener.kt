@@ -36,7 +36,7 @@ import org.bukkit.event.server.ServerCommandEvent
 import java.util.concurrent.CompletableFuture
 
 @ExperimentalStdlibApi
-class PlayerListener : Listener {
+object PlayerListener : Listener {
 
     @EventHandler(
         priority = EventPriority.HIGHEST,

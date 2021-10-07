@@ -21,6 +21,7 @@ import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
@@ -73,6 +74,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
@@ -191,6 +193,12 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         Schedulers.sync().runLater({ canJoin = true }, 60L)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun loadListeners()
+    {
+        server.pluginManager.registerEvents(PlayerListener, this)
+    }
+
     private fun loadCommands() {
         val commandManager = CubedCommandManager(
             plugin = this,
@@ -297,8 +305,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         return ChatColor.valueOf(string).toString()
     }
 
-    private fun loadListeners() {
-        ClassUtils.getClassesInPackage(this, "gg.scala.lemon.listener").forEach {
+    fun loadListenersInPackage(plugin: JavaPlugin, `package`: String) {
+        ClassUtils.getClassesInPackage(plugin, `package`).forEach {
             val listener = it.newInstance() as Listener
 
             server.pluginManager.registerEvents(listener, this)
