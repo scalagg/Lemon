@@ -307,9 +307,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     fun loadListenersInPackage(plugin: JavaPlugin, `package`: String) {
         ClassUtils.getClassesInPackage(plugin, `package`).forEach {
-            val listener = it.newInstance() as Listener
-
-            server.pluginManager.registerEvents(listener, this)
+            try {
+                server.pluginManager.registerEvents(
+                    it.newInstance() as Listener, this
+                )
+            } catch (e: Exception) {
+                plugin.logger.severe("Could not instantiate: ${it.simpleName} - ${e.message}")
+            }
         }
     }
 
@@ -367,7 +371,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
         ClassUtils.getClassesInPackage(commandManager.plugin, commandPackage).forEach { clazz ->
-            commandManager.registerCommand(clazz.newInstance() as BaseCommand)
+            try {
+                commandManager.registerCommand(
+                    clazz.newInstance() as BaseCommand
+                )
+            } catch (e: Exception) {
+                commandManager.plugin.logger.severe("Could not instantiate: ${clazz.simpleName} - ${e.message}")
+            }
         }
     }
 
