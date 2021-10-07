@@ -1,6 +1,7 @@
 package gg.scala.lemon.disguise.command
 
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -20,13 +21,11 @@ class DisguiseCheckCommand : BaseCommand() {
     @CommandAlias("dgc|checkdisguise")
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.disguise.check")
-    fun onCheckDisguise(player: Player, target: OnlinePlayer) {
-        val lemonPlayer = PlayerHandler.findPlayer(target.player).orElse(null)
-
-        if (target.player.hasMetadata("disguised")) {
-            player.sendMessage("${CC.YELLOW}${lemonPlayer.name}${CC.GREEN} is disguised as ${lemonPlayer.getColoredName()}${CC.GREEN}.")
+    fun onCheckDisguise(player: Player, target: LemonPlayer) {
+        if (target.bukkitPlayer!!.hasMetadata("disguised")) {
+            player.sendMessage("${CC.YELLOW}${target.name}${CC.GREEN} is disguised as ${target.getColoredName()}${CC.GREEN}.")
         } else {
-            player.sendMessage("${lemonPlayer.getColoredName()}'s${CC.RED} not disguised!")
+            player.sendMessage("${target.getColoredName()}'s${CC.RED} not disguised!")
         }
     }
 

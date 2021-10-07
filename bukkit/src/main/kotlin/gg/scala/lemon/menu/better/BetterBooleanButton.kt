@@ -46,7 +46,7 @@ class BetterBooleanButton(
         return Material.WOOL
     }
 
-    override fun clicked(player: Player, i: Int, clickType: ClickType, view: InventoryView) {
+    override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
         if (parent.called) {
             return
         }

@@ -384,13 +384,19 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val firstArgument = it.popFirstArg()
-            val lemonPlayer = PlayerHandler.findPlayer(firstArgument)
+            val lemonPlayerOptional = PlayerHandler.findPlayer(firstArgument)
 
-            if (!lemonPlayer.isPresent) {
+            if (!lemonPlayerOptional.isPresent) {
                 throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
-            return@registerContext lemonPlayer.get()
+            val lemonPlayer = lemonPlayerOptional.orElse(null)!!
+
+            if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player)) {
+                throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
+            }
+
+            return@registerContext lemonPlayer
         }
 
         commandManager.commandCompletions.registerAsyncCompletion("all-players") {

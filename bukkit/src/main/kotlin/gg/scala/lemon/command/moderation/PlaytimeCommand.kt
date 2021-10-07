@@ -1,6 +1,7 @@
 package gg.scala.lemon.command.moderation
 
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -22,18 +23,17 @@ class PlaytimeCommand : BaseCommand() {
     @CommandAlias("playtime|pt")
     @CommandPermission("lemon.command.playtime")
     fun onPlayTime(
-        player: Player, @Optional target: OnlinePlayer?
+        player: Player, @Optional target: LemonPlayer?
     ) {
         val lemonPlayer = PlayerHandler.findPlayer(
-            if (target == null) player else target.player
-        ).orElse(null)
+            if (target == null) player else null
+        ).orElse(null) ?: target
 
         if (target != null && !player.hasPermission("lemon.command.playtime.other")) {
             throw ConditionFailedException("You do not have permission to check the playtime of other players!")
         }
 
-        val timeOnlineNetwork = lemonPlayer
-            .pastLogins.values.sum()
+        val timeOnlineNetwork = lemonPlayer!!.pastLogins.values.sum()
 
         player.sendMessage("${ 
             if (target != null) {

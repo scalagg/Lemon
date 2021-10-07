@@ -157,8 +157,8 @@ object PlayerHandler {
         return Optional.ofNullable(LemonPlayer(uuid!!, name, null))
     }
 
-    fun findPlayer(player: Player): Optional<LemonPlayer> {
-        return Optional.ofNullable(players[player.uniqueId])
+    fun findPlayer(player: Player?): Optional<LemonPlayer> {
+        return Optional.ofNullable(players[player?.uniqueId])
     }
 
     fun vanishPlayer(player: Player, power: Int = 0) {

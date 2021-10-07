@@ -1,6 +1,7 @@
 package gg.scala.lemon.command.moderation
 
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -19,14 +20,14 @@ class VanishCommand : BaseCommand() {
     @CommandAlias("vanish|v|tv|togglevanish")
     @CommandPermission("lemon.command.vanish")
     @CommandCompletion("0|10|100|1000 @all-players")
-    fun onVanish(sender: Player, @Optional priority: Int?, @Optional target: OnlinePlayer?) {
+    fun onVanish(sender: Player, @Optional priority: Int?, @Optional target: LemonPlayer?) {
         if (target != null) {
-            if (!sender.uniqueId.equals(target.player.uniqueId) && !sender.hasPermission("lemon.command.vanish.other")) {
+            if (!sender.uniqueId.equals(target.bukkitPlayer!!.uniqueId) && !sender.hasPermission("lemon.command.vanish.other")) {
                 throw ConditionFailedException("${CC.RED}You do not have permission to vanish other players!")
             }
         }
 
-        val playerToVanish = if (target != null) target.player else sender
+        val playerToVanish = if (target != null) target.bukkitPlayer!! else sender
         val lemonPlayer = PlayerHandler.findPlayer(playerToVanish).orElse(null)
         val youOrNot = if (target != null) "${CC.YELLOW}${playerToVanish.name}${CC.RED} does" else "You do"
         val youHave = if (target != null) "${coloredName(playerToVanish)}${CC.SEC} has" else "${CC.SEC}You've"

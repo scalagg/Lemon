@@ -26,10 +26,10 @@ class AltsCommand : BaseCommand() {
     @CommandAlias("alts")
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.alts")
-    fun onAlts(sender: Player, target: OnlinePlayer) {
-        val targetLemon = PlayerHandler.findPlayer(target.player.uniqueId).orElse(null)
+    fun onAlts(sender: Player, target: LemonPlayer) {
+        val targetLemon = PlayerHandler.findPlayer(target.bukkitPlayer!!.uniqueId).orElse(null)
 
-        PlayerHandler.fetchAlternateAccountsFor(target.player.uniqueId).thenAccept {
+        PlayerHandler.fetchAlternateAccountsFor(target.bukkitPlayer!!.uniqueId).thenAccept {
             if (it.isEmpty()) {
                 sender.sendMessage("${CC.RED}${targetLemon.getColoredName()}${CC.RED} does not have any alts.")
                 return@thenAccept
@@ -116,7 +116,7 @@ class AltsCommand : BaseCommand() {
                     .andHoverOf(*hoverList.toTypedArray())
             }
 
-            sender.sendMessage("${coloredName(target.player)}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
+            sender.sendMessage("${coloredName(target.bukkitPlayer!!)}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
 
             val lastComponent = finalMessage.components[finalMessage.components.size - 1]
 
