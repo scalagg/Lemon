@@ -64,12 +64,6 @@ object RedisHandler : BananaHandler {
         }
     }
 
-    private fun hasFlag(player: Player, flag: String?): Boolean {
-        if (flag == null) return false
-
-        return PlayerHandler.findPlayer(player).orElse(null)?.getSetting(flag) ?: false
-    }
-
     @Subscribe("global-message")
     fun onGlobalMessage(message: Message) {
         val newMessage = message["message"]
