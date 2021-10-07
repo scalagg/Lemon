@@ -11,8 +11,10 @@ data class DisguiseInfo(
     val username: String,
     val skinInfo: String,
     val skinSignature: String
-) {
-    companion object {
+)
+{
+    companion object
+    {
         @JvmStatic
         val NOTHING: DisguiseInfo? = null
     }

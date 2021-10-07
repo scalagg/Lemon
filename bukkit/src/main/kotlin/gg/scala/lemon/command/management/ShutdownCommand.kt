@@ -37,7 +37,7 @@ class ShutdownCommand : BaseCommand() {
             throw ConditionFailedException("That duration is too long.")
         }
 
-        ServerHandler.initiateShutdown(player, seconds)
+        ServerHandler.initiateShutdown(seconds)
     }
 
     @Subcommand("status")
@@ -61,7 +61,7 @@ class ShutdownCommand : BaseCommand() {
     @Subcommand("cancel|stop")
     @Description("Cancel the current shutdown.")
     fun onCancel(player: Player) {
-        ServerHandler.cancelShutdown(player)
+        ServerHandler.cancelShutdown()
     }
 
 }
