@@ -13,6 +13,7 @@ import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 
@@ -66,14 +67,19 @@ class AuthenticationCommand : BaseCommand() {
     @CommandAlias("remove2fa")
     @CommandPermission("lemon.command.remove2fa")
     @Description("Remove & reset a specified player's 2fa.")
-    fun onRemove2fa(player: Player, target: OnlinePlayer) {
+    fun onRemove2fa(sender: CommandSender, target: OnlinePlayer) {
         val lemonPlayer = PlayerHandler.findPlayer(target.player).orElse(null)
 
         if (!lemonPlayer.hasSetupAuthentication()) {
             throw ConditionFailedException("${CC.YELLOW}${target.player.name}${CC.RED} has not setup 2fa.")
         }
 
-        lemonPlayer.authenticateInternal()
+        lemonPlayer.removeMetadata("auth-secret")
+        lemonPlayer.removeMetadata("auth-exempt")
+
+        lemonPlayer.authenticateInternalReversed()
+
+        sender.sendMessage("${CC.SEC}You've reset ${CC.PRI}${target.player.name}'s${CC.SEC} 2fa.")
     }
 
     @CommandAlias("setup2fa")
