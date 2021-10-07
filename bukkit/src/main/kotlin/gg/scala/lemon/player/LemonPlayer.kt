@@ -1,6 +1,5 @@
 package gg.scala.lemon.player
 
-import com.cryptomorin.xseries.XMaterial
 import com.google.zxing.WriterException
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
@@ -17,22 +16,18 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.*
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
-import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.type.Savable
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.totp.ImageMapRenderer
-import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
-import java.lang.RuntimeException
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -57,16 +52,12 @@ class LemonPlayer(
     var notes = mutableListOf<Note>()
     var ignoring = mutableListOf<UUID>()
 
-    @Transient
     val cooldowns = mutableMapOf<String, Cooldown>()
 
-    @Transient
     val handleOnConnection = arrayListOf<(Player) -> Any>()
+    var hasHandledOnConnection = false
 
-    @Transient
     var activeGrant: Grant? = null
-
-    @Transient
     var attachment: PermissionAttachment? = null
 
     var metadata = mutableMapOf<String, Metadata>()

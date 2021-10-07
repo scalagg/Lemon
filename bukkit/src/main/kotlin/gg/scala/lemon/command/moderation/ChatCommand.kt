@@ -40,6 +40,25 @@ class ChatCommand : BaseCommand() {
         )
     }
 
+    @Syntax("<seconds> [-h]")
+    @CommandAlias("slowchat")
+    @CommandPermission("lemon.command.slowchat")
+    fun onSlowChat(sender: CommandSender, seconds: Int, @Optional hiddenString: String?) {
+        ChatHandler.slowChatTime = seconds
+
+        val toggledTo = ChatHandler.chatMuted
+        val coloredName = nameOrConsole(sender)
+        val hidden = hiddenString != null && hiddenString == "-h"
+
+        Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}Chat has been slowed to $seconds seconds by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
+
+        sendStaffMessage(
+            sender,
+            "$coloredName${CC.D_AQUA} has slowed the chat to $seconds seconds.",
+            true, QuickAccess.MessageType.NOTIFICATION
+        )
+    }
+
     @Syntax("[-h]")
     @CommandAlias("clearchat|cc")
     @CommandPermission("lemon.command.clearchat")

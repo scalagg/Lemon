@@ -283,14 +283,6 @@ class PlayerListener : Listener {
         val lemonPlayer = PlayerHandler.findPlayer(event.player)
         event.joinMessage = null
 
-        // db could be slow,
-//        if (!lemonPlayer.isPresent) {
-//            event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
-//            return
-//        }
-
-        lemonPlayer.orElse(null) ?: event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
-
         val highestPlayerCount = Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
@@ -302,6 +294,7 @@ class PlayerListener : Listener {
             player.handleOnConnection.forEach {
                 it.invoke(event.player)
             }
+            player.hasHandledOnConnection = true
 
             VisibilityHandler.updateToAll(event.player)
             NametagHandler.reloadPlayer(event.player)

@@ -6,6 +6,7 @@ import gg.scala.lemon.util.QuickAccess
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
+import java.util.concurrent.ForkJoinPool
 
 /**
  * @author GrowlyX
@@ -14,15 +15,17 @@ import org.bukkit.Bukkit
 class ResourceUpdateRunnable : Runnable {
 
     override fun run() {
-        Bukkit.getOnlinePlayers().forEach { player ->
-            val lemonPlayer = PlayerHandler.findPlayer(player)
+        ForkJoinPool.commonPool().execute {
+            Bukkit.getOnlinePlayers().forEach { player ->
+                val lemonPlayer = PlayerHandler.findPlayer(player)
 
-            lemonPlayer.ifPresent {
-                it.checkForGrantUpdate()
-            }
+                lemonPlayer.ifPresent {
+                    it.checkForGrantUpdate()
+                }
 
-            PunishmentHandler.fetchAllPunishmentsForTarget(player.uniqueId).thenAccept {
-                it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
+                PunishmentHandler.fetchAllPunishmentsForTarget(player.uniqueId).thenAccept {
+                    it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
+                }
             }
         }
     }
