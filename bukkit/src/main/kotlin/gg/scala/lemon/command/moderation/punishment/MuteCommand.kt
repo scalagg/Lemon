@@ -20,10 +20,10 @@ class MuteCommand : BaseCommand() {
 
     @CommandAlias("mute|tmute|tempmute")
     @CommandPermission("lemon.command.mute")
-    @Syntax("<player> <duration> [reason] [-s]")
+    @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onMute(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.mute.permanent")) {
@@ -40,10 +40,10 @@ class MuteCommand : BaseCommand() {
 
     @CommandAlias("remute|rm")
     @CommandPermission("lemon.command.mute")
-    @Syntax("<player> <duration> [reason] [-s]")
+    @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onReMute(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.mute.permanent")) {
@@ -59,11 +59,11 @@ class MuteCommand : BaseCommand() {
     }
 
     @CommandAlias("unmute|um")
-    @Syntax("<player> <duration> [reason] [-s]")
+    @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.mute.remove")
     fun onUnMute(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
 
         handleUnPunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,

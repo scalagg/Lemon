@@ -16,12 +16,12 @@ import java.util.*
  */
 class BlacklistCommand : BaseCommand() {
 
-    @Syntax("<player> [reason] [-s]")
+    @Syntax("<player> [-s] [reason] [-s]")
     @CommandAlias("blacklist|bl")
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@all-players Unfair Advantage")
     fun onBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
@@ -31,12 +31,12 @@ class BlacklistCommand : BaseCommand() {
         )
     }
 
-    @Syntax("<player> [reason] [-s]")
+    @Syntax("<player> [-s] [reason] [-s]")
     @CommandAlias("reblacklist|rbl")
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@all-players Unfair Advantage")
     fun onReBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
@@ -48,11 +48,11 @@ class BlacklistCommand : BaseCommand() {
     }
 
     @CommandAlias("unblacklist|ubl")
-    @Syntax("<player> [reason] [-s]")
+    @Syntax("<player> [-s] [reason] [-s]")
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.blacklist.remove")
     fun onUnBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
 
         handleUnPunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,

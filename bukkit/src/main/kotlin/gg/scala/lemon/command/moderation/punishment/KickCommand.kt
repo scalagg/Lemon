@@ -16,11 +16,11 @@ import java.util.*
 class KickCommand : BaseCommand() {
 
     @CommandAlias("kick|k")
-    @Syntax("<player> [reason] [-s]")
+    @Syntax("<player> [-s] [reason] [-s]")
     @CommandPermission("lemon.command.kick")
     @CommandCompletion("@all-players Camping")
     fun onKick(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,

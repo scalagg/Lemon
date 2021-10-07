@@ -20,10 +20,10 @@ class BanCommand : BaseCommand() {
 
     @CommandAlias("ban|tban|tempban|b")
     @CommandPermission("lemon.command.ban")
-    @Syntax("<player> <duration> [reason] [-s]")
+    @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.ban.permanent")) {
@@ -40,10 +40,10 @@ class BanCommand : BaseCommand() {
 
     @CommandAlias("reban|rb")
     @CommandPermission("lemon.command.ban")
-    @Syntax("<player> <duration> [reason] [-s]")
+    @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onReBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.ban.permanent")) {
@@ -59,11 +59,11 @@ class BanCommand : BaseCommand() {
     }
 
     @CommandAlias("unban|ub")
-    @Syntax("<player> [reason] [-s]")
+    @Syntax("<player> [-s] [reason] [-s]")
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.ban.remove")
     fun onUnBan(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") ?: false
+        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
 
         handleUnPunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,

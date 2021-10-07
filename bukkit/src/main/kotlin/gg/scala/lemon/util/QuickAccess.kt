@@ -202,6 +202,9 @@ object QuickAccess {
         var preParsedReason = reason?.removeSuffix("-s") ?: fallback
         preParsedReason = preParsedReason.removeSuffix(" ")
 
+        preParsedReason = preParsedReason.removePrefix("-s")
+        preParsedReason = preParsedReason.removePrefix(" ")
+
         return preParsedReason.ifBlank { fallback }
     }
 
