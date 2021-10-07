@@ -16,7 +16,6 @@ import org.bukkit.entity.Player
  */
 class VanishCommand : BaseCommand() {
 
-    @Syntax("[priority] <target>")
     @CommandAlias("vanish|v|tv|togglevanish")
     @CommandPermission("lemon.command.vanish")
     @CommandCompletion("0|10|100|1000 @all-players")

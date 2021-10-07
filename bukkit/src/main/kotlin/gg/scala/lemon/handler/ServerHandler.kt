@@ -1,6 +1,7 @@
 package gg.scala.lemon.handler
 
 import gg.scala.lemon.task.ShutdownRunnable
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
@@ -10,8 +11,7 @@ object ServerHandler {
 
     fun initiateShutdown(initiator: Player, seconds: Int) {
         if (shutdownRunnable != null) {
-            initiator.sendMessage("${CC.RED}A server shutdown has already been initialized.")
-            return
+            throw ConditionFailedException("A server shutdown has already been initialized.")
         }
 
         shutdownRunnable = ShutdownRunnable(seconds)
@@ -19,8 +19,7 @@ object ServerHandler {
 
     fun cancelShutdown(stopper: Player) {
         if (shutdownRunnable == null) {
-            stopper.sendMessage("${CC.RED}There is currently no scheduled shutdown.")
-            return
+            throw ConditionFailedException("There is currently no scheduled shutdown.")
         }
 
         shutdownRunnable!!.cancel()
