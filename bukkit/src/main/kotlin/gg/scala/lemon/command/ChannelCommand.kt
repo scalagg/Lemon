@@ -5,6 +5,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.acf.BaseCommand
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.Default
 import net.evilblock.cubed.acf.annotation.Optional
@@ -17,21 +18,25 @@ import org.bukkit.entity.Player
  * @since 9/9/2021
  */
 @CommandAlias("channel")
-class ChannelCommand : BaseCommand() {
+class ChannelCommand : BaseCommand()
+{
 
     @Default
-    fun onDefault(player: Player, @Optional channel: Channel?) {
+    fun onDefault(player: Player, @Optional channel: Channel?)
+    {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-        if (channel == null) {
+        if (channel == null)
+        {
             lemonPlayer.metadata["channel"]?.let {
                 player.sendMessage("${CC.SEC}You're currently chatting in ${CC.PRI}${it.asString()}${CC.SEC}.")
-            } ?: player.sendMessage("${CC.RED}You're currently not chatting in a channel.")
+            } ?: player.sendMessage("${CC.RED}You're chatting in the regular channel.")
 
             return
         }
 
-        if (!channel.hasPermission(player)) {
+        if (!channel.hasPermission(player))
+        {
             player.sendMessage("${CC.RED}You do not have permission to chat in ${CC.YELLOW}${channel.getId()}${CC.RED}.")
             return
         }
@@ -41,24 +46,39 @@ class ChannelCommand : BaseCommand() {
             Metadata(channel.getId())
         )
 
-        player.sendMessage("${CC.GREEN}You're now chatting in ${CC.YELLOW}${channel.getId()}${CC.GREEN}.")
+        player.sendMessage("${CC.GREEN}You're now chatting in ${CC.YELLOW}${channel.getId().capitalize()}${CC.GREEN}.")
     }
 
     @Subcommand("list|showall")
-    fun onShowAll(player: Player) {
-        player.sendMessage("${CC.SEC}Channels: ${CC.PRI}${
-            ChatHandler.channels.values
-                .filter { it.hasPermission(player) }
-                .map { it.getId() }
-                .joinToString(
+    fun onShowAll(player: Player)
+    {
+        val viewable = ChatHandler.channels.values
+            .filter { it.hasPermission(player) }
+            .map { it.getId().capitalize() }
+
+        if (viewable.isEmpty()) {
+            throw ConditionFailedException("You do not have permission to chat in any other channel!")
+        }
+
+        player.sendMessage(
+            "${CC.SEC}Channels: ${CC.PRI}${
+                viewable.joinToString(
                     separator = "${CC.YELLOW}, ${CC.PRI}"
                 )
-        }${CC.SEC}.")
+            }${CC.SEC}."
+        )
     }
 
     @Subcommand("reset")
-    fun onReset(player: Player) {
+    fun onReset(player: Player)
+    {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+
+        if (!lemonPlayer.hasMetadata("channel"))
+        {
+            throw ConditionFailedException("You're talking in any channel.")
+        }
+
         lemonPlayer.removeMetadata("channel")
 
         player.sendMessage("${CC.GREEN}You've reset your channel.")
