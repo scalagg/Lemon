@@ -32,7 +32,6 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
                 LemonConstants.STRING_METADATA_MAP_TYPE
             )
 
-            lemonPlayer.notes = Serializers.gson.fromJson(jsonObject.get("notes"), LemonConstants.NOTE_ARRAY_LIST_TYPE)
             lemonPlayer.pastIpAddresses = Serializers.gson.fromJson(jsonObject.get("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
             lemonPlayer.pastLogins = Serializers.gson.fromJson(jsonObject.get("pastLogins"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
 
@@ -52,7 +51,6 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
 
         jsonObject.add("ignoring", Serializers.gson.toJsonTree(src.ignoring))
         jsonObject.add("metadata", Serializers.gson.toJsonTree(src.metadata))
-        jsonObject.add("notes", Serializers.gson.toJsonTree(src.notes))
         jsonObject.add("pastIpAddresses", Serializers.gson.toJsonTree(src.pastIpAddresses))
         jsonObject.add("pastLogins", Serializers.gson.toJsonTree(src.pastLogins))
 

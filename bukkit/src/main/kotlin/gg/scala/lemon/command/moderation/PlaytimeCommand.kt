@@ -41,7 +41,7 @@ class PlaytimeCommand : BaseCommand() {
             } else {
                 "${CC.SEC}You've"
             }
-        } been online the network for:")
+        } played on the network for:")
 
         player.sendMessage("${CC.PRI}${
             DurationFormatUtils.formatDurationWords(

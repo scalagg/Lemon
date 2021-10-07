@@ -9,7 +9,6 @@ import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.metadata.Metadata
-import gg.scala.lemon.player.note.Note
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
@@ -49,9 +48,7 @@ class LemonPlayer(
 
     val activePunishments = mutableMapOf<PunishmentCategory, Punishment?>()
 
-    var notes = mutableListOf<Note>()
     var ignoring = mutableListOf<UUID>()
-
     val cooldowns = mutableMapOf<String, Cooldown>()
 
     val handleOnConnection = arrayListOf<(Player) -> Any>()

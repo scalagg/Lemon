@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.comment
 
+import gg.scala.lemon.util.SplitUtil
 import java.time.Instant
 import java.util.*
 
@@ -13,4 +14,6 @@ data class Comment(
     val target: UUID,
     val timestamp: Instant,
     var value: String
-)
+) {
+    internal val shortenedUniqueId = SplitUtil.splitUuid(uniqueId)
+}
