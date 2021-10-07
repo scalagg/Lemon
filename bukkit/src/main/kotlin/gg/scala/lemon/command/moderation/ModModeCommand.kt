@@ -21,7 +21,7 @@ class ModModeCommand : BaseCommand() {
     fun onModMode(player: Player, @Optional target: LemonPlayer?) {
         val toggling = target?.bukkitPlayer ?: player
 
-        if (target != null && target.bukkitPlayer != player && !player.hasPermission("lemon.command.modemode.other")) {
+        if (target != null && target.bukkitPlayer != player && !player.hasPermission("lemon.command.modmode.other")) {
             throw ConditionFailedException("You do not have permission to mod-mode others!")
         }
 
