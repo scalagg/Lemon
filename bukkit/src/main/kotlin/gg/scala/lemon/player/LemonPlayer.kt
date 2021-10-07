@@ -323,6 +323,15 @@ class LemonPlayer(
         )
     }
 
+    fun authenticateInternalReversed() {
+        bukkitPlayer?.removeMetadata(
+            "authenticated",
+            Lemon.instance
+        )
+
+        removeMetadata("last-auth")
+    }
+
     fun handleAuthMap(authSecret: String) {
         val mapRenderer: ImageMapRenderer
 

@@ -10,6 +10,7 @@ import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Description
 import net.evilblock.cubed.acf.annotation.Syntax
+import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
 import org.bukkit.entity.Player
@@ -59,6 +60,20 @@ class AuthenticationCommand : BaseCommand() {
         player.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been authenticated.")
 
 //        BatUtil.makePlayerUnSitOnBat(player)
+    }
+
+    @Syntax("<target>")
+    @CommandAlias("remove2fa")
+    @CommandPermission("lemon.command.remove2fa")
+    @Description("Remove & reset a specified player's 2fa.")
+    fun onRemove2fa(player: Player, target: OnlinePlayer) {
+        val lemonPlayer = PlayerHandler.findPlayer(target.player).orElse(null)
+
+        if (!lemonPlayer.hasSetupAuthentication()) {
+            throw ConditionFailedException("${CC.YELLOW}${target.player.name}${CC.RED} has not setup 2fa.")
+        }
+
+        lemonPlayer.authenticateInternal()
     }
 
     @CommandAlias("setup2fa")

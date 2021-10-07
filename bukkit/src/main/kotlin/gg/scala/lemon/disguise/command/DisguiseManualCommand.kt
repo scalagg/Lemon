@@ -19,7 +19,7 @@ import java.util.*
  */
 class DisguiseManualCommand : BaseCommand() {
 
-    @Syntax("<player> [disguise]")
+    @Syntax("<player> <disguise>")
     @CommandAlias("dgm|disguisemanual")
     @CommandCompletion("@all-players @all-players")
     @CommandPermission("lemon.command.disguise.manual")
