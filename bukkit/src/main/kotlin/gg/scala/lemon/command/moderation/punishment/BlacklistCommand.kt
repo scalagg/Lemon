@@ -16,7 +16,7 @@ import java.util.*
  */
 class BlacklistCommand : BaseCommand() {
 
-    @Syntax("<player> [reason]")
+    @Syntax("<player> [reason] [-s]")
     @CommandAlias("blacklist|bl")
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@all-players Unfair Advantage")
@@ -31,7 +31,7 @@ class BlacklistCommand : BaseCommand() {
         )
     }
 
-    @Syntax("<player> [reason]")
+    @Syntax("<player> [reason] [-s]")
     @CommandAlias("reblacklist|rbl")
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@all-players Unfair Advantage")
@@ -48,7 +48,7 @@ class BlacklistCommand : BaseCommand() {
     }
 
     @CommandAlias("unblacklist|ubl")
-    @Syntax("<player> [reason]")
+    @Syntax("<player> [reason] [-s]")
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.blacklist.remove")
     fun onUnBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {

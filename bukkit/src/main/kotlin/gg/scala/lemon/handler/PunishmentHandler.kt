@@ -127,8 +127,7 @@ object PunishmentHandler {
         category: PunishmentCategory, silent: Boolean = false
     ) {
         Tasks.async {
-            val activePunishments = PunishmentHandler
-                .fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
+            val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
             val targetName = QuickAccess.fetchColoredName(uuid)
             val issuerUuid = QuickAccess.uuidOf(issuer)

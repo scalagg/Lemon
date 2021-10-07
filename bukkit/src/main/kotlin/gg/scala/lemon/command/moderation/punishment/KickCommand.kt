@@ -15,8 +15,8 @@ import java.util.*
  */
 class KickCommand : BaseCommand() {
 
-    @Syntax("<player> [reason]")
-    @CommandAlias("kick|lattabitch|k")
+    @CommandAlias("kick|k")
+    @Syntax("<player> [reason] [-s]")
     @CommandPermission("lemon.command.kick")
     @CommandCompletion("@all-players Camping")
     fun onKick(sender: CommandSender, uuid: UUID, @Optional reason: String?) {

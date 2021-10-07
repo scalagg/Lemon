@@ -20,7 +20,7 @@ class MuteCommand : BaseCommand() {
 
     @CommandAlias("mute|tmute|tempmute")
     @CommandPermission("lemon.command.mute")
-    @Syntax("<player> <duration> [reason]")
+    @Syntax("<player> <duration> [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onMute(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
@@ -40,7 +40,7 @@ class MuteCommand : BaseCommand() {
 
     @CommandAlias("remute|rm")
     @CommandPermission("lemon.command.mute")
-    @Syntax("<player> <duration> [reason]")
+    @Syntax("<player> <duration> [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onReMute(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
@@ -59,7 +59,7 @@ class MuteCommand : BaseCommand() {
     }
 
     @CommandAlias("unmute|um")
-    @Syntax("<player> <duration> [reason]")
+    @Syntax("<player> <duration> [reason] [-s]")
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.mute.remove")
     fun onUnMute(sender: CommandSender, uuid: UUID, @Optional reason: String?) {

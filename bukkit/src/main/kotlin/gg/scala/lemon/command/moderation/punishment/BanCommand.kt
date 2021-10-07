@@ -20,7 +20,7 @@ class BanCommand : BaseCommand() {
 
     @CommandAlias("ban|tban|tempban|b")
     @CommandPermission("lemon.command.ban")
-    @Syntax("<player> <duration> [reason]")
+    @Syntax("<player> <duration> [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
@@ -40,7 +40,7 @@ class BanCommand : BaseCommand() {
 
     @CommandAlias("reban|rb")
     @CommandPermission("lemon.command.ban")
-    @Syntax("<player> <duration> [reason]")
+    @Syntax("<player> <duration> [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onReBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
         val silent = reason?.endsWith(" -s") ?: false
@@ -59,7 +59,7 @@ class BanCommand : BaseCommand() {
     }
 
     @CommandAlias("unban|ub")
-    @Syntax("<player> [reason]")
+    @Syntax("<player> [reason] [-s]")
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.ban.remove")
     fun onUnBan(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
