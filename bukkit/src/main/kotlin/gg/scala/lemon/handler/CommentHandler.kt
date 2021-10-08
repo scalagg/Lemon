@@ -20,7 +20,8 @@ object CommentHandler
      * Attaches a [Comment] to a player.
      */
     fun addCommentToPlayer(
-        issuer: Player, target: UUID, commentValue: String
+        issuer: Player, target: UUID,
+        commentValue: String
     )
     {
         val comment = Comment(
@@ -45,7 +46,6 @@ object CommentHandler
      */
     fun removeCommentFromPlayer(
         remover: Player,
-        target: UUID,
         shortenedUniqueId: String
     )
     {
