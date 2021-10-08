@@ -6,8 +6,8 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.SplitUtil
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
-import java.time.Instant
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -15,6 +15,13 @@ import java.util.*
  */
 object CommentHandler
 {
+
+    fun fetchComments(target: UUID): CompletableFuture<Map<String, Comment>>
+    {
+        return DataStoreHandler.commentLayer.fetchAllEntriesWithFilter(
+            Filters.eq("target", target.toString())
+        )
+    }
 
     /**
      * Attaches a [Comment] to a player.
@@ -27,8 +34,7 @@ object CommentHandler
         val comment = Comment(
             UUID.randomUUID(),
             issuer.uniqueId, target,
-            Instant.now(),
-            commentValue
+            Date(), commentValue
         )
 
         DataStoreHandler.commentLayer.saveEntry(
