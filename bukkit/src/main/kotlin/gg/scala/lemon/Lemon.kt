@@ -84,9 +84,11 @@ import java.util.*
 import java.util.UUID
 import java.util.concurrent.Executors
 
-class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
+class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
+{
 
-    companion object {
+    companion object
+    {
         @JvmStatic
         lateinit var instance: Lemon
 
@@ -117,7 +119,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     val executor = Executors.newFixedThreadPool(1)
 
-    override fun enable() {
+    override fun enable()
+    {
         instance = this
 
         loadBaseConfigurations()
@@ -141,21 +144,22 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         consoleLogger.log(
             "Passed data validation checks, now loading Lemon with ${"Scala"}'s information..."
         ); lemonWebData = LemonWebData(
-            LemonWebStatus.SUCCESS,
-            "",
-            "Scala",
-            "GREEN",
-            "YELLOW",
-            "",
-            "scalagg",
-            "scala.gg",
-            ""
-        )
+        LemonWebStatus.SUCCESS,
+        "",
+        "Scala",
+        "GREEN",
+        "YELLOW",
+        "",
+        "scalagg",
+        "scala.gg",
+        ""
+    )
 
         runAfterDataValidation()
     }
 
-    private fun runAfterDataValidation() {
+    private fun runAfterDataValidation()
+    {
         Serializers.useGsonBuilderThenRebuild { builder ->
             builder.serializeNulls()
                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
@@ -202,7 +206,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         server.pluginManager.registerEvents(PlayerListener, this)
     }
 
-    private fun loadCommands() {
+    private fun loadCommands()
+    {
         val commandManager = CubedCommandManager(
             plugin = this,
             primary = ChatColor.valueOf(lemonWebData.primary),
@@ -212,12 +217,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         registerCompletionsAndContexts(commandManager)
         registerCommandsInPackage(commandManager, "gg.scala.lemon.command")
 
-        if (settings.disguiseEnabled) {
+        if (settings.disguiseEnabled)
+        {
             registerCommandsInPackage(commandManager, "gg.scala.lemon.disguise.command")
         }
     }
 
-    private fun setupPlayerLookAndFeel() {
+    private fun setupPlayerLookAndFeel()
+    {
         CC.setup(
             toCCColorFormat(lemonWebData.primary),
             toCCColorFormat(lemonWebData.secondary)
@@ -231,14 +238,16 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler())
 
-        if (settings.disguiseEnabled) {
+        if (settings.disguiseEnabled)
+        {
             DisguiseInfoProvider.initialLoad()
             DisguiseProvider.initialLoad()
 
             server.pluginManager.registerEvents(DisguiseListener, this)
         }
 
-        if (settings.logDataToFile) {
+        if (settings.logDataToFile)
+        {
             ChatAsyncFileLogger.start()
             CommandAsyncFileLogger.start()
 
@@ -262,7 +271,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             val player = it.player
 
             clientAdapters.forEach { adapter ->
-                if (player.hasMetadata("mod-mode")) {
+                if (player.hasMetadata("mod-mode"))
+                {
                     adapter.updateNametag(
                         player, listOf(
                             player.playerListName,
@@ -272,7 +282,8 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                     return@forEach
                 }
 
-                if (player.hasMetadata("vanished")) {
+                if (player.hasMetadata("vanished"))
+                {
                     adapter.updateNametag(
                         player, listOf(
                             player.playerListName,
@@ -305,43 +316,51 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
         serverStatisticProvider = DefaultSparkServerStatisticProvider
 
-        if (Bukkit.getPluginManager().getPlugin("spark") != null) {
+        if (Bukkit.getPluginManager().getPlugin("spark") != null)
+        {
             serverStatisticProvider = SparkServerStatisticProvider()
 
             logger.info("Now utilizing spark for server statistics.")
         }
     }
 
-    private fun toCCColorFormat(string: String): String {
+    private fun toCCColorFormat(string: String): String
+    {
         return ChatColor.valueOf(string).toString()
     }
 
-    fun loadListenersInPackage(plugin: JavaPlugin, `package`: String) {
+    fun loadListenersInPackage(plugin: JavaPlugin, `package`: String)
+    {
         ClassUtils.getClassesInPackage(plugin, `package`).forEach {
-            try {
+            try
+            {
                 server.pluginManager.registerEvents(
                     it.newInstance() as Listener, this
                 )
-            } catch (e: Exception) {
+            } catch (e: Exception)
+            {
                 plugin.logger.severe("Could not instantiate: ${it.simpleName} - ${e.message}")
             }
         }
     }
 
-    private fun loadBaseConfigurations() {
-        consoleLogger = DaddySharkLogAdapter()
+    private fun loadBaseConfigurations()
+    {
+        consoleLogger = DaddySharkLogAdapter
         configFactory = ConfigFactory.newFactory(this)
 
         settings = configFactory.fromFile("settings", SettingsConfigProcessor::class.java)
     }
 
-    private fun loadExtraConfigurations() {
+    private fun loadExtraConfigurations()
+    {
         languageConfig = configFactory.fromFile("language", LanguageConfigProcessor::class.java)
         credentials = configFactory.fromFile("redis", BananaCredentials::class.java)
         mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor::class.java)
     }
 
-    private fun loadHandlers() {
+    private fun loadHandlers()
+    {
         RankHandler.loadRanks()
 
         localInstance = ServerInstance(
@@ -349,12 +368,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             settings.group
         )
 
-        redisConnection = if (!credentials.authenticate) {
+        redisConnection = if (!credentials.authenticate)
+        {
             NoAuthRedisConnection(
                 credentials.address,
                 credentials.port
             )
-        } else {
+        } else
+        {
             AuthRedisConnection(
                 credentials.address,
                 credentials.port,
@@ -380,31 +401,46 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
         setupDataStore()
     }
 
-    fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
-        ClassUtils.getClassesInPackage(commandManager.plugin, commandPackage).forEach { clazz ->
-            try {
+    fun registerCommandsInPackage(
+        commandManager: CubedCommandManager,
+        commandPackage: String
+    )
+    {
+        ClassUtils.getClassesInPackage(
+            commandManager.plugin, commandPackage
+        ).forEach { clazz ->
+            try
+            {
                 // kotlin `objects` have the INSTANCE field set as
                 // its instance during runtime.
-                val instance = clazz.getField("INSTANCE")
 
-                if (instance != null) {
+                // filtering through fields so it returns a Field? instead of throwing an error
+                val instance = clazz.fields.firstOrNull {
+                    it.name.equals("INSTANCE")
+                }
+
+                if (instance != null)
+                {
                     val instanceObject = instance.get(null)
 
                     commandManager.registerCommand(
                         instanceObject as BaseCommand
                     )
-                } else {
+                } else
+                {
                     commandManager.registerCommand(
                         clazz.newInstance() as BaseCommand
                     )
                 }
-            } catch (e: Exception) {
-                commandManager.plugin.logger.severe("Could not instantiate: ${clazz.simpleName} - ${e.message}")
+            } catch (e: Exception)
+            {
+                commandManager.plugin.logger.severe("Could not register ${clazz.simpleName}: ${e.message}")
             }
         }
     }
 
-    fun registerCompletionsAndContexts(commandManager: CubedCommandManager) {
+    fun registerCompletionsAndContexts(commandManager: CubedCommandManager)
+    {
         commandManager.commandCompletions.registerAsyncCompletion("ranks") {
             return@registerAsyncCompletion RankHandler.ranks.map { it.value.name }
         }
@@ -427,13 +463,15 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
             val firstArgument = it.popFirstArg()
             val lemonPlayerOptional = PlayerHandler.findPlayer(firstArgument)
 
-            if (!lemonPlayerOptional.isPresent) {
+            if (!lemonPlayerOptional.isPresent)
+            {
                 throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
             val lemonPlayer = lemonPlayerOptional.orElse(null)!!
 
-            if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player)) {
+            if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player))
+            {
                 throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
@@ -451,15 +489,18 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     override var layer: RedisStorageLayer<ServerInstance>? = null
 
-    override fun getConsoleLogger(): ConsoleLogger {
+    override fun getConsoleLogger(): ConsoleLogger
+    {
         return consoleLogger
     }
 
-    override fun getLocalServerInstance(): ServerInstance {
+    override fun getLocalServerInstance(): ServerInstance
+    {
         return localInstance
     }
 
-    override fun getRedisConnection(): RedisConnection {
+    override fun getRedisConnection(): RedisConnection
+    {
         return redisConnection
     }
 }
