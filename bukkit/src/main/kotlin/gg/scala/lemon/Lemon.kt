@@ -17,6 +17,9 @@ import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
+import gg.scala.lemon.adapt.statistic.ServerStatisticProvider
+import gg.scala.lemon.adapt.statistic.impl.DefaultSparkServerStatisticProvider
+import gg.scala.lemon.adapt.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
@@ -102,6 +105,7 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
 
     lateinit var lemonWebData: LemonWebData
     lateinit var entityInteractionHandler: EntityInteractionHandler
+    lateinit var serverStatisticProvider: ServerStatisticProvider
 
 //    private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
 
@@ -298,6 +302,14 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
                 "${clientAdapter.getClientName()} implementation has been enabled."
             )
         }
+
+        serverStatisticProvider = DefaultSparkServerStatisticProvider
+
+        if (Bukkit.getPluginManager().getPlugin("spark") != null) {
+            serverStatisticProvider = SparkServerStatisticProvider()
+
+            logger.info("Now utilizing spark for server statistics.")
+        }
     }
 
     private fun toCCColorFormat(string: String): String {
@@ -371,13 +383,13 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
         ClassUtils.getClassesInPackage(commandManager.plugin, commandPackage).forEach { clazz ->
             try {
-                // kotlin `objects` have the INSTANCE field set as 
+                // kotlin `objects` have the INSTANCE field set as
                 // its instance during runtime.
                 val instance = clazz.getField("INSTANCE")
-                
+
                 if (instance != null) {
                     val instanceObject = instance.get(null)
-                    
+
                     commandManager.registerCommand(
                         instanceObject as BaseCommand
                     )

@@ -5,4 +5,6 @@ main: gg.scala.lemon.Lemon
 author: Scala
 website: https://scala.gg
 
-depend: [Cubed, spark]
+depend: [Cubed]
+softdepend:
+  - spark
