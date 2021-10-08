@@ -371,9 +371,21 @@ class Lemon: ExtendedJavaPlugin(), DaddySharkPlatform {
     fun registerCommandsInPackage(commandManager: CubedCommandManager, commandPackage: String) {
         ClassUtils.getClassesInPackage(commandManager.plugin, commandPackage).forEach { clazz ->
             try {
-                commandManager.registerCommand(
-                    clazz.newInstance() as BaseCommand
-                )
+                // kotlin `objects` have the INSTANCE field set as 
+                // its instance during runtime.
+                val instance = clazz.getField("INSTANCE")
+                
+                if (instance != null) {
+                    val instanceObject = instance.get(null)
+                    
+                    commandManager.registerCommand(
+                        instanceObject as BaseCommand
+                    )
+                } else {
+                    commandManager.registerCommand(
+                        clazz.newInstance() as BaseCommand
+                    )
+                }
             } catch (e: Exception) {
                 commandManager.plugin.logger.severe("Could not instantiate: ${clazz.simpleName} - ${e.message}")
             }
