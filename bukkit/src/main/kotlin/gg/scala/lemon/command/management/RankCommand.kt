@@ -4,6 +4,7 @@ import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.player.result.RankPaginatedResult
 import gg.scala.lemon.util.QuickAccess.replaceEmpty
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.lemon.util.dispatchToLemon
@@ -32,22 +33,16 @@ class RankCommand : BaseCommand() {
 
     @Subcommand("list")
     @Description("View all ranks.")
-    fun onList(sender: CommandSender) {
+    fun onList(sender: CommandSender, @Optional page: Int?) {
         val rankList = RankHandler.sorted
 
         if (rankList.isEmpty()) {
             throw ConditionFailedException("There are no ranks.")
         }
 
-        sender.sendMessage(arrayOf(
-            "${CC.B_PRI}Available Ranks:",
-            "${CC.SEC}${rankList.size}${CC.GRAY} ranks found.",
-            ""
-        ))
-
-        rankList.forEach {
-            sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${it.getColoredName()}")
-        }
+        RankPaginatedResult.display(
+            sender, rankList, page ?: 1, "/rank list %s"
+        )
     }
 
     @CommandCompletion("@ranks")

@@ -1,4 +1,4 @@
-package gg.scala.lemon.player.comment.paginated
+package gg.scala.lemon.player.result
 
 import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.util.CubedCacheUtil
@@ -14,7 +14,7 @@ object CommentPaginatedResult : PaginatedResult<Comment>()
 {
     override fun format(result: Comment, resultIndex: Int): String
     {
-        return "${CC.GRAY} - ${CC.SEC}${CubedCacheUtil.fetchName(result.issuer)} ${CC.GRAY}(${TimeUtil.formatIntoFullCalendarString(result.timestamp)})${CC.WHITE}: ${result.value}"
+        return "${CC.GRAY} ${resultIndex}. ${CC.SEC}${CubedCacheUtil.fetchName(result.issuer)} ${CC.GRAY}(${TimeUtil.formatIntoFullCalendarString(result.timestamp)})${CC.WHITE}: ${result.value}"
     }
 
     override fun getHeader(page: Int, maxPages: Int): String

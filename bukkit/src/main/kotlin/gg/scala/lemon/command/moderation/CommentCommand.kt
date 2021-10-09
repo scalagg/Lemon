@@ -2,7 +2,7 @@ package gg.scala.lemon.command.moderation
 
 import gg.scala.lemon.handler.CommentHandler
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.comment.paginated.CommentPaginatedResult
+import gg.scala.lemon.player.result.CommentPaginatedResult
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
