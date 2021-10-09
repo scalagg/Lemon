@@ -37,6 +37,8 @@ class ShutdownCommand : BaseCommand() {
             throw ConditionFailedException("That duration is too long.")
         }
 
+        player.sendMessage("${CC.GREEN}The shutdown has been initiated.")
+
         ServerHandler.initiateShutdown(seconds)
     }
 
@@ -47,11 +49,11 @@ class ShutdownCommand : BaseCommand() {
 
         if (shutdown != null) {
             player.sendMessage(
-                "${CC.SEC}The server is scheduled to shutdown in ${CC.PRI}${
+                "${CC.RED}The server is scheduled to shutdown in ${CC.YELLOW}${
                     TimeUtil.formatIntoDetailedString(
                         shutdown.seconds
                     )
-                }${CC.SEC}."
+                }${CC.RED}."
             )
         } else {
             player.sendMessage("${CC.RED}There is currently no scheduled shutdown.")

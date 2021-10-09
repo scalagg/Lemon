@@ -11,9 +11,10 @@ import org.bukkit.scheduler.BukkitRunnable
 abstract class LemonRunnable(var seconds: Int): BukkitRunnable() {
 
     override fun run() {
+        seconds--
+
         if (getSeconds().contains(seconds)) {
             onRun()
-            seconds--
         } else if (seconds == 0) {
             onEnd()
             cancel()

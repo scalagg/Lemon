@@ -15,8 +15,6 @@ class BukkitInstanceUpdateRunnable(private var platform: DaddySharkPlatform): Ru
         instance.onlineMode = Bukkit.getOnlineMode()
         instance.version = Bukkit.getVersion()
 
-
-
         instance.ticksPerSecond = Lemon.instance.serverStatisticProvider.ticksPerSecond()
         instance.lastHeartbeat = System.currentTimeMillis()
 
