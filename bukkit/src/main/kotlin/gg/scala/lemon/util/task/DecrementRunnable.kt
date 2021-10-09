@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable
  * @author puugz
  * @since 23/08/2021 19:19
  */
-abstract class LemonRunnable(var seconds: Int): BukkitRunnable() {
+abstract class DecrementRunnable(var seconds: Int): BukkitRunnable() {
 
     override fun run() {
         seconds--
@@ -23,10 +23,6 @@ abstract class LemonRunnable(var seconds: Int): BukkitRunnable() {
 
     fun broadcast(message: String) {
         Bukkit.broadcastMessage(Color.translate(message))
-    }
-
-    fun broadcast(message: String, permission: String) {
-        Bukkit.broadcast(message, permission)
     }
 
     abstract fun onRun()
