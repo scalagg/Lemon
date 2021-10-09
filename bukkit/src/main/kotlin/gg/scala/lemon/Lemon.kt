@@ -179,13 +179,25 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
             0L, DaddySharkConstants.UPDATE_DELAY_MILLI
         )
 
-//        Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
+        Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
 
         server.consoleSender.sendMessage(
             "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Players will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
         )
 
-        Cubed.instance.uuidCache = RedisUUIDCache(banana)
+        val uuidCacheBanana = BananaBuilder()
+            .options(
+                BananaOptions(
+                    channel = "cubed",
+                    gson = Serializers.gson,
+                )
+            )
+            .credentials(
+                credentials
+            ).build()
+
+        Cubed.instance.uuidCache = RedisUUIDCache(uuidCacheBanana)
+        Cubed.instance.uuidCache.load()
 
         Schedulers.sync().runLater({ canJoin = true }, 60L)
     }
