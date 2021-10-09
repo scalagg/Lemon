@@ -42,7 +42,6 @@ import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.util.LemonWebUtil
 import gg.scala.lemon.util.validate.LemonWebData
-import gg.scala.lemon.util.validate.LemonWebStatus
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
@@ -83,7 +82,6 @@ import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import java.util.UUID
-import java.util.concurrent.Executors
 
 class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 {
@@ -116,6 +114,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
+
     override fun enable()
     {
         instance = this
@@ -137,6 +136,8 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 
             return
         }
+
+        lemonWebData = webData
 
         logger.info(
             "Now loading Lemon with ${lemonWebData.serverName}'s information..."
