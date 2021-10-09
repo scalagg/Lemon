@@ -32,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
+import java.util.concurrent.ForkJoinPool
 
 object PlayerListener : Listener
 {
@@ -48,25 +49,21 @@ object PlayerListener : Listener
             return
         }
 
-        DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(event.uniqueId.toString())
-            .whenComplete { lemonPlayer, throwable ->
-                val lemonPlayerFinal: LemonPlayer?
-                throwable?.printStackTrace()
+        ForkJoinPool.commonPool().execute {
+            var lemonPlayer = DataStoreHandler.lemonPlayerLayer.fetchEntryByKeySync(event.uniqueId.toString())
 
-                if (lemonPlayer == null || throwable != null)
-                {
-                    lemonPlayerFinal = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress ?: "")
-                    lemonPlayerFinal.handleIfFirstCreated()
-                } else
-                {
-                    lemonPlayer.ipAddress = event.address.hostAddress ?: ""
-                    lemonPlayer.handlePostLoad()
-
-                    lemonPlayerFinal = lemonPlayer
-                }
-
-                PlayerHandler.players[event.uniqueId] = lemonPlayerFinal
+            if (lemonPlayer == null)
+            {
+                lemonPlayer = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress ?: "")
+                lemonPlayer.handleIfFirstCreated()
+            } else
+            {
+                lemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                lemonPlayer.handlePostLoad()
             }
+
+            PlayerHandler.players[event.uniqueId] = lemonPlayer
+        }
     }
 
     @EventHandler(
