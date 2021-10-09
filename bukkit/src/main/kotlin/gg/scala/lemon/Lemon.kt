@@ -9,6 +9,7 @@ import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnectio
 import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.logger.ConsoleLogger
+import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.banana.Banana
 import gg.scala.banana.BananaBuilder
 import gg.scala.banana.credentials.BananaCredentials
@@ -232,6 +233,8 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
             DisguiseProvider.initialLoad()
 
             server.pluginManager.registerEvents(DisguiseListener, this)
+
+            logger.info("Loaded disguise resources.")
         }
 
         if (settings.logDataToFile)
@@ -239,7 +242,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
             ChatAsyncFileLogger.start()
             CommandAsyncFileLogger.start()
 
-            logger.info("Started log queue for chat & commands")
+            logger.info("Started log queue for chat & commands.")
         }
 
         Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)
@@ -386,7 +389,15 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
         banana.registerClass(RedisHandler)
         banana.subscribe()
 
-        setupDataStore()
+        val builder = RedisStorageBuilder<ServerInstance>()
+
+        builder.setConnection(this.getRedisConnection())
+        builder.setSection("daddy_shark_data")
+        builder.setType(ServerInstance::class.java)
+
+        this.layer = builder.build()
+
+        logger.info("Setup redis data-store handling.")
     }
 
     fun registerCommandsInPackage(
