@@ -3,15 +3,11 @@ package gg.scala.lemon.util
 import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.handler.*
-import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.other.Cooldown
-import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.nametag.NametagHandler
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -339,7 +335,7 @@ object QuickAccess {
         val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
 
         return if (lemonPlayer != null && (player.name == lemonPlayer.name || !player.hasMetadata("disguised"))) {
-            lemonPlayer.activeGrant!!.getRank()
+            lemonPlayer.activeGrant?.getRank() ?: RankHandler.getDefaultRank()
         } else {
             RankHandler.getDefaultRank()
         }

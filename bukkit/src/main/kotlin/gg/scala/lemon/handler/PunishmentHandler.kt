@@ -11,8 +11,8 @@ import gg.scala.lemon.util.QuickAccess.fetchIpAddress
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
 import gg.scala.lemon.util.dispatchToLemon
-import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender

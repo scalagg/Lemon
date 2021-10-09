@@ -1,7 +1,6 @@
 package gg.scala.lemon.handler
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.other.FancyMessage
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

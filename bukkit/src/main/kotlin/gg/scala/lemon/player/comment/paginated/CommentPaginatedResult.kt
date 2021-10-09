@@ -1,4 +1,4 @@
-package gg.scala.lemon.player.comment.output
+package gg.scala.lemon.player.comment.paginated
 
 import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.util.CubedCacheUtil

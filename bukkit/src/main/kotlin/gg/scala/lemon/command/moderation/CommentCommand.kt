@@ -2,7 +2,7 @@ package gg.scala.lemon.command.moderation
 
 import gg.scala.lemon.handler.CommentHandler
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.comment.output.CommentPaginatedResult
+import gg.scala.lemon.player.comment.paginated.CommentPaginatedResult
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
@@ -35,7 +35,8 @@ class CommentCommand : BaseCommand()
 
         CommentHandler.fetchComments(target = target.uniqueId).thenAccept {
             CommentPaginatedResult.display(
-                sender, listOf(*it.values.toTypedArray()), page ?: 1
+                sender, listOf(*it.values.toTypedArray()),
+                page ?: 1, command = "comment list %s"
             )
         }
     }
