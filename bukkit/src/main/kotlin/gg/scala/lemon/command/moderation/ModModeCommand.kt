@@ -5,6 +5,7 @@ import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player
 class ModModeCommand : BaseCommand() {
 
     @CommandAlias("modmode|mm|h")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.modmode")
     fun onModMode(player: Player, @Optional target: LemonPlayer?) {
         val toggling = target?.bukkitPlayer ?: player

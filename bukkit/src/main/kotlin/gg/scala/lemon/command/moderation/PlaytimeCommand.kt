@@ -4,10 +4,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
-import net.evilblock.cubed.acf.annotation.Optional
-import net.evilblock.cubed.acf.annotation.Syntax
+import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import org.apache.commons.lang.time.DurationFormatUtils
@@ -21,6 +18,7 @@ class PlaytimeCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandAlias("playtime|pt")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.playtime")
     fun onPlayTime(
         player: Player, @Optional target: LemonPlayer?

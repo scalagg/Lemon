@@ -28,6 +28,7 @@ class CommentCommand : BaseCommand()
 
     @Subcommand("list")
     @Syntax("<player> [page]")
+    @CommandCompletion("@all-players")
     @Description("List all comments attached to a player.")
     fun onList(sender: CommandSender, target: LemonPlayer, @Optional page: Int?)
     {
@@ -43,6 +44,7 @@ class CommentCommand : BaseCommand()
 
     @Subcommand("add|set")
     @Syntax("<player> <comment>")
+    @CommandCompletion("@all-players")
     @Description("Attach a comment to a player.")
     fun onAdd(player: Player, target: LemonPlayer, comment: String)
     {
@@ -51,6 +53,7 @@ class CommentCommand : BaseCommand()
 
     @Syntax("<id>")
     @Subcommand("remove|delete")
+    @CommandCompletion("@all-players")
     @Description("Remove a comment from a player.")
     fun onRemove(player: Player, @Single id: String)
     {

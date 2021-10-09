@@ -6,10 +6,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
-import net.evilblock.cubed.acf.annotation.Description
-import net.evilblock.cubed.acf.annotation.Syntax
+import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
@@ -65,6 +62,7 @@ class AuthenticationCommand : BaseCommand() {
 
     @Syntax("<target>")
     @CommandAlias("remove2fa")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.remove2fa")
     @Description("Remove & reset a specified player's 2fa.")
     fun onRemove2fa(sender: CommandSender, target: OnlinePlayer) {

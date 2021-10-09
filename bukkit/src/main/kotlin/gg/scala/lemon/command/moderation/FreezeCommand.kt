@@ -9,6 +9,7 @@ import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
@@ -24,6 +25,7 @@ class FreezeCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandAlias("freeze|fr|ss")
+    @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.freeze")
     fun onFreeze(sender: CommandSender, target: LemonPlayer) {
         val alreadyFrozen = target.bukkitPlayer!!.hasMetadata("frozen")
