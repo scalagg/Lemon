@@ -179,7 +179,7 @@ object RedisHandler : BananaHandler {
         sync {
             Bukkit.getPlayer(targetUuid)?.kickPlayer(
                 """
-                    ${CC.RED}You've been kicked from${Lemon.instance.settings.id}:
+                    ${CC.RED}You've been kicked from ${Lemon.instance.settings.id}:
                     ${CC.WHITE}$reason
                 """.trimIndent()
             )

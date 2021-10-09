@@ -170,7 +170,7 @@ class LemonPlayer(
     ): String {
         return when (punishment.category) {
             KICK -> """
-                ${CC.RED}You were kicked from ${Lemon.instance.settings.id}:
+                ${CC.RED}You've been kicked from ${Lemon.instance.settings.id}:
                 ${CC.WHITE}${punishment.addedReason}
             """.trimIndent()
             MUTE -> """
