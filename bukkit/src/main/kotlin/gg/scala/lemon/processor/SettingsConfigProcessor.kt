@@ -13,6 +13,7 @@ class SettingsConfigProcessor {
     @Comment("What's the password to your network details?")
     val serverPassword: String = "server_password"
     val serverPasswordSupplier: String = "api.scala.gg"
+    val serverPasswordHttps: Boolean = false
 
     @Comment("Shall console be able to view chat messages?")
     val consoleChat: Boolean = false

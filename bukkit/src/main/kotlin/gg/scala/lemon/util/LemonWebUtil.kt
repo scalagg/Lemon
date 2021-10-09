@@ -22,7 +22,9 @@ object LemonWebUtil {
         return try {
             Scanner(
                 URL(
-                    "https://${
+                    "${
+                        if (Lemon.instance.settings.serverPasswordHttps) "https" else "http"
+                    }://${
                         Lemon.instance.settings.serverPasswordSupplier
                     }/routing/minecraft/$id"
                 ).openStream()
