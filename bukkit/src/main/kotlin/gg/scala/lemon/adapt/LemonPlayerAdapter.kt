@@ -32,8 +32,8 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
                 LemonConstants.STRING_METADATA_MAP_TYPE
             )
 
-            lemonPlayer.pastIpAddresses = Serializers.gson.fromJson(jsonObject.get("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
-            lemonPlayer.pastLogins = Serializers.gson.fromJson(jsonObject.get("pastLogins"), LemonConstants.STRING_LONG_MUTABLEMAP_TYPE)
+            lemonPlayer.pastIpAddresses = Serializers.gson.fromJson(jsonObject.get("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE)
+            lemonPlayer.pastLogins = Serializers.gson.fromJson(jsonObject.get("pastLogins"), LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE)
 
             return lemonPlayer
         } catch (e: Throwable) {

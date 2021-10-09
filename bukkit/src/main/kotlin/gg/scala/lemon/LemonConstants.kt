@@ -21,10 +21,7 @@ object LemonConstants {
     val STRING_METADATA_MAP_TYPE: Type = object : TypeToken<HashMap<String, Metadata>>() {}.type
 
     @JvmStatic
-    val STRING_LONG_MUTABLEMAP_TYPE: Type = object : TypeToken<MutableMap<String, Long>>() {}.type
-
-    @JvmStatic
-    val NOTE_ARRAY_LIST_TYPE: Type = object : TypeToken<ArrayList<Note>>() {}.type
+    val STRING_LONG_MUTABLE_MAP_TYPE: Type = object : TypeToken<MutableMap<String, Long>>() {}.type
 
     @JvmStatic
     val UUID_ARRAY_LIST_TYPE: Type = object : TypeToken<MutableList<UUID>>() {}.type
