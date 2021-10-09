@@ -1,5 +1,6 @@
 package gg.scala.lemon.util
 
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.validate.LemonWebData
 import net.evilblock.cubed.serializers.Serializers
 import java.net.URL
@@ -11,12 +12,19 @@ import java.util.*
  */
 object LemonWebUtil {
 
+    /**
+     * Fetches server design information from our API.
+     *
+     * [id] - The server-specific identifier
+     */
     @JvmStatic
     fun fetchServerData(id: String): LemonWebData? {
         return try {
             Scanner(
                 URL(
-                    "https://api.solexgames.com/fetch?id=$id"
+                    "https://${
+                        Lemon.instance.settings.serverPasswordSupplier
+                    }/routing/minecraft/$id"
                 ).openStream()
             ).useDelimiter("\\A").use { scanner ->
                 Serializers.gson.fromJson(

@@ -5,9 +5,6 @@ package gg.scala.lemon.util.validate
  * @since 8/26/2021
  */
 data class LemonWebData(
-    val result: LemonWebStatus,
-    val message: String,
-
     val serverName: String,
 
     val primary: String,

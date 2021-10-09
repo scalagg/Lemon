@@ -40,6 +40,7 @@ import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
+import gg.scala.lemon.util.LemonWebUtil
 import gg.scala.lemon.util.validate.LemonWebData
 import gg.scala.lemon.util.validate.LemonWebStatus
 import me.lucko.helper.Events
@@ -109,15 +110,11 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
     lateinit var entityInteractionHandler: EntityInteractionHandler
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
-//    private lateinit var playerLayer: RedisStorageLayer<CachedLemonPlayer>
-
     private lateinit var consoleLogger: ConsoleLogger
     private lateinit var localInstance: ServerInstance
     private lateinit var redisConnection: RedisConnection
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
-
-    val executor = Executors.newFixedThreadPool(1)
 
     override fun enable()
     {
@@ -125,35 +122,25 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 
         loadBaseConfigurations()
 
-//        val webData = LemonWebUtil.fetchServerData(settings.serverPassword)
-//
-//        if (webData == null) {
-//            consoleLogger.log("Something went wrong during data validation, shutting down... (webData=null)")
-//            server.pluginManager.disablePlugin(this)
-//
-//            return
-//        }
-//
-//        if (webData.result == LemonWebStatus.FAILED) {
-//            consoleLogger.log("Your server password's incorrect. (${webData.message})")
-//            server.pluginManager.disablePlugin(this)
-//
-//            return
-//        }
+        val webData = LemonWebUtil.fetchServerData(
+            settings.serverPassword
+        )
 
-        consoleLogger.log(
-            "Passed data validation checks, now loading Lemon with ${"Scala"}'s information..."
-        ); lemonWebData = LemonWebData(
-        LemonWebStatus.SUCCESS,
-        "",
-        "Scala",
-        "GREEN",
-        "YELLOW",
-        "",
-        "scalagg",
-        "scala.gg",
-        ""
-    )
+        if (webData == null)
+        {
+            logger.severe(
+                "Something went wrong during data validation, shutting down... ${
+                    "(No information was returned, or \"No result was found.\" was returned.)"
+                }"
+            )
+            server.pluginManager.disablePlugin(this)
+
+            return
+        }
+
+        logger.info(
+            "Now loading Lemon with ${lemonWebData.serverName}'s information..."
+        )
 
         runAfterDataValidation()
     }

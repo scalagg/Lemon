@@ -12,6 +12,7 @@ class SettingsConfigProcessor {
 
     @Comment("What's the password to your network details?")
     val serverPassword: String = "server_password"
+    val serverPasswordSupplier: String = "api.scala.gg"
 
     @Comment("Shall console be able to view chat messages?")
     val consoleChat: Boolean = false
@@ -20,7 +21,7 @@ class SettingsConfigProcessor {
     val logDataToFile: Boolean = true
 
     @Comment("Should we enable our disguise system on this server?")
-    val disguiseEnabled: Boolean = true
+    val disguiseEnabled: Boolean = false
 
     val blacklistedCommands = listOf(
         "/ver", "/icanhasbukkit"
