@@ -46,10 +46,6 @@ class BanCommand : BaseCommand() {
         val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
-        if (durationFinal == Long.MAX_VALUE && !sender.hasPermission("lemon.command.ban.permanent")) {
-            throw ConditionFailedException("You do not have permission to issue permanent bans.")
-        }
-
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BAN,
