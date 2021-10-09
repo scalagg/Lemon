@@ -45,7 +45,7 @@ class InvalidatePunishmentRangeCommand : BaseCommand() {
                         ); invalidated++
                     }
 
-                sender.sendMessage("${CC.SEC}Invalidated ${CC.PRI}${invalidated} punishments globally.")
+                sender.sendMessage("${CC.SEC}Invalidated ${CC.PRI}${invalidated}${CC.SEC} punishments globally.")
             }
     }
 

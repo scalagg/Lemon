@@ -12,6 +12,7 @@ object GrantRecalculationUtil {
     fun getProminentGrant(grants: List<Grant>): Grant? {
         return grants
             .sortedByDescending { it.addedAt }
+            .sortedByDescending { it.getRank().weight }
             .firstOrNull { !it.isRemoved && !it.hasExpired && it.getRank().visible && it.isApplicable() }
     }
 
