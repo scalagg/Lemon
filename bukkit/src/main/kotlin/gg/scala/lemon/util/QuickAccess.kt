@@ -6,6 +6,7 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.queue.impl.BananaOutgoingMessageQueue
 import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
@@ -162,7 +163,7 @@ object QuickAccess {
                     it["server"] = Lemon.instance.settings.id
                     it["with-server"] = addServer.toString()
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         }
     }
 
@@ -187,7 +188,7 @@ object QuickAccess {
                     it["server"] = Lemon.instance.settings.id
                     it["with-server"] = addServer.toString()
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         }
     }
 
@@ -223,7 +224,7 @@ object QuickAccess {
                 mutableMapOf<String, String>().also { map ->
                     map["uniqueId"] = punishment.target.toString()
                 }
-            ).dispatchToLemon()
+            ).dispatchImmediately()
         }
     }
 
@@ -242,7 +243,7 @@ object QuickAccess {
                     mutableMapOf<String, String>().also { map ->
                         map["uniqueId"] = punishment.target.toString()
                     }
-                ).dispatchToLemon()
+                ).dispatchImmediately()
             }
 
             false
@@ -258,7 +259,7 @@ object QuickAccess {
                     it["message"] = message
                     it["permission"] = permission ?: ""
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         }
     }
 
@@ -271,7 +272,7 @@ object QuickAccess {
                     it["message"] = gson.toJson(fancyMessage)
                     it["permission"] = permission ?: ""
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         }
     }
 
@@ -284,7 +285,7 @@ object QuickAccess {
                     it["message"] = message
                     it["target"] = uuid.toString()
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         }
     }
 
@@ -297,7 +298,7 @@ object QuickAccess {
                     it["message"] = gson.toJson(fancyMessage)
                     it["target"] = uuid.toString()
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         }
     }
 
@@ -348,13 +349,12 @@ object QuickAccess {
     }
 }
 
-fun Message.dispatchToLemon() {
-    ForkJoinPool.commonPool().execute {
-        Lemon.instance.banana.useResource {
-            it.publish("lemon:spigot", gson.toJson(this))
-            it.close()
-        }
-    }
+fun Message.queueForDispatch() {
+    BananaOutgoingMessageQueue.dispatchSafe(this)
+}
+
+fun Message.dispatchImmediately() {
+    BananaOutgoingMessageQueue.dispatchUrgently(this)
 }
 
 fun Message.dispatchToCocoa() {

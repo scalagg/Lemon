@@ -10,7 +10,7 @@ import gg.scala.lemon.util.QuickAccess.attemptRemoval
 import gg.scala.lemon.util.QuickAccess.fetchIpAddress
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
-import gg.scala.lemon.util.dispatchToLemon
+import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -269,7 +269,7 @@ object PunishmentHandler {
                     mutableMapOf<String, String>().also {
                         it["uniqueId"] = uuid.toString()
                     }
-                ).dispatchToLemon()
+                ).dispatchImmediately()
 
                 if (punishment.category == PunishmentCategory.KICK) {
                     RedisHandler.buildMessage(
@@ -278,7 +278,7 @@ object PunishmentHandler {
                             map["uniqueId"] = punishment.target.toString()
                             map["reason"] = punishment.addedReason
                         }
-                    ).dispatchToLemon()
+                    ).dispatchImmediately()
                 }
             }
         }
@@ -319,7 +319,7 @@ object PunishmentHandler {
                     mutableMapOf<String, String>().also {
                         it["uniqueId"] = uuid.toString()
                     }
-                ).dispatchToLemon()
+                ).dispatchImmediately()
             }
         }
     }

@@ -12,8 +12,8 @@ import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.QuickAccess.shouldBlock
-import gg.scala.lemon.util.dispatchToLemon
 import gg.scala.lemon.util.other.Cooldown
+import gg.scala.lemon.util.queueForDispatch
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -245,7 +245,7 @@ object PlayerListener : Listener
                     it["rank"] = lemonPlayer.activeGrant!!.getRank().uuid.toString()
                     it["server"] = Lemon.instance.settings.id
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
         } else
         {
             for (target in Bukkit.getOnlinePlayers())

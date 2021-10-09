@@ -5,9 +5,8 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
-import gg.scala.lemon.util.QuickAccess.reloadPlayer
 import gg.scala.lemon.util.QuickAccess.senderUuid
-import gg.scala.lemon.util.dispatchToLemon
+import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.util.CC
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
@@ -102,7 +101,7 @@ object GrantHandler {
                 hashMapOf<String, String>().also {
                     it["uniqueId"] = grant.target.toString()
                 }
-            ).dispatchToLemon()
+            ).dispatchImmediately()
 
             sender.sendMessage(arrayOf(
                 "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${grant.getRank().getColoredName()}${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",

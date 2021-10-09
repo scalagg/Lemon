@@ -3,7 +3,7 @@ package gg.scala.lemon.player.rank
 import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.util.dispatchToLemon
+import gg.scala.lemon.util.queueForDispatch
 import gg.scala.lemon.util.type.Savable
 import net.evilblock.cubed.util.CC
 import java.util.*
@@ -68,7 +68,7 @@ class Rank(
                 hashMapOf<String, String>().also {
                     it["uniqueId"] = uuid.toString()
                 }
-            ).dispatchToLemon()
+            ).queueForDispatch()
 
             return@thenApply null
         }
