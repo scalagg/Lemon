@@ -108,10 +108,6 @@ class RankCommand : BaseCommand() {
             throw ConditionFailedException("${CC.YELLOW}$name${CC.RED} must be at most 16 characters long.")
         }
 
-        if (!StringUtils.isAlphanumeric(name)) {
-            throw ConditionFailedException("${CC.YELLOW}$name${CC.RED} must only contain alphanumeric characters.")
-        }
-
         val rank = Rank(name)
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've created the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
