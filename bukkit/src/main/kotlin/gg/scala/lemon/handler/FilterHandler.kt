@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 

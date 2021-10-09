@@ -36,7 +36,7 @@ class CommentCommand : BaseCommand()
         CommentHandler.fetchComments(target = target.uniqueId).thenAccept {
             CommentPaginatedResult.display(
                 sender, listOf(*it.values.toTypedArray()),
-                page ?: 1, command = "comment list %s"
+                page ?: 1, command = "comment list ${target.name} %s"
             )
         }
     }

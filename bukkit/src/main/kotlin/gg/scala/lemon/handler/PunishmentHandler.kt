@@ -16,6 +16,7 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -166,6 +167,13 @@ object PunishmentHandler {
         category: PunishmentCategory, duration: Long, reason: String,
         silent: Boolean = false, rePunishing: Boolean = false
     ) {
+        if (issuer is Player) {
+            if (issuer.uniqueId == uuid) {
+                issuer.sendMessage("${CC.RED}You may not issue punishments towards yourself.")
+                return
+            }
+        }
+
         Tasks.async {
             val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 

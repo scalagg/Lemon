@@ -7,6 +7,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks.sync
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
