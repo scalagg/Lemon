@@ -3,6 +3,7 @@ package gg.scala.lemon.command.moderation
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.FrozenPlayerHandler
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.event.impl.PostFreezeEvent
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
@@ -54,6 +55,8 @@ class FreezeCommand : BaseCommand() {
                     Lemon.instance, true
                 )
             )
+
+            PostFreezeEvent(target.bukkitPlayer!!).dispatch()
 
             FrozenPlayerHandler.expirables[target.bukkitPlayer!!.uniqueId] = FrozenPlayerHandler.FrozenExpirable()
         }

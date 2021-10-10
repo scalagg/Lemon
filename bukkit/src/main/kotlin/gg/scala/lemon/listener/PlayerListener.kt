@@ -317,6 +317,13 @@ object PlayerListener : Listener
     fun onPlayerJoin(event: PlayerJoinEvent)
     {
         val lemonPlayer = PlayerHandler.findPlayer(event.player)
+
+        if (!lemonPlayer.isPresent)
+        {
+            event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
+            return
+        }
+
         event.joinMessage = null
 
         val highestPlayerCount = Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]
