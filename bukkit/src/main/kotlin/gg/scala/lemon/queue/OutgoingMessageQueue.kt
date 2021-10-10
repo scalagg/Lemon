@@ -4,6 +4,7 @@ import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.serializers.Serializers
 import java.util.*
+import java.util.concurrent.ForkJoinPool
 
 /**
  * Queues, or instantly dispatches [Message]
@@ -64,8 +65,10 @@ open class OutgoingMessageQueue(
 
     private fun dispatchInternal(popped: Message)
     {
-        Lemon.instance.banana.useResource {
-            it.publish(channel, Serializers.gson.toJson(popped))
+        ForkJoinPool.commonPool().execute {
+            Lemon.instance.banana.useResource {
+                it.publish(channel, Serializers.gson.toJson(popped))
+            }
         }
     }
 

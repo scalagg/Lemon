@@ -7,3 +7,4 @@ import gg.scala.lemon.queue.OutgoingMessageQueue
  * @since 10/9/2021
  */
 object BananaOutgoingMessageQueue : OutgoingMessageQueue("banana")
+

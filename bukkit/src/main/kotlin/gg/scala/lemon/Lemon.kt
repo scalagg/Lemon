@@ -39,6 +39,7 @@ import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
+import gg.scala.lemon.queue.impl.BananaOutgoingMessageQueue
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
@@ -171,6 +172,8 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
         loadHandlers()
         loadCommands()
 
+        startMessageQueues()
+
         setupPlayerLookAndFeel()
 
         server.scheduler.runTaskTimerAsynchronously(this, ResourceUpdateRunnable(), 0L, 20L)
@@ -185,7 +188,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
             0L, 600L
         )
 
-        Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
+//        Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
 
         server.consoleSender.sendMessage(
             "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Players will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
@@ -206,6 +209,13 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
         Cubed.instance.uuidCache.load()
 
         Schedulers.sync().runLater({ canJoin = true }, 60L)
+    }
+
+    private fun startMessageQueues()
+    {
+        BananaOutgoingMessageQueue.start()
+
+        logger.info("Started all outgoing jedis message queues.")
     }
 
     private fun loadListeners()

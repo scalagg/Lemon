@@ -13,10 +13,12 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-object RedisHandler : BananaHandler {
+object RedisHandler : BananaHandler
+{
 
     @Subscribe("channel-message")
-    fun onChannelMessage(message: Message) {
+    fun onChannelMessage(message: Message)
+    {
         val newMessage = message["message"]!!
         val sender = message["sender"]!!
 
@@ -27,7 +29,8 @@ object RedisHandler : BananaHandler {
         val channel = ChatHandler.findChannel(message["channel"]!!) ?: return
 
         Bukkit.getOnlinePlayers().forEach {
-            if (channel.hasPermission(it)) {
+            if (channel.hasPermission(it))
+            {
                 it.sendMessage(
                     channel.getFormatted(newMessage, sender, rank, it).replace("%s", message["server"]!!)
                 )
@@ -39,7 +42,8 @@ object RedisHandler : BananaHandler {
         value = "staff-message",
         priority = 10
     )
-    fun onStaffMessage(message: Message) {
+    fun onStaffMessage(message: Message)
+    {
         val newMessage = message["message"]
         val permission = message["permission"]
 
@@ -54,10 +58,12 @@ object RedisHandler : BananaHandler {
 
             val lemonPlayer = PlayerHandler.findPlayer(it).orElse(null)
 
-            return@sendMessage if (lemonPlayer != null) {
+            return@sendMessage if (lemonPlayer != null)
+            {
                 val base = lemonPlayer.hasPermission(permission) && !lemonPlayer.getSetting("staff-messages-disabled")
 
-                if (potentialFlag != null) {
+                if (potentialFlag != null)
+                {
                     lemonPlayer.hasPermission(permission) && !lemonPlayer.getSetting(potentialFlag)
                 } else base
             } else false
@@ -65,24 +71,29 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("global-message")
-    fun onGlobalMessage(message: Message) {
+    fun onGlobalMessage(message: Message)
+    {
         val newMessage = message["message"]
         val permission = message["permission"]
 
-        if (permission!!.isNotBlank()) {
+        if (permission!!.isNotBlank())
+        {
             Bukkit.broadcast(newMessage, permission)
-        } else {
+        } else
+        {
             Bukkit.broadcastMessage(newMessage)
         }
     }
 
     @Subscribe("mass-whitelist")
-    fun onMassWhitelist(message: Message) {
+    fun onMassWhitelist(message: Message)
+    {
         val group = message["group"]!!
         val issuer = message["issuer"]!!
         val setting = message["setting"]!!
 
-        if (Lemon.instance.getLocalServerInstance().serverGroup.equals(group, true)) {
+        if (Lemon.instance.getLocalServerInstance().serverGroup.equals(group, true))
+        {
             Bukkit.setWhitelist(setting.toBoolean())
 
             Bukkit.broadcast(
@@ -95,7 +106,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("player-message")
-    fun onPlayerMessage(message: Message) {
+    fun onPlayerMessage(message: Message)
+    {
         val newMessage = message["message"]
         val targetUuid = UUID.fromString(
             message["target"]
@@ -105,7 +117,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("global-fancy-message")
-    fun onGlobalFancyMessage(message: Message) {
+    fun onGlobalFancyMessage(message: Message)
+    {
         val newMessage = Serializers.gson.fromJson(
             message["message"],
             FancyMessage::class.java
@@ -118,7 +131,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("player-fancy-message")
-    fun onPlayerFancyMessage(message: Message) {
+    fun onPlayerFancyMessage(message: Message)
+    {
         val newMessage = Serializers.gson.fromJson(
             message["message"],
             FancyMessage::class.java
@@ -129,13 +143,15 @@ object RedisHandler : BananaHandler {
 
         val player = Bukkit.getPlayer(targetUuid)
 
-        if (player != null) {
+        if (player != null)
+        {
             newMessage.sendToPlayer(player)
         }
     }
 
     @Subscribe("recalculate-grants")
-    fun onRecalculate(message: Message) {
+    fun onRecalculate(message: Message)
+    {
         val targetUuid = UUID.fromString(
             message["target"]
         )
@@ -148,7 +164,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("recalculate-punishments")
-    fun onPunishmentHandling(message: Message) {
+    fun onPunishmentHandling(message: Message)
+    {
         val targetUuid = UUID.fromString(
             message["uniqueId"]
         )
@@ -159,7 +176,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("reload-player")
-    fun onReloadPlayer(message: Message) {
+    fun onReloadPlayer(message: Message)
+    {
         val targetUuid = UUID.fromString(
             message["uniqueId"]
         )
@@ -170,7 +188,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("cross-kick")
-    fun onCrossKick(message: Message) {
+    fun onCrossKick(message: Message)
+    {
         val targetUuid = UUID.fromString(
             message["uniqueId"]
         )
@@ -187,7 +206,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("rank-delete")
-    fun onRankDelete(message: Message) {
+    fun onRankDelete(message: Message)
+    {
         val rankUuid = UUID.fromString(
             message["uniqueId"]
         )
@@ -196,7 +216,8 @@ object RedisHandler : BananaHandler {
     }
 
     @Subscribe("rank-update")
-    fun onRankUpdate(message: Message) {
+    fun onRankUpdate(message: Message)
+    {
         val completableFuture = DataStoreHandler.rankLayer
             .fetchEntryByKey(message["uniqueId"])
 
@@ -205,15 +226,18 @@ object RedisHandler : BananaHandler {
         }
     }
 
-    private fun sendMessage(message: String, permission: (Player) -> Boolean) {
+    private fun sendMessage(message: String, permission: (Player) -> Boolean)
+    {
         Bukkit.getOnlinePlayers().forEach {
-            if (permission.invoke(it)) {
+            if (permission.invoke(it))
+            {
                 it.sendMessage(message)
             }
         }
     }
 
-    fun buildMessage(packet: String, message: Map<String, String>): Message {
+    fun buildMessage(packet: String, message: Map<String, String>): Message
+    {
         return Message(packet).also {
             message.forEach { (key, value) ->
                 it[key] = value
