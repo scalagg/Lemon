@@ -52,7 +52,7 @@ class RankCommand : BaseCommand()
     @CommandCompletion("@ranks")
     @Subcommand("view|info|information")
     @Description("View information for a certain rank.")
-    fun onList(sender: CommandSender, rank: Rank)
+    fun onInfo(sender: CommandSender, rank: Rank)
     {
         sender.sendMessage("${CC.B_PRI}${rank.name} Information:")
         sender.sendMessage("")
@@ -88,7 +88,17 @@ class RankCommand : BaseCommand()
         if (rank.permissions.isNotEmpty())
         {
             rank.permissions.forEach {
-                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}$it")
+                val suffix = if (it.startsWith("%")) {
+                    "(Bungee)"
+                } else if (it.startsWith("-")) {
+                    "(Disabled)"
+                } else {
+                    ""
+                }
+
+                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${
+                    it.removePrefix("%").removePrefix("-")
+                } ${CC.GRAY}$suffix")
             }
         }
     }
