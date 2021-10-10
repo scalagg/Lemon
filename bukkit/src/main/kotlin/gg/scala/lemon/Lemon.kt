@@ -40,6 +40,7 @@ import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.task.ResourceUpdateRunnable
+import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.util.LemonWebUtil
 import gg.scala.lemon.util.validate.LemonWebData
@@ -177,6 +178,11 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable(this),
             0L, DaddySharkConstants.UPDATE_DELAY_MILLI
+        )
+
+        Schedulers.async().runRepeating(
+            ServerMonitorRunnable(this.serverStatisticProvider),
+            0L, 600L
         )
 
         Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
