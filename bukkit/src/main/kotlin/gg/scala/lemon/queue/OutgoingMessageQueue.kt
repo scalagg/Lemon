@@ -25,22 +25,23 @@ open class OutgoingMessageQueue(
     {
         while (true)
         {
-            if (messages.isNotEmpty())
-            {
-                val popped = messages.pop()
-
-                if (popped != null)
-                {
-                    dispatchInternal(popped)
-                }
-            }
-
             try
             {
-                sleep(delay)
+                if (messages.isNotEmpty())
+                {
+                    val popped = messages.pop()
+
+                    if (popped != null)
+                    {
+                        dispatchInternal(popped)
+                    }
+                }
             } catch (e: Exception)
             {
                 e.printStackTrace()
+            } finally
+            {
+                sleep(delay)
             }
         }
     }

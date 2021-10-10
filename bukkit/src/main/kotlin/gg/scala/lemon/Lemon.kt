@@ -39,7 +39,7 @@ import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
-import gg.scala.lemon.queue.impl.BananaOutgoingMessageQueue
+import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
@@ -213,7 +213,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 
     private fun startMessageQueues()
     {
-        BananaOutgoingMessageQueue.start()
+        LemonOutgoingMessageQueue.start()
 
         logger.info("Started all outgoing jedis message queues.")
     }
