@@ -25,11 +25,14 @@ open class OutgoingMessageQueue(
     {
         while (true)
         {
-            val popped = messages.pop()
-
-            if (popped != null)
+            if (messages.isNotEmpty())
             {
-                dispatchInternal(popped)
+                val popped = messages.pop()
+
+                if (popped != null)
+                {
+                    dispatchInternal(popped)
+                }
             }
 
             try
