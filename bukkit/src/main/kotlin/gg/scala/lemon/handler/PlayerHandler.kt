@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
@@ -49,10 +50,9 @@ object PlayerHandler {
 
         inventory[8] =
             ItemBuilder(XMaterial.PAPER)
-                .name("${CC.B_PRI}Freeze Player")
+                .name("${CC.B_PRI}Staff List")
                 .addToLore(
-                    "${CC.GRAY}Click a player using",
-                    "${CC.GRAY}this paper to freeze them."
+                    "${CC.GRAY}View all online staff.",
                 ).build()
 
         vanishItems[true] = ItemBuilder(XMaterial.LIME_DYE)
@@ -75,6 +75,7 @@ object PlayerHandler {
             .handler {
                 val isHoldingPushForward =  it.item.isSimilar(inventory[1])
                 val isHoldingToggleVanish =  it.item.hasItemMeta() && it.item.itemMeta.displayName.contains("Vanish")
+                val isHoldingFreeze =  it.item.isSimilar(inventory[8])
 
                 if (isHoldingToggleVanish) {
                     Bukkit.dispatchCommand(
@@ -87,6 +88,8 @@ object PlayerHandler {
                 } else if (isHoldingPushForward) {
                     it.player.velocity = it.player.location
                         .direction.multiply(2.5F)
+                } else if (isHoldingFreeze) {
+                    StaffListMenu().openMenu(it.player)
                 }
             }
 
@@ -96,18 +99,9 @@ object PlayerHandler {
             .filter { it.player.hasMetadata("mod-mode") }
             .handler {
                 val rightClicked = it.rightClicked as Player
-
                 val isHoldingViewInventory =  it.player.inventory.itemInHand.isSimilar(inventory[0])
-                val isHoldingFreeze =  it.player.inventory.itemInHand.isSimilar(inventory[8])
 
-                if (isHoldingFreeze) {
-                    Bukkit.dispatchCommand(
-                        it.player,
-                        "freeze ${rightClicked.name}"
-                    )
-                } else if (isHoldingViewInventory) {
-                    // TODO: 10/3/2021 handle view inventory menu
-                }
+                // TODO: 10/10/2021 finish view inv
             }
     }
 
