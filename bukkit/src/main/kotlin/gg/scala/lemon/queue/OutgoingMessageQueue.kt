@@ -71,6 +71,7 @@ open class OutgoingMessageQueue(
         ForkJoinPool.commonPool().execute {
             Lemon.instance.banana.useResource {
                 it.publish(channel, Serializers.gson.toJson(popped))
+                it.close()
             }
         }
     }
