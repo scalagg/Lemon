@@ -74,6 +74,12 @@ object PlayerListener : Listener
     {
         val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
 
+        if (lemonPlayer == null)
+        {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad)
+            return
+        }
+
         if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff)
         {
             event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
