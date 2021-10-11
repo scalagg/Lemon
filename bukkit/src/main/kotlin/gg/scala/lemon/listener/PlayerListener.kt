@@ -57,7 +57,7 @@ object PlayerListener : Listener
 
         executor.execute {
             var lemonPlayer = DataStoreHandler.lemonPlayerLayer.fetchEntryByKeySync(event.uniqueId.toString())
-            println("It took ${System.currentTimeMillis() - current}ms to load the profile.")
+            println("It took ${System.currentTimeMillis() - current}ms to load the profile. (${event.name})")
 
             if (lemonPlayer != null) {
                 PlayerHandler.players[event.uniqueId] = lemonPlayer

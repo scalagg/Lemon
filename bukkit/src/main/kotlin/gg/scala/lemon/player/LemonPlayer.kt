@@ -89,6 +89,8 @@ class LemonPlayer(
         nothing: Boolean = false
     ): CompletableFuture<Void>
     {
+        val current = System.currentTimeMillis()
+
         return PunishmentHandler
             .fetchAllPunishmentsForTarget(uniqueId).thenAccept { list ->
                 list.forEach { QuickAccess.attemptExpiration(it) }
@@ -150,6 +152,8 @@ class LemonPlayer(
                         }
                     }
                 }
+
+                println("It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
             }
     }
 
@@ -228,10 +232,6 @@ class LemonPlayer(
         val current = System.currentTimeMillis()
 
         return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
-            if (connecting) {
-                println("It took ${System.currentTimeMillis() - current}ms to fetch grants.")
-            }
-
             if (grants == null || grants.isEmpty())
             {
                 setupAutomaticGrant()
@@ -283,6 +283,10 @@ class LemonPlayer(
             }
 
             if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
+
+            if (connecting) {
+                println("It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
+            }
         }
     }
 
@@ -470,7 +474,7 @@ class LemonPlayer(
                 }
             }
 
-            println("It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments.")
+            println("It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
         }
     }
 
