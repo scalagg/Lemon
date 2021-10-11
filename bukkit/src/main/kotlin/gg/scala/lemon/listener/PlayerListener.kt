@@ -32,10 +32,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
 import java.util.concurrent.ForkJoinPool
 
 object PlayerListener : Listener
 {
+
+    val executor = Executors.newFixedThreadPool(1)
 
     @EventHandler(
         priority = EventPriority.HIGHEST,
@@ -49,8 +53,11 @@ object PlayerListener : Listener
             return
         }
 
-        ForkJoinPool.commonPool().execute {
+        val current = System.currentTimeMillis()
+
+        executor.execute {
             var lemonPlayer = DataStoreHandler.lemonPlayerLayer.fetchEntryByKeySync(event.uniqueId.toString())
+            println("It took ${System.currentTimeMillis() - current}ms to load the profile.")
 
             if (lemonPlayer != null) {
                 PlayerHandler.players[event.uniqueId] = lemonPlayer

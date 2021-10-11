@@ -37,7 +37,8 @@ class LemonPlayer(
 
     @Transient
     var ipAddress: String?
-) : Savable {
+) : Savable
+{
 
     private val bungeePermissions = mutableListOf<String>()
 
@@ -69,14 +70,16 @@ class LemonPlayer(
 
     private val classInit = System.currentTimeMillis()
 
-    init {
+    init
+    {
         cooldowns["command"] = Cooldown(0L)
         cooldowns["request"] = Cooldown(0L)
         cooldowns["report"] = Cooldown(0L)
         cooldowns["chat"] = Cooldown(0L)
         cooldowns["slowChat"] = Cooldown(0L)
 
-        for (value in PunishmentCategory.VALUES) {
+        for (value in PunishmentCategory.VALUES)
+        {
             activePunishments[value] = null
         }
     }
@@ -84,17 +87,20 @@ class LemonPlayer(
     fun recalculatePunishments(
         connecting: Boolean = false,
         nothing: Boolean = false
-    ): CompletableFuture<Void> {
+    ): CompletableFuture<Void>
+    {
         return PunishmentHandler
             .fetchAllPunishmentsForTarget(uniqueId).thenAccept { list ->
                 list.forEach { QuickAccess.attemptExpiration(it) }
 
-                for (value in PunishmentCategory.VALUES) {
+                for (value in PunishmentCategory.VALUES)
+                {
                     val newList = list.filter {
                         it.category == value && it.isActive
                     }
 
-                    if (newList.isEmpty()) {
+                    if (newList.isEmpty())
+                    {
                         activePunishments[value] = null
                         continue
                     }
@@ -104,12 +110,15 @@ class LemonPlayer(
 
                 if (nothing) return@thenAccept
 
-                if (!connecting) {
+                if (!connecting)
+                {
                     activePunishments.forEach {
-                        if (it.value != null) {
+                        if (it.value != null)
+                        {
                             val message = getPunishmentMessage(it.value!!)
 
-                            when (it.value!!.category.intensity) {
+                            when (it.value!!.category.intensity)
+                            {
                                 PunishmentCategoryIntensity.MEDIUM -> Tasks.sync {
                                     bukkitPlayer?.ifPresent { player ->
                                         player.kickPlayer(message)
@@ -121,13 +130,16 @@ class LemonPlayer(
                             }
                         }
                     }
-                } else {
+                } else
+                {
                     val sortedCategories = PunishmentCategory.PERSISTENT.sortedByDescending { it.ordinal }
 
-                    for (sortedCategory in sortedCategories) {
+                    for (sortedCategory in sortedCategories)
+                    {
                         val punishmentInCategory = activePunishments[sortedCategory]
 
-                        if (punishmentInCategory != null) {
+                        if (punishmentInCategory != null)
+                        {
                             val message = getPunishmentMessage(punishmentInCategory, current = false)
 
                             handleOnConnection.add {
@@ -143,19 +155,24 @@ class LemonPlayer(
 
     fun getIpRelMessage(
         coloredName: String, punishment: Punishment
-    ): String {
-        if (punishment.category == BLACKLIST) {
+    ): String
+    {
+        if (punishment.category == BLACKLIST)
+        {
             return String.format(
                 Lemon.instance.languageConfig.blacklistRelationMessage,
                 coloredName,
             )
-        } else {
-            return if (punishment.isPermanent) {
+        } else
+        {
+            return if (punishment.isPermanent)
+            {
                 String.format(
                     Lemon.instance.languageConfig.banRelationPermanentMessage,
                     coloredName, coloredName
                 )
-            } else {
+            } else
+            {
                 String.format(
                     Lemon.instance.languageConfig.banRelationTemporaryMessage,
                     coloredName, coloredName
@@ -167,8 +184,10 @@ class LemonPlayer(
     fun getPunishmentMessage(
         punishment: Punishment,
         current: Boolean = true
-    ): String {
-        return when (punishment.category) {
+    ): String
+    {
+        return when (punishment.category)
+        {
             KICK -> """
                 ${CC.RED}You've been kicked from ${Lemon.instance.settings.id}:
                 ${CC.WHITE}${punishment.addedReason}
@@ -177,13 +196,15 @@ class LemonPlayer(
                 ${CC.RED}${if (current) "You've been" else "You're currently"} muted for: ${CC.WHITE}${punishment.addedReason}
                 ${CC.RED}This punishment will ${punishment.fancyDurationFromNowStringRaw}.
             """.trimIndent()
-            BAN -> if (punishment.isPermanent) {
+            BAN -> if (punishment.isPermanent)
+            {
                 String.format(
                     Lemon.instance.languageConfig.permBanMessage,
                     punishment.addedReason,
                     SplitUtil.splitUuid(punishment.uuid)
                 )
-            } else {
+            } else
+            {
                 String.format(
                     Lemon.instance.languageConfig.tempBanMessage,
                     punishment.durationString,
@@ -202,9 +223,17 @@ class LemonPlayer(
         forceRecalculatePermissions: Boolean = false,
         shouldCalculateNow: Boolean = false,
         connecting: Boolean = false
-    ): CompletableFuture<Void> {
+    ): CompletableFuture<Void>
+    {
+        val current = System.currentTimeMillis()
+
         return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
-            if (grants == null || grants.isEmpty()) {
+            if (connecting) {
+                println("It took ${System.currentTimeMillis() - current}ms to fetch grants.")
+            }
+
+            if (grants == null || grants.isEmpty())
+            {
                 setupAutomaticGrant()
 
                 return@thenAccept
@@ -214,7 +243,8 @@ class LemonPlayer(
             val previousRank = fetchPreviousRank(grants)
 
             grants.forEach { grant ->
-                if (!grant.isRemoved && grant.hasExpired) {
+                if (!grant.isRemoved && grant.hasExpired)
+                {
                     grant.removedReason = "Expired"
                     grant.removedAt = System.currentTimeMillis()
                     grant.removedOn = Lemon.instance.settings.id
@@ -230,12 +260,14 @@ class LemonPlayer(
 
             var shouldRecalculatePermissions = forceRecalculatePermissions
 
-            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.getRank().uuid) {
+            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.getRank().uuid)
+            {
                 shouldRecalculatePermissions = true
                 shouldNotifyPlayer = true
             }
 
-            if (shouldNotifyPlayer && !connecting) {
+            if (shouldNotifyPlayer && !connecting)
+            {
                 bukkitPlayer?.ifPresent {
                     notifyPlayerOfRankUpdate(it)
 
@@ -245,7 +277,8 @@ class LemonPlayer(
                 }
             }
 
-            if (activeGrant == null) {
+            if (activeGrant == null)
+            {
                 setupAutomaticGrant()
             }
 
@@ -253,62 +286,76 @@ class LemonPlayer(
         }
     }
 
-    fun isAuthExempt(): Boolean {
+    fun isAuthExempt(): Boolean
+    {
         return getSetting("auth-exempt")
     }
 
-    fun hasAuthenticatedThisSession(): Boolean {
+    fun hasAuthenticatedThisSession(): Boolean
+    {
         return bukkitPlayer?.hasMetadata("authenticated") == true
     }
 
-    fun hasSetupAuthentication(): Boolean {
+    fun hasSetupAuthentication(): Boolean
+    {
         return getMetadata("auth-secret") != null
     }
 
-    fun getAuthSecret(): String {
+    fun getAuthSecret(): String
+    {
         return getMetadata("auth-secret")?.asString() ?: ""
     }
 
-    private fun needsToReAuthenticate(): Boolean {
+    private fun needsToReAuthenticate(): Boolean
+    {
         val meta = getMetadata("last-auth")
 
         return meta == null || System.currentTimeMillis() > meta.asLong() + TimeUnit.HOURS.toMillis(12L)
     }
 
-    fun validatePlayerAuthentication() {
-        if (!hasPermission("lemon.2fa.forced")) {
+    fun validatePlayerAuthentication()
+    {
+        if (!hasPermission("lemon.2fa.forced"))
+        {
             return
         }
 
-        if (isAuthExempt()) {
+        if (isAuthExempt())
+        {
             authenticateInternal()
             return
         }
 
         val authSecret = getMetadata("auth-secret")
 
-        if (authSecret != null) {
-            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress || needsToReAuthenticate()) {
+        if (authSecret != null)
+        {
+            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress || needsToReAuthenticate())
+            {
                 authenticateInternal()
 
-                if (LemonConstants.LOBBY) {
+                if (LemonConstants.LOBBY)
+                {
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been automatically authenticated.")
                 }
-            } else {
+            } else
+            {
                 savePreviousIpAddressAsCurrent = true
 
                 Schedulers.sync().callLater({
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate using ${CC.WHITE}/auth <code>${CC.SEC}.")
                 }, 1L)
             }
-        } else {
+        } else
+        {
             Schedulers.sync().callLater({
                 bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
             }, 1L)
         }
     }
 
-    fun authenticateInternal() {
+    fun authenticateInternal()
+    {
         bukkitPlayer?.setMetadata(
             "authenticated",
             FixedMetadataValue(Lemon.instance, true)
@@ -320,7 +367,8 @@ class LemonPlayer(
         )
     }
 
-    fun authenticateInternalReversed() {
+    fun authenticateInternalReversed()
+    {
         bukkitPlayer?.removeMetadata(
             "authenticated",
             Lemon.instance
@@ -329,20 +377,25 @@ class LemonPlayer(
         removeMetadata("last-auth")
     }
 
-    fun handleAuthMap(authSecret: String) {
+    fun handleAuthMap(authSecret: String)
+    {
         val mapRenderer: ImageMapRenderer
 
-        try {
+        try
+        {
             mapRenderer = ImageMapRenderer(
                 name, authSecret, LemonConstants.WEB_LINK
             )
-        } catch (e: WriterException) {
+        } catch (e: WriterException)
+        {
             println("[Lemon] [2FA] An error occurred: ${e.message}")
 
-            bukkitPlayer?.sendMessage(arrayOf(
-                "${CC.RED}While setting your 2FA, an error occurred.",
-                "${CC.RED}This error has been reported, sorry for the inconvenience."
-            ))
+            bukkitPlayer?.sendMessage(
+                arrayOf(
+                    "${CC.RED}While setting your 2FA, an error occurred.",
+                    "${CC.RED}This error has been reported, sorry for the inconvenience."
+                )
+            )
             return
         }
 
@@ -372,7 +425,10 @@ class LemonPlayer(
         notNullPlayer.updateInventory()
     }
 
-    fun checkForIpRelative() {
+    fun checkForIpRelative()
+    {
+        val current = System.currentTimeMillis()
+
         PlayerHandler.fetchAlternateAccountsFor(uniqueId).thenAccept { lemonPlayers ->
             lemonPlayers.forEach {
                 val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
@@ -380,13 +436,16 @@ class LemonPlayer(
 
                 val matchingIpInfo = lastIpAddress == targetLastIpAddress
 
-                if (matchingIpInfo) {
-                    for (punishmentCategory in PunishmentCategory.IP_REL) {
+                if (matchingIpInfo)
+                {
+                    for (punishmentCategory in PunishmentCategory.IP_REL)
+                    {
                         val punishments = PunishmentHandler
                             .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
 
                         punishments.thenAccept { list ->
-                            if (list.isNotEmpty()) {
+                            if (list.isNotEmpty())
+                            {
                                 activePunishments[IP_RELATIVE] = list[0]
                             }
                         }
@@ -396,7 +455,8 @@ class LemonPlayer(
 
             val ipRelPunishment = activePunishments[IP_RELATIVE]
 
-            if (ipRelPunishment != null) {
+            if (ipRelPunishment != null)
+            {
                 handleOnConnection.add {
                     CompletableFuture.supplyAsync {
                         QuickAccess.fetchColoredName(ipRelPunishment.target)
@@ -409,10 +469,13 @@ class LemonPlayer(
                     }
                 }
             }
+
+            println("It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments.")
         }
     }
 
-    fun pushCocoaUpdates() {
+    fun pushCocoaUpdates()
+    {
         RedisHandler.buildMessage(
             "permission-update",
             hashMapOf<String, String>().also {
@@ -425,39 +488,48 @@ class LemonPlayer(
         ).dispatchToCocoa()
     }
 
-    private fun fetchPreviousRank(grants: List<Grant>): UUID? {
+    private fun fetchPreviousRank(grants: List<Grant>): UUID?
+    {
         var uuid: UUID? = null
 
-        if (activeGrant == null) {
+        if (activeGrant == null)
+        {
             val currentGrant = GrantRecalculationUtil.getProminentGrant(grants)
 
-            if (currentGrant != null) {
+            if (currentGrant != null)
+            {
                 uuid = currentGrant.getRank().uuid
             }
-        } else {
+        } else
+        {
             uuid = activeGrant!!.getRank().uuid
         }
 
         return uuid
     }
 
-    fun checkForGrantUpdate() {
+    fun checkForGrantUpdate()
+    {
         recalculateGrants(
             shouldCalculateNow = true
         )
     }
 
-    private fun notifyPlayerOfRankUpdate(player: Player) {
+    private fun notifyPlayerOfRankUpdate(player: Player)
+    {
         activeGrant?.let { grant ->
             player.sendMessage("${CC.GREEN}Your rank has been set to ${grant.getRank().getColoredName()}${CC.GREEN}.")
         }
     }
 
-    private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false) {
+    private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false)
+    {
         val handleAddPermission: (String, Player) -> Unit = { it, player ->
-            if (it.startsWith("%")) {
+            if (it.startsWith("%"))
+            {
                 bungeePermissions.add(it.removePrefix("%"))
-            } else {
+            } else
+            {
                 attachment!!.setPermission(it, !it.startsWith("*"))
 
                 VaultUtil.usePermissions { permission ->
@@ -484,12 +556,15 @@ class LemonPlayer(
             )
         }
 
-        if (instant) {
-            if (bukkitPlayer != null) {
+        if (instant)
+        {
+            if (bukkitPlayer != null)
+            {
                 handlePlayerSetup.invoke(bukkitPlayer!!)
                 pushCocoaUpdates()
             }
-        } else {
+        } else
+        {
             handleOnConnection.add {
                 handlePlayerSetup.invoke(it)
                 pushCocoaUpdates()
@@ -497,15 +572,19 @@ class LemonPlayer(
         }
     }
 
-    private fun setupPermissionAttachment(player: Player) {
-        if (this.attachment != null) {
+    private fun setupPermissionAttachment(player: Player)
+    {
+        if (this.attachment != null)
+        {
             this.attachment!!.permissions.clear()
-        } else {
+        } else
+        {
             this.attachment = player.addAttachment(Lemon.instance)
         }
     }
 
-    private fun setupAutomaticGrant() {
+    private fun setupAutomaticGrant()
+    {
         val rank = RankHandler.getDefaultRank()
         activeGrant = Grant(
             UUID.randomUUID(),
@@ -521,40 +600,48 @@ class LemonPlayer(
         GrantHandler.registerGrant(activeGrant!!)
     }
 
-    fun getColoredName(): String {
+    fun getColoredName(): String
+    {
         val bukkitPlayer = bukkitPlayer!!
 
         return QuickAccess.realRank(bukkitPlayer).color + bukkitPlayer.name
     }
 
-    fun getSetting(id: String): Boolean {
+    fun getSetting(id: String): Boolean
+    {
         val data = getMetadata(id)
         return data != null && data.asBoolean()
     }
 
-    fun fetchPunishmentOf(category: PunishmentCategory): Punishment? {
+    fun fetchPunishmentOf(category: PunishmentCategory): Punishment?
+    {
         return this.activePunishments[category]
     }
 
     fun hasPermission(
         permission: String,
         checkType: PermissionCheck = PermissionCheck.PLAYER
-    ): Boolean {
+    ): Boolean
+    {
         var hasPermission = false
 
-        when (checkType) {
+        when (checkType)
+        {
             PermissionCheck.COMPOUNDED -> hasPermission =
                 activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
             PermissionCheck.PLAYER -> bukkitPlayer?.ifPresent {
-                if (it.isOp || it.hasPermission(permission.toLowerCase())) {
+                if (it.isOp || it.hasPermission(permission.toLowerCase()))
+                {
                     hasPermission = true
                 }
             }
-            PermissionCheck.BOTH -> {
+            PermissionCheck.BOTH ->
+            {
                 hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
 
                 bukkitPlayer?.ifPresent {
-                    if (it.isOp || it.hasPermission(permission.toLowerCase())) {
+                    if (it.isOp || it.hasPermission(permission.toLowerCase()))
+                    {
                         hasPermission = true
                     }
                 }
@@ -564,33 +651,41 @@ class LemonPlayer(
         return hasPermission
     }
 
-    fun resetChatCooldown() {
+    fun resetChatCooldown()
+    {
         val donor = hasPermission("lemon.donator")
 
-        cooldowns["chat"] = if (donor) {
+        cooldowns["chat"] = if (donor)
+        {
             Cooldown(1000L)
-        } else {
+        } else
+        {
             Cooldown(3000L)
         }
     }
 
-    fun updateOrAddMetadata(id: String, data: Metadata) {
+    fun updateOrAddMetadata(id: String, data: Metadata)
+    {
         metadata[id] = data
     }
 
-    fun removeMetadata(id: String): Metadata? {
+    fun removeMetadata(id: String): Metadata?
+    {
         return metadata.remove(id)
     }
 
-    fun hasMetadata(id: String): Boolean {
+    fun hasMetadata(id: String): Boolean
+    {
         return metadata.containsKey(id)
     }
 
-    fun getMetadata(id: String): Metadata? {
+    fun getMetadata(id: String): Metadata?
+    {
         return metadata.getOrDefault(id, null)
     }
 
-    override fun save(): CompletableFuture<Void> {
+    override fun save(): CompletableFuture<Void>
+    {
         finalizeMetaData()
 
         return DataStoreHandler.lemonPlayerLayer.saveEntry(
@@ -598,7 +693,8 @@ class LemonPlayer(
         )
     }
 
-    private fun finalizeMetaData() {
+    private fun finalizeMetaData()
+    {
         updateOrAddMetadata(
             "last-connection", Metadata(System.currentTimeMillis())
         )
@@ -628,7 +724,8 @@ class LemonPlayer(
         }
     }
 
-    fun handlePostLoad() {
+    fun handlePostLoad()
+    {
         recalculateGrants(
             connecting = true,
             forceRecalculatePermissions = true
@@ -652,34 +749,42 @@ class LemonPlayer(
      * Validates that the player still has the
      * permission required to access their current channel.
      */
-    private fun checkChannelPermission(player: Player) {
+    private fun checkChannelPermission(player: Player)
+    {
         metadata["channel"]?.let { metadata ->
             val channel = ChatHandler.findChannel(metadata.asString())
 
-            if (channel != null) {
-                if (!channel.hasPermission(player)) {
+            if (channel != null)
+            {
+                if (!channel.hasPermission(player))
+                {
                     removeMetadata("channel")
                 }
             }
         }
     }
 
-    private fun handleAutomaticStaffModules(player: Player) {
+    private fun handleAutomaticStaffModules(player: Player)
+    {
         if (
             player.hasPermission("lemon.staff")
-        ) {
-           handleApplicableClient(player) {
-               try {
-                   it.enableStaffModules(player)
+        )
+        {
+            handleApplicableClient(player) {
+                try
+                {
+                    it.enableStaffModules(player)
 
-                   player.sendMessage("${CC.GREEN}We've automatically enabled ${it.getClientName()} staff modules for you.")
-               } catch (ignored: RuntimeException) {
-               }
-           }
+                    player.sendMessage("${CC.GREEN}We've automatically enabled ${it.getClientName()} staff modules for you.")
+                } catch (ignored: RuntimeException)
+                {
+                }
+            }
         }
     }
 
-    fun handleIfFirstCreated() {
+    fun handleIfFirstCreated()
+    {
         updateOrAddMetadata(
             "first-connection",
             Metadata(System.currentTimeMillis())
@@ -694,15 +799,19 @@ class LemonPlayer(
         handlePostLoad()
     }
 
-    private fun Player?.ifPresent(block: (Player) -> Unit) {
-        if (this != null) {
+    private fun Player?.ifPresent(block: (Player) -> Unit)
+    {
+        if (this != null)
+        {
             block.invoke(this)
         }
     }
 
-    fun removeMap() {
+    fun removeMap()
+    {
         bukkitPlayer?.inventory?.contents?.forEachIndexed { index, itemStack ->
-            if (itemStack != null && itemStack.type == Material.MAP) {
+            if (itemStack != null && itemStack.type == Material.MAP)
+            {
                 bukkitPlayer?.inventory?.setItem(index, ItemStack(Material.AIR))
             }
         }
