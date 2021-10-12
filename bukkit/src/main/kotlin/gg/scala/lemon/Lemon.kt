@@ -188,8 +188,6 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
             0L, 600L
         )
 
-//        Schedulers.sync().runRepeating(Runnable { System.gc() }, 0L, 100L)
-
         server.consoleSender.sendMessage(
             "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Players will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
         )
