@@ -122,11 +122,7 @@ internal object DisguiseProvider
                 player, disguiseInfo
             )
 
-            // as newer non-legacy versions require
-            // events to be called on the main thread.
-            sync {
-                preDisguiseEvent.call()
-            }
+            preDisguiseEvent.call()
 
             if (preDisguiseEvent.isCancelled)
                 return@useRandomAvailableDisguise

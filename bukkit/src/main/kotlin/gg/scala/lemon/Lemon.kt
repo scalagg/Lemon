@@ -1,9 +1,6 @@
 package gg.scala.lemon
 
 import com.google.gson.LongSerializationPolicy
-import com.solexgames.daddyshark.commons.constants.DaddySharkConstants
-import com.solexgames.daddyshark.commons.model.ServerInstance
-import com.solexgames.daddyshark.commons.platform.DaddySharkPlatform
 import com.solexgames.datastore.commons.connection.impl.RedisConnection
 import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnection
 import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
@@ -17,7 +14,6 @@ import gg.scala.banana.options.BananaOptions
 import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.client.PlayerClientAdapter
-import gg.scala.lemon.adapt.daddyshark.DaddySharkLogAdapter
 import gg.scala.lemon.adapt.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapt.statistic.impl.DefaultSparkServerStatisticProvider
 import gg.scala.lemon.adapt.statistic.impl.SparkServerStatisticProvider
@@ -40,11 +36,13 @@ import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
+import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.ServerMonitorRunnable
-import gg.scala.lemon.task.daddyshark.BukkitInstanceUpdateRunnable
+import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.util.LemonWebUtil
 import gg.scala.lemon.util.validate.LemonWebData
+import me.lucko.helper.Commands
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
@@ -86,7 +84,7 @@ import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import java.util.UUID
 
-class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
+class Lemon : ExtendedJavaPlugin()
 {
 
     companion object
@@ -107,13 +105,14 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
     lateinit var banana: Banana
     lateinit var credentials: BananaCredentials
 
+    lateinit var serverLayer: RedisStorageLayer<ServerInstance>
+    lateinit var localInstance: ServerInstance
+
     lateinit var lemonWebData: LemonWebData
     lateinit var entityInteractionHandler: EntityInteractionHandler
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
-    private lateinit var consoleLogger: ConsoleLogger
-    private lateinit var localInstance: ServerInstance
-    private lateinit var redisConnection: RedisConnection
+    lateinit var redisConnection: RedisConnection
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
@@ -179,8 +178,8 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
         server.scheduler.runTaskTimerAsynchronously(this, ResourceUpdateRunnable(), 0L, 20L)
 
         Schedulers.async().runRepeating(
-            BukkitInstanceUpdateRunnable(this),
-            0L, DaddySharkConstants.UPDATE_DELAY_MILLI
+            BukkitInstanceUpdateRunnable,
+            0L, 100L
         )
 
         Schedulers.async().runRepeating(
@@ -326,7 +325,7 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
             val clientAdapter = it.newInstance() as PlayerClientAdapter
             clientAdapters.add(clientAdapter)
 
-            getConsoleLogger().log(
+            logger.info(
                 "${clientAdapter.getClientName()} implementation has been enabled."
             )
         }
@@ -363,7 +362,6 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 
     private fun loadBaseConfigurations()
     {
-        consoleLogger = DaddySharkLogAdapter
         configFactory = ConfigFactory.newFactory(this)
 
         settings = configFactory.fromFile("settings", SettingsConfigProcessor::class.java)
@@ -417,13 +415,19 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
 
         val builder = RedisStorageBuilder<ServerInstance>()
 
-        builder.setConnection(this.getRedisConnection())
-        builder.setSection("daddy_shark_data")
+        builder.setConnection(redisConnection)
+        builder.setSection("lemon:heartbeats")
         builder.setType(ServerInstance::class.java)
 
-        this.layer = builder.build()
+        serverLayer = builder.build()
 
         logger.info("Setup redis data-store handling.")
+
+        Commands.create().assertOp().assertPlayer().handler {
+            it.reply("collected")
+            System.gc()
+            it.sender().performCommand("spark healthreport")
+        }.registerAndBind(this, "systemgc")
     }
 
     fun registerCommandsInPackage(
@@ -510,22 +514,5 @@ class Lemon : ExtendedJavaPlugin(), DaddySharkPlatform
                 }
             }
         }
-    }
-
-    override var layer: RedisStorageLayer<ServerInstance>? = null
-
-    override fun getConsoleLogger(): ConsoleLogger
-    {
-        return consoleLogger
-    }
-
-    override fun getLocalServerInstance(): ServerInstance
-    {
-        return localInstance
-    }
-
-    override fun getRedisConnection(): RedisConnection
-    {
-        return redisConnection
     }
 }

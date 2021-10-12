@@ -7,6 +7,7 @@ import com.solexgames.datastore.commons.storage.impl.MongoStorageBuilder
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.util.bukkit.Tasks
 
 /**
  * @author GrowlyX
@@ -32,7 +33,7 @@ object DisguiseInfoProvider
         activeDisguises = RedisStorageBuilder<DisguiseInfo>()
             .setSection("lemon:disguised")
             .setType(DisguiseInfo::class.java)
-            .setConnection(Lemon.instance.getRedisConnection())
+            .setConnection(Lemon.instance.redisConnection)
             .build()
 
         disguiseLayer.supplyWithCustomGson(Serializers.gson)
@@ -61,14 +62,16 @@ object DisguiseInfoProvider
                     allDisguises.remove(it.value.uuid.toString())
                 }
 
-                if (allDisguises.isEmpty())
-                {
-                    lambda.invoke(DisguiseInfo.NOTHING)
-                } else
-                {
-                    lambda.invoke(
-                        allDisguises.values.random()
-                    )
+                Tasks.sync {
+                    if (allDisguises.isEmpty())
+                    {
+                        lambda.invoke(DisguiseInfo.NOTHING)
+                    } else
+                    {
+                        lambda.invoke(
+                            allDisguises.values.random()
+                        )
+                    }
                 }
             }
         }

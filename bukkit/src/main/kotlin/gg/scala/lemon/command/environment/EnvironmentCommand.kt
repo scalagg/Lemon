@@ -2,6 +2,8 @@ package gg.scala.lemon.command.environment
 
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.handler.ServerHandler
+import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.acf.BaseCommand
@@ -24,7 +26,7 @@ class EnvironmentCommand : BaseCommand() {
     @Subcommand("fetch-online")
     @Description("Fetch online servers.")
     fun onFetchOnline(sender: CommandSender, group: String) {
-        Lemon.instance.handler.fetchOnlineServerInstancesByGroup(group)?.whenComplete { t, u ->
+        ServerHandler.fetchOnlineServerInstancesByGroup(group).whenComplete { t, u ->
             if (u != null || t == null) {
                 sender.sendMessage("${CC.RED}No server in the group ${CC.YELLOW}$group${CC.RED} is online.")
                 return@whenComplete
@@ -33,7 +35,7 @@ class EnvironmentCommand : BaseCommand() {
             sender.sendMessage("${CC.PRI}${CC.BOLD}Online Servers in Group $group:")
 
             t.forEach {
-                sender.sendMessage("${CC.GRAY} - ${CC.SEC}${it.serverId}")
+                sender.sendMessage("${CC.GRAY} - ${CC.SEC}${it.value.serverId}")
             }
         }
     }
@@ -53,27 +55,10 @@ class EnvironmentCommand : BaseCommand() {
         ).dispatchImmediately()
     }
 
-    @Subcommand("fetch-all")
-    @Description("Fetch all servers.")
-    fun onFetchAll(sender: CommandSender) {
-        Lemon.instance.handler.fetchAllCachedServers()?.whenComplete { t, u ->
-            if (u != null || t == null) {
-                sender.sendMessage("${CC.RED}No servers found.")
-                return@whenComplete
-            }
-
-            sender.sendMessage("${CC.PRI}${CC.BOLD}Cached Servers:")
-
-            t.forEach {
-                sender.sendMessage("${CC.GRAY} - ${CC.SEC}${it.value.serverId}")
-            }
-        }
-    }
-
     @Subcommand("fetch")
     @Description("Fetch server by id.")
     fun onFetchServer(sender: CommandSender, id: String) {
-        Lemon.instance.handler.fetchServerInstanceById(id)?.whenComplete { t, u ->
+        ServerHandler.fetchServerInstanceById(id).whenComplete { t, u ->
             if (u != null || t == null) {
                 sender.sendMessage("${CC.RED}No server by the name ${CC.YELLOW}$id${CC.RED} is online.")
                 return@whenComplete

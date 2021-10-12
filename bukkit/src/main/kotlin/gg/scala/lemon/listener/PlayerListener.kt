@@ -39,7 +39,7 @@ import java.util.concurrent.ForkJoinPool
 object PlayerListener : Listener
 {
 
-    val executor = Executors.newFixedThreadPool(1)
+    private val executor = Executors.newFixedThreadPool(1)
 
     @EventHandler(
         priority = EventPriority.HIGHEST,
@@ -533,12 +533,6 @@ object PlayerListener : Listener
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent)
     {
-        if (shouldBlock(event.player))
-        {
-            event.isCancelled = true
-            return
-        }
-
         if (event.player.hasMetadata("mod-mode"))
         {
             event.player.sendMessage("${CC.RED}You may not place blocks while in mod-mode.")

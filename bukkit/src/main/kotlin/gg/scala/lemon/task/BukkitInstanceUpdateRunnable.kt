@@ -1,13 +1,14 @@
-package gg.scala.lemon.task.daddyshark
+package gg.scala.lemon.task
 
-import com.solexgames.daddyshark.commons.platform.DaddySharkPlatform
 import gg.scala.lemon.Lemon
 import org.bukkit.Bukkit
 
-class BukkitInstanceUpdateRunnable(private var platform: DaddySharkPlatform): Runnable {
+object BukkitInstanceUpdateRunnable : Runnable
+{
 
-    override fun run() {
-        val instance = platform.getLocalServerInstance()
+    override fun run()
+    {
+        val instance = Lemon.instance.localInstance
 
         instance.onlinePlayers = Bukkit.getOnlinePlayers().size
         instance.maxPlayers = Bukkit.getMaxPlayers()
@@ -18,7 +19,9 @@ class BukkitInstanceUpdateRunnable(private var platform: DaddySharkPlatform): Ru
         instance.ticksPerSecond = Lemon.instance.serverStatisticProvider.ticksPerSecond()
         instance.lastHeartbeat = System.currentTimeMillis()
 
-        platform.layer!!.saveEntry(instance.serverId, instance).whenComplete { _, u ->
+        Lemon.instance.serverLayer.saveEntry(
+            instance.serverId, instance
+        ).whenComplete { _, u ->
             u?.printStackTrace()
         }
     }
