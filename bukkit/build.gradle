@@ -20,6 +20,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.30"
     implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
+    implementation 'org.slf4j:slf4j-api:2.0.0-alpha5'
+    implementation 'org.slf4j:slf4j-simple:2.0.0-alpha5'
+
     implementation fileTree("internal")
     compileOnly fileTree(dir: "lib")
 

@@ -436,7 +436,7 @@ class Lemon : ExtendedJavaPlugin()
         ).forEach { clazz ->
             try
             {
-                // kotlin `objects` have the INSTANCE field set as
+                // kotlin `object`s have the INSTANCE field set as
                 // its instance during runtime.
 
                 // filtering through fields so it returns a Field? instead of throwing an error
@@ -461,6 +461,12 @@ class Lemon : ExtendedJavaPlugin()
             {
                 // kotlin stream stuff
                 if (e.message?.contains("can not access a member of") == true)
+                {
+                    return
+                }
+
+                // ...more kotlin stream/lambda stuff
+                if (e.message?.contains("$") == true)
                 {
                     return
                 }
