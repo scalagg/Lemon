@@ -172,10 +172,12 @@ class Lemon : ExtendedJavaPlugin()
         loadCommands()
 
         startMessageQueues()
-
         setupPlayerLookAndFeel()
 
-        server.scheduler.runTaskTimerAsynchronously(this, ResourceUpdateRunnable(), 0L, 20L)
+        Schedulers.async().runRepeating(
+            ResourceUpdateRunnable(),
+            0L, 20L
+        )
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable,

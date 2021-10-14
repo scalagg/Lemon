@@ -18,6 +18,7 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.LivingEntity
@@ -32,14 +33,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executors
 import java.util.concurrent.ForkJoinPool
+import kotlin.math.roundToInt
 
 object PlayerListener : Listener
 {
-
-    private val executor = Executors.newFixedThreadPool(1)
 
     @EventHandler(
         priority = EventPriority.HIGHEST,
@@ -55,7 +53,7 @@ object PlayerListener : Listener
 
         val current = System.currentTimeMillis()
 
-        executor.execute {
+        ForkJoinPool.commonPool().execute {
             var lemonPlayer = DataStoreHandler.lemonPlayerLayer.fetchEntryByKeySync(event.uniqueId.toString())
             println("It took ${System.currentTimeMillis() - current}ms to load the profile. (${event.name})")
 
@@ -337,12 +335,12 @@ object PlayerListener : Listener
 
         event.joinMessage = null
 
-        val highestPlayerCount = Lemon.instance.getLocalServerInstance().metaData["highest-player-count"]
+        val highestPlayerCount = Lemon.instance.localInstance.metaData["highest-player-count"]
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
         if (highestPlayerCount == null || currentPlayerCount > Integer.parseInt(highestPlayerCount))
         {
-            Lemon.instance.getLocalServerInstance().metaData["highest-player-count"] = currentPlayerCount.toString()
+            Lemon.instance.localInstance.metaData["highest-player-count"] = currentPlayerCount.toString()
         }
 
         lemonPlayer.ifPresent { player ->
@@ -463,6 +461,18 @@ object PlayerListener : Listener
             }
         }
 
+        if (!event.player.isOp && command.equals("tps", true)) {
+            val ticksPerSecond = Lemon.instance
+                .serverStatisticProvider.ticksPerSecond()
+
+            event.player.sendMessage("${CC.SEC}Current server TPS: ${
+                formatTps(ticksPerSecond)
+            }${CC.SEC}/${CC.GREEN}20.0${CC.SEC}.")
+
+            event.isCancelled = true
+            return
+        }
+
         CommandAsyncFileLogger.queueForUpdates(
             "${event.player.name}: ${event.message}"
         )
@@ -471,6 +481,24 @@ object PlayerListener : Listener
         {
             lemonPlayer.cooldowns["command"] = Cooldown(1000L)
         }
+    }
+
+    private fun formatTps(tps: Double): String
+    {
+        val color: ChatColor = if (tps > 18.0)
+        {
+            ChatColor.GREEN
+        } else if (tps > 16.0)
+        {
+            ChatColor.YELLOW
+        } else
+        {
+            ChatColor.RED
+        }
+
+        return "$color ${
+            if (tps > 20.0) "*" else "" + ((tps * 100.0).roundToInt() / 100.0).coerceAtMost(20.0)
+        }"
     }
 
     @EventHandler

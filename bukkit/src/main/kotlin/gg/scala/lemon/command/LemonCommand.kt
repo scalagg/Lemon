@@ -10,6 +10,7 @@ import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.concurrent.ForkJoinPool
 
 /**
  * @author GrowlyX
@@ -39,6 +40,8 @@ class LemonCommand : BaseCommand()
         sender.sendMessage("")
         sender.sendMessage("System:")
         sender.sendMessage(" Threads: ${Thread.getAllStackTraces().values.size}")
+        sender.sendMessage(" Common Pool Parallelism: ${ForkJoinPool.getCommonPoolParallelism()}")
+        sender.sendMessage(" Common Pool: ${ForkJoinPool.getCommonPoolParallelism() > 1}")
     }
 
     @Subcommand("visibility-dump")

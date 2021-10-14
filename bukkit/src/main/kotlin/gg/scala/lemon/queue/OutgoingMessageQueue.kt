@@ -69,11 +69,9 @@ open class OutgoingMessageQueue(
 
     private fun dispatchInternal(popped: Message)
     {
-        ForkJoinPool.commonPool().execute {
-            Lemon.instance.banana.useResource {
-                it.publish(channel, Serializers.gson.toJson(popped))
-                it.close()
-            }
+        Lemon.instance.banana.useResource {
+            it.publish(channel, Serializers.gson.toJson(popped))
+            it.close()
         }
     }
 

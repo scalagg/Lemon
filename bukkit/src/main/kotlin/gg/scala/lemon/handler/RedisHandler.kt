@@ -92,7 +92,7 @@ object RedisHandler : BananaHandler
         val issuer = message["issuer"]!!
         val setting = message["setting"]!!
 
-        if (Lemon.instance.getLocalServerInstance().serverGroup.equals(group, true))
+        if (Lemon.instance.localInstance.serverGroup.equals(group, true))
         {
             Bukkit.setWhitelist(setting.toBoolean())
 

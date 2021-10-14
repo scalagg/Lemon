@@ -15,17 +15,15 @@ import java.util.concurrent.ForkJoinPool
 class ResourceUpdateRunnable : Runnable {
 
     override fun run() {
-        ForkJoinPool.commonPool().execute {
-            Bukkit.getOnlinePlayers().forEach { player ->
-                val lemonPlayer = PlayerHandler.findPlayer(player)
+        Bukkit.getOnlinePlayers().forEach { player ->
+            val lemonPlayer = PlayerHandler.findPlayer(player)
 
-                lemonPlayer.ifPresent {
-                    it.checkForGrantUpdate()
-                }
+            lemonPlayer.ifPresent {
+                it.checkForGrantUpdate()
+            }
 
-                PunishmentHandler.fetchAllPunishmentsForTarget(player.uniqueId).thenAccept {
-                    it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
-                }
+            PunishmentHandler.fetchAllPunishmentsForTarget(player.uniqueId).thenAccept {
+                it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
             }
         }
     }
