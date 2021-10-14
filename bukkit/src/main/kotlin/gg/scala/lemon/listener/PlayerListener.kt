@@ -1,6 +1,7 @@
 package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -55,7 +56,6 @@ object PlayerListener : Listener
 
         ForkJoinPool.commonPool().execute {
             var lemonPlayer = DataStoreHandler.lemonPlayerLayer.fetchEntryByKeySync(event.uniqueId.toString())
-            println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load the profile. (${event.name})")
 
             if (lemonPlayer == null)
             {
@@ -65,6 +65,11 @@ object PlayerListener : Listener
             {
                 lemonPlayer.ipAddress = event.address.hostAddress ?: ""
                 lemonPlayer.handlePostLoad()
+            }
+
+            if (LemonConstants.DEBUG)
+            {
+                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load the profile. (${event.name})")
             }
 
             PlayerHandler.players[event.uniqueId] = lemonPlayer

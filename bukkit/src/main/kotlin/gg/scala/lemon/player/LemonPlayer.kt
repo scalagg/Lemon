@@ -153,7 +153,10 @@ class LemonPlayer(
                     }
                 }
 
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
+                if (LemonConstants.DEBUG)
+                {
+                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
+                }
             }
     }
 
@@ -284,7 +287,8 @@ class LemonPlayer(
 
             if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
 
-            if (connecting) {
+            if (connecting && LemonConstants.DEBUG)
+            {
                 println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
             }
         }
@@ -474,7 +478,10 @@ class LemonPlayer(
                 }
             }
 
-            println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+            if (LemonConstants.DEBUG)
+            {
+                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+            }
         }
     }
 
@@ -634,7 +641,7 @@ class LemonPlayer(
             PermissionCheck.COMPOUNDED -> hasPermission =
                 activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
             PermissionCheck.PLAYER -> bukkitPlayer?.ifPresent {
-                if (it.isOp || it.hasPermission(permission.toLowerCase()))
+                if (it.isOp || it.hasPermission(permission.lowercase(Locale.getDefault())))
                 {
                     hasPermission = true
                 }
@@ -644,7 +651,7 @@ class LemonPlayer(
                 hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
 
                 bukkitPlayer?.ifPresent {
-                    if (it.isOp || it.hasPermission(permission.toLowerCase()))
+                    if (it.isOp || it.hasPermission(permission.lowercase(Locale.getDefault())))
                     {
                         hasPermission = true
                     }
