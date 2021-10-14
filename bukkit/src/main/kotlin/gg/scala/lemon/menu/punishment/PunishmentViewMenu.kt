@@ -56,7 +56,12 @@ class PunishmentViewMenu(
                 }.size
 
                 buttons[index] = ItemBuilder(XMaterial.WHITE_WOOL)
-                    .name("${CC.RED}${it.fancyVersion + "s"}")
+                    .name("${CC.RED}${
+                        when (viewType) {
+                            HistoryViewType.STAFF_HIST -> "Issued "
+                            HistoryViewType.TARGET_HIST -> ""
+                        }
+                    }${it.fancyVersion + "s"}")
                     .data(if (active >= 1) 5 else 14)
                     .amount(totalAmount)
                     .addToLore(
@@ -91,7 +96,11 @@ class PunishmentViewMenu(
     }
 
     override fun size(buttons: Map<Int, Button>): Int {
-        return 27
+        return when (viewType) {
+            HistoryViewType.TARGET_HIST -> 27
+            // TODO: 10/13/2021 add support for removed punishments 
+            HistoryViewType.STAFF_HIST -> /* 45 */ 27
+        }
     }
 
     private fun fetchPunishments(category: PunishmentCategory): CompletableFuture<List<Punishment>> {

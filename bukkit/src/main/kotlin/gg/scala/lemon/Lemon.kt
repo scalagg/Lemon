@@ -424,12 +424,6 @@ class Lemon : ExtendedJavaPlugin()
         serverLayer = builder.build()
 
         logger.info("Setup redis data-store handling.")
-
-        Commands.create().assertOp().assertPlayer().handler {
-            it.reply("collected")
-            System.gc()
-            it.sender().performCommand("spark healthreport")
-        }.registerAndBind(this, "systemgc")
     }
 
     fun registerCommandsInPackage(
