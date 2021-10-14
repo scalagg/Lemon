@@ -5,7 +5,6 @@ import com.solexgames.datastore.commons.connection.impl.RedisConnection
 import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnection
 import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
-import com.solexgames.datastore.commons.logger.ConsoleLogger
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.banana.Banana
 import gg.scala.banana.BananaBuilder
@@ -21,7 +20,8 @@ import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
-import gg.scala.lemon.library.LemonLibraryLoader
+import gg.scala.lemon.library.HelperLibraryHandler
+import gg.scala.lemon.library.impl.LemonLibraries
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -43,11 +43,9 @@ import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.util.LemonWebUtil
 import gg.scala.lemon.util.validate.LemonWebData
-import me.lucko.helper.Commands
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
-import me.lucko.helper.plugin.ap.Plugin
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -123,7 +121,7 @@ class Lemon : ExtendedJavaPlugin()
     {
         instance = this
 
-        LemonLibraryLoader.initialLoad()
+        HelperLibraryHandler.loadAll(LemonLibraries)
 
         loadBaseConfigurations()
 
