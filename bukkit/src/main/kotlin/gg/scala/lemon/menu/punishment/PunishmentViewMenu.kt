@@ -111,7 +111,7 @@ class PunishmentViewMenu(
 
             for (it in persistentHasPermission)
             {
-                val totalAmount = punishments.filter { punishment ->
+                val totalAmount = removed.filter { punishment ->
                     punishment.category == it
                 }.size
 

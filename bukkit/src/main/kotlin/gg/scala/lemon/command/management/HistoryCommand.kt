@@ -5,6 +5,7 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.punishment.PunishmentViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
+import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
@@ -43,11 +44,16 @@ class HistoryCommand : BaseCommand() {
                 return@thenAccept
             }
 
-            PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
-                PunishmentViewMenu(
-                    uuid, HistoryViewType.TARGET_HIST, it, removed
-                ).openMenu(player)
-            }
+            handleStaffHistory(uuid, it, HistoryViewType.TARGET_HIST, player)
+        }
+    }
+
+    fun handleStaffHistory(uuid: UUID, it: List<Punishment>, type: HistoryViewType, player: Player)
+    {
+        PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
+            PunishmentViewMenu(
+                uuid, type, it, removed
+            ).openMenu(player)
         }
     }
 
@@ -71,11 +77,7 @@ class HistoryCommand : BaseCommand() {
                 return@thenAccept
             }
 
-            PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
-                PunishmentViewMenu(
-                    uuid, HistoryViewType.STAFF_HIST, it, removed
-                ).openMenu(player)
-            }
+            handleStaffHistory(uuid, it, HistoryViewType.STAFF_HIST, player)
         }
     }
 }
