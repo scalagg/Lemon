@@ -98,7 +98,7 @@ class PunishmentViewMenu(
     override fun size(buttons: Map<Int, Button>): Int {
         return when (viewType) {
             HistoryViewType.TARGET_HIST -> 27
-            // TODO: 10/13/2021 add support for removed punishments 
+            // TODO: 10/13/2021 add support for removed punishments
             HistoryViewType.STAFF_HIST -> /* 45 */ 27
         }
     }

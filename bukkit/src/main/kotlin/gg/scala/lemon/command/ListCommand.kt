@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 9/11/2021
  */
-class ListCommand : BaseCommand() {
+object ListCommand : BaseCommand() {
 
     @CommandAlias("list|who|online")
     fun onList(sender: CommandSender) {

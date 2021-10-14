@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/25/2021
  */
-class StaffVisibilityCommand : BaseCommand() {
+object StaffVisibilityCommand : BaseCommand() {
 
     @CommandPermission("lemon.staff")
     @CommandAlias("togglestaffvisibility|tsv")

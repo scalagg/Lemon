@@ -16,7 +16,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/13/2021
  */
-class MuteCommand : BaseCommand() {
+object MuteCommand : BaseCommand() {
 
     @CommandAlias("mute|tmute|tempmute")
     @CommandPermission("lemon.command.mute")

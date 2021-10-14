@@ -14,7 +14,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/13/2021
  */
-class BlacklistCommand : BaseCommand() {
+object BlacklistCommand : BaseCommand() {
 
     @Syntax("<player> [-s] [reason] [-s]")
     @CommandAlias("blacklist|bl")

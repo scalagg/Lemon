@@ -1,9 +1,7 @@
 package gg.scala.lemon.command.environment
 
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.handler.ServerHandler
-import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.acf.BaseCommand
@@ -15,7 +13,7 @@ import org.bukkit.command.CommandSender
 
 @CommandAlias("environment|env")
 @CommandPermission("lemon.command.environment")
-class EnvironmentCommand : BaseCommand() {
+object EnvironmentCommand : BaseCommand() {
 
     @Default
     @HelpCommand

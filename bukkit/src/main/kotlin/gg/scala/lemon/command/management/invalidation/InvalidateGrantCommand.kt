@@ -14,7 +14,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/11/2021
  */
-class InvalidateGrantCommand : BaseCommand() {
+object InvalidateGrantCommand : BaseCommand() {
 
     @Syntax("<type> [player]")
     @CommandAlias("invalidategrants")

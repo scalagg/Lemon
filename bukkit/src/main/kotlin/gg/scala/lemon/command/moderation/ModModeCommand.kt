@@ -15,9 +15,9 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 10/3/2021
  */
-class ModModeCommand : BaseCommand() {
+object ModModeCommand : BaseCommand() {
 
-    @CommandAlias("modmode|mm|h")
+    @CommandAlias("modmode|mod|mm|h")
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.modmode")
     fun onModMode(player: Player, @Optional target: LemonPlayer?) {

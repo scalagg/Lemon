@@ -19,10 +19,10 @@ import java.util.*
  * @author GrowlyX
  * @since 9/7/2021
  */
-class AltsCommand : BaseCommand() {
+object AltsCommand : BaseCommand() {
 
     @Syntax("<target>")
-    @CommandAlias("alts")
+    @CommandAlias("alts|ipreport")
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.alts")
     fun onAlts(sender: Player, target: LemonPlayer) {

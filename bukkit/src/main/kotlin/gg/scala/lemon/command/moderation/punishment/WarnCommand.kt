@@ -12,7 +12,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/13/2021
  */
-class WarnCommand : BaseCommand() {
+object WarnCommand : BaseCommand() {
 
     @CommandAlias("warn")
     @CommandCompletion("@all-players")

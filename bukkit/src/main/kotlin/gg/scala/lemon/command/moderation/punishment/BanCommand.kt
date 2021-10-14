@@ -16,7 +16,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/13/2021
  */
-class BanCommand : BaseCommand() {
+object BanCommand : BaseCommand() {
 
     @CommandAlias("ban|tban|tempban|b")
     @CommandPermission("lemon.command.ban")

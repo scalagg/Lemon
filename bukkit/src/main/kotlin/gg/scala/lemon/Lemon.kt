@@ -459,6 +459,12 @@ class Lemon : ExtendedJavaPlugin()
                 }
             } catch (e: Exception)
             {
+                // kotlin stream stuff
+                if (e.message?.contains("can not access a member of") == true)
+                {
+                    return
+                }
+
                 commandManager.plugin.logger.severe("Could not register ${clazz.simpleName}: ${e.message}")
             }
         }

@@ -18,7 +18,7 @@ import java.util.concurrent.ForkJoinPool
  */
 @CommandAlias("lemon")
 @CommandPermission("op")
-class LemonCommand : BaseCommand()
+object LemonCommand : BaseCommand()
 {
 
     @Default
@@ -41,7 +41,7 @@ class LemonCommand : BaseCommand()
         sender.sendMessage("System:")
         sender.sendMessage(" Threads: ${Thread.getAllStackTraces().values.size}")
         sender.sendMessage(" Common Pool Parallelism: ${ForkJoinPool.getCommonPoolParallelism()}")
-        sender.sendMessage(" Common Pool: ${ForkJoinPool.getCommonPoolParallelism() > 1}")
+        sender.sendMessage(" Using Common Pool: ${ForkJoinPool.getCommonPoolParallelism() > 1}")
     }
 
     @Subcommand("visibility-dump")
