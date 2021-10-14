@@ -4,7 +4,7 @@ plugins {
     id "idea"
     id "java"
     id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.5.30"
+    id "org.jetbrains.kotlin.jvm" version "1.5.31"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "com.gorylenko.gradle-git-properties" version "2.3.1"
 }
@@ -14,14 +14,12 @@ repositories {
     mavenCentral()
 
     maven { url 'https://jitpack.io' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.30"
-    implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
-
-//    implementation 'org.slf4j:slf4j-api:2.0.0-alpha5'
-//    implementation 'org.slf4j:slf4j-simple:2.0.0-alpha5'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
+    compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
     implementation fileTree("internal")
     compileOnly fileTree(dir: "lib")

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/29/2021
  */
-object DisguiseCommand : BaseCommand() {
+class DisguiseCommand : BaseCommand() {
 
     @CommandAlias("disguise")
     @CommandPermission("lemon.command.disguise")

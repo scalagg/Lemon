@@ -20,7 +20,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/9/2021
  */
-object GrantsCommand : BaseCommand() {
+class GrantsCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandCompletion("@players")

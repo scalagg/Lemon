@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/15/2021
  */
-object VanishCommand : BaseCommand() {
+class VanishCommand : BaseCommand() {
 
     @CommandAlias("vanish|v|tv|togglevanish")
     @CommandPermission("lemon.command.vanish")

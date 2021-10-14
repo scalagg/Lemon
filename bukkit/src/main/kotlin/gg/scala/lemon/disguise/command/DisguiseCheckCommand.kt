@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/29/2021
  */
-object DisguiseCheckCommand : BaseCommand() {
+class DisguiseCheckCommand : BaseCommand() {
 
     @CommandAlias("dgc|checkdisguise")
     @CommandCompletion("@all-players")

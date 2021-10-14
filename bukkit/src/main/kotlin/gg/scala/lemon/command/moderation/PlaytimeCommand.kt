@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/26/2021
  */
-object PlaytimeCommand : BaseCommand() {
+class PlaytimeCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandAlias("playtime|pt")

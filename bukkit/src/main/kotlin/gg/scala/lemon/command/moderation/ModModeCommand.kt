@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 10/3/2021
  */
-object ModModeCommand : BaseCommand() {
+class ModModeCommand : BaseCommand() {
 
     @CommandAlias("modmode|mod|mm|h")
     @CommandCompletion("@all-players")

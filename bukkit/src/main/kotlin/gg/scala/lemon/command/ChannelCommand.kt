@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
  * @since 9/9/2021
  */
 @CommandAlias("channel")
-object ChannelCommand : BaseCommand()
+class ChannelCommand : BaseCommand()
 {
 
     @Default

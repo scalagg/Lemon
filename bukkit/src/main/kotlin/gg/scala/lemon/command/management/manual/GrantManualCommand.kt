@@ -16,7 +16,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/10/2021
  */
-object GrantManualCommand : BaseCommand() {
+class GrantManualCommand : BaseCommand() {
 
     @CommandAlias("grantmanual")
     @CommandPermission("lemon.command.grantmanual")

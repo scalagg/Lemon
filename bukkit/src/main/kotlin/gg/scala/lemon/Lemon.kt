@@ -21,6 +21,7 @@ import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.library.LemonLibraryLoader
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -46,6 +47,7 @@ import me.lucko.helper.Commands
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
+import me.lucko.helper.plugin.ap.Plugin
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -120,6 +122,8 @@ class Lemon : ExtendedJavaPlugin()
     override fun enable()
     {
         instance = this
+
+        LemonLibraryLoader.initialLoad()
 
         loadBaseConfigurations()
 
@@ -441,7 +445,7 @@ class Lemon : ExtendedJavaPlugin()
 
                 // filtering through fields so it returns a Field? instead of throwing an error
                 val instance = clazz.fields.firstOrNull {
-                    it.name.equals("INSTANCE")
+                    it.name == "INSTANCE"
                 }
 
                 if (instance != null)

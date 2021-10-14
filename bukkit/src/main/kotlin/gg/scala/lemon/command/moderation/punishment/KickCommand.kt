@@ -13,7 +13,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/13/2021
  */
-object KickCommand : BaseCommand() {
+class KickCommand : BaseCommand() {
 
     @CommandAlias("kick|k")
     @Syntax("<player> [-s] [reason] [-s]")

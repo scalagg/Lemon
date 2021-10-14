@@ -22,7 +22,7 @@ import org.bukkit.metadata.FixedMetadataValue
  * @author GrowlyX
  * @since 9/23/2021
  */
-object FreezeCommand : BaseCommand() {
+class FreezeCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandAlias("freeze|fr|ss")

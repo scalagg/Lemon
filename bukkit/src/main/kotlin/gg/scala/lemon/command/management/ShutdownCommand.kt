@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
  */
 @CommandAlias("shutdown|reboot")
 @CommandPermission("lemon.command.shutdown")
-object ShutdownCommand : BaseCommand() {
+class ShutdownCommand : BaseCommand() {
 
     @Default
     @HelpCommand

@@ -19,7 +19,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/7/2021
  */
-object AltsCommand : BaseCommand() {
+class AltsCommand : BaseCommand() {
 
     @Syntax("<target>")
     @CommandAlias("alts|ipreport")

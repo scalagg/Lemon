@@ -22,7 +22,7 @@ import org.bukkit.command.CommandSender
  */
 @CommandAlias("rank")
 @CommandPermission("lemon.command.rank")
-object RankCommand : BaseCommand()
+class RankCommand : BaseCommand()
 {
 
     @Default

@@ -18,7 +18,7 @@ import java.util.concurrent.ForkJoinPool
  */
 @CommandAlias("lemon")
 @CommandPermission("op")
-object LemonCommand : BaseCommand()
+class LemonCommand : BaseCommand()
 {
 
     @Default

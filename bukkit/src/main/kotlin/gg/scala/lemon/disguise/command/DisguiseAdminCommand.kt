@@ -17,7 +17,7 @@ import java.util.*
  */
 @CommandAlias("dga|disguiseadmin")
 @CommandPermission("lemon.command.disguise.admin")
-object DisguiseAdminCommand : BaseCommand() {
+class DisguiseAdminCommand : BaseCommand() {
 
     @Default
     @HelpCommand

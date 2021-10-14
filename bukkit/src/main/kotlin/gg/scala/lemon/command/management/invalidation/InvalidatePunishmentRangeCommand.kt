@@ -14,7 +14,7 @@ import org.bukkit.command.ConsoleCommandSender
  * @author GrowlyX
  * @since 9/11/2021
  */
-object InvalidatePunishmentRangeCommand : BaseCommand() {
+class InvalidatePunishmentRangeCommand : BaseCommand() {
 
     @Syntax("<minimum> <maximum> [category]")
     @CommandAlias("ipr|invalidatepunishmentsrange")

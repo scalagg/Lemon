@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender
 
 @CommandAlias("environment|env")
 @CommandPermission("lemon.command.environment")
-object EnvironmentCommand : BaseCommand() {
+class EnvironmentCommand : BaseCommand() {
 
     @Default
     @HelpCommand

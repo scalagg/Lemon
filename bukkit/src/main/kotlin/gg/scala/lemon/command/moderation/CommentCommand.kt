@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
  */
 @CommandPermission("lemon.command.comment")
 @CommandAlias("comment|note|comments|notes")
-object CommentCommand : BaseCommand()
+class CommentCommand : BaseCommand()
 {
 
     @Default

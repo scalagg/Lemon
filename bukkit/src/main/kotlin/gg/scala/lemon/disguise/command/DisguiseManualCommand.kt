@@ -17,7 +17,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/30/2021
  */
-object DisguiseManualCommand : BaseCommand() {
+class DisguiseManualCommand : BaseCommand() {
 
     @CommandAlias("dgm|disguisemanual")
     @CommandCompletion("@all-players @all-players")
