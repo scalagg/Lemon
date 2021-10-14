@@ -38,14 +38,16 @@ class HistoryCommand : BaseCommand() {
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${coloredName(name)}'s${CC.SEC} history...")
 
         PunishmentHandler.fetchAllPunishmentsForTarget(uuid).thenAccept {
-            if (it.isEmpty() && Lemon.instance.lemonWebData.serverName != "SolexGames") {
+            if (it.isEmpty()) {
                 player.sendMessage("${CC.RED}No punishments found for ${CC.YELLOW}${coloredName(name)}${CC.RED}.")
                 return@thenAccept
             }
 
-            PunishmentViewMenu(
-                uuid, HistoryViewType.TARGET_HIST, it
-            ).openMenu(player)
+            PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
+                PunishmentViewMenu(
+                    uuid, HistoryViewType.TARGET_HIST, it, removed
+                ).openMenu(player)
+            }
         }
     }
 
@@ -64,14 +66,16 @@ class HistoryCommand : BaseCommand() {
         player.sendMessage("${CC.SEC}Viewing ${CC.PRI}${coloredName(name)}'s${CC.SEC} staff history...")
 
         PunishmentHandler.fetchAllPunishmentsByExecutor(uuid).thenAccept {
-            if (it.isEmpty() && Lemon.instance.lemonWebData.serverName != "SolexGames") {
+            if (it.isEmpty()) {
                 player.sendMessage("${CC.RED}No punishments found by ${CC.YELLOW}${coloredName(name)}${CC.RED}.")
                 return@thenAccept
             }
 
-            PunishmentViewMenu(
-                uuid, HistoryViewType.STAFF_HIST, it
-            ).openMenu(player)
+            PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
+                PunishmentViewMenu(
+                    uuid, HistoryViewType.STAFF_HIST, it, removed
+                ).openMenu(player)
+            }
         }
     }
 }

@@ -1,3 +1,3 @@
-package gg.scala.lemon.util.type
+package gg.scala.common
 
 interface Persistent<T>: Loadable<T>, Savable

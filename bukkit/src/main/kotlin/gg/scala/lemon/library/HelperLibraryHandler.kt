@@ -27,36 +27,25 @@ object HelperLibraryHandler
 
     fun loadAll(any: Any)
     {
-        loadAll(any::class.java)
+        loadAll(any::class.java, any)
     }
 
     /**
      * Scans and registers all declared fields in a class
      * which are [Library] instances.
      */
-    fun loadAll(clazz: Class<*>)
+    fun loadAll(clazz: Class<*>, any: Any? = null)
     {
-        val fields = clazz.declaredFields
+        val fields = clazz.fields
 
         for (field in fields)
         {
-            if (!Modifier.isStatic(field.modifiers))
-            {
-                return
-            }
-
-            // kotlin stuff :D
-            if (field.name == "INSTANCE")
-            {
-                return
-            }
-
             if (!field.isAccessible)
             {
                 field.isAccessible = true
             }
 
-            val instance = field.get(null)
+            val instance = field.get(any)
 
             if (instance is Library)
             {
@@ -84,6 +73,7 @@ object HelperLibraryHandler
                             foundRepository = true
                         } catch (exception: Exception)
                         {
+                            println(exception.message)
                         }
                     }
 
@@ -92,6 +82,9 @@ object HelperLibraryHandler
                         Log.error("Failed to register ${instance.artifactId} version ${instance.version} due to no matching repository being found.")
                     }
                 }
+            } else
+            {
+                Log.info("Failed to load ${field.name} due to it not being an instance of Library.")
             }
         }
     }

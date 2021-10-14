@@ -58,7 +58,7 @@ class GrantViewMenu(
     override fun getGlobalButtons(player: Player): Map<Int, Button> {
         return HashMap<Int, Button>().also {
             if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid) {
-                it[4] = ItemBuilder(Material.PISTON_STICKY_BASE)
+                it[4] = ItemBuilder(XMaterial.STICKY_PISTON)
                     .name("${CC.RED}Invalidate Grants")
                     .addToLore(
                         "${CC.GRAY}Click to invalidate all active",

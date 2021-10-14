@@ -1,4 +1,4 @@
-package gg.scala.lemon.util.type
+package gg.scala.common
 
 interface Prefixable {
 

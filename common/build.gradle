@@ -1,0 +1,31 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.5.31"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+compileKotlin {
+    kotlinOptions.javaParameters = true
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
+    compileOnly 'com.google.code.gson:gson:2.8.8'
+}
+
+task prepareKotlinBuildScriptModel {
+}
+
+shadowJar {
+    classifier = "all"
+
+    exclude "**/*.kotlin_metadata"
+    exclude "**/*.kotlin_builtins"
+    exclude "META-INF/"
+
+    archiveFileName = "lemon-commons.jar"
+}

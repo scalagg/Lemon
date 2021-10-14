@@ -7,7 +7,7 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.other.Expirable
-import gg.scala.lemon.util.type.Savable
+import gg.scala.common.Savable
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture

@@ -4,7 +4,7 @@ import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.other.Expirable
-import gg.scala.lemon.util.type.Savable
+import gg.scala.common.Savable
 import java.util.*
 import java.util.concurrent.CompletableFuture
 

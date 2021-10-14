@@ -80,6 +80,22 @@ object PunishmentHandler {
         }
     }
 
+    fun fetchPunishmentsRemovedByOfCategory(uuid: UUID, category: PunishmentCategory): CompletableFuture<List<Punishment>> {
+        return fetchPunishments(
+            Filters.eq("removedBy", uuid.toString())
+        ) {
+            it.category == category
+        }
+    }
+
+    fun fetchPunishmentsRemovedBy(uuid: UUID): CompletableFuture<List<Punishment>> {
+        return fetchPunishments(
+            Filters.eq("removedBy", uuid.toString())
+        ) {
+            true
+        }
+    }
+
     fun fetchAllPunishmentsForTarget(uuid: UUID): CompletableFuture<List<Punishment>> {
         return fetchPunishments(
             Filters.eq("target", uuid.toString())

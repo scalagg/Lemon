@@ -1,10 +1,10 @@
-package gg.scala.lemon.util.validate
+package gg.scala.validate
 
 /**
  * @author GrowlyX
  * @since 8/26/2021
  */
-data class LemonWebData(
+data class ScalaValidateData(
     val serverName: String,
 
     val primary: String,

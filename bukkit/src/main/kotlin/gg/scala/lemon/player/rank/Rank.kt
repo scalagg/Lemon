@@ -4,7 +4,7 @@ import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.queueForDispatch
-import gg.scala.lemon.util.type.Savable
+import gg.scala.common.Savable
 import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture

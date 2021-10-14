@@ -20,8 +20,6 @@ import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
-import gg.scala.lemon.library.HelperLibraryHandler
-import gg.scala.lemon.library.impl.LemonLibraries
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -41,8 +39,8 @@ import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
-import gg.scala.lemon.util.LemonWebUtil
-import gg.scala.lemon.util.validate.LemonWebData
+import gg.scala.validate.ScalaValidateData
+import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.plugin.ExtendedJavaPlugin
@@ -108,7 +106,7 @@ class Lemon : ExtendedJavaPlugin()
     lateinit var serverLayer: RedisStorageLayer<ServerInstance>
     lateinit var localInstance: ServerInstance
 
-    lateinit var lemonWebData: LemonWebData
+    lateinit var lemonWebData: ScalaValidateData
     lateinit var entityInteractionHandler: EntityInteractionHandler
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
@@ -116,17 +114,21 @@ class Lemon : ExtendedJavaPlugin()
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
-
     override fun enable()
     {
         instance = this
 
-        HelperLibraryHandler.loadAll(LemonLibraries)
+        // not complete!
+//        HelperLibraryHandler.loadAll(
+//            LemonLibraries()
+//        )
 
         loadBaseConfigurations()
 
-        val webData = LemonWebUtil.fetchServerData(
-            settings.serverPassword
+        val webData = ScalaValidateUtil.fetchServerData(
+            settings.serverPassword,
+            settings.serverPasswordHttps,
+            settings.serverPasswordSupplier
         )
 
         if (webData == null)

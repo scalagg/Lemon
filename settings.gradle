@@ -1,3 +1,3 @@
 rootProject.name = 'Lemon'
 include 'bukkit'
-
+include 'common'

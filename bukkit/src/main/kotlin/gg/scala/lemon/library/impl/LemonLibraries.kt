@@ -6,10 +6,9 @@ import gg.scala.lemon.library.model.Library
  * @author GrowlyX
  * @since 10/14/2021
  */
-object LemonLibraries
+class LemonLibraries
 {
 
-    @JvmStatic
     val CONFIG_API = Library(
         groupId = "com.github.mkotb",
         artifactId = "ConfigAPI",
