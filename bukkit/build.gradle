@@ -20,10 +20,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.30"
     implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
-
     implementation fileTree("internal")
-    compileOnly fileTree("lib")
+    compileOnly fileTree(dir: "lib")
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 }
