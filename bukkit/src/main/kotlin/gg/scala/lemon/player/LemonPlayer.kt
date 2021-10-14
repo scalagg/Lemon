@@ -153,7 +153,7 @@ class LemonPlayer(
                     }
                 }
 
-                println("It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
+                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
             }
     }
 
@@ -285,7 +285,7 @@ class LemonPlayer(
             if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
 
             if (connecting) {
-                println("It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
+                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
             }
         }
     }
@@ -474,7 +474,7 @@ class LemonPlayer(
                 }
             }
 
-            println("It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+            println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
         }
     }
 
