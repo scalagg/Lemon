@@ -444,23 +444,28 @@ class Lemon : ExtendedJavaPlugin()
                 // its instance during runtime.
 
                 // filtering through fields so it returns a Field? instead of throwing an error
-                val instance = clazz.fields.firstOrNull {
-                    it.name == "INSTANCE"
-                }
 
-                if (instance != null)
-                {
-                    val instanceObject = instance.get(null)
+                commandManager.registerCommand(
+                    clazz.newInstance() as BaseCommand
+                )
 
-                    commandManager.registerCommand(
-                        instanceObject as BaseCommand
-                    )
-                } else
-                {
-                    commandManager.registerCommand(
-                        clazz.newInstance() as BaseCommand
-                    )
-                }
+//                val instance = clazz.fields.firstOrNull {
+//                    it.name == "INSTANCE"
+//                }
+//
+//                if (instance != null)
+//                {
+//                    val instanceObject = instance.get(null)
+//
+//                    commandManager.registerCommand(
+//                        instanceObject as BaseCommand
+//                    )
+//                } else
+//                {
+//                    commandManager.registerCommand(
+//                        clazz.newInstance() as BaseCommand
+//                    )
+//                }
             } catch (e: Exception)
             {
                 // kotlin stream stuff
