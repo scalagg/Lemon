@@ -17,6 +17,8 @@ import gg.scala.lemon.adapt.client.PlayerClientAdapter
 import gg.scala.lemon.adapt.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapt.statistic.impl.DefaultSparkServerStatisticProvider
 import gg.scala.lemon.adapt.statistic.impl.SparkServerStatisticProvider
+import gg.scala.lemon.cooldown.CooldownHandler
+import gg.scala.lemon.handler.LemonCooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
@@ -40,12 +42,10 @@ import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
-import gg.scala.lemon.util.QuickAccess
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
-import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -380,6 +380,9 @@ class Lemon : ExtendedScalaPlugin()
     private fun loadHandlers()
     {
         RankHandler.loadRanks()
+
+        CooldownHandler.initialLoad()
+        LemonCooldownHandler.initialLoad()
 
         localInstance = ServerInstance(
             settings.id,

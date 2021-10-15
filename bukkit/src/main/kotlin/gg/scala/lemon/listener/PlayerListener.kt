@@ -2,6 +2,10 @@ package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.cooldown.CooldownHandler
+import gg.scala.lemon.cooldown.impl.ChatCooldown
+import gg.scala.lemon.cooldown.impl.CommandCooldown
+import gg.scala.lemon.cooldown.impl.SlowChatCooldown
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -11,9 +15,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.realRank
-import gg.scala.lemon.util.QuickAccess.remaining
 import gg.scala.lemon.util.QuickAccess.shouldBlock
-import gg.scala.lemon.util.other.Cooldown
 import gg.scala.lemon.util.queueForDispatch
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
@@ -161,39 +163,39 @@ object PlayerListener : Listener
             cancel(event, "${CC.RED}Global chat is currently muted.")
         } else if (ChatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass"))
         {
-            if (lemonPlayer.cooldowns["slowChat"]?.isActive() == true)
+            val slowChat = CooldownHandler.find(
+                SlowChatCooldown::class.java
+            )!!
+
+            if (slowChat.isActive(player))
             {
-                val formatted = lemonPlayer.cooldowns["slowChat"]?.let { remaining(it) }
+                val formatted = slowChat.getRemainingFormatted(player)
 
                 cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted seconds.")
                 return
             }
 
-            lemonPlayer.cooldowns["slowChat"] = Cooldown(ChatHandler.slowChatTime * 1000L)
+            slowChat.addOrOverride(player)
         } else
         {
             if (!lemonPlayer.hasPermission("lemon.cooldown.chat.bypass"))
             {
-                if (lemonPlayer.cooldowns["chat"]?.isActive() == true)
-                {
-                    val formatted = lemonPlayer.cooldowns["chat"]?.let { remaining(it) }
+                val chat = CooldownHandler.find(
+                    ChatCooldown::class.java
+                )!!
 
-                    cancel(event, "${CC.RED}You're on chat cooldown, please wait $formatted seconds.")
+                if (!CooldownHandler.notifyAndContinue(ChatCooldown::class.java, player))
+                {
+                    event.isCancelled = true
                     return
                 }
 
-                lemonPlayer.resetChatCooldown()
+                chat.addOrOverride(player)
             }
         }
 
         if (event.isCancelled)
             return
-
-        if (lemonPlayer.getSetting("global-chat-disabled"))
-        {
-            cancel(event, "${CC.RED}You have global chat disabled, re-enable it to continue chatting.")
-            return
-        }
 
         var channelMatch: Channel? = null
 
@@ -233,6 +235,12 @@ object PlayerListener : Listener
 
         if (channelMatch!!.getId() == "default")
         {
+            if (lemonPlayer.getSetting("global-chat-disabled"))
+            {
+                cancel(event, "${CC.RED}You may not send messages while having global chat muted.")
+                return
+            }
+
             if (FilterHandler.checkIfMessageFiltered(event.message, player))
             {
                 // they'll think the message sent ;O
@@ -390,13 +398,20 @@ object PlayerListener : Listener
     fun onCommand(event: PlayerCommandPreprocessEvent)
     {
         val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null) ?: return
+        val player = event.player
 
-        if (lemonPlayer.cooldowns["command"]?.isActive() == true)
+        val commandCoolDown = CooldownHandler.find(
+            CommandCooldown::class.java
+        )!!
+
+        if (!CooldownHandler.notifyAndContinue(CommandCooldown::class.java, player))
         {
-            val formatted = lemonPlayer.cooldowns["command"]?.let { remaining(it) }
-
-            cancel(event, "${CC.RED}You're on command cooldown, please wait $formatted seconds.")
+            event.isCancelled = true
             return
+        }
+
+        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass")) {
+            commandCoolDown.addOrOverride(player)
         }
 
         val command = event.message.split(" ")[0]
@@ -477,11 +492,6 @@ object PlayerListener : Listener
         CommandAsyncFileLogger.queueForUpdates(
             "${event.player.name}: ${event.message}"
         )
-
-        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass"))
-        {
-            lemonPlayer.cooldowns["command"] = Cooldown(1000L)
-        }
     }
 
     private fun formatTps(tps: Double): String

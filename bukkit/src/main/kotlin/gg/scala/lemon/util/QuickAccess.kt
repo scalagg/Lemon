@@ -7,7 +7,6 @@ import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
-import gg.scala.lemon.util.other.Cooldown
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC

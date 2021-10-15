@@ -16,7 +16,6 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.*
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
-import gg.scala.lemon.util.other.Cooldown
 import gg.scala.common.Savable
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
@@ -52,7 +51,6 @@ class LemonPlayer(
     val activePunishments = mutableMapOf<PunishmentCategory, Punishment?>()
 
     var ignoring = mutableListOf<UUID>()
-    val cooldowns = mutableMapOf<String, Cooldown>()
 
     val handleOnConnection = arrayListOf<(Player) -> Any>()
     var hasHandledOnConnection = false
@@ -74,12 +72,6 @@ class LemonPlayer(
 
     init
     {
-        cooldowns["command"] = Cooldown(0L)
-        cooldowns["request"] = Cooldown(0L)
-        cooldowns["report"] = Cooldown(0L)
-        cooldowns["chat"] = Cooldown(0L)
-        cooldowns["slowChat"] = Cooldown(0L)
-
         for (value in PunishmentCategory.VALUES)
         {
             activePunishments[value] = null
@@ -662,19 +654,6 @@ class LemonPlayer(
         }
 
         return hasPermission
-    }
-
-    fun resetChatCooldown()
-    {
-        val donor = hasPermission("lemon.donator")
-
-        cooldowns["chat"] = if (donor)
-        {
-            Cooldown(1000L)
-        } else
-        {
-            Cooldown(3000L)
-        }
     }
 
     fun updateOrAddMetadata(id: String, data: Metadata)
