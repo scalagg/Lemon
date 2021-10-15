@@ -1,5 +1,7 @@
 package gg.scala.lemon.menu.report
 
+import gg.scala.lemon.cooldown.CooldownHandler
+import gg.scala.lemon.cooldown.impl.ReportCooldown
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.enums.ReportType
 import gg.scala.lemon.util.QuickAccess
@@ -49,7 +51,11 @@ class ReportMenu(
                             if (throwable != null) {
                                 player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")
                             } else {
-                                lemonPlayer.cooldowns["report"] = Cooldown(60000L)
+                                val report = CooldownHandler.find(
+                                    ReportCooldown::class.java
+                                )
+
+                                report?.addOrOverride(player)
 
                                 player.closeInventory()
                                 player.sendMessage("${CC.GREEN}Your report has been submitted.")

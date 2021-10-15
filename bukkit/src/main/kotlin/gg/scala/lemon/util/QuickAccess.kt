@@ -127,11 +127,6 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun remaining(cooldown: Cooldown): String {
-        return String.format("%.0f", (cooldown.getRemaining() / 1000).toFloat())
-    }
-
-    @JvmStatic
     fun replaceEmpty(string: String): String {
         return ChatColor.stripColor(string).ifBlank {
             "${CC.RED}None"
