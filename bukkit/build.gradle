@@ -22,12 +22,12 @@ dependencies {
     implementation project(":common")
 
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
-    implementation "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
+    compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
     compileOnly "me.lucko:helper:5.6.8"
 
     implementation fileTree("internal")
-    compileOnly fileTree(dir: "lib")
+    compileOnly fileTree("lib")
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 }

@@ -10,6 +10,7 @@ import gg.scala.banana.Banana
 import gg.scala.banana.BananaBuilder
 import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
+import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.adapt.LemonPlayerAdapter
 import gg.scala.lemon.adapt.UUIDAdapter
 import gg.scala.lemon.adapt.client.PlayerClientAdapter
@@ -39,6 +40,7 @@ import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
@@ -82,7 +84,7 @@ import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import java.util.UUID
 
-class Lemon : ExtendedJavaPlugin()
+class Lemon : ExtendedScalaPlugin()
 {
 
     companion object
@@ -117,11 +119,6 @@ class Lemon : ExtendedJavaPlugin()
     override fun enable()
     {
         instance = this
-
-        // not complete!
-//        HelperLibraryHandler.loadAll(
-//            LemonLibraries()
-//        )
 
         loadBaseConfigurations()
 
@@ -468,6 +465,8 @@ class Lemon : ExtendedJavaPlugin()
 //                }
             } catch (e: Exception)
             {
+                e.printStackTrace()
+
                 // kotlin stream stuff
                 if (e.message?.contains("can not access a member of") == true)
                 {

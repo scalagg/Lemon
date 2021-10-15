@@ -694,7 +694,7 @@ class LemonPlayer(
 
     fun getMetadata(id: String): Metadata?
     {
-        return metadata.getOrDefault(id, null)
+        return metadata[id]
     }
 
     override fun save(): CompletableFuture<Void>
