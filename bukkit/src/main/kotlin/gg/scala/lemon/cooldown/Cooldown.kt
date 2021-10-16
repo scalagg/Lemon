@@ -1,6 +1,7 @@
 package gg.scala.lemon.cooldown
 
 import net.evilblock.cubed.util.time.TimeUtil
+import org.apache.commons.lang.time.DurationFormatUtils
 
 /**
  * @author GrowlyX
@@ -36,8 +37,8 @@ abstract class Cooldown<T>
 
     fun getRemainingFormatted(t: T): String
     {
-        return TimeUtil.formatIntoDetailedString(
-            fetchRemaining(t).toInt()
+        return DurationFormatUtils.formatDurationWords(
+            fetchRemaining(t), true, true
         )
     }
 
