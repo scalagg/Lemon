@@ -3,8 +3,8 @@ package gg.scala.lemon.notebook
 import com.cryptomorin.xseries.XMaterial
 import io.netty.buffer.Unpooled
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.nms.MinecraftProtocol
-import net.evilblock.cubed.util.nms.NBTUtil
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
@@ -23,7 +23,7 @@ class WrappedNotebook
     )
 
     var internalTitle = "Not Identified"
-    var internalPages = listOf("Not Identified")
+    var internalMainPageDescription = listOf("Not Identified")
 
     var hasFinalized = false
 
@@ -35,9 +35,8 @@ class WrappedNotebook
     fun setDescription(vararg description: String)
     {
         val immutableList = listOf(*description)
-        internalPages = immutableList
+        internalMainPageDescription = Color.translate(immutableList)
     }
-
 
     internal fun internalFinalize()
     {
@@ -48,12 +47,10 @@ class WrappedNotebook
         NotebookHandler.TAG_COMPOUND_SET_STRING.invoke(compound, "author", "Scala")
 
         val tagList = NotebookHandler.TAG_LIST.newInstance()
+        val joined = internalMainPageDescription.joinToString("\n")
+        val tagString = NotebookHandler.TAG_STRING_CONSTRUCTOR.newInstance(joined)
 
-        for (page in internalPages)
-        {
-            val tagString = NotebookHandler.TAG_STRING_CONSTRUCTOR.newInstance(page)
-            NotebookHandler.TAG_LIST_ADD.invoke(tagList, tagString)
-        }
+        NotebookHandler.TAG_LIST_ADD.invoke(tagList, tagString)
 
         NotebookHandler.TAG_COMPOUND_SET.invoke(compound, "pages", tagList)
         NotebookHandler.NMS_ITEM_STACK_TAG_FIELD.set(craftStack, compound)
