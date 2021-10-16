@@ -12,12 +12,12 @@ abstract class Cooldown<T>
     private val expiringTimes = mutableMapOf<T, Long>()
     private val start = System.currentTimeMillis()
 
-    fun addOrOverride(t: T)
+    open fun addOrOverride(t: T)
     {
         expiringTimes[t] = calculateExpiry(t)
     }
 
-    fun reset(t: T)
+    open fun reset(t: T)
     {
         expiringTimes.remove(t)
     }
