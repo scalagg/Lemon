@@ -61,7 +61,7 @@ object NotebookHandler
     )!!
 
     @JvmStatic
-    val CRAFT_ITEM_STACK = Reflection.getClassSuppressed("${MinecraftReflection.getCraftBukkitVersion()}.inventory.CraftItemStack")!!
+    val CRAFT_ITEM_STACK = MinecraftReflection.getCraftBukkitClass("inventory.CraftItemStack")!!
 
     @JvmStatic
     val CRAFT_ITEM_STACK_TAG_FIELD = Reflection.getField(CRAFT_ITEM_STACK, "tag")!!
