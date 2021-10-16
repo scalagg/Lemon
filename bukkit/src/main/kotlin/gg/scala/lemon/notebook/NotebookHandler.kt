@@ -64,7 +64,10 @@ object NotebookHandler
     val CRAFT_ITEM_STACK = MinecraftReflection.getCraftBukkitClass("inventory.CraftItemStack")!!
 
     @JvmStatic
-    val CRAFT_ITEM_STACK_TAG_FIELD = Reflection.getField(CRAFT_ITEM_STACK, "tag")!!
+    val NMS_ITEM_STACK = MinecraftReflection.getNMSClass("ItemStack")!!
+
+    @JvmStatic
+    val CRAFT_ITEM_STACK_TAG_FIELD = Reflection.getField(NMS_ITEM_STACK, "tag")!!
 
     @JvmStatic
     val AS_NMS_COPY = Reflection.getDeclaredMethod(CRAFT_ITEM_STACK, "asNMSCopy", ItemStack::class.java)!!
