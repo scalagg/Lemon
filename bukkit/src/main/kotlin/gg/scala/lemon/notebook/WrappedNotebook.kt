@@ -51,7 +51,7 @@ class WrappedNotebook
         }
 
         NotebookHandler.TAG_COMPOUND_SET.invoke(compound, tagList)
-        NotebookHandler.CRAFT_ITEM_STACK_TAG_FIELD.set(craftStack, compound)
+        NotebookHandler.NMS_ITEM_STACK_TAG_FIELD.set(craftStack, compound)
 
         notebook = NotebookHandler.AS_BUKKIT_COPY.invoke(null, craftStack) as ItemStack
         hasFinalized = true
