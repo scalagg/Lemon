@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial
 import io.netty.buffer.Unpooled
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.nms.MinecraftProtocol
+import net.evilblock.cubed.util.nms.NBTUtil
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
@@ -21,36 +22,40 @@ class WrappedNotebook
         XMaterial.WRITTEN_BOOK.parseMaterial()
     )
 
+    var internalTitle = "Not Identified"
+    var internalPages = listOf("Not Identified")
+
     var hasFinalized = false
 
     fun setTitle(title: String)
     {
-        handle().title = title
+        internalTitle = title
     }
 
     fun setDescription(vararg description: String)
     {
         val immutableList = listOf(*description)
-        handle().pages = immutableList
+        internalPages = immutableList
     }
+
 
     internal fun internalFinalize()
     {
         val craftStack = NotebookHandler.AS_NMS_COPY.invoke(null, notebook)
         val compound = NotebookHandler.TAG_COMPOUND.newInstance()
 
-        NotebookHandler.TAG_COMPOUND_SET_STRING.invoke(compound, "title", handle().title)
+        NotebookHandler.TAG_COMPOUND_SET_STRING.invoke(compound, "title", internalTitle)
         NotebookHandler.TAG_COMPOUND_SET_STRING.invoke(compound, "author", "Scala")
 
         val tagList = NotebookHandler.TAG_LIST.newInstance()
 
-        for (page in handle().pages)
+        for (page in internalPages)
         {
             val tagString = NotebookHandler.TAG_STRING_CONSTRUCTOR.newInstance(page)
             NotebookHandler.TAG_LIST_ADD.invoke(tagList, tagString)
         }
 
-        NotebookHandler.TAG_COMPOUND_SET.invoke(compound, tagList)
+        NotebookHandler.TAG_COMPOUND_SET.invoke(compound, "pages", tagList)
         NotebookHandler.NMS_ITEM_STACK_TAG_FIELD.set(craftStack, compound)
 
         notebook = NotebookHandler.AS_BUKKIT_COPY.invoke(null, craftStack) as ItemStack
@@ -85,10 +90,5 @@ class WrappedNotebook
         MinecraftProtocol.send(player, packet)
 
         player.inventory.setItem(previous, previousItem)
-    }
-
-    internal fun handle(): BookMeta
-    {
-        return notebook.itemMeta as BookMeta
     }
 }
