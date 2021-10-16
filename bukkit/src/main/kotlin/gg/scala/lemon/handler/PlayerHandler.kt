@@ -133,22 +133,13 @@ object PlayerHandler {
 
         if (player != null) {
             return Optional.ofNullable(
-                players.getOrDefault(
-                    player.uniqueId,
-                    LemonPlayer(player.uniqueId, player.name, null)
+                players.get(
+                    player.uniqueId
                 )
             )
         }
 
-        val offline = Bukkit.getOfflinePlayer(name)
-
-        if (offline != null && offline.hasPlayedBefore()) {
-            return Optional.ofNullable(LemonPlayer(offline.uniqueId, offline.name, null))
-        }
-
-        val uuid = CubedCacheUtil.fetchUuid(name)
-
-        return Optional.ofNullable(LemonPlayer(uuid!!, name, null))
+        return Optional.ofNullable(null)
     }
 
     fun findPlayer(player: Player?): Optional<LemonPlayer> {
