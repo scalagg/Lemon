@@ -51,7 +51,7 @@ object CooldownHandler
             val formatted = cooldown.getRemainingFormatted(player)
 
             player.sendMessage(
-                "${CC.RED}You're on ${cooldown.id()} cooldown, please wait $formatted seconds."
+                "${CC.RED}You're on ${cooldown.id()} cooldown, please wait $formatted."
             )
 
             false
