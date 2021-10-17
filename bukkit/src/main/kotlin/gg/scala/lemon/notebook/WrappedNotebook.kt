@@ -18,7 +18,7 @@ import org.bukkit.inventory.meta.BookMeta
 class WrappedNotebook
 {
 
-    internal var notebook = ItemStack(
+    private var handle = ItemStack(
         XMaterial.WRITTEN_BOOK.parseMaterial()
     )
 
@@ -38,9 +38,9 @@ class WrappedNotebook
         internalMainPageDescription = Color.translate(immutableList)
     }
 
-    internal fun internalFinalize()
+    private fun internalFinalize()
     {
-        val craftStack = NotebookHandler.AS_NMS_COPY.invoke(null, notebook)
+        val craftStack = NotebookHandler.AS_NMS_COPY.invoke(null, handle)
         val compound = NotebookHandler.TAG_COMPOUND.newInstance()
 
         NotebookHandler.TAG_COMPOUND_SET_STRING.invoke(compound, "title", internalTitle)
@@ -55,7 +55,7 @@ class WrappedNotebook
         NotebookHandler.TAG_COMPOUND_SET.invoke(compound, "pages", tagList)
         NotebookHandler.NMS_ITEM_STACK_TAG_FIELD.set(craftStack, compound)
 
-        notebook = NotebookHandler.AS_BUKKIT_COPY.invoke(null, craftStack) as ItemStack
+        handle = NotebookHandler.AS_BUKKIT_COPY.invoke(null, craftStack) as ItemStack
         hasFinalized = true
     }
 
@@ -82,7 +82,7 @@ class WrappedNotebook
         val previous = player.inventory.heldItemSlot
         val previousItem = player.inventory.getItem(previous)
 
-        player.inventory.setItem(previous, notebook)
+        player.inventory.setItem(previous, handle)
 
         MinecraftProtocol.send(player, packet)
 

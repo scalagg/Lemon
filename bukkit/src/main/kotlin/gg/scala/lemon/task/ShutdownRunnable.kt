@@ -1,13 +1,13 @@
 package gg.scala.lemon.task
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.task.DecrementRunnable
+import gg.scala.lemon.util.task.DiminutionRunnable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks.sync
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 
-class ShutdownRunnable(seconds: Int): DecrementRunnable(seconds) {
+class ShutdownRunnable(seconds: Int): DiminutionRunnable(seconds) {
 
     init {
         runTaskTimerAsynchronously(Lemon.instance, 0L, 20L)

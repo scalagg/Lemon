@@ -106,7 +106,7 @@ class RankCommand : BaseCommand()
     @Subcommand("create")
     @Description("Create a new rank.")
     @CommandPermission("lemon.command.rank.management")
-    fun onCreate(sender: CommandSender, name: String)
+    fun onCreate(sender: CommandSender, @Single name: String)
     {
         val existing = RankHandler.findRank(name)
 

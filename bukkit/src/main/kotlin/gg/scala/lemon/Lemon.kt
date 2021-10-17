@@ -109,7 +109,6 @@ class Lemon : ExtendedScalaPlugin()
     lateinit var localInstance: ServerInstance
 
     lateinit var lemonWebData: ScalaValidateData
-    lateinit var entityInteractionHandler: EntityInteractionHandler
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
     lateinit var redisConnection: RedisConnection

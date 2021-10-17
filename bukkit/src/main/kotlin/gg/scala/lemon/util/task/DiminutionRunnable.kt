@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable
  * @author puugz
  * @since 23/08/2021 19:19
  */
-abstract class DecrementRunnable(var seconds: Int): BukkitRunnable() {
+abstract class DiminutionRunnable(var seconds: Int): BukkitRunnable() {
 
     override fun run() {
         seconds--
