@@ -1,4 +1,4 @@
-package gg.scala.lemon.adapt.client
+package gg.scala.lemon.adapter.client
 
 import org.bukkit.entity.Player
 

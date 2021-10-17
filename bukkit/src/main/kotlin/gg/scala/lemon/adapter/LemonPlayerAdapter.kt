@@ -1,4 +1,4 @@
-package gg.scala.lemon.adapt
+package gg.scala.lemon.adapter
 
 import com.google.gson.*
 import gg.scala.lemon.LemonConstants

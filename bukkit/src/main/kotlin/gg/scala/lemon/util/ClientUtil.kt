@@ -1,7 +1,7 @@
 package gg.scala.lemon.util
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.adapt.client.PlayerClientAdapter
+import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import org.bukkit.entity.Player
 
 /**

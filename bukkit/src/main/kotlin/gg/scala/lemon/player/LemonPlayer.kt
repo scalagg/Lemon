@@ -281,7 +281,8 @@ class LemonPlayer(
                 setupAutomaticGrant()
             }
 
-            if (shouldRecalculatePermissions) handlePermissionApplication(grants, shouldCalculateNow)
+            if (shouldRecalculatePermissions)
+                handlePermissionApplication(grants, shouldCalculateNow)
 
             if (connecting && LemonConstants.DEBUG)
             {

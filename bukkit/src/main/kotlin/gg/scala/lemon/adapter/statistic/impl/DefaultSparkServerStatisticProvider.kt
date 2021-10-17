@@ -1,6 +1,6 @@
-package gg.scala.lemon.adapt.statistic.impl
+package gg.scala.lemon.adapter.statistic.impl
 
-import gg.scala.lemon.adapt.statistic.ServerStatisticProvider
+import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import net.evilblock.cubed.util.nms.MinecraftReflection
 import java.lang.management.ManagementFactory
 

@@ -1,4 +1,4 @@
-package gg.scala.lemon.adapt.statistic
+package gg.scala.lemon.adapter.statistic
 
 /**
  * @author GrowlyX

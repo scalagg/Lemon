@@ -11,12 +11,12 @@ import gg.scala.banana.BananaBuilder
 import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.lemon.adapt.LemonPlayerAdapter
-import gg.scala.lemon.adapt.UUIDAdapter
-import gg.scala.lemon.adapt.client.PlayerClientAdapter
-import gg.scala.lemon.adapt.statistic.ServerStatisticProvider
-import gg.scala.lemon.adapt.statistic.impl.DefaultSparkServerStatisticProvider
-import gg.scala.lemon.adapt.statistic.impl.SparkServerStatisticProvider
+import gg.scala.lemon.adapter.LemonPlayerAdapter
+import gg.scala.lemon.adapter.UUIDAdapter
+import gg.scala.lemon.adapter.client.PlayerClientAdapter
+import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
+import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
+import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.handler.LemonCooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
@@ -67,7 +67,6 @@ import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
-import net.evilblock.cubed.util.bukkit.selection.impl.EntityInteractionHandler
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor

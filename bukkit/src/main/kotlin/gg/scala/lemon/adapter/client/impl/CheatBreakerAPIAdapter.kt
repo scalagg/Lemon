@@ -1,8 +1,8 @@
-package gg.scala.lemon.adapt.client.impl
+package gg.scala.lemon.adapter.client.impl
 
 import com.oldcheatbreaker.api.CheatBreakerAPI
 import com.oldcheatbreaker.api.`object`.TitleType
-import gg.scala.lemon.adapt.client.PlayerClientAdapter
+import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.time.Duration

@@ -1,6 +1,6 @@
-package gg.scala.lemon.adapt.statistic.impl
+package gg.scala.lemon.adapter.statistic.impl
 
-import gg.scala.lemon.adapt.statistic.ServerStatisticProvider
+import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import me.lucko.spark.api.SparkProvider
 import me.lucko.spark.api.statistic.StatisticWindow
 import java.lang.management.ManagementFactory
