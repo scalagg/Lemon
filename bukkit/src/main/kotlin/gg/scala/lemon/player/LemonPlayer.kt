@@ -49,6 +49,7 @@ class LemonPlayer(
     var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments = mutableMapOf<PunishmentCategory, Punishment?>()
+    val permissions = listOf<String>()
 
     var ignoring = mutableListOf<UUID>()
 
