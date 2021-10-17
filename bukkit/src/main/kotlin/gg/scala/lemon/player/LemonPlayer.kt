@@ -315,7 +315,7 @@ class LemonPlayer(
     {
         val meta = getMetadata("last-auth")
 
-        return meta == null || System.currentTimeMillis() > meta.asLong() + TimeUnit.HOURS.toMillis(12L)
+        return meta == null || System.currentTimeMillis() > meta.asString().toLong() + TimeUnit.HOURS.toMillis(12L)
     }
 
     fun validatePlayerAuthentication()
@@ -368,7 +368,7 @@ class LemonPlayer(
 
         updateOrAddMetadata(
             "last-auth",
-            Metadata(System.currentTimeMillis())
+            Metadata(System.currentTimeMillis().toString())
         )
     }
 

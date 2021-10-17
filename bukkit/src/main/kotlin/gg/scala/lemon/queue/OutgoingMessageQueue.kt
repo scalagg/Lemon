@@ -31,6 +31,7 @@ open class OutgoingMessageQueue(
                 {
                     val popped = messages.pop()
 
+
                     if (popped != null)
                     {
                         dispatchInternal(popped)
