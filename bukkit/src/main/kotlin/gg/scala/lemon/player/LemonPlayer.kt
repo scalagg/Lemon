@@ -555,6 +555,10 @@ class LemonPlayer(
                 }
             }
 
+            permissions.forEach { permission ->
+                handleAddPermission.invoke(permission, it)
+            }
+
             it.recalculatePermissions()
 
             QuickAccess.reloadPlayer(
