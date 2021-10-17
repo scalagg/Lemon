@@ -49,7 +49,7 @@ class LemonPlayer(
     var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments = mutableMapOf<PunishmentCategory, Punishment?>()
-    val permissions = listOf<String>()
+    var permissions = listOf<String>()
 
     var ignoring = mutableListOf<UUID>()
 
@@ -57,7 +57,8 @@ class LemonPlayer(
     var hasHandledOnConnection = false
 
     var activeGrant: Grant? = null
-    var attachment: PermissionAttachment? = null
+
+    private var attachment: PermissionAttachment? = null
 
     var metadata = mutableMapOf<String, Metadata>()
 

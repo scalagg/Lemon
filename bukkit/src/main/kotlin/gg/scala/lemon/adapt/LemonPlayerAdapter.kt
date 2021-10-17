@@ -25,7 +25,7 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
 
             lemonPlayer.previousIpAddress = jsonObject.get("ipAddress").asString
 
-            lemonPlayer.ignoring = Serializers.gson.fromJson(jsonObject.get("ignoring"), LemonConstants.UUID_ARRAY_LIST_TYPE)
+            lemonPlayer.ignoring = Serializers.gson.fromJson(jsonObject.get("ignoring"), LemonConstants.UUID_MUTABLE_LIST)
 
             lemonPlayer.metadata = Serializers.gson.fromJson(
                 jsonObject.get("metadata"),
@@ -34,6 +34,7 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
 
             lemonPlayer.pastIpAddresses = Serializers.gson.fromJson(jsonObject.get("pastIpAddresses"), LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE)
             lemonPlayer.pastLogins = Serializers.gson.fromJson(jsonObject.get("pastLogins"), LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE)
+            lemonPlayer.permissions = Serializers.gson.fromJson(jsonObject.get("specific-permissions"), LemonConstants.STRING_MUTABLE_LIST)
 
             return lemonPlayer
         } catch (e: Throwable) {
@@ -53,6 +54,7 @@ object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonP
         jsonObject.add("metadata", Serializers.gson.toJsonTree(src.metadata))
         jsonObject.add("pastIpAddresses", Serializers.gson.toJsonTree(src.pastIpAddresses))
         jsonObject.add("pastLogins", Serializers.gson.toJsonTree(src.pastLogins))
+        jsonObject.add("specific-permissions", Serializers.gson.toJsonTree(src.permissions))
 
         return jsonObject
     }

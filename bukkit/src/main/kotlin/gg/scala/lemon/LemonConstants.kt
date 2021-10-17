@@ -33,7 +33,10 @@ object LemonConstants {
     val STRING_LONG_MUTABLE_MAP_TYPE: Type = object : TypeToken<MutableMap<String, Long>>() {}.type
 
     @JvmStatic
-    val UUID_ARRAY_LIST_TYPE: Type = object : TypeToken<MutableList<UUID>>() {}.type
+    val STRING_MUTABLE_LIST: Type = object : TypeToken<MutableList<String>>() {}.type
+
+    @JvmStatic
+    val UUID_MUTABLE_LIST: Type = object : TypeToken<MutableList<UUID>>() {}.type
 
     @JvmStatic
     val SERVER_NAME = Lemon.instance.lemonWebData.serverName
