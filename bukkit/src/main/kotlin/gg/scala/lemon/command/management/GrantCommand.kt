@@ -1,6 +1,6 @@
 package gg.scala.lemon.command.management
 
-import gg.scala.lemon.menu.grant.issue.GrantIssueRankMenu
+import gg.scala.lemon.menu.grant.context.GrantRankContextMenu
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.acf.BaseCommand
@@ -29,6 +29,6 @@ class GrantCommand : BaseCommand() {
 
         player.sendMessage("${CC.SEC}Granting for ${CC.PRI}${colored}${CC.SEC}...")
 
-        GrantIssueRankMenu(uuid, name).openMenu(player)
+        GrantRankContextMenu(uuid, name).openMenu(player)
     }
 }

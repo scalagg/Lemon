@@ -1,22 +1,16 @@
-package gg.scala.lemon.menu.grant.issue
+package gg.scala.lemon.menu.grant.context
 
 import com.cryptomorin.xseries.XMaterial
-import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.util.QuickAccess
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.ColorUtil
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
-import net.evilblock.cubed.util.text.TextSplitter
 import net.evilblock.cubed.util.time.Duration
 import org.apache.commons.lang.time.DurationFormatUtils
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
@@ -27,7 +21,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/23/2021
  */
-class GrantIssueDurationMenu(
+class GrantDurationContextMenu(
     private val uuid: UUID,
     private val name: String,
     private val rank: Rank
@@ -71,9 +65,9 @@ class GrantIssueDurationMenu(
                             if (duration == null) {
                                 context.sendMessage("Invalid duration parsed. Returning to menu. (Example: 1h30m)")
 
-                                GrantIssueDurationMenu(uuid, name, rank).openMenu(player)
+                                GrantDurationContextMenu(uuid, name, rank).openMenu(player)
                             } else {
-                                GrantIssueReasonMenu(uuid, name, rank, duration).openMenu(player)
+                                GrantReasonContextMenu(uuid, name, rank, duration).openMenu(player)
 
                                 context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
                             }
@@ -88,7 +82,7 @@ class GrantIssueDurationMenu(
                     "${CC.YELLOW}Click to continue."
                 )
                 .toButton { _, _ ->
-                    GrantIssueReasonMenu(uuid, name, rank, Duration.parse("perm")).openMenu(player)
+                    GrantReasonContextMenu(uuid, name, rank, Duration.parse("perm")).openMenu(player)
 
                     player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}Permanent${CC.SEC}.")
                 }
@@ -106,7 +100,7 @@ class GrantIssueDurationMenu(
     override fun onClose(player: Player, manualClose: Boolean) {
         if (manualClose) {
             Schedulers.sync().runLater({
-                GrantIssueRankMenu(uuid, name).openMenu(player)
+                GrantRankContextMenu(uuid, name).openMenu(player)
             }, 1L)
         }
     }
@@ -126,7 +120,7 @@ class GrantIssueDurationMenu(
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            GrantIssueReasonMenu(uuid, name, rank, duration).openMenu(player)
+            GrantReasonContextMenu(uuid, name, rank, duration).openMenu(player)
 
             player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$formatted${CC.SEC}.")
         }

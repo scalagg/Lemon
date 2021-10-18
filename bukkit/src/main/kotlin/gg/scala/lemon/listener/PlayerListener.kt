@@ -547,25 +547,22 @@ object PlayerListener : Listener
         if (player.hasMetadata("vanished"))
         {
             player.sendMessage("${CC.RED}You may not damage entities while in vanish.")
+            event.isCancelled = true
         }
         if (player.hasMetadata("mod-mode"))
         {
             player.sendMessage("${CC.RED}You may not damage entities while in mod-mode.")
+            event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent)
     {
-        if (shouldBlock(event.player))
-        {
-            event.isCancelled = true
-            return
-        }
-
         if (event.player.hasMetadata("mod-mode"))
         {
             event.player.sendMessage("${CC.RED}You may not break blocks while in mod-mode.")
+            event.isCancelled = true
         }
     }
 
@@ -575,6 +572,7 @@ object PlayerListener : Listener
         if (event.player.hasMetadata("mod-mode"))
         {
             event.player.sendMessage("${CC.RED}You may not place blocks while in mod-mode.")
+            event.isCancelled = true
         }
     }
 

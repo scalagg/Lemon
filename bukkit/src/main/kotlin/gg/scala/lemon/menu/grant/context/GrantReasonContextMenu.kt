@@ -1,4 +1,4 @@
-package gg.scala.lemon.menu.grant.issue
+package gg.scala.lemon.menu.grant.context
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
@@ -6,7 +6,6 @@ import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.util.QuickAccess
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
@@ -15,18 +14,14 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import net.evilblock.cubed.util.time.Duration
-import org.apache.commons.lang.time.DurationFormatUtils
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.ClickType
-import org.bukkit.inventory.InventoryView
 import java.util.*
 
 /**
  * @author GrowlyX
  * @since 9/23/2021
  */
-class GrantIssueReasonMenu(
+class GrantReasonContextMenu(
     private val uuid: UUID,
     private val name: String,
     private val rank: Rank,
@@ -128,7 +123,7 @@ class GrantIssueReasonMenu(
     override fun onClose(player: Player, manualClose: Boolean) {
         if (manualClose) {
             Schedulers.sync().runLater({
-                GrantIssueDurationMenu(uuid, name, rank).openMenu(player)
+                GrantDurationContextMenu(uuid, name, rank).openMenu(player)
             }, 1L)
         }
     }

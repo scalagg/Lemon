@@ -1,6 +1,7 @@
 package gg.scala.lemon.handler
 
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
@@ -51,7 +52,7 @@ object FilterHandler {
                 )
             }
 
-            this.linkRegexList.filter { it.matches(finalWord) }.forEach { _ ->
+            this.linkRegexList.filter { it.matches(finalWord) && !finalWord.endsWith(LemonConstants.WEB_LINK) || !finalWord.startsWith(LemonConstants.WEB_LINK) }.forEach { _ ->
                 return notifyLocally(
                     title = "Blacklisted Link",
                     description = "Message contains a link: ${CC.WHITE}$finalWord${CC.GRAY}.",

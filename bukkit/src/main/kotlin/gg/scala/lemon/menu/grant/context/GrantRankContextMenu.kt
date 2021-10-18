@@ -1,4 +1,4 @@
-package gg.scala.lemon.menu.grant.issue
+package gg.scala.lemon.menu.grant.context
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.handler.PlayerHandler
@@ -22,7 +22,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/23/2021
  */
-class GrantIssueRankMenu(
+class GrantRankContextMenu(
     private val uuid: UUID,
     private val name: String
 ) : PaginatedMenu() {
@@ -84,7 +84,7 @@ class GrantIssueRankMenu(
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
-                GrantIssueDurationMenu(uuid, name, rank).openMenu(player)
+                GrantDurationContextMenu(uuid, name, rank).openMenu(player)
             } else {
                 player.sendMessage("${CC.RED}You're not allowed to grant this rank.")
             }
