@@ -477,7 +477,7 @@ object PlayerListener : Listener
             }
         }
 
-        if (!event.player.isOp && command.equals("tps", true)) {
+        if (!event.player.isOp && command.equals("/tps", true)) {
             val ticksPerSecond = Lemon.instance
                 .serverStatisticProvider.ticksPerSecond()
 
