@@ -406,7 +406,7 @@ class LemonPlayer(
 
         val notNullPlayer = bukkitPlayer!!
 
-        val stack = ItemBuilder(XMaterial.MAP).build()
+        val stack = ItemStack(Material.MAP)
         val view = Bukkit.createMap(notNullPlayer.world)
 
         stack.durability = view.id
