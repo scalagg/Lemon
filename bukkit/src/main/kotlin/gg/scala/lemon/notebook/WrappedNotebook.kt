@@ -22,14 +22,29 @@ class WrappedNotebook
         XMaterial.WRITTEN_BOOK.parseMaterial()
     )
 
-    var internalTitle = "Not Identified"
-    var internalMainPageDescription = listOf("Not Identified")
+    internal var internalTitle = "Not Identified"
+    internal var internalMainPageDescription = listOf("Not Identified")
 
-    var hasFinalized = false
+    internal var buffer: Buffer? = null
+    
+    internal var hasFinalized = false
+    
+    internal var shouldGlow = false
+    internal var shouldReplace = false
 
     fun setTitle(title: String)
     {
         internalTitle = title
+    }
+    
+    fun replace()
+    {
+        shouldReplace = true
+    }
+    
+    fun glow()
+    {
+        shouldGlow = true
     }
 
     fun setDescription(vararg description: String)
@@ -40,6 +55,18 @@ class WrappedNotebook
 
     private fun internalFinalize()
     {
+        if (buffer == null)
+        {
+            buffer = Unpooled.buffer(256)
+            buffer.setByte(0, 0)
+            buffer.writerIndex(1)
+        }
+        
+        if (shouldGlow)
+        {
+            // TODO:
+        }
+        
         val craftStack = NotebookHandler.AS_NMS_COPY.invoke(null, handle)
         val compound = NotebookHandler.TAG_COMPOUND.newInstance()
 
@@ -56,7 +83,6 @@ class WrappedNotebook
         NotebookHandler.NMS_ITEM_STACK_TAG_FIELD.set(craftStack, compound)
 
         handle = NotebookHandler.AS_BUKKIT_COPY.invoke(null, craftStack) as ItemStack
-        hasFinalized = true
     }
 
     fun open(player: Player)
@@ -64,6 +90,7 @@ class WrappedNotebook
         if (!hasFinalized) {
             try {
                 internalFinalize()
+                hasFinalized = true
             } catch (exception: Exception) {
                 exception.printStackTrace()
                 player.sendMessage("${CC.RED}Sorry, we couldn't open this notebook.")
@@ -71,12 +98,8 @@ class WrappedNotebook
             }
         }
 
-        val buf = Unpooled.buffer(256)
-        buf.setByte(0, 0)
-        buf.writerIndex(1)
-
         val packet = NotebookHandler.CUSTOM_PAYLOAD_CONSTRUCTOR.newInstance(
-            "MC|BOpen", NotebookHandler.DATA_SERIALIZER_CONSTRUCTOR.newInstance(buf)
+            "MC|BOpen", NotebookHandler.DATA_SERIALIZER_CONSTRUCTOR.newInstance(buffer)
         )
 
         val previous = player.inventory.heldItemSlot
