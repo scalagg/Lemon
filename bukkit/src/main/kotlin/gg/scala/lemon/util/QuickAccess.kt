@@ -191,11 +191,9 @@ object QuickAccess {
         reason: String?,
         fallback: String = "Unfair Advantage"
     ): String {
-        var preParsedReason = reason?.removeSuffix("-s") ?: fallback
-        preParsedReason = preParsedReason.removeSuffix(" ")
-
-        preParsedReason = preParsedReason.removePrefix("-s")
-        preParsedReason = preParsedReason.removePrefix(" ")
+        var preParsedReason = reason? ?: fallback
+        preParsedReason = preParsedReason.removeSurrounding("-s")
+        preParsedReason = preParsedReason.removeSurrounding(" ")
 
         return preParsedReason.ifBlank { fallback }
     }
