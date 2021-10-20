@@ -4,7 +4,7 @@ import java.util.*
 
 /**
  * Contains fundamental information for a specific player which
- * will be used across a network running Lemon.
+ * will be used across a network utilizing Lemon.
  *
  * @author GrowlyX
  * @since 10/19/2021
