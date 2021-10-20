@@ -11,6 +11,7 @@ import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
+import gg.scala.lemon.player.extension.LemonPlayerCacheExtension
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
@@ -602,6 +603,7 @@ object PlayerListener : Listener
             }
 
             PlayerHandler.unModModePlayerSilent(player)
+            LemonPlayerCacheExtension.forget(it)
 
             PlayerHandler.players.remove(it.uniqueId)?.save()
         }
