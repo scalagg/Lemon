@@ -368,7 +368,7 @@ object PlayerListener : Listener
     )
     fun onInteract(event: PlayerInteractEvent)
     {
-        if (shouldBlock(event.player))
+        if (shouldBlock(event.player) && LemonConstants.LOBBY)
         {
             event.isCancelled = true
             return

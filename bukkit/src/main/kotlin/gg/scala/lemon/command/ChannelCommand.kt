@@ -37,8 +37,7 @@ class ChannelCommand : BaseCommand()
 
         if (!channel.hasPermission(player))
         {
-            player.sendMessage("${CC.RED}You do not have permission to chat in ${CC.YELLOW}${channel.getId()}${CC.RED}.")
-            return
+            throw ConditionFailedException("You do not have permission to chat in ${CC.YELLOW}${channel.getId()}${CC.RED}.")
         }
 
         lemonPlayer.updateOrAddMetadata(

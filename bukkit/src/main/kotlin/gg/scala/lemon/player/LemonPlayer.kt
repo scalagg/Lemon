@@ -1,7 +1,7 @@
 package gg.scala.lemon.player
 
-import com.cryptomorin.xseries.XMaterial
 import com.google.zxing.WriterException
+import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
@@ -16,10 +16,8 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.*
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
-import gg.scala.common.Savable
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.totp.ImageMapRenderer
 import org.bukkit.Bukkit
@@ -221,6 +219,7 @@ class LemonPlayer(
         }
     }
 
+    @JvmOverloads
     fun recalculateGrants(
         autoNotify: Boolean = false,
         forceRecalculatePermissions: Boolean = false,

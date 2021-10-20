@@ -1,9 +1,11 @@
 package gg.scala.lemon.notebook
 
 import com.cryptomorin.xseries.XMaterial
+import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
+import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.nms.MinecraftProtocol
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -25,10 +27,10 @@ class WrappedNotebook
     internal var internalTitle = "Not Identified"
     internal var internalMainPageDescription = listOf("Not Identified")
 
-    internal var buffer: Buffer? = null
-    
+    internal var buffer: ByteBuf? = null
+
     internal var hasFinalized = false
-    
+
     internal var shouldGlow = false
     internal var shouldReplace = false
 
@@ -36,12 +38,12 @@ class WrappedNotebook
     {
         internalTitle = title
     }
-    
+
     fun replace()
     {
         shouldReplace = true
     }
-    
+
     fun glow()
     {
         shouldGlow = true
@@ -58,15 +60,16 @@ class WrappedNotebook
         if (buffer == null)
         {
             buffer = Unpooled.buffer(256)
-            buffer.setByte(0, 0)
-            buffer.writerIndex(1)
+            buffer!!.setByte(0, 0)
+            buffer!!.writerIndex(1)
         }
-        
+
         if (shouldGlow)
         {
-            // TODO:
+            handle = ItemBuilder.copyOf(handle)
+                .glow().build()
         }
-        
+
         val craftStack = NotebookHandler.AS_NMS_COPY.invoke(null, handle)
         val compound = NotebookHandler.TAG_COMPOUND.newInstance()
 
