@@ -8,7 +8,7 @@ import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
-import gg.scala.lemon.player.extension.LemonPlayerCacheExtension
+import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.player.punishment.Punishment
@@ -729,7 +729,7 @@ class LemonPlayer(
             connecting = true,
             forceRecalculatePermissions = true
         ).thenRun {
-            LemonPlayerCacheExtension.memorize(this)
+            PlayerCachingExtension.memorize(this)
         }
 
         recalculatePunishments(

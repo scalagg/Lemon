@@ -22,7 +22,7 @@ class VanishCommand : BaseCommand() {
     fun onVanish(sender: Player, @Optional priority: Int?, @Optional target: LemonPlayer?) {
         if (target != null) {
             if (!sender.uniqueId.equals(target.bukkitPlayer!!.uniqueId) && !sender.hasPermission("lemon.command.vanish.other")) {
-                throw ConditionFailedException("${CC.RED}You do not have permission to vanish other players!")
+                throw ConditionFailedException("${CC.RED}You do not have permission to vanish others!")
             }
         }
 

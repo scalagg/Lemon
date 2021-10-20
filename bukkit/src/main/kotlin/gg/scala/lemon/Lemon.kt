@@ -29,7 +29,7 @@ import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
-import gg.scala.lemon.player.extension.LemonPlayerCacheExtension
+import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
@@ -317,7 +317,7 @@ class Lemon : ExtendedScalaPlugin()
 
         if (settings.redisCachePlayers)
         {
-            LemonPlayerCacheExtension.initialLoad()
+            PlayerCachingExtension.initialLoad()
 
             logger.info("Now memorizing fundamental player data to your redis server.")
         }

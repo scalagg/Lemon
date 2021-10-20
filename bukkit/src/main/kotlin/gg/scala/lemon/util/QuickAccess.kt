@@ -148,15 +148,14 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "staff-message",
-                hashMapOf<String, String>().also {
-                    it["sender-fancy"] = sender?.let { nameOrConsole(sender) } ?: ""
-                    it["message"] = message
-                    it["permission"] = "lemon.staff"
-                    it["message-type"] = messageType.name
-
-                    it["server"] = Lemon.instance.settings.id
-                    it["with-server"] = addServer.toString()
-                }
+                hashMapOf(
+                    "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
+                    "message" to message,
+                    "permission" to "lemon.staff",
+                    "message-type" to messageType.name,
+                    "server" to Lemon.instance.settings.id,
+                    "with-server" to addServer.toString(),
+                )
             ).queueForDispatch()
         }
     }
@@ -172,16 +171,15 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "staff-message",
-                hashMapOf<String, String>().also {
-                    it["sender-fancy"] = sender?.let { nameOrConsole(sender) } ?: ""
-                    it["message"] = message
-                    it["permission"] = "lemon.staff"
-                    it["message-type"] = messageType.name
-                    it["flag"] = flag
-
-                    it["server"] = Lemon.instance.settings.id
-                    it["with-server"] = addServer.toString()
-                }
+                hashMapOf(
+                    "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
+                    "message" to message,
+                    "permission" to "lemon.staff",
+                    "flag" to flag,
+                    "message-type" to messageType.name,
+                    "server" to Lemon.instance.settings.id,
+                    "with-server" to addServer.toString(),
+                )
             ).queueForDispatch()
         }
     }
@@ -191,7 +189,7 @@ object QuickAccess {
         reason: String?,
         fallback: String = "Unfair Advantage"
     ): String {
-        var preParsedReason = reason? ?: fallback
+        var preParsedReason = reason ?: fallback
         preParsedReason = preParsedReason.removeSurrounding("-s")
         preParsedReason = preParsedReason.removeSurrounding(" ")
 

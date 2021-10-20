@@ -28,7 +28,7 @@ class PlaytimeCommand : BaseCommand() {
         ).orElse(null) ?: target
 
         if (target != null && !player.hasPermission("lemon.command.playtime.other")) {
-            throw ConditionFailedException("You do not have permission to check the playtime of other players!")
+            throw ConditionFailedException("You do not have permission to view playtime of other players!")
         }
 
         val timeOnlineNetwork = lemonPlayer!!.pastLogins.values.sum()

@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 10/19/2021
  */
-object LemonPlayerCacheExtension
+object PlayerCachingExtension
 {
     private lateinit var handle: RedisStorageLayer<FundamentalLemonPlayer>
 
