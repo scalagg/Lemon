@@ -5,6 +5,7 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.queueForDispatch
 import gg.scala.common.Savable
+import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -65,10 +66,10 @@ class Rank(
         return this.save().thenApply {
             RedisHandler.buildMessage(
                 "rank-update",
-                hashMapOf<String, String>().also {
-                    it["uniqueId"] = uuid.toString()
-                }
-            ).queueForDispatch()
+                hashMapOf(
+                    "uniqueId" to uuid.toString()
+                )
+            ).dispatchImmediately()
 
             return@thenApply null
         }
