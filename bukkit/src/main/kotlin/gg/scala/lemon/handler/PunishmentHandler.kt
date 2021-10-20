@@ -19,6 +19,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ForkJoinPool
 
 /**
  * @author GrowlyX
@@ -190,7 +191,12 @@ object PunishmentHandler {
             }
         }
 
-        Tasks.async {
+        if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.toLowerCase()}.permanent")) {
+            issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.toLowerCase()}s!")
+            return
+        }
+
+        ForkJoinPool.commonPool().execute {
             val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
             val targetName = QuickAccess.fetchColoredName(uuid)
@@ -200,11 +206,6 @@ object PunishmentHandler {
             val issuerWeight = QuickAccess.weightOf(issuer)
 
             activePunishments.thenAccept {
-                if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.toLowerCase()}.permanent")) {
-                    issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.toLowerCase()}s!")
-                    return@thenAccept
-                }
-
                 if (!it.isNullOrEmpty() && !rePunishing) {
                     issuer.sendMessage(arrayOf(
                         "${CC.RED}While attempting to issue a punishment for $targetName${CC.RED}",

@@ -28,8 +28,6 @@ class ReportMenu(
 
     override fun getButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also { buttons ->
-            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
             ReportType.VALUES.forEach {
                 val finalDescription = mutableListOf<String>()
 
