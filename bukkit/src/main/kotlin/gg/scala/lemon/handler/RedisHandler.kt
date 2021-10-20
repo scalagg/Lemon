@@ -4,6 +4,7 @@ import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -213,6 +214,8 @@ object RedisHandler : BananaHandler
         )
 
         RankHandler.ranks.remove(rankUuid)
+
+        ResourceUpdateRunnable.run()
     }
 
     @Subscribe("rank-update")

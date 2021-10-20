@@ -175,7 +175,7 @@ class Lemon : ExtendedScalaPlugin()
         setupPlayerLookAndFeel()
 
         Schedulers.async().runRepeating(
-            ResourceUpdateRunnable(),
+            ResourceUpdateRunnable,
             0L, 20L
         )
 

@@ -12,7 +12,7 @@ import java.util.concurrent.ForkJoinPool
  * @author GrowlyX
  * @since 9/8/2021
  */
-class ResourceUpdateRunnable : Runnable {
+object ResourceUpdateRunnable : Runnable {
 
     override fun run() {
         Bukkit.getOnlinePlayers().forEach { player ->
