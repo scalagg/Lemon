@@ -87,18 +87,29 @@ class RankCommand : BaseCommand()
 
         if (rank.permissions.isNotEmpty())
         {
-            rank.permissions.forEach {
-                val suffix = if (it.startsWith("%")) {
-                    "(Bungee)"
-                } else if (it.startsWith("-")) {
-                    "(Disabled)"
-                } else {
-                    ""
-                }
+            val bungee = rank.permissions.filter { it.startsWith("%") }
+            val spigot = rank.permissions.filter { !it.startsWith("%") }
 
-                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${
-                    it.removePrefix("%").removePrefix("-")
-                } ${CC.GRAY}$suffix")
+            if (bungee.isNotEmpty())
+            {
+                sender.sendMessage(" ${CC.GRAY}Proxy Level:")
+
+                bungee.forEach {
+                    sender.sendMessage("${CC.GRAY}  - ${CC.WHITE}${
+                        it.removePrefix("%").removePrefix("-")
+                    } ${CC.GRAY}")
+                }
+            }
+
+            if (spigot.isNotEmpty())
+            {
+                sender.sendMessage(" ${CC.GRAY}Spigot Level:")
+
+                bungee.forEach {
+                    sender.sendMessage("${CC.GRAY}  - ${CC.WHITE}${
+                        it.removePrefix("%").removePrefix("-")
+                    } ${CC.GRAY}")
+                }
             }
         }
     }
