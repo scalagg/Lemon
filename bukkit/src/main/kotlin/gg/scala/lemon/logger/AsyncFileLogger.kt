@@ -1,15 +1,9 @@
 package gg.scala.lemon.logger
 
-import com.google.common.io.Files
 import gg.scala.lemon.Lemon
-import net.evilblock.cubed.util.time.TimeUtil
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
-import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 /**
  * @author GrowlyX

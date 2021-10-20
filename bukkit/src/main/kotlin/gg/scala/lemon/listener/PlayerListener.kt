@@ -58,11 +58,14 @@ object PlayerListener : Listener
         val current = System.currentTimeMillis()
 
         ForkJoinPool.commonPool().execute {
-            var lemonPlayer = DataStoreHandler.lemonPlayerLayer.fetchEntryByKeySync(event.uniqueId.toString())
+            var lemonPlayer = DataStoreHandler.lemonPlayerLayer
+                .fetchEntryByKeySync(event.uniqueId.toString())
 
             if (lemonPlayer == null)
             {
-                lemonPlayer = LemonPlayer(event.uniqueId, event.name, event.address.hostAddress ?: "")
+                lemonPlayer = LemonPlayer(
+                    event.uniqueId, event.name, event.address.hostAddress ?: ""
+                )
                 lemonPlayer.handleIfFirstCreated()
             } else
             {
@@ -263,13 +266,14 @@ object PlayerListener : Listener
         {
             RedisHandler.buildMessage(
                 "channel-message",
-                hashMapOf<String, String>().also {
-                    it["channel"] = channelMatch!!.getId()
-                    it["message"] = event.message
-                    it["sender"] = lemonPlayer.name
-                    it["rank"] = lemonPlayer.activeGrant!!.getRank().uuid.toString()
-                    it["server"] = Lemon.instance.settings.id
-                }
+                hashMapOf(
+                    "channel" to channelMatch!!.getId(),
+                    "message" to event.message,
+                    "sender" to lemonPlayer.name,
+                    "rank" to lemonPlayer.activeGrant!!
+                        .getRank().uuid.toString(),
+                    "server" to Lemon.instance.settings.id
+                )
             ).queueForDispatch()
         } else
         {
@@ -411,7 +415,8 @@ object PlayerListener : Listener
             return
         }
 
-        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass")) {
+        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass"))
+        {
             commandCoolDown.addOrOverride(player)
         }
 
@@ -478,13 +483,16 @@ object PlayerListener : Listener
             }
         }
 
-        if (!event.player.isOp && command.equals("/tps", true)) {
+        if (!event.player.isOp && command.equals("/tps", true))
+        {
             val ticksPerSecond = Lemon.instance
                 .serverStatisticProvider.ticksPerSecond()
 
-            event.player.sendMessage("${CC.SEC}Current server TPS: ${
-                formatTps(ticksPerSecond)
-            }${CC.SEC}/${CC.GREEN}20.0${CC.SEC}.")
+            event.player.sendMessage(
+                "${CC.SEC}Current server TPS: ${
+                    formatTps(ticksPerSecond)
+                }${CC.SEC}/${CC.GREEN}20.0${CC.SEC}."
+            )
 
             event.isCancelled = true
             return
