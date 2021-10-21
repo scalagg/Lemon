@@ -259,4 +259,9 @@ object RedisHandler : BananaHandler
             }
         }
     }
+    
+    infix fun send(message: Message)
+    {
+        QuickAccess.dispatchToLemon(message)
+    }
 }
