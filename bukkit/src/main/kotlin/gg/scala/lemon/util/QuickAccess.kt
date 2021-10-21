@@ -211,9 +211,9 @@ object QuickAccess {
         punishment.save().thenAccept {
             RedisHandler.buildMessage(
                 "recalculate-punishments",
-                mutableMapOf<String, String>().also { map ->
-                    map["uniqueId"] = punishment.target.toString()
-                }
+                hashMapOf(
+                    "uniqueId" to punishment.target.toString()
+                )
             ).dispatchImmediately()
         }
     }
@@ -230,9 +230,9 @@ object QuickAccess {
             punishment.save().thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
-                    mutableMapOf<String, String>().also { map ->
-                        map["uniqueId"] = punishment.target.toString()
-                    }
+                    hashMapOf(
+                        "uniqueId" to punishment.target.toString()
+                    )
                 ).dispatchImmediately()
             }
 
@@ -245,10 +245,10 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-message",
-                hashMapOf<String, String>().also {
-                    it["message"] = message
-                    it["permission"] = permission ?: ""
-                }
+                hashMapOf(
+                    "message" to message,
+                    "permission" to permission ?: ""
+                )
             ).queueForDispatch()
         }
     }
@@ -258,10 +258,10 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-fancy-message",
-                hashMapOf<String, String>().also {
-                    it["message"] = gson.toJson(fancyMessage)
-                    it["permission"] = permission ?: ""
-                }
+                hashMapOf(
+                    "message" to message,
+                    "permission" to permission ?: ""
+                )
             ).queueForDispatch()
         }
     }
@@ -271,10 +271,10 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "player-message",
-                hashMapOf<String, String>().also {
-                    it["message"] = message
-                    it["target"] = uuid.toString()
-                }
+                hashMapOf(
+                    "message" to message,
+                    "target" to uuid.toString()
+                )
             ).queueForDispatch()
         }
     }
@@ -284,10 +284,10 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "player-fancy-message",
-                hashMapOf<String, String>().also {
-                    it["message"] = gson.toJson(fancyMessage)
-                    it["target"] = uuid.toString()
-                }
+                hashMapOf(
+                    "message" to gson.toJson(fancyMessage),
+                    "target" to uuid.toString()
+                )
             ).queueForDispatch()
         }
     }
