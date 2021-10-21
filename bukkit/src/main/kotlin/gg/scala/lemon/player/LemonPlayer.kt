@@ -379,7 +379,7 @@ class LemonPlayer(
             Lemon.instance
         )
 
-        removeMetadata("last-auth")
+        this remove "last-auth"
     }
 
     fun handleAuthMap(authSecret: String)
@@ -759,7 +759,7 @@ class LemonPlayer(
             {
                 if (!channel.hasPermission(player))
                 {
-                    removeMetadata("channel")
+                    this remove "channel"
                 }
             }
         }
@@ -806,6 +806,21 @@ class LemonPlayer(
         {
             block.invoke(this)
         }
+    }
+
+    infix fun has(id: String): Boolean
+    {
+        return metadata.containsKey(id)
+    }
+
+    infix fun doesNotHave(id: String): Boolean
+    {
+        return !metadata.containsKey(id)
+    }
+
+    infix fun remove(id: String)
+    {
+        metadata.remove(id)
     }
 
     fun removeMap()

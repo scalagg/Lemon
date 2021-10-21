@@ -283,18 +283,14 @@ object PunishmentHandler {
             ).thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
-                    hashMapOf(
-                        "uniqueId" to uuid.toString()
-                    )
+                    "uniqueId" to uuid.toString()
                 ).dispatchImmediately()
 
                 if (punishment.category == PunishmentCategory.KICK) {
                     RedisHandler.buildMessage(
                         "cross-kick",
-                        hashMapOf(
-                            "uniqueId" to uuid.toString(),
-                            "reason" to punishment.addedReason
-                        )
+                        "uniqueId" to uuid.toString(),
+                        "reason" to punishment.addedReason
                     ).dispatchImmediately()
                 }
             }
@@ -333,9 +329,7 @@ object PunishmentHandler {
             ).thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
-                    hashMapOf(
-                        "uniqueId" to uuid.toString()
-                    )
+                    "uniqueId" to uuid.toString()
                 ).dispatchImmediately()
             }
         }

@@ -98,9 +98,7 @@ object GrantHandler {
 
             RedisHandler.buildMessage(
                 "reload-player",
-                hashMapOf<String, String>().also {
-                    it["uniqueId"] = grant.target.toString()
-                }
+                "uniqueId" to grant.target.toString()
             ).dispatchImmediately()
 
             sender.sendMessage(arrayOf(

@@ -6,6 +6,7 @@ import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.queueForDispatch
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -237,6 +238,7 @@ object RedisHandler : BananaHandler
                 it.sendMessage(message)
             }
         }
+
     }
 
     fun buildMessage(packet: String, message: Map<String, String>): Message
@@ -247,21 +249,16 @@ object RedisHandler : BananaHandler
             }
         }
     }
-    
-    fun <K, V> buildMessage(
-        packet: String, 
-        vararg pairs: Pair<K, V>
+
+    fun buildMessage(
+        packet: String,
+        vararg pairs: Pair<String, String>
     ): Message
     {
         return Message(packet).also {
             pairs.forEach { pair ->
-                it[pair.key] = pair.value
+                it[pair.first] = pair.second
             }
         }
-    }
-    
-    infix fun send(message: Message)
-    {
-        QuickAccess.dispatchToLemon(message)
     }
 }

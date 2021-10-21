@@ -178,7 +178,7 @@ internal object DisguiseProvider
 
         if (!disconnecting)
         {
-            lemonPlayer.removeMetadata("disguised")
+            lemonPlayer remove "disguised"
 
             reloadPlayerInternal(player, handle)
         }

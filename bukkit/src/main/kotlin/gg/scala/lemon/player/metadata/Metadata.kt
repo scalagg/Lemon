@@ -2,29 +2,36 @@ package gg.scala.lemon.player.metadata
 
 import java.util.*
 
-class Metadata(private var value: Any?) {
+class Metadata(private var value: Any?)
+{
 
-    fun asInt(): Int {
+    fun asInt(): Int
+    {
         return value as Int
     }
 
-    fun asString(): String {
+    fun asString(): String
+    {
         return value as String
     }
 
-    fun asUuid(): UUID {
+    fun asUuid(): UUID
+    {
         return UUID.fromString(asString())
     }
 
-    fun asBoolean(): Boolean {
+    fun asBoolean(): Boolean
+    {
         return value as Boolean
     }
 
-    fun asLong(): Long {
+    fun asLong(): Long
+    {
         return value as Long
     }
 
-    fun asDouble(): Double {
+    fun asDouble(): Double
+    {
         return value as Double
     }
 

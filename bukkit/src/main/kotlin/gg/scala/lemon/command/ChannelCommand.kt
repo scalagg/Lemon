@@ -4,6 +4,7 @@ import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.metadata.Metadata
+import gg.scala.lemon.util.data
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -71,14 +72,14 @@ class ChannelCommand : BaseCommand()
     @Subcommand("reset")
     fun onReset(player: Player)
     {
-        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+        val lemonPlayer = (player data player.uniqueId)!!
 
-        if (!lemonPlayer.hasMetadata("channel"))
+        if (lemonPlayer doesNotHave "channel")
         {
             throw ConditionFailedException("You're talking in any channel.")
         }
 
-        lemonPlayer.removeMetadata("channel")
+        lemonPlayer remove "channel"
 
         player.sendMessage("${CC.GREEN}You've reset your channel.")
     }

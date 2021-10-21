@@ -4,10 +4,12 @@ import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -245,10 +247,8 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-message",
-                hashMapOf(
-                    "message" to message,
-                    "permission" to permission ?: ""
-                )
+                "message" to message,
+                "permission" to (permission ?: "")
             ).queueForDispatch()
         }
     }
@@ -258,10 +258,8 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-fancy-message",
-                hashMapOf(
-                    "message" to message,
-                    "permission" to permission ?: ""
-                )
+                "message" to Serializers.gson.toJson(fancyMessage),
+                "permission" to (permission ?: "")
             ).queueForDispatch()
         }
     }
@@ -354,4 +352,9 @@ fun Message.dispatchToCocoa() {
             it.close()
         }
     }
+}
+
+infix fun Player.data(uuid: UUID): LemonPlayer?
+{
+    return PlayerHandler.findPlayer(uuid).orElse(null)
 }

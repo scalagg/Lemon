@@ -105,7 +105,7 @@ class RankCommand : BaseCommand()
             {
                 sender.sendMessage(" ${CC.GRAY}Spigot Level:")
 
-                bungee.forEach {
+                spigot.forEach {
                     sender.sendMessage("${CC.GRAY}  - ${CC.WHITE}${
                         it.removePrefix("%").removePrefix("-")
                     } ${CC.GRAY}")

@@ -28,7 +28,7 @@ class StaffVisibilityCommand : BaseCommand() {
 
             player.sendMessage("${CC.RED}You've now hidden staff.")
         } else {
-            lemonPlayer.removeMetadata("hiding-staff")
+            lemonPlayer remove "hiding-staff"
 
             player.sendMessage("${CC.GREEN}You've now viewing staff.")
         }

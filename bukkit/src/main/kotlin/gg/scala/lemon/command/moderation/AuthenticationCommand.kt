@@ -72,8 +72,8 @@ class AuthenticationCommand : BaseCommand() {
             throw ConditionFailedException("${CC.YELLOW}${target.player.name}${CC.RED} has not setup 2fa.")
         }
 
-        lemonPlayer.removeMetadata("auth-secret")
-        lemonPlayer.removeMetadata("auth-exempt")
+        lemonPlayer remove "auth-secret"
+        lemonPlayer remove "auth-exempt"
 
         lemonPlayer.authenticateInternalReversed()
 

@@ -45,11 +45,10 @@ class EnvironmentCommand : BaseCommand() {
         sender.sendMessage("${CC.SEC}You've set the whitelist to ${CC.WHITE}$boolean${CC.SEC} on all servers in the group ${CC.PRI}$group${CC.SEC}.")
 
         RedisHandler.buildMessage(
-            "mass-whitelist", hashMapOf<String, String>().also {
-                it["group"] = group
-                it["setting"] = boolean.toString()
-                it["issuer"] = QuickAccess.nameOrConsole(sender)
-            }
+            "mass-whitelist",
+            "group" to group,
+            "setting" to boolean.toString(),
+            "issuer" to QuickAccess.nameOrConsole(sender)
         ).dispatchImmediately()
     }
 
