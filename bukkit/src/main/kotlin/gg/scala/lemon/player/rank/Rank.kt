@@ -5,6 +5,7 @@ import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.dispatchImmediately
+import gg.scala.lemon.util.queueForDispatch
 import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -92,7 +93,7 @@ constructor(
                 hashMapOf(
                     "uniqueId" to uuid.toString()
                 )
-            ).dispatchImmediately()
+            ).queueForDispatch()
 
             return@thenApply null
         }

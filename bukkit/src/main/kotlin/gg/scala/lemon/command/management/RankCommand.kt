@@ -78,7 +78,7 @@ class RankCommand : BaseCommand()
 
                 if (child != null)
                 {
-                    sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${rank.getColoredName()}")
+                    sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${child.getColoredName()}")
                 }
             }
 
@@ -386,6 +386,11 @@ class RankCommand : BaseCommand()
             {
                 val rankBefore = sorted[withIndex.index - 1]
 
+                if (rankBefore.uuid == withIndex.value.uuid)
+                {
+                    continue
+                }
+
                 if (!withIndex.value.children.contains(rankBefore.uuid))
                 {
                     withIndex.value.children.add(rankBefore.uuid)
@@ -413,6 +418,11 @@ class RankCommand : BaseCommand()
         }
 
         ranksToModify.forEach {
+            if (it.value.uuid == rank.uuid)
+            {
+                return@forEach
+            }
+
             it.value.children.add(rank.uuid)
             it.value.saveAndPushUpdatesGlobally()
         }
