@@ -13,6 +13,11 @@ object RankHandler {
             return ranks.values.sortedByDescending { it.weight }
         }
 
+    val sortedI: List<Rank>
+        get() {
+            return ranks.values.sortedByDescending { -it.weight }
+        }
+
     fun loadRanks() {
         DataStoreHandler.rankLayer.fetchAllEntries().whenComplete { entries, _ ->
             entries.forEach {

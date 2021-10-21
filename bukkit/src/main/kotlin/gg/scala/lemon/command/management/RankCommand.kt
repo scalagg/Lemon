@@ -373,7 +373,7 @@ class RankCommand : BaseCommand()
     @Description("Make all ranks inherit the rank before them.")
     fun onToolsInheritStart(sender: CommandSender)
     {
-        val sorted = RankHandler.sorted
+        val sorted = RankHandler.sortedI
 
         for (withIndex in sorted.withIndex())
         {
@@ -414,7 +414,28 @@ class RankCommand : BaseCommand()
 
         ranksToModify.forEach {
             it.value.children.add(rank.uuid)
-            rank.saveAndPushUpdatesGlobally()
+            it.value.saveAndPushUpdatesGlobally()
+        }
+
+        sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
+    }
+
+    @Subcommand("clear-all-inheritances")
+    @Description("Clear all inheritances for all ranks.")
+    fun onToolsClear(sender: CommandSender)
+    {
+        val ranksToModify = RankHandler.ranks.filter {
+            it.value.children.isNotEmpty()
+        }
+
+        if (ranksToModify.isEmpty())
+        {
+            throw ConditionFailedException("There are no ranks to modify.")
+        }
+
+        ranksToModify.forEach {
+            it.value.children.clear()
+            it.value.saveAndPushUpdatesGlobally()
         }
 
         sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
