@@ -247,4 +247,16 @@ object RedisHandler : BananaHandler
             }
         }
     }
+    
+    fun <K, V> buildMessage(
+        packet: String, 
+        vararg pairs: Pair<K, V>
+    ): Message
+    {
+        return Message(packet).also {
+            pairs.forEach { pair ->
+                it[pair.key] = pair.value
+            }
+        }
+    }
 }
