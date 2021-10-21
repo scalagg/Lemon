@@ -8,6 +8,7 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import me.lucko.helper.Events
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.player.PlayerSnapshot
@@ -178,12 +179,12 @@ object PlayerHandler {
         player.sendMessage("${CC.SEC}${
             if (player == target) "You are" else CC.SEC + target.name + " is"
         } now ${CC.GREEN}in mod mode${CC.SEC}.")
+
+        NametagHandler.reloadPlayer(target)
     }
 
     fun unModModePlayer(player: Player, target: Player) {
         unModModePlayerSilent(target)
-
-        target.removeMetadata("mod-mode", Lemon.instance)
 
         player.sendMessage("${CC.SEC}${
             if (player == target) "You are" else CC.SEC + target.name + " is"
@@ -191,6 +192,8 @@ object PlayerHandler {
     }
 
     fun unModModePlayerSilent(player: Player) {
+        player.removeMetadata("mod-mode", Lemon.instance)
+
         val snapshot = snapshots.remove(player.uniqueId)
         snapshot?.restore(player, teleport = false)
     }
