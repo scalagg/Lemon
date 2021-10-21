@@ -45,12 +45,16 @@ object RankHandler {
         return ranks.values
             .filter { it.visible }
             .sortedBy { -it.weight }
-            .map { it.getColoredName() }
-            .joinToString(separator = "${CC.WHITE}, ")
+            .joinToString(separator = "${CC.WHITE}, ") {
+                it.getColoredName()
+            }
     }
 
     private fun createDefaultRank(): Rank {
-        val rank = Rank("Default")
+        val rank = Rank(
+            UUID.randomUUID(),
+            "Default"
+        )
         rank.saveAndPushUpdatesGlobally()
 
         ranks[rank.uuid] = rank

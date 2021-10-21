@@ -12,9 +12,11 @@ import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
+import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import org.bukkit.command.CommandSender
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -136,7 +138,8 @@ class RankCommand : BaseCommand()
             throw ConditionFailedException("${CC.YELLOW}$name${CC.RED} must be at most 16 characters long.")
         }
 
-        val rank = Rank(name)
+        val rank = Rank(UUID.randomUUID(), name)
+
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've created the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
@@ -333,7 +336,18 @@ class RankCommand : BaseCommand()
         rank.permissions.add(permission)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've added the permission ${CC.WHITE}$permission${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+            sender.sendMessage("${CC.SEC}You've added the ${
+                if (permission.startsWith("%"))
+                {
+                    "proxy-level"
+                } else if (permission.startsWith("*"))
+                {
+                    "blacklisted"
+                } else
+                {
+                    ""
+                }
+            } permission ${CC.WHITE}$permission${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
     }
 
@@ -353,5 +367,56 @@ class RankCommand : BaseCommand()
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've remove the permission ${CC.WHITE}$permission${CC.SEC} from the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
+    }
+
+    @Subcommand("tools inherit-from-start")
+    @Description("Make all ranks inherit the rank before them.")
+    fun onToolsInheritStart(sender: CommandSender)
+    {
+        val sorted = RankHandler.sorted
+
+        for (withIndex in sorted.withIndex())
+        {
+            if (withIndex.index - 1 < 0)
+            {
+                continue
+            }
+
+            try
+            {
+                val rankBefore = sorted[withIndex.index - 1]
+
+                if (!withIndex.value.children.contains(rankBefore.uuid))
+                {
+                    withIndex.value.children.add(rankBefore.uuid)
+                    withIndex.value.saveAndPushUpdatesGlobally()
+
+                    sender.sendMessage("${CC.GREEN}Added ${rankBefore.getColoredName()}${CC.GREEN} as a child of ${withIndex.value.getColoredName()}${CC.GREEN}.")
+                }
+            } catch (ignored: Exception)
+            {
+            }
+        }
+    }
+
+    @Subcommand("tools inherit")
+    @Description("Make all ranks inherit a specified rank.")
+    fun onToolsInherit(sender: CommandSender, rank: Rank)
+    {
+        val ranksToModify = RankHandler.ranks.filter {
+            !it.value.children.contains(rank.uuid)
+        }
+
+        if (ranksToModify.isEmpty())
+        {
+            throw ConditionFailedException("All ranks already inherit the ${CC.YELLOW}${rank.name}${CC.RED} rank.")
+        }
+
+        ranksToModify.forEach {
+            it.value.children.add(rank.uuid)
+            rank.saveAndPushUpdatesGlobally()
+        }
+
+        sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
     }
 }

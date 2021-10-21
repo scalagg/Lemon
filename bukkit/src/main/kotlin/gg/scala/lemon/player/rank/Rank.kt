@@ -1,21 +1,22 @@
 package gg.scala.lemon.player.rank
 
+import gg.scala.common.Savable
 import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.util.queueForDispatch
-import gg.scala.common.Savable
 import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class Rank(
+class Rank
+
+@JvmOverloads
+constructor(
     val uuid: UUID = UUID.randomUUID(),
     var name: String
-): Savable {
-
-    constructor(name: String): this(UUID.randomUUID(), name)
+) : Savable
+{
 
     var weight: Int = 0
 
@@ -28,7 +29,22 @@ class Rank(
     val children = ArrayList<UUID>()
     val permissions = ArrayList<String>()
 
-    fun getColoredName(): String {
+    /**
+     * Validates all [Rank]'s
+     * in the [children] list.
+     */
+    fun crosscheck()
+    {
+        children.toList().forEach {
+            if (RankHandler.findRank(it) == null)
+            {
+                children.remove(it)
+            }
+        }
+    }
+
+    fun getColoredName(): String
+    {
         return color + name
     }
 
@@ -36,11 +52,13 @@ class Rank(
      * Returns a list with permissions from
      * all inherited ranks as well as the current rank
      */
-    fun getCompoundedPermissions(): ArrayList<String> {
+    fun getCompoundedPermissions(): ArrayList<String>
+    {
         val compoundedPermissions = ArrayList<String>()
 
         permissions.forEach {
-            if (!compoundedPermissions.contains(it)) {
+            if (!compoundedPermissions.contains(it))
+            {
                 compoundedPermissions.add(it)
             }
         }
@@ -48,7 +66,8 @@ class Rank(
         children.forEach {
             RankHandler.findRank(it)?.let { rank ->
                 rank.getCompoundedPermissions().forEach { permission ->
-                    if (!compoundedPermissions.contains(permission)) {
+                    if (!compoundedPermissions.contains(permission))
+                    {
                         compoundedPermissions.add(permission)
                     }
                 }
@@ -58,11 +77,15 @@ class Rank(
         return compoundedPermissions
     }
 
-    override fun save(): CompletableFuture<Void> {
+    override fun save(): CompletableFuture<Void>
+    {
         return DataStoreHandler.rankLayer.saveEntry(uuid.toString(), this)
     }
 
-    fun saveAndPushUpdatesGlobally(): CompletableFuture<Void> {
+    fun saveAndPushUpdatesGlobally(): CompletableFuture<Void>
+    {
+        crosscheck()
+
         return this.save().thenApply {
             RedisHandler.buildMessage(
                 "rank-update",
