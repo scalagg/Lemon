@@ -58,6 +58,15 @@ object QuickAccess {
     }
 
     @JvmStatic
+    fun coloredNameOrNull(name: String?): String? {
+        val lemonPlayer = name?.let { PlayerHandler.findOnlinePlayer(it) }
+
+        lemonPlayer?.let {
+            return it.getColoredName()
+        } ?: return null
+    }
+
+    @JvmStatic
     fun coloredName(uuid: UUID): String? {
         val lemonPlayer = PlayerHandler.findPlayer(uuid).orElse(null)
 
@@ -77,6 +86,16 @@ object QuickAccess {
             ?: return RankHandler.getDefaultRank().color + playerName
 
         return prominent.getRank().color + playerName
+    }
+
+    @JvmStatic
+    fun computeColoredName(uuid: UUID, name: String): CompletableFuture<String> {
+        return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
+            val prominent = GrantRecalculationUtil.getProminentGrant(it)
+                ?: return@thenApplyAsync RankHandler.getDefaultRank().color + RankHandler.getDefaultRank().name
+
+            return@thenApplyAsync prominent.getRank().color + name
+        }
     }
 
     @JvmStatic
