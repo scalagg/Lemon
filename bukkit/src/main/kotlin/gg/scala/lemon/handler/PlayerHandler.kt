@@ -107,20 +107,7 @@ object PlayerHandler {
     }
 
     fun findPlayer(uuid: UUID): Optional<LemonPlayer> {
-        if (players.containsKey(uuid)) {
-            return Optional.ofNullable(players[uuid])
-        }
-
-        val offline = Bukkit.getOfflinePlayer(uuid)
-        val name = CubedCacheUtil.fetchName(uuid)
-
-        return Optional.ofNullable(
-            if (offline.hasPlayedBefore()) {
-                LemonPlayer(uuid, offline.name, null)
-            } else {
-                LemonPlayer(uuid, name!!, null)
-            }
-        )
+        return Optional.ofNullable(players[uuid])
     }
 
     fun findOnlinePlayer(name: String): LemonPlayer? {
@@ -134,9 +121,7 @@ object PlayerHandler {
 
         if (player != null) {
             return Optional.ofNullable(
-                players.get(
-                    player.uniqueId
-                )
+                players[player.uniqueId]
             )
         }
 

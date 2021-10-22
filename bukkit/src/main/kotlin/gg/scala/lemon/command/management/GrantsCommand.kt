@@ -45,12 +45,10 @@ class GrantsCommand : BaseCommand()
 
         if (colored == null)
         {
-            computeColoredName(uuid, name).thenAcceptAsync {
-                Tasks.sync {
-                    handleGrantMenu(
-                        player, uuid, it
-                    )
-                }
+            computeColoredName(uuid, name).thenAccept {
+                handleGrantMenu(
+                    player, uuid, it
+                )
             }
         } else {
             handleGrantMenu(
@@ -59,9 +57,20 @@ class GrantsCommand : BaseCommand()
         }
     }
 
-    private fun handleGrantMenu(player: Player, uuid: UUID, colored: String, type: HistoryViewType = HistoryViewType.TARGET_HIST)
+    private fun handleGrantMenu(
+        player: Player, uuid: UUID, colored: String,
+        type: HistoryViewType = HistoryViewType.TARGET_HIST
+    )
     {
-        player.sendMessage("${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC} grants...")
+        player.sendMessage("${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC} ${
+            if (type == HistoryViewType.STAFF_HIST)
+            {
+                "issued grants"
+            } else
+            {
+                "grants"
+            }
+        }...")
 
         GrantHandler.fetchGrantsFor(uuid).thenAccept { grants ->
             try
@@ -101,12 +110,10 @@ class GrantsCommand : BaseCommand()
 
         if (colored == null)
         {
-            computeColoredName(uuid, name).thenAcceptAsync {
-                Tasks.sync {
-                    handleGrantMenu(
-                        player, uuid, it, HistoryViewType.STAFF_HIST
-                    )
-                }
+            computeColoredName(uuid, name).thenAccept {
+                handleGrantMenu(
+                    player, uuid, it, HistoryViewType.STAFF_HIST
+                )
             }
         } else {
             handleGrantMenu(

@@ -58,12 +58,9 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun coloredNameOrNull(name: String?): String? {
-        val lemonPlayer = name?.let { PlayerHandler.findOnlinePlayer(it) }
-
-        lemonPlayer?.let {
-            return it.getColoredName()
-        } ?: return null
+    fun coloredNameOrNull(name: String): String? {
+        return PlayerHandler.findPlayer(name)
+            .orElse(null)?.getColoredName()
     }
 
     @JvmStatic
