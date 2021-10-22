@@ -1,6 +1,5 @@
 package gg.scala.lemon.command.management
 
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.punishment.PunishmentViewMenu

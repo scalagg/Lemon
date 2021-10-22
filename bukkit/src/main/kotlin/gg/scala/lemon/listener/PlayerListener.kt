@@ -66,10 +66,14 @@ object PlayerListener : Listener
                 lemonPlayer = LemonPlayer(
                     event.uniqueId, event.name, event.address.hostAddress ?: ""
                 )
+                PlayerHandler.players[event.uniqueId] = lemonPlayer
+
                 lemonPlayer.handleIfFirstCreated()
             } else
             {
                 lemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                PlayerHandler.players[event.uniqueId] = lemonPlayer
+
                 lemonPlayer.handlePostLoad()
             }
 
@@ -77,8 +81,6 @@ object PlayerListener : Listener
             {
                 println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load the profile. (${event.name})")
             }
-
-            PlayerHandler.players[event.uniqueId] = lemonPlayer
         }
     }
 
@@ -90,15 +92,12 @@ object PlayerListener : Listener
     {
         val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
 
-        if (lemonPlayer == null)
+        if (lemonPlayer != null)
         {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.playerDataLoad)
-            return
-        }
-
-        if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL && lemonPlayer.isStaff)
-        {
-            event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
+            if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL)
+            {
+                event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
+            }
         }
     }
 
