@@ -141,7 +141,7 @@ object PlayerListener : Listener
 
         if (ipRelativePunishment != null)
         {
-            cancel(event, "${CC.RED}You're not allowed to chat while being ip-punished.")
+            cancel(event, "${CC.RED}You may not chat while being in relation to a punished player.")
             return
         }
 
@@ -157,7 +157,7 @@ object PlayerListener : Listener
 
         if (blacklistPunishment != null)
         {
-            cancel(event, "${CC.RED}You cannot chat while you're blacklisted.")
+            cancel(event, "${CC.RED}You may not chat while being blacklist.")
             return
         }
 
@@ -165,7 +165,7 @@ object PlayerListener : Listener
 
         if (banPunishment != null)
         {
-            cancel(event, "${CC.RED}You cannot chat while you're banned.")
+            cancel(event, "${CC.RED}You may not chat while being banned.")
             return
         }
 
@@ -443,7 +443,7 @@ object PlayerListener : Listener
 
         if (ipRelativePunishment != null)
         {
-            cancel(event, "${CC.RED}You're not allowed to perform commands while being ip-punished.")
+            cancel(event, "${CC.RED}You may not issue commands while being in relation to a punished player.")
             return
         }
 
@@ -451,12 +451,7 @@ object PlayerListener : Listener
 
         if (blacklistPunishment != null && command != "/register")
         {
-            cancel(
-                event, """
-                ${CC.RED}You cannot perform commands while being blacklisted.
-                ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
-            """.trimIndent()
-            )
+            cancel(event, "${CC.RED}You may not issue commands while being blacklisted.")
             return
         }
 
@@ -464,18 +459,13 @@ object PlayerListener : Listener
 
         if (banPunishment != null && command != "/register")
         {
-            cancel(
-                event, """
-                ${CC.RED}You cannot perform commands while being banned.
-                ${CC.RED}You're only able to perform ${CC.YELLOW}/register${CC.RED}.
-            """.trimIndent()
-            )
+            cancel(event, "${CC.RED}You may not issue commands while being banned.")
             return
         }
 
         if (command.contains(":") && !lemonPlayer.hasPermission("lemon.dev"))
         {
-            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
+            cancel(event, "${CC.RED}You may not use this syntax.")
             return
         }
 
@@ -484,7 +474,7 @@ object PlayerListener : Listener
             Lemon.instance.settings.blacklistedCommands.forEach {
                 if (command.equals(it, true))
                 {
-                    cancel(event, "${CC.RED}You do not have permission to perform this command!")
+                    cancel(event, "${CC.RED}You're not allowed to issue this command.")
                     return
                 }
             }
