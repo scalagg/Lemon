@@ -60,20 +60,28 @@ object PlayerListener : Listener
         ForkJoinPool.commonPool().execute {
             var lemonPlayer = DataStoreHandler.lemonPlayerLayer
                 .fetchEntryByKeySync(event.uniqueId.toString())
+            val created: Boolean
 
             if (lemonPlayer == null)
             {
                 lemonPlayer = LemonPlayer(
                     event.uniqueId, event.name, event.address.hostAddress ?: ""
                 )
-                PlayerHandler.players[event.uniqueId] = lemonPlayer
+                created = true
 
-                lemonPlayer.handleIfFirstCreated()
             } else
             {
                 lemonPlayer.ipAddress = event.address.hostAddress ?: ""
-                PlayerHandler.players[event.uniqueId] = lemonPlayer
+                created = false
+            }
 
+            PlayerHandler.players[event.uniqueId] = lemonPlayer
+
+            if (created)
+            {
+                lemonPlayer.handleIfFirstCreated()
+            } else
+            {
                 lemonPlayer.handlePostLoad()
             }
 
