@@ -254,7 +254,6 @@ object PlayerListener : Listener
 
             if (FilterHandler.checkIfMessageFiltered(event.message, player))
             {
-                // they'll think the message sent ;O
                 player.sendMessage(
                     channelMatch?.getFormatted(
                         event.message, player.name,
@@ -333,7 +332,6 @@ object PlayerListener : Listener
                 lemonPlayer.activeGrant!!.getRank(), player
             )!!
 
-            // as Bukkit#getOnlinePlayers does not have console in it
             if (Lemon.instance.settings.consoleChat)
             {
                 Bukkit.getConsoleSender().sendMessage(selfMessage)

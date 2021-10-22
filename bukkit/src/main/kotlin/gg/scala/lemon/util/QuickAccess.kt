@@ -89,7 +89,7 @@ object QuickAccess {
     fun computeColoredName(uuid: UUID, name: String): CompletableFuture<String> {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             val prominent = GrantRecalculationUtil.getProminentGrant(it)
-                ?: return@thenApplyAsync RankHandler.getDefaultRank().color + RankHandler.getDefaultRank().name
+                ?: return@thenApplyAsync RankHandler.getDefaultRank().color + name
 
             return@thenApplyAsync prominent.getRank().color + name
         }
