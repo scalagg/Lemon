@@ -36,6 +36,11 @@ class ChannelCommand : BaseCommand()
             return
         }
 
+        if (channel.getId() == "default")
+        {
+            throw ConditionFailedException("Use ${CC.YELLOW}/channel reset${CC.RED} to jump back to the regular channel.")
+        }
+
         if (!channel.hasPermission(player))
         {
             throw ConditionFailedException("You do not have permission to chat in ${CC.YELLOW}${channel.getId()}${CC.RED}.")
@@ -53,7 +58,7 @@ class ChannelCommand : BaseCommand()
     fun onShowAll(player: Player)
     {
         val viewable = ChatHandler.channels.values
-            .filter { it.hasPermission(player) }
+            .filter { it.hasPermission(player) && it.getId() != "default" }
             .map { it.getId().capitalize() }
 
         if (viewable.isEmpty()) {
