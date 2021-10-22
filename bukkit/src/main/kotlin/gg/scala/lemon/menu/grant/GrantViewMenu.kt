@@ -39,7 +39,7 @@ class GrantViewMenu(
     private val viewingFor = CubedCacheUtil.fetchName(uuid)
 
     override fun getPrePaginatedTitle(player: Player): String {
-        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(uuid)}"
+        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} $viewingFor"
 
         return when (viewType) {
             HistoryViewType.STAFF_HIST -> "Staff $base"
@@ -117,7 +117,7 @@ class GrantViewMenu(
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Target: ${CC.PRI}${coloredName(grant.target)}")
+            lines.add("${CC.SEC}Target: ${CC.PRI}${coloredName(grant.target) ?: CubedCacheUtil.fetchName(grant.target)}")
             lines.add("${CC.SEC}Rank: ${CC.PRI}${grant.getRank().getColoredName()}")
             lines.add("${CC.SEC}Duration: ${CC.PRI + grant.durationString}")
 
@@ -141,7 +141,7 @@ class GrantViewMenu(
                 val removedBy = grant.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
-                    "${LemonConstants.CONSOLE}"
+                    LemonConstants.CONSOLE
                 }
 
                 lines.add("")
