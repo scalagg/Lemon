@@ -11,24 +11,18 @@ abstract class AnimatedScoreboardTitle : Runnable
 {
     var current: String? = null
 
-    private val currentIndex = -1
+    private var currentIndex = -1
 
     override fun run()
     {
-        val newIndex = if (currentIndex >= getAnimations().size)
-        {
-            0
-        } else
-        {
-            currentIndex + 1
-        }
+        val newIndex = currentIndex++
 
         current = try
         {
-            val value = getAnimations()[newIndex]
-            value
+            getAnimations()[newIndex]
         } catch (ignored: Exception)
         {
+            currentIndex = 0
             getAnimations()[0]
         }
     }
