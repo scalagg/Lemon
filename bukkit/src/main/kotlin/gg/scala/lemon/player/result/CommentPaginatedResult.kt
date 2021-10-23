@@ -4,7 +4,6 @@ import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.PaginatedResult
-import net.evilblock.cubed.util.time.TimeUtil
 
 /**
  * @author GrowlyX
@@ -14,7 +13,7 @@ object CommentPaginatedResult : PaginatedResult<Comment>()
 {
     override fun format(result: Comment, resultIndex: Int): String
     {
-        return "${CC.GRAY} ${resultIndex}. ${CC.SEC}${CubedCacheUtil.fetchName(result.issuer)} ${CC.GRAY}(${TimeUtil.formatIntoFullCalendarString(result.timestamp)})${CC.WHITE}: ${result.value}"
+        return "${CC.GRAY} ${resultIndex}. ${CC.SEC}${CubedCacheUtil.fetchName(result.issuer)} ${CC.GRAY}(${result.shortenedUniqueId})${CC.WHITE}: ${result.value}"
     }
 
     override fun getHeader(page: Int, maxPages: Int): String
