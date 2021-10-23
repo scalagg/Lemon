@@ -182,7 +182,7 @@ object PlayerListener : Listener
             {
                 val formatted = slowChat.getRemainingFormatted(player)
 
-                cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted seconds.")
+                cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted.")
                 return
             }
 
