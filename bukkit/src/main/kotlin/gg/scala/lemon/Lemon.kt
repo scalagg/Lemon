@@ -538,4 +538,12 @@ class Lemon : ExtendedScalaPlugin()
             }
         }
     }
+
+    override fun disable()
+    {
+        banana.useResource {
+            it.hdel("lemon:heartbeats", settings.id)
+            it.close()
+        }
+    }
 }
