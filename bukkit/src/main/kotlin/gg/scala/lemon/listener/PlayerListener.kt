@@ -169,45 +169,6 @@ object PlayerListener : Listener
             return
         }
 
-        if (ChatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass"))
-        {
-            cancel(event, "${CC.RED}Global chat is currently muted.")
-        } else if (ChatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass"))
-        {
-            val slowChat = CooldownHandler.find(
-                SlowChatCooldown::class.java
-            )!!
-
-            if (slowChat.isActive(player))
-            {
-                val formatted = slowChat.getRemainingFormatted(player)
-
-                cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted.")
-                return
-            }
-
-            slowChat.addOrOverride(player)
-        } else
-        {
-            if (!lemonPlayer.hasPermission("lemon.cooldown.chat.bypass"))
-            {
-                val chat = CooldownHandler.find(
-                    ChatCooldown::class.java
-                )!!
-
-                if (!CooldownHandler.notifyAndContinue(ChatCooldown::class.java, player))
-                {
-                    event.isCancelled = true
-                    return
-                }
-
-                chat.addOrOverride(player)
-            }
-        }
-
-        if (event.isCancelled)
-            return
-
         var channelMatch: Channel? = null
 
         ChatHandler.channels.forEach { (_, channel) ->
@@ -251,6 +212,45 @@ object PlayerListener : Listener
                 cancel(event, "${CC.RED}You may not send messages while having global chat muted.")
                 return
             }
+
+            if (ChatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass"))
+            {
+                cancel(event, "${CC.RED}Global chat is currently muted.")
+            } else if (ChatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass"))
+            {
+                val slowChat = CooldownHandler.find(
+                    SlowChatCooldown::class.java
+                )!!
+
+                if (slowChat.isActive(player))
+                {
+                    val formatted = slowChat.getRemainingFormatted(player)
+
+                    cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted.")
+                    return
+                }
+
+                slowChat.addOrOverride(player)
+            } else
+            {
+                if (!lemonPlayer.hasPermission("lemon.cooldown.chat.bypass"))
+                {
+                    val chat = CooldownHandler.find(
+                        ChatCooldown::class.java
+                    )!!
+
+                    if (!CooldownHandler.notifyAndContinue(ChatCooldown::class.java, player))
+                    {
+                        event.isCancelled = true
+                        return
+                    }
+
+                    chat.addOrOverride(player)
+                }
+            }
+
+            if (event.isCancelled)
+                return
 
             if (FilterHandler.checkIfMessageFiltered(event.message, player))
             {
