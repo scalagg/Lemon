@@ -93,7 +93,7 @@ class Lemon : ExtendedScalaPlugin()
         lateinit var instance: Lemon
 
         @JvmStatic
-        var canJoin: Boolean = false
+        var canJoin: Boolean = true
     }
 
     lateinit var mongoConfig: MongoDBConfigProcessor
@@ -206,8 +206,6 @@ class Lemon : ExtendedScalaPlugin()
 
         Cubed.instance.uuidCache = RedisUUIDCache(uuidCacheBanana)
         Cubed.instance.uuidCache.load()
-
-        Schedulers.sync().runLater({ canJoin = true }, 60L)
     }
 
     private fun startMessageQueues()

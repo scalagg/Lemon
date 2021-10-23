@@ -5,6 +5,7 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
 import net.evilblock.cubed.acf.BaseCommand
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Optional
@@ -44,6 +45,11 @@ class ChatCommand : BaseCommand() {
     @CommandAlias("slowchat")
     @CommandPermission("lemon.command.slowchat")
     fun onSlowChat(sender: CommandSender, seconds: Int, @Optional hiddenString: String?) {
+        if (seconds < 0)
+        {
+            throw ConditionFailedException("You cannot use a negative number.")
+        }
+
         ChatHandler.slowChatTime = seconds
 
         val toggledTo = ChatHandler.chatMuted
