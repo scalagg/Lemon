@@ -44,12 +44,12 @@ class PunishmentSpecificViewMenu(
                 )
                 .data(3).toButton() { _, _ ->
                     player.closeInventory()
-                    player.performCommand("/alts $username")
+                    player.performCommand("alts $username")
                 }
 
             it[4] = SpecificButton()
 
-            it[6] = ItemBuilder(Material.MAGMA_CREAM)
+            it[6] = ItemBuilder(XMaterial.MAGMA_CREAM)
                 .name("${CC.GREEN}$username's Punishments")
                 .addToLore(
                     "${CC.GRAY}View all punishments",
@@ -57,8 +57,8 @@ class PunishmentSpecificViewMenu(
                     "",
                     "${CC.YELLOW}Click to view!"
                 )
-                .data(3).toButton() { _, _ ->
-                    player.performCommand("/c $username")
+                .toButton() { _, _ ->
+                    player.performCommand("c $username")
                 }
         }
     }
@@ -125,19 +125,8 @@ class PunishmentSpecificViewMenu(
                 lines.add("${CC.GRAY}Removed Reason: ${CC.RED}${punishment.removedReason}")
             }
 
-            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
-            val canRemove: Boolean = lemonPlayer.hasPermission(
-                "lemon.punishment.remove." + punishment.category.name.toLowerCase()
-            ) && punishment.isActive
-
-            if (punishment.isActive) {
-                lines.add("")
-                lines.add(if (canRemove) "${CC.YELLOW}Click to remove this punishment!" else "${CC.RED}You can't remove this punishment.")
-            }
-
             return ItemBuilder(XMaterial.ANVIL)
-                .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)}")
+                .name("$statusLore ${CC.D_GRAY}Viewing Data")
                 .addToLore(lines)
                 .build()
         }
