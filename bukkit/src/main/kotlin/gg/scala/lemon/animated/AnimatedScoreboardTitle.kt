@@ -36,7 +36,7 @@ abstract class AnimatedScoreboardTitle : Runnable
 
         current = getAnimations()[0]
 
-        Schedulers.async().runRepeating(this, 0L, 10L)
+        Schedulers.async().runRepeating(this, 0L, 3L)
     }
 
     abstract fun getAnimations(): List<String>
