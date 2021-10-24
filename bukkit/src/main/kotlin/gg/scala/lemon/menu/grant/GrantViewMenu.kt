@@ -78,13 +78,13 @@ class GrantViewMenu(
                                 return@toButton
                             }
 
-                            clicker.sendMessage("${CC.SEC}Starting grant wipe for ${CC.PRI}$viewingFor${CC.SEC}...")
+                            clicker.sendMessage("${CC.GRAY}Starting grant wipe for ${CC.WHITE}$viewingFor${CC.GRAY}...")
 
                             GrantHandler.invalidateAllGrantsBy(
                                 uuid,
                                 clicker
                             ).thenAccept {
-                                clicker.sendMessage("${CC.SEC}Finished grant wipe, now updating menu...")
+                                clicker.sendMessage("${CC.GRAY}Finished grant wipe, now updating menu...")
 
                                 Tasks.sync {
                                     player.performCommand("granthistory $viewingFor")
@@ -117,25 +117,25 @@ class GrantViewMenu(
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Target: ${CC.PRI}${coloredName(grant.target) ?: CubedCacheUtil.fetchName(grant.target)}")
-            lines.add("${CC.SEC}Rank: ${CC.PRI}${grant.getRank().getColoredName()}")
-            lines.add("${CC.SEC}Duration: ${CC.PRI + grant.durationString}")
+            lines.add("${CC.GRAY}Target: ${CC.WHITE}${coloredName(grant.target) ?: CubedCacheUtil.fetchName(grant.target)}")
+            lines.add("${CC.GRAY}Rank: ${CC.WHITE}${grant.getRank().getColoredName()}")
+            lines.add("${CC.GRAY}Duration: ${CC.WHITE + grant.durationString}")
 
             if (grant.isActive) {
-                lines.add("${CC.SEC}Expire Date: ${CC.PRI + grant.expirationString}")
+                lines.add("${CC.GRAY}Expire Date: ${CC.WHITE + grant.expirationString}")
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Scopes:")
+            lines.add("${CC.GRAY}Scopes:")
 
             grant.scopes.forEach {
                 lines.add("${CC.GRAY} - ${CC.RESET}$it")
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
-            lines.add("${CC.SEC}Issued On: ${CC.PRI}${grant.addedOn}")
-            lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${grant.addedReason}")
+            lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
+            lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${grant.addedOn}")
+            lines.add("${CC.GRAY}Issued Reason: ${CC.WHITE}${grant.addedReason}")
 
             if (grant.isRemoved) {
                 val removedBy = grant.removedBy?.let {
@@ -145,16 +145,16 @@ class GrantViewMenu(
                 }
 
                 lines.add("")
-                lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
-                lines.add("${CC.SEC}Removed On: ${CC.PRI}${grant.removedOn}")
-                lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${grant.removedReason}")
+                lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
+                lines.add("${CC.GRAY}Removed On: ${CC.RED}${grant.removedOn}")
+                lines.add("${CC.GRAY}Removed Reason: ${CC.RED}${grant.removedReason}")
             }
 
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             if (grant.isActive) {
                 lines.add("")
-                lines.add(if (grant.canRemove(lemonPlayer)) "${CC.GREEN}Click to remove this grant." else "${CC.RED}You can't remove this grant.")
+                lines.add(if (grant.canRemove(lemonPlayer)) "${CC.YELLOW}Click to remove this grant!" else "${CC.RED}You can't remove this grant.")
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
@@ -169,14 +169,14 @@ class GrantViewMenu(
             if (!grant.canRemove(lemonPlayer)) return
 
             InputPrompt()
-                .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
+                .withText("${CC.GRAY}Please enter the ${CC.WHITE}Removal Reason${CC.GRAY}. ${CC.GRAY}(Type \"cancel\" to exit)")
                 .acceptInput { context, input ->
                     if (input.equals("stop", true) || input.equals("cancel", true)) {
-                        context.sendMessage("${CC.SEC}You've cancelled the removal operation.")
+                        context.sendMessage("${CC.GRAY}You've cancelled the removal operation.")
                         return@acceptInput
                     }
 
-                    context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
+                    context.sendMessage("${CC.GRAY}You've set the ${CC.WHITE}Removal Reason${CC.GRAY} to ${CC.WHITE}$input${CC.GRAY}.")
 
                     val splitUuid = SplitUtil.splitUuid(grant.uuid)
                     val grantTarget = CubedCacheUtil.fetchName(grant.target)
@@ -196,7 +196,7 @@ class GrantViewMenu(
                             grant.removedOn = Lemon.instance.settings.id
                             grant.removedReason = input
 
-                            player.sendMessage("${CC.SEC}You've removed grant ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.PRI}$grantTarget${CC.SEC}.")
+                            player.sendMessage("${CC.GRAY}You've removed grant ${CC.WHITE}#$splitUuid${CC.GRAY} from ${CC.WHITE}$grantTarget${CC.GRAY}.")
 
                             grant.save().thenAccept {
                                 Tasks.sync {

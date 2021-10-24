@@ -89,19 +89,19 @@ class PunishmentDetailedViewMenu(
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Target: ${CC.PRI}${CubedCacheUtil.fetchName(punishment.target)}")
+            lines.add("${CC.GRAY}Target: ${CC.WHITE}${CubedCacheUtil.fetchName(punishment.target)}")
 
             if (!punishment.category.instant) {
-                lines.add("${CC.SEC}Duration: ${CC.PRI + punishment.durationString}")
+                lines.add("${CC.GRAY}Duration: ${CC.WHITE + punishment.durationString}")
             }
             if (punishment.isActive) {
-                lines.add("${CC.SEC}Expire Date: ${CC.PRI + punishment.expirationString}")
+                lines.add("${CC.GRAY}Expire Date: ${CC.WHITE + punishment.expirationString}")
             }
 
             lines.add("")
-            lines.add("${CC.SEC}Issued By: ${CC.PRI}$addedBy")
-            lines.add("${CC.SEC}Issued On: ${CC.PRI}${punishment.addedOn}")
-            lines.add("${CC.SEC}Issued Reason: ${CC.PRI}${punishment.addedReason}")
+            lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
+            lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${punishment.addedOn}")
+            lines.add("${CC.GRAY}Issued Reason: ${CC.WHITE}${punishment.addedReason}")
 
             if (punishment.isRemoved) {
                 val removedBy = punishment.removedBy?.let {
@@ -111,9 +111,9 @@ class PunishmentDetailedViewMenu(
                 }
 
                 lines.add("")
-                lines.add("${CC.SEC}Removed By: ${CC.PRI}$removedBy")
-                lines.add("${CC.SEC}Removed On: ${CC.PRI}${punishment.removedOn}")
-                lines.add("${CC.SEC}Removed Reason: ${CC.PRI}${punishment.removedReason}")
+                lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
+                lines.add("${CC.GRAY}Removed On: ${CC.RED}${punishment.removedOn}")
+                lines.add("${CC.GRAY}Removed Reason: ${CC.RED}${punishment.removedReason}")
             }
 
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
@@ -124,7 +124,7 @@ class PunishmentDetailedViewMenu(
 
             if (punishment.isActive) {
                 lines.add("")
-                lines.add(if (canRemove) "${CC.GREEN}Click to remove this punishment." else "${CC.RED}You can't remove this punishment.")
+                lines.add(if (canRemove) "${CC.YELLOW}Right-Click to remove this punishment!" else "${CC.RED}You can't remove this punishment.")
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
@@ -137,52 +137,58 @@ class PunishmentDetailedViewMenu(
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-            val canRemove: Boolean = lemonPlayer.hasPermission(
-                "lemon.punishment.remove." + punishment.category.name.toLowerCase()
-            ) && punishment.isActive
+            if (clickType.name.contains("LEFT"))
+            {
+                PunishmentSpecificViewMenu(punishment, "${ if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history" } $viewingFor").openMenu(player)
+            } else
+            {
+                val canRemove: Boolean = lemonPlayer.hasPermission(
+                    "lemon.punishment.remove." + punishment.category.name.toLowerCase()
+                ) && punishment.isActive
 
-            if (!canRemove) return
+                if (!canRemove) return
 
-            InputPrompt()
-                .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
-                .acceptInput { context, input ->
-                    if (input.equals("stop", true) || input.equals("cancel", true)) {
-                        context.sendMessage("${CC.SEC}You've cancelled the removal operation.")
-                        return@acceptInput
-                    }
-
-                    context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
-
-                    val splitUuid = SplitUtil.splitUuid(punishment.uuid)
-                    val grantTarget = CubedCacheUtil.fetchName(punishment.target)
-
-                    BetterConfirmMenu(
-                        "Punishment Expiration ${Constants.DOUBLE_ARROW_RIGHT} $splitUuid",
-                        listOf(
-                            "${CC.GRAY}Would you like to expire",
-                            "${CC.GRAY}punishment ${CC.WHITE}#$splitUuid${CC.GRAY} from",
-                            "${CC.GRAY}player ${grantTarget}?"
-                        ), true
-                    ) {
-                        if (it) {
-                            QuickAccess.attemptRemoval(
-                                punishment,
-                                reason = input,
-                                remover = player.uniqueId
-                            )
-
-                            player.sendMessage("${CC.SEC}You've removed punishment ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.PRI}$grantTarget${CC.SEC}.")
-
-                            Tasks.sync {
-                                player.performCommand("${ if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history" } $viewingFor")
-                            }
-                        } else {
-                            player.sendMessage("${CC.RED}You've cancelled the removal operation.")
+                InputPrompt()
+                    .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
+                    .acceptInput { context, input ->
+                        if (input.equals("stop", true) || input.equals("cancel", true)) {
+                            context.sendMessage("${CC.SEC}You've cancelled the removal operation.")
+                            return@acceptInput
                         }
-                    }.openMenu(player)
-                }.start(player)
 
-            player.closeInventory()
+                        context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
+
+                        val splitUuid = SplitUtil.splitUuid(punishment.uuid)
+                        val grantTarget = CubedCacheUtil.fetchName(punishment.target)
+
+                        BetterConfirmMenu(
+                            "Punishment Expiration ${Constants.DOUBLE_ARROW_RIGHT} $splitUuid",
+                            listOf(
+                                "${CC.GRAY}Would you like to expire",
+                                "${CC.GRAY}punishment ${CC.WHITE}#$splitUuid${CC.GRAY} from",
+                                "${CC.GRAY}player ${grantTarget}?"
+                            ), true
+                        ) {
+                            if (it) {
+                                QuickAccess.attemptRemoval(
+                                    punishment,
+                                    reason = input,
+                                    remover = player.uniqueId
+                                )
+
+                                player.sendMessage("${CC.SEC}You've removed punishment ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.PRI}$grantTarget${CC.SEC}.")
+
+                                Tasks.sync {
+                                    player.performCommand("${ if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history" } $viewingFor")
+                                }
+                            } else {
+                                player.sendMessage("${CC.RED}You've cancelled the removal operation.")
+                            }
+                        }.openMenu(player)
+                    }.start(player)
+
+                player.closeInventory()
+            }
         }
     }
 }
