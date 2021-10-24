@@ -115,6 +115,8 @@ class Lemon : ExtendedScalaPlugin()
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
+    val init = System.currentTimeMillis()
+
     override fun enable()
     {
         instance = this

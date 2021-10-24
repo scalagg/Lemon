@@ -79,6 +79,7 @@ class EnvironmentCommand : BaseCommand() {
             sender.sendMessage("")
             sender.sendMessage("${CC.GRAY}Version: ${CC.WHITE}${t.version}")
             sender.sendMessage("${CC.GRAY}Last Heartbeat: ${CC.WHITE}${DurationFormatUtils.formatDurationWords(System.currentTimeMillis() - t.lastHeartbeat, true, false)}")
+            sender.sendMessage("${CC.GRAY}Uptime: ${CC.WHITE}${DurationFormatUtils.formatDurationWords(System.currentTimeMillis() - (t.metaData["init"]?.toLong() ?: 0L), true, false)}")
         }
     }
 }

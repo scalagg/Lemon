@@ -61,7 +61,7 @@ class PunishmentViewMenu(
 
                 buttons[index] = ItemBuilder(XMaterial.WHITE_WOOL)
                     .name(
-                        "${CC.RED}${
+                        "${CC.GREEN}${
                             when (viewType)
                             {
                                 HistoryViewType.STAFF_HIST -> "Issued "
@@ -83,7 +83,7 @@ class PunishmentViewMenu(
                             }.size
                         }",
                         "",
-                        "${CC.YELLOW}Click to view more info."
+                        "${CC.YELLOW}Click to view more!"
                     ).toButton { _, _ ->
                         fetchPunishments(it).whenComplete { list, _ ->
                             if (list.isEmpty())
@@ -138,7 +138,7 @@ class PunishmentViewMenu(
                             "",
                             " ${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
                             "",
-                            "${CC.YELLOW}Click to view more info."
+                            "${CC.YELLOW}Click to view more!"
                         ).toButton { _, _ ->
                             fetchPunishmentsRemoved(it).whenComplete { list, _ ->
                                 if (list.isEmpty())
