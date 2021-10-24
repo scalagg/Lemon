@@ -5,6 +5,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.other.Expirable
 import gg.scala.common.Savable
+import gg.scala.lemon.util.SplitUtil
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,6 +20,8 @@ class Punishment(
     duration: Long,
     val category: PunishmentCategory
 ): Expirable(addedAt, duration), Savable {
+
+    val shortened = SplitUtil.splitUuid(uuid)
 
     var removedReason: String? = null
     var removedOn: String? = null
