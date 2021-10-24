@@ -169,14 +169,14 @@ class GrantViewMenu(
             if (!grant.canRemove(lemonPlayer)) return
 
             InputPrompt()
-                .withText("${CC.GRAY}Please enter the ${CC.WHITE}Removal Reason${CC.GRAY}. ${CC.GRAY}(Type \"cancel\" to exit)")
+                .withText("${CC.SEC}Please enter the ${CC.WHITE}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
                 .acceptInput { context, input ->
                     if (input.equals("stop", true) || input.equals("cancel", true)) {
                         context.sendMessage("${CC.GRAY}You've cancelled the removal operation.")
                         return@acceptInput
                     }
 
-                    context.sendMessage("${CC.GRAY}You've set the ${CC.WHITE}Removal Reason${CC.GRAY} to ${CC.WHITE}$input${CC.GRAY}.")
+                    context.sendMessage("${CC.SEC}You've set the ${CC.WHITE}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
 
                     val splitUuid = SplitUtil.splitUuid(grant.uuid)
                     val grantTarget = CubedCacheUtil.fetchName(grant.target)
@@ -196,7 +196,7 @@ class GrantViewMenu(
                             grant.removedOn = Lemon.instance.settings.id
                             grant.removedReason = input
 
-                            player.sendMessage("${CC.GRAY}You've removed grant ${CC.WHITE}#$splitUuid${CC.GRAY} from ${CC.WHITE}$grantTarget${CC.GRAY}.")
+                            player.sendMessage("${CC.SEC}You've removed grant ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.WHITE}$grantTarget${CC.SEC}.")
 
                             grant.save().thenAccept {
                                 Tasks.sync {
