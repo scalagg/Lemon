@@ -43,12 +43,12 @@ class GrantReasonContextMenu(
     override fun getGlobalButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also {
             it[3] = ItemBuilder(XMaterial.MAP)
-                .name("${CC.B_GREEN}Custom Duration")
+                .name("${CC.B_GREEN}Custom Reason")
                 .addToLore(
-                    "${CC.GRAY}Input a custom duration",
+                    "${CC.GRAY}Input a custom reason",
                     "${CC.GRAY}to use on this grant.",
                     "",
-                    "${CC.YELLOW}Click to set duration."
+                    "${CC.YELLOW}Click to set reason."
                 )
                 .toButton { _, _ ->
                     player.closeInventory()
