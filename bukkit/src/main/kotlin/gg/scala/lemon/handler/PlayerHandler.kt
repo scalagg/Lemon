@@ -181,6 +181,8 @@ object PlayerHandler {
 
         val snapshot = snapshots.remove(player.uniqueId)
         snapshot?.restore(player, teleport = false)
+
+        NametagHandler.reloadPlayer(player)
     }
 
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>> {
