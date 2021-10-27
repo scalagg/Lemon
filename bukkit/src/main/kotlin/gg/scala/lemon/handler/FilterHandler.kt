@@ -42,6 +42,7 @@ object FilterHandler {
                 .replace(oldValue = "4", newValue = "a")
                 .replace(oldValue = "1", newValue = "i")
                 .replace(oldValue = "5", newValue = "s")
+                .replace(oldValue = "\"", newValue = "")
 
             this.regexList.filter { it.matches(finalWord) }.forEach { _ ->
                 return notifyLocally(
