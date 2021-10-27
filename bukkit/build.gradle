@@ -26,6 +26,7 @@ dependencies {
 }
 
 compileKotlin {
+    kotlinOptions.javaParameters = true
     kotlinOptions.jvmTarget = "1.8"
 }
 
