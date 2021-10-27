@@ -158,7 +158,7 @@ class GrantViewMenu(
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (grant.hasExpired) 1 else if (!grant.isRemoved) if (grant.isCustomScope()) 13 else 5 else 14).toShort())
+                .data((if (grant.hasExpired) 8 else if (!grant.isRemoved) if (grant.isCustomScope()) 13 else 5 else 14).toShort())
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)}")
                 .addToLore(lines).build()
         }
@@ -172,7 +172,7 @@ class GrantViewMenu(
                 .withText("${CC.SEC}Please enter the ${CC.WHITE}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
                 .acceptInput { context, input ->
                     if (input.equals("stop", true) || input.equals("cancel", true)) {
-                        context.sendMessage("${CC.GRAY}You've cancelled the removal operation.")
+                        context.sendMessage("${CC.RED}You've cancelled the removal operation.")
                         return@acceptInput
                     }
 

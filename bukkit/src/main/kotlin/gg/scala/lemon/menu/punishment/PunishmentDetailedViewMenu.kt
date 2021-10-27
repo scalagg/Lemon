@@ -128,7 +128,7 @@ class PunishmentDetailedViewMenu(
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (punishment.hasExpired) 1 else if (!punishment.isRemoved) 5 else 14).toShort())
+                .data((if (punishment.hasExpired) 8 else if (!punishment.isRemoved) 5 else 14).toShort())
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)}")
                 .addToLore(lines)
                 .build()
@@ -152,7 +152,7 @@ class PunishmentDetailedViewMenu(
                     .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
                     .acceptInput { context, input ->
                         if (input.equals("stop", true) || input.equals("cancel", true)) {
-                            context.sendMessage("${CC.SEC}You've cancelled the removal operation.")
+                            context.sendMessage("${CC.RED}You've cancelled the removal operation.")
                             return@acceptInput
                         }
 

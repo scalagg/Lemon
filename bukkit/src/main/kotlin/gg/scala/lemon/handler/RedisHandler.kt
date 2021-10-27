@@ -92,7 +92,6 @@ object RedisHandler : BananaHandler
     fun onMassWhitelist(message: Message)
     {
         val group = message["group"]!!
-        val issuer = message["issuer"]!!
         val setting = message["setting"]!!
 
         if (Lemon.instance.localInstance.serverGroup.equals(group, true))
@@ -100,11 +99,17 @@ object RedisHandler : BananaHandler
             Bukkit.setWhitelist(setting.toBoolean())
 
             broadcast(
-                "${CC.AQUA}[S] [External] ${CC.D_AQUA}Whitelist has been set to ${CC.AQUA}$setting${CC.D_AQUA}.",
+                "${CC.RED}[A] ${CC.D_AQUA}Whitelist has been ${
+                    if (setting.toBoolean())
+                    {
+                        "${CC.GREEN}enabled"
+                    } else
+                    {
+                        "${CC.RED}disabled"
+                    }
+                }${CC.D_AQUA} externally.",
                 "lemon.security.notifications"
             )
-
-            println("[Security] $issuer has set whitelist to $setting.")
         }
     }
 
