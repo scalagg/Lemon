@@ -13,11 +13,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     compileOnly 'com.google.code.gson:gson:2.8.8'
-}
-
-task prepareKotlinBuildScriptModel {
 }
 
 shadowJar {
@@ -29,3 +26,5 @@ shadowJar {
 
     archiveFileName = "lemon-commons.jar"
 }
+
+tasks.build.dependsOn(shadowJar)
