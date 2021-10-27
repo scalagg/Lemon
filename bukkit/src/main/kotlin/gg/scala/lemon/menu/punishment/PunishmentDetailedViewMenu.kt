@@ -77,13 +77,13 @@ class PunishmentDetailedViewMenu(
             val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
-                "${LemonConstants.CONSOLE}"
+                LemonConstants.CONSOLE
             }
 
-            lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
+            lines.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
 
             if (punishment.hasExpired) {
-                lines.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
+                lines.add(CC.GRAY + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
             } else if (punishment.isRemoved) {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
             }

@@ -89,10 +89,10 @@ class PunishmentSpecificViewMenu(
                 "${LemonConstants.CONSOLE}"
             }
 
-            lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
+            lines.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
 
             if (punishment.hasExpired) {
-                lines.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
+                lines.add(CC.GRAY + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
             } else if (punishment.isRemoved) {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
             }

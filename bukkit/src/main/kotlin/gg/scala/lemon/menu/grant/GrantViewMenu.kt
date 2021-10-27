@@ -108,10 +108,10 @@ class GrantViewMenu(
                 LemonConstants.CONSOLE
             }
 
-            lines.add(CC.GRAY + "+ " + TimeUtil.formatIntoCalendarString(Date(grant.addedAt)))
+            lines.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(grant.addedAt)))
 
             if (grant.hasExpired) {
-                lines.add(CC.GOLD + "* " + TimeUtil.formatIntoCalendarString(grant.expireDate))
+                lines.add(CC.GRAY + "* " + TimeUtil.formatIntoCalendarString(grant.expireDate))
             } else if (grant.isRemoved) {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(grant.removedAt)))
             }
