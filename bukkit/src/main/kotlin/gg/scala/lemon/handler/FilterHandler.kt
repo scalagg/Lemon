@@ -79,7 +79,7 @@ object FilterHandler {
                         "${CC.YELLOW}${player.displayName}${CC.WHITE}:"
                     }
                     FilterType.PRIVATE -> {
-                        "${CC.GRAY}(${player.name} -> ${target!!.name})"
+                        "${CC.YELLOW}(${player.name} -> ${target!!.name})${CC.WHITE}:"
                     }
                 }
             } $message")
