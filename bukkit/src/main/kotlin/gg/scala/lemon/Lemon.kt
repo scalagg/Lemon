@@ -12,6 +12,7 @@ import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.adapter.LemonPlayerAdapter
+import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.UUIDAdapter
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
@@ -338,6 +339,9 @@ class Lemon : ExtendedScalaPlugin()
                 "${clientAdapter.getClientName()} implementation has been enabled."
             )
         }
+
+        ProtocolLibHook.initialLoad()
+        logger.info("Attempted initial load of ProtocolLib hook.")
 
         serverStatisticProvider = DefaultSparkServerStatisticProvider
 
