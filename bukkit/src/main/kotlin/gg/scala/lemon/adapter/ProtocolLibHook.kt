@@ -44,6 +44,12 @@ object ProtocolLibHook
 
                         val command = split[0]
 
+                        if (command.contains(":"))
+                        {
+                            event.isCancelled = true
+                            return
+                        }
+
                         Lemon.instance.settings.blacklistedCommands.forEach {
                             if (command.equals("/$it", true))
                             {
