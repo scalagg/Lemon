@@ -107,7 +107,7 @@ class PunishmentDetailedViewMenu(
                 val removedBy = punishment.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
-                    "${LemonConstants.CONSOLE}"
+                    LemonConstants.CONSOLE
                 }
 
                 lines.add("")

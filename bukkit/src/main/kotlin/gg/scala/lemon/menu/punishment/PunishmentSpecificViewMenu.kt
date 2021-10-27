@@ -86,7 +86,7 @@ class PunishmentSpecificViewMenu(
             val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
-                "${LemonConstants.CONSOLE}"
+                LemonConstants.CONSOLE
             }
 
             lines.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
@@ -116,7 +116,7 @@ class PunishmentSpecificViewMenu(
                 val removedBy = punishment.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
-                    "${LemonConstants.CONSOLE}"
+                    LemonConstants.CONSOLE
                 }
 
                 lines.add("")

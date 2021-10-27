@@ -1,12 +1,7 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
-    id "idea"
-    id "java"
     id "maven-publish"
     id "org.jetbrains.kotlin.jvm" version "1.5.31"
     id "com.github.johnrengelman.shadow" version "5.2.0"
-    id "com.gorylenko.gradle-git-properties" version "2.3.1"
 }
 
 repositories {
@@ -19,42 +14,24 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     implementation project(":common")
-
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
 
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
     compileOnly "me.lucko:helper:5.6.8"
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
     implementation fileTree("internal")
     compileOnly fileTree("lib")
-
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-}
-
-compileJava {
-    options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = "javac"
 }
 
 compileKotlin {
-    kotlinOptions.javaParameters = true
     kotlinOptions.jvmTarget = "1.8"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
-}
-
 shadowJar {
-    classifier = "all"
+    archiveClassifier.set("")
+
     exclude "**/*.kotlin_metadata"
     exclude "**/*.kotlin_builtins"
     exclude "META-INF/"
@@ -70,9 +47,4 @@ publishing {
     }
 }
 
-processResources {
-    filter ReplaceTokens, tokens: ["plugin.version": project.version ]
-//    TODO: fix git commit stuff
-//    filter ReplaceTokens, tokens: ["git.commit.id.abbrev": (project.extensions.extraProperties.ge("gitProps") as Map<String, String>)["git.commit.id.abbrev"] ]
-//    filter ReplaceTokens, tokens: ["git.remote.origin.url": (project.extensions.extraProperties.get("gitProps") as Map<String, String>)["git.remote.origin.url"] ]
-}
+tasks.build.dependsOn(shadowJar, publishing)
