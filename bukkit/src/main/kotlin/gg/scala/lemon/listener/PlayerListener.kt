@@ -460,7 +460,7 @@ object PlayerListener : Listener
         if (!lemonPlayer.hasPermission("lemon.command-blacklist.bypass"))
         {
             Lemon.instance.settings.blacklistedCommands.forEach {
-                if (command.equals(it, true))
+                if (command.equals("/$it", true))
                 {
                     cancel(event, "${CC.RED}You're not allowed to issue this command.")
                     return
