@@ -97,8 +97,8 @@ class GrantsCommand : BaseCommand()
     @CommandPermission("lemon.command.staffhistory.grants")
     fun onStaffHistory(player: Player, uuid: UUID)
     {
-        val name =
-            CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
+        val name = CubedCacheUtil.fetchName(uuid)
+            ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.grants.other"))
         {

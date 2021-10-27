@@ -373,18 +373,6 @@ object PlayerListener : Listener
         }
     }
 
-    @EventHandler(
-        priority = EventPriority.HIGHEST
-    )
-    fun onInteract(event: PlayerInteractEvent)
-    {
-        if (shouldBlock(event.player) && LemonConstants.LOBBY)
-        {
-            event.isCancelled = true
-            return
-        }
-    }
-
     @EventHandler
     fun onEntityTarget(event: EntityTargetEvent)
     {

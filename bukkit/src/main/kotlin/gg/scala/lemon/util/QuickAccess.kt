@@ -29,6 +29,18 @@ import java.util.concurrent.ForkJoinPool
 object QuickAccess {
 
     @JvmStatic
+    fun broadcast(message: String, permission: String = "")
+    {
+        Bukkit.getOnlinePlayers()
+            .filter { permission != "" && it.hasPermission(permission) }
+            .forEach {
+                it.sendMessage(message)
+            }
+
+        Bukkit.getConsoleSender().sendMessage(message)
+    }
+
+    @JvmStatic
     fun nameOrConsole(sender: CommandSender): String {
         if (sender is ConsoleCommandSender) {
             return LemonConstants.CONSOLE

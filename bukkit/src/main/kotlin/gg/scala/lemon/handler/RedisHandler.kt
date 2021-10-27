@@ -6,6 +6,7 @@ import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.broadcast
 import gg.scala.lemon.util.queueForDispatch
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -80,7 +81,7 @@ object RedisHandler : BananaHandler
 
         if (permission!!.isNotBlank())
         {
-            Bukkit.broadcast(newMessage, permission)
+            broadcast(newMessage ?: "", permission)
         } else
         {
             Bukkit.broadcastMessage(newMessage)
@@ -98,7 +99,7 @@ object RedisHandler : BananaHandler
         {
             Bukkit.setWhitelist(setting.toBoolean())
 
-            Bukkit.broadcast(
+            broadcast(
                 "${CC.AQUA}[S] [External] ${CC.D_AQUA}Whitelist has been set to ${CC.AQUA}$setting${CC.D_AQUA}.",
                 "lemon.security.notifications"
             )

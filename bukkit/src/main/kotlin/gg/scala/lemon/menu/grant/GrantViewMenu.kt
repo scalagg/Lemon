@@ -158,7 +158,7 @@ class GrantViewMenu(
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (grant.hasExpired) 1 else if (!grant.isRemoved) 5 else 14).toShort())
+                .data((if (grant.hasExpired) 1 else if (!grant.isRemoved) if (grant.isCustomScope()) 13 else 5 else 14).toShort())
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)}")
                 .addToLore(lines).build()
         }
