@@ -373,6 +373,8 @@ object PlayerListener : Listener
         }
     }
 
+
+
     @EventHandler
     fun onEntityTarget(event: EntityTargetEvent)
     {
@@ -466,42 +468,9 @@ object PlayerListener : Listener
             }
         }
 
-        if (!event.player.isOp && command.equals("/tps", true))
-        {
-            val ticksPerSecond = Lemon.instance
-                .serverStatisticProvider.ticksPerSecond()
-
-            event.player.sendMessage(
-                "${CC.SEC}Current server TPS: ${
-                    formatTps(ticksPerSecond)
-                }${CC.SEC}/${CC.GREEN}20.0${CC.SEC}."
-            )
-
-            event.isCancelled = true
-            return
-        }
-
         CommandAsyncFileLogger.queueForUpdates(
             "${event.player.name}: ${event.message}"
         )
-    }
-
-    private fun formatTps(tps: Double): String
-    {
-        val color: ChatColor = if (tps > 18.0)
-        {
-            ChatColor.GREEN
-        } else if (tps > 16.0)
-        {
-            ChatColor.YELLOW
-        } else
-        {
-            ChatColor.RED
-        }
-
-        return "$color ${
-            if (tps > 20.0) "*" else "" + ((tps * 100.0).roundToInt() / 100.0).coerceAtMost(20.0)
-        }"
     }
 
     @EventHandler
@@ -547,6 +516,16 @@ object PlayerListener : Listener
             event.isCancelled = true
         }
     }
+
+    @EventHandler
+    fun onInteract(event: PlayerInteractEvent)
+    {
+        if (shouldBlock(event.player))
+        {
+            event.isCancelled = true
+        }
+    }
+
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent)

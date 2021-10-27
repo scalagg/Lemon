@@ -5,6 +5,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
@@ -18,6 +19,7 @@ class InvalidatePunishmentRangeCommand : BaseCommand() {
 
     @Syntax("<minimum> <maximum> [category]")
     @CommandAlias("ipr|invalidatepunishmentsrange")
+    @CommandPermission("op")
     fun onInvalidate(
         sender: ConsoleCommandSender,
         min: Long, max: Long,
