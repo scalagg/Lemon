@@ -29,12 +29,14 @@ open class OutgoingMessageQueue(
             {
                 if (messages.isNotEmpty())
                 {
-                    val popped = messages.pop()
-
-
-                    if (popped != null)
+                    if (messages.first != null)
                     {
-                        dispatchInternal(popped)
+                        val popped = messages.pop()
+
+                        if (popped != null)
+                        {
+                            dispatchInternal(popped)
+                        }
                     }
                 }
             } catch (e: Exception)

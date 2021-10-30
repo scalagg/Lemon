@@ -9,11 +9,11 @@ import org.bukkit.entity.Player
 class StaffChannel(private val channel: StaffChannelType): Channel {
 
     override fun getId(): String {
-        return channel.name.toLowerCase()
+        return channel.name.lowercase()
     }
 
     override fun getPermission(): String {
-        return "lemon.channel.${channel.name.toLowerCase()}"
+        return "lemon.channel.${channel.name.lowercase()}"
     }
 
     override fun hasPermission(t: Player): Boolean {

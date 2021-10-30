@@ -21,7 +21,7 @@ dependencies {
     compileOnly "me.lucko:helper:5.6.8"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
-    implementation fileTree("internal")
+    implementation fileTree(dir: 'internal')
     compileOnly fileTree(dir: "lib")
 }
 

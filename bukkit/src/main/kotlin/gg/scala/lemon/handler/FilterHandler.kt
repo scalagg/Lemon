@@ -35,7 +35,7 @@ object FilterHandler {
         }
 
         message.split(" ").forEach { word ->
-            val finalWord = word.toLowerCase()
+            val finalWord = word.lowercase()
                 .replace(oldValue = "@", newValue = "a")
                 .replace(oldValue = "3", newValue = "e")
                 .replace(oldValue = "0", newValue = "o")

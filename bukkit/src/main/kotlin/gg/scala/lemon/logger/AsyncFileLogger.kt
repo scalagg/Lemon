@@ -33,7 +33,7 @@ abstract class AsyncFileLogger<T>(
     fun start() {
         val logFolder = File(
             Lemon.instance.dataFolder,
-            "/logs/${fileName.toLowerCase()}"
+            "/logs/${fileName.lowercase()}"
         )
 
         if (!logFolder.exists())

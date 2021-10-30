@@ -16,6 +16,7 @@ import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.util.*
 
 /**
@@ -430,7 +431,7 @@ class RankCommand : BaseCommand()
         sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
     }
 
-    @Subcommand("clear-all-inheritances")
+    @Subcommand("tools clear-all-inheritances")
     @Description("Clear all inheritances for all ranks.")
     fun onToolsClear(sender: CommandSender)
     {
@@ -449,5 +450,50 @@ class RankCommand : BaseCommand()
         }
 
         sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
+    }
+
+    @Subcommand("tools clear-all-permissions")
+    @Description("Clear all permissions for all ranks.")
+    fun onToolsClearPermissions(player: Player)
+    {
+        RankHandler.ranks.forEach {
+            it.value.permissions.clear()
+            it.value.saveAndPushUpdatesGlobally()
+
+            player.sendMessage("${CC.GREEN}Cleared ${it.value.getColoredName()}'s ${CC.GREEN}permissions.")
+        }
+    }
+
+    @Subcommand("tools clear-duplicates")
+    @Description("Clear all duplicate permissions for all ranks.")
+    fun onToolsClearDuplicates(player: Player)
+    {
+        RankHandler.sorted.forEach { rank ->
+            var removed = 0
+
+            rank.permissions.toList().forEach { permission ->
+                var shouldRemove = false
+
+                rank.children.forEach { child ->
+                    val childRank = RankHandler.findRank(child)
+
+                    if (childRank != null)
+                    {
+                        if (childRank.permissions.contains(permission))
+                        {
+                            shouldRemove = true
+                        }
+                    }
+                }
+
+                if (shouldRemove)
+                {
+                    rank.permissions.remove(permission)
+                    removed++
+                }
+            }
+
+            player.sendMessage("${CC.GREEN}Removed ${CC.D_AQUA}$removed${CC.GREEN} duplicate permissions from ${rank.getColoredName()}${CC.GREEN}.")
+        }
     }
 }

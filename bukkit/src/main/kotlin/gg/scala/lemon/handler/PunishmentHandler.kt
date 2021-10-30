@@ -191,8 +191,8 @@ object PunishmentHandler {
             }
         }
 
-        if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.toLowerCase()}.permanent")) {
-            issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.toLowerCase()}s!")
+        if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent")) {
+            issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.lowercase()}s!")
             return
         }
 
@@ -224,7 +224,7 @@ object PunishmentHandler {
                         issuer.sendMessage(arrayOf(
                             "${CC.RED}While attempting to issue a re-punishment for $targetName${CC.RED}",
                             "${CC.RED}there was no pre-existing punishment found.",
-                            "${CC.RED}Please use ${CC.YELLOW}/${category.name.toLowerCase()} ${CC.RED}instead."
+                            "${CC.RED}Please use ${CC.YELLOW}/${category.name.lowercase()} ${CC.RED}instead."
                         ))
                         return@thenAccept
                     }

@@ -128,7 +128,7 @@ class PunishmentDetailedViewMenu(
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             val canRemove: Boolean = lemonPlayer.hasPermission(
-                "lemon.punishment.remove." + punishment.category.name.toLowerCase()
+                "lemon.punishment.remove." + punishment.category.name.lowercase()
             ) && punishment.isActive
 
             if (punishment.isActive) {
@@ -152,7 +152,7 @@ class PunishmentDetailedViewMenu(
             } else
             {
                 val canRemove: Boolean = lemonPlayer.hasPermission(
-                    "lemon.punishment.remove." + punishment.category.name.toLowerCase()
+                    "lemon.punishment.remove." + punishment.category.name.lowercase()
                 ) && punishment.isActive
 
                 if (!canRemove) return

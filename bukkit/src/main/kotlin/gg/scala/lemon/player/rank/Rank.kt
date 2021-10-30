@@ -93,7 +93,7 @@ constructor(
                 hashMapOf(
                     "uniqueId" to uuid.toString()
                 )
-            ).queueForDispatch()
+            ).dispatchImmediately()
 
             return@thenApply null
         }
