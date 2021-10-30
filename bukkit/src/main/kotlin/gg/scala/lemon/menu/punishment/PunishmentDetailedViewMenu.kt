@@ -17,6 +17,7 @@ import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
+import net.evilblock.cubed.util.text.TextSplitter
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -101,7 +102,11 @@ class PunishmentDetailedViewMenu(
             lines.add("")
             lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
             lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${punishment.addedOn}")
-            lines.add("${CC.GRAY}Issued Reason: ${CC.WHITE}${punishment.addedReason}")
+
+            lines.addAll(TextSplitter.split(
+                text = "${CC.GRAY}Issued Reason: ${CC.RED}${punishment.addedReason}",
+                linePrefix = CC.WHITE
+            ))
 
             if (punishment.isRemoved) {
                 val removedBy = punishment.removedBy?.let {
@@ -113,7 +118,11 @@ class PunishmentDetailedViewMenu(
                 lines.add("")
                 lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
                 lines.add("${CC.GRAY}Removed On: ${CC.RED}${punishment.removedOn}")
-                lines.add("${CC.GRAY}Removed Reason: ${CC.RED}${punishment.removedReason}")
+
+                lines.addAll(TextSplitter.split(
+                    text = "${CC.GRAY}Removed Reason: ${CC.RED}${punishment.removedReason}",
+                    linePrefix = CC.RED
+                ))
             }
 
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
