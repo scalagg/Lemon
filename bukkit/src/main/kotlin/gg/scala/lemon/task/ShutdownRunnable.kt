@@ -14,15 +14,7 @@ class ShutdownRunnable(seconds: Int): DiminutionRunnable(seconds) {
     }
 
     override fun onRun() {
-        if (seconds == 2) {
-            sync {
-                Bukkit.getOnlinePlayers().forEach { player ->
-                    player.kickPlayer("${CC.RED}The server is currently rebooting.")
-                }
-            }
-        } else {
-            broadcast("${CC.SEC}The server will be rebooting in ${CC.PRI}${TimeUtil.formatIntoDetailedString(seconds)}${CC.SEC}.")
-        }
+        broadcast("${CC.SEC}The server will be rebooting in ${CC.PRI}${TimeUtil.formatIntoDetailedString(seconds)}${CC.SEC}.")
     }
 
     override fun onEnd() {

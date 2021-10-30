@@ -39,18 +39,18 @@ class ServerMonitorRunnable(
             )
         } tps)"
 
-        Bukkit.getOnlinePlayers()
-            .filter { it.hasPermission("lemon.monitor.alerts") }
-            .forEach {
-                it.sendMessage(
-                    if (failedMemory || failedCpu || failedTps)
-                    {
-                        "${CC.D_RED} ✘ ${CC.RED}Failed server check!$formatted"
-                    } else
-                    {
-                        "${CC.D_GREEN} ✔ ${CC.GREEN}Passed server check.$formatted"
-                    }
-                )
-            }
+//        Bukkit.getOnlinePlayers()
+//            .filter { it.hasPermission("lemon.monitor.alerts") }
+//            .forEach {
+//                it.sendMessage(
+//                    if (failedMemory || failedCpu || failedTps)
+//                    {
+//                        "${CC.D_RED} ✘ ${CC.RED}Failed server check!$formatted"
+//                    } else
+//                    {
+//                        "${CC.D_GREEN} ✔ ${CC.GREEN}Passed server check.$formatted"
+//                    }
+//                )
+//            }
     }
 }
