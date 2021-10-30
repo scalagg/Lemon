@@ -104,7 +104,7 @@ class PunishmentDetailedViewMenu(
             lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${punishment.addedOn}")
 
             lines.addAll(TextSplitter.split(
-                text = "${CC.GRAY}Issued Reason: ${CC.RED}${punishment.addedReason}",
+                text = "${CC.GRAY}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
                 linePrefix = CC.WHITE
             ))
 

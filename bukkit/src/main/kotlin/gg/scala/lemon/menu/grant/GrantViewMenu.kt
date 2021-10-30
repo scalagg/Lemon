@@ -139,7 +139,7 @@ class GrantViewMenu(
 
             lines.addAll(
                 TextSplitter.split(
-                    text = "${CC.GRAY}Issued Reason: ${CC.RED}${grant.addedReason}",
+                    text = "${CC.GRAY}Issued Reason: ${CC.WHITE}${grant.addedReason}",
                     linePrefix = CC.WHITE
                 )
             )
