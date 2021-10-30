@@ -17,8 +17,8 @@ import java.util.*
  */
 class AltsRemoveCommand : BaseCommand()
 {
-    @CommandAlias("altsremove")
-    @CommandPermission("lemon.command.altsremove")
+    @CommandAlias("removealts")
+    @CommandPermission("lemon.command.removealts")
     @CommandCompletion("@all-players")
     fun onAltsRemove(sender: CommandSender, target: UUID)
     {
