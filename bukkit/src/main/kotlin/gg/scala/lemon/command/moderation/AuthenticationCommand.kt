@@ -60,6 +60,7 @@ class AuthenticationCommand : BaseCommand()
 
         lemonPlayer.removeMap()
         lemonPlayer.authenticateInternal()
+        lemonPlayer.save()
 
         player.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been authenticated.")
     }
@@ -78,12 +79,14 @@ class AuthenticationCommand : BaseCommand()
             )
 
             target.authenticateInternal()
+            target.save()
 
             sender.sendMessage("${AUTH_PREFIX}${CC.GREEN}They are now exempt.")
         } else
         {
             target remove "auth-exempt"
             target.authenticateInternalReversed()
+            target.save()
 
             sender.sendMessage("${AUTH_PREFIX}${CC.GREEN}They are no longer exempt.")
         }
@@ -105,6 +108,7 @@ class AuthenticationCommand : BaseCommand()
         lemonPlayer remove "auth-exempt"
 
         lemonPlayer.authenticateInternalReversed()
+        lemonPlayer.save()
 
         sender.sendMessage("${CC.SEC}You've reset ${CC.PRI}${lemonPlayer.name}'s${CC.SEC} 2fa.")
     }
@@ -134,6 +138,7 @@ class AuthenticationCommand : BaseCommand()
         )
 
         lemonPlayer.handleAuthMap(base32Secret)
+        lemonPlayer.save()
 
         player.sendMessage(
             arrayOf(
