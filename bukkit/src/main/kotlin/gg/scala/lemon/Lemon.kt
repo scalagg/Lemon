@@ -528,9 +528,12 @@ class Lemon : ExtendedScalaPlugin()
 
             val lemonPlayer = lemonPlayerOptional.orElse(null)!!
 
-            if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player))
+            if (it.player != null)
             {
-                throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
+                if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player))
+                {
+                    throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
+                }
             }
 
             return@registerContext lemonPlayer
