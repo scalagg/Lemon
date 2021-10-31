@@ -23,20 +23,47 @@ import java.util.concurrent.ThreadLocalRandom
 class ChatCommand : BaseCommand() {
 
     @Syntax("[-h]")
-    @CommandAlias("mutechat|mc")
+    @CommandAlias("mutechat|silencechat")
     @CommandPermission("lemon.command.mutechat")
     fun onMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
-        ChatHandler.chatMuted = !ChatHandler.chatMuted
+        if (ChatHandler.chatMuted)
+        {
+            throw ConditionFailedException("The chat is already silenced. Use ${CC.BOLD}/unmutechat${CC.RED} to unmute the chat!")
+        }
 
-        val toggledTo = ChatHandler.chatMuted
+        ChatHandler.chatMuted = true
+
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
-        Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}Chat has been ${if (toggledTo) "disabled" else "enabled"} by ${if (hidden) "staff" else coloredName}${if (toggledTo) CC.RED else CC.GREEN}.")
+        Bukkit.broadcastMessage("${CC.GREEN}Chat has been enabled by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
             sender,
-            "$coloredName${CC.D_AQUA} has ${if (toggledTo) "${CC.RED}disabled" else "${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
+            "$coloredName${CC.D_AQUA} has ${"${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
+            true, QuickAccess.MessageType.NOTIFICATION
+        )
+    }
+
+    @Syntax("[-h]")
+    @CommandAlias("mutechat|silencechat")
+    @CommandPermission("lemon.command.mutechat")
+    fun onUnMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
+        if (!ChatHandler.chatMuted)
+        {
+            throw ConditionFailedException("The chat is not silenced. Use ${CC.BOLD}/mutechat${CC.RED} to mute the chat!")
+        }
+
+        ChatHandler.chatMuted = false
+
+        val coloredName = nameOrConsole(sender)
+        val hidden = hiddenString != null && hiddenString == "-h"
+
+        Bukkit.broadcastMessage("${CC.RED}Chat has been disabled by ${if (hidden) "staff" else coloredName}${CC.RED}.")
+
+        sendStaffMessage(
+            sender,
+            "$coloredName${CC.D_AQUA} has ${"${CC.RED}disabled"}${CC.D_AQUA} chat.",
             true, QuickAccess.MessageType.NOTIFICATION
         )
     }
