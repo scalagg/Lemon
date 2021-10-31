@@ -191,9 +191,12 @@ object PunishmentHandler {
             }
         }
 
-        if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent")) {
-            issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.lowercase()}s!")
-            return
+        if (category != PunishmentCategory.BLACKLIST)
+        {
+            if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent")) {
+                issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.lowercase()}s!")
+                return
+            }
         }
 
         ForkJoinPool.commonPool().execute {
