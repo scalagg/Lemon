@@ -25,14 +25,17 @@ import java.util.concurrent.ForkJoinPool
  * @author GrowlyX
  * @since 8/26/2021
  */
-object PunishmentHandler {
+object PunishmentHandler
+{
 
-    private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>> {
+    private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>>
+    {
         return DataStoreHandler.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {
             val mutableList = mutableListOf<Punishment>()
 
             it.forEach { entry ->
-                if (test.invoke(entry.value)) {
+                if (test.invoke(entry.value))
+                {
                     mutableList.add(entry.value)
                 }
             }
@@ -41,7 +44,11 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsForTargetOfIntensity(uuid: UUID, intensity: PunishmentCategoryIntensity): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsForTargetOfIntensity(
+        uuid: UUID,
+        intensity: PunishmentCategoryIntensity
+    ): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("target", uuid.toString())
         ) {
@@ -49,7 +56,11 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsByExecutorOfIntensity(uuid: UUID, intensity: PunishmentCategoryIntensity): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsByExecutorOfIntensity(
+        uuid: UUID,
+        intensity: PunishmentCategoryIntensity
+    ): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("addedBy", uuid.toString())
         ) {
@@ -57,7 +68,11 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsForTargetOfCategory(uuid: UUID, category: PunishmentCategory): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsForTargetOfCategory(
+        uuid: UUID,
+        category: PunishmentCategory
+    ): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("target", uuid.toString())
         ) {
@@ -65,7 +80,11 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsForTargetOfCategoryAndActive(uuid: UUID, category: PunishmentCategory): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsForTargetOfCategoryAndActive(
+        uuid: UUID,
+        category: PunishmentCategory
+    ): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("target", uuid.toString())
         ) {
@@ -73,7 +92,11 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsByExecutorOfCategory(uuid: UUID, category: PunishmentCategory): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsByExecutorOfCategory(
+        uuid: UUID,
+        category: PunishmentCategory
+    ): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("addedBy", uuid.toString())
         ) {
@@ -81,7 +104,11 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsRemovedByOfCategory(uuid: UUID, category: PunishmentCategory): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsRemovedByOfCategory(
+        uuid: UUID,
+        category: PunishmentCategory
+    ): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("removedBy", uuid.toString())
         ) {
@@ -89,7 +116,8 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchPunishmentsRemovedBy(uuid: UUID): CompletableFuture<List<Punishment>> {
+    fun fetchPunishmentsRemovedBy(uuid: UUID): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("removedBy", uuid.toString())
         ) {
@@ -97,19 +125,22 @@ object PunishmentHandler {
         }
     }
 
-    fun fetchAllPunishmentsForTarget(uuid: UUID): CompletableFuture<List<Punishment>> {
+    fun fetchAllPunishmentsForTarget(uuid: UUID): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("target", uuid.toString())
         ) { true }
     }
 
-    fun fetchAllPunishmentsByExecutor(uuid: UUID): CompletableFuture<List<Punishment>> {
+    fun fetchAllPunishmentsByExecutor(uuid: UUID): CompletableFuture<List<Punishment>>
+    {
         return fetchPunishments(
             Filters.eq("addedBy", uuid.toString())
         ) { true }
     }
 
-    fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment> {
+    fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment>
+    {
         return DataStoreHandler.punishmentLayer.fetchEntryByKey(uuid.toString())
     }
 
@@ -118,7 +149,8 @@ object PunishmentHandler {
      *
      * @author GrowlyX
      */
-    fun handleWarning(issuer: CommandSender, uuid: UUID, reason: String) {
+    fun handleWarning(issuer: CommandSender, uuid: UUID, reason: String)
+    {
         Tasks.async {
             val issuerName = nameOrConsole(issuer)
             val targetName = QuickAccess.fetchColoredName(uuid)
@@ -143,7 +175,8 @@ object PunishmentHandler {
     fun handleUnPunishmentForTargetPlayerGlobally(
         issuer: CommandSender, uuid: UUID, reason: String,
         category: PunishmentCategory, silent: Boolean = false
-    ) {
+    )
+    {
         Tasks.async {
             val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
@@ -151,11 +184,14 @@ object PunishmentHandler {
             val issuerUuid = QuickAccess.uuidOf(issuer)
 
             activePunishments.thenAccept {
-                if (it.isNullOrEmpty()) {
-                    issuer.sendMessage(arrayOf(
-                        "${CC.RED}While attempting to issue an un-punishment for $targetName${CC.RED}",
-                        "${CC.RED}there was no pre-existing punishment found."
-                    ))
+                if (it.isNullOrEmpty())
+                {
+                    issuer.sendMessage(
+                        arrayOf(
+                            "${CC.RED}While attempting to issue an un-punishment for $targetName${CC.RED}",
+                            "${CC.RED}there was no pre-existing punishment found."
+                        )
+                    )
                     return@thenAccept
                 }
 
@@ -183,9 +219,12 @@ object PunishmentHandler {
         issuer: CommandSender, uuid: UUID,
         category: PunishmentCategory, duration: Long, reason: String,
         silent: Boolean = false, rePunishing: Boolean = false
-    ) {
-        if (issuer is Player) {
-            if (issuer.uniqueId == uuid) {
+    )
+    {
+        if (issuer is Player)
+        {
+            if (issuer.uniqueId == uuid)
+            {
                 issuer.sendMessage("${CC.RED}You may not issue punishments towards yourself.")
                 return
             }
@@ -193,7 +232,8 @@ object PunishmentHandler {
 
         if (category != PunishmentCategory.BLACKLIST)
         {
-            if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent")) {
+            if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent"))
+            {
                 issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.lowercase()}s!")
                 return
             }
@@ -209,26 +249,34 @@ object PunishmentHandler {
             val issuerWeight = QuickAccess.weightOf(issuer)
 
             activePunishments.thenAccept {
-                if (!it.isNullOrEmpty() && !rePunishing) {
-                    issuer.sendMessage(arrayOf(
-                        "${CC.RED}While attempting to issue a punishment for $targetName${CC.RED}",
-                        "${CC.RED}there was an active, pre-existing punishment found."
-                    ))
+                if (!it.isNullOrEmpty() && !rePunishing)
+                {
+                    issuer.sendMessage(
+                        arrayOf(
+                            "${CC.RED}While attempting to issue a punishment for $targetName${CC.RED}",
+                            "${CC.RED}there was an active, pre-existing punishment found."
+                        )
+                    )
                     return@thenAccept
                 }
 
-                if (targetWeight >= issuerWeight) {
+                if (targetWeight >= issuerWeight)
+                {
                     issuer.sendMessage("${CC.RED}Failed to issue a punishment for $targetName${CC.RED} due to them having a higher rank priority than you.")
                     return@thenAccept
                 }
 
-                if (rePunishing) {
-                    if (!it.isNullOrEmpty()) {
-                        issuer.sendMessage(arrayOf(
-                            "${CC.RED}While attempting to issue a re-punishment for $targetName${CC.RED}",
-                            "${CC.RED}there was no pre-existing punishment found.",
-                            "${CC.RED}Please use ${CC.YELLOW}/${category.name.lowercase()} ${CC.RED}instead."
-                        ))
+                if (rePunishing)
+                {
+                    if (!it.isNullOrEmpty())
+                    {
+                        issuer.sendMessage(
+                            arrayOf(
+                                "${CC.RED}While attempting to issue a re-punishment for $targetName${CC.RED}",
+                                "${CC.RED}there was no pre-existing punishment found.",
+                                "${CC.RED}Please use ${CC.YELLOW}/${category.name.lowercase()} ${CC.RED}instead."
+                            )
+                        )
                         return@thenAccept
                     }
 
@@ -255,7 +303,15 @@ object PunishmentHandler {
         }
     }
 
-    private fun handlePostPunishmentCheck(punishment: Punishment, silent: Boolean, uuid: UUID, issuer: CommandSender, issuerUuid: UUID?, targetName: String) {
+    private fun handlePostPunishmentCheck(
+        punishment: Punishment,
+        silent: Boolean,
+        uuid: UUID,
+        issuer: CommandSender,
+        issuerUuid: UUID?,
+        targetName: String
+    )
+    {
         val issuerName = QuickAccess.fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
@@ -263,7 +319,8 @@ object PunishmentHandler {
         val broadcastPermanent = if (punishment.isPermanent) "permanently " else ""
         val broadcastSuffix = if (silent) " for ${CC.WHITE}${punishment.addedReason}${CC.GREEN}." else "."
 
-        val broadcastBody = "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
+        val broadcastBody =
+            "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
 
         punishment.save().thenRun {
             issuer.sendMessage("$broadcastPrefix${CC.GREEN}You've $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN} for ${CC.WHITE}${punishment.addedReason}${CC.GREEN}.")
@@ -271,7 +328,8 @@ object PunishmentHandler {
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
 
-            if (broadcastPermission.isNotBlank()) {
+            if (broadcastPermission.isNotBlank())
+            {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
                     "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",
@@ -289,7 +347,8 @@ object PunishmentHandler {
                     "uniqueId" to uuid.toString()
                 ).dispatchImmediately()
 
-                if (punishment.category == PunishmentCategory.KICK) {
+                if (punishment.category == PunishmentCategory.KICK)
+                {
                     RedisHandler.buildMessage(
                         "cross-kick",
                         "uniqueId" to uuid.toString(),
@@ -300,14 +359,23 @@ object PunishmentHandler {
         }
     }
 
-    private fun handlePostUnPunishmentCheck(punishment: Punishment, silent: Boolean, uuid: UUID, issuer: CommandSender, issuerUuid: UUID?, targetName: String) {
+    private fun handlePostUnPunishmentCheck(
+        punishment: Punishment,
+        silent: Boolean,
+        uuid: UUID,
+        issuer: CommandSender,
+        issuerUuid: UUID?,
+        targetName: String
+    )
+    {
         val issuerName = QuickAccess.fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
         val broadcastPermission = if (silent) "lemon.staff" else ""
         val broadcastSuffix = if (silent) " for ${CC.WHITE}${punishment.removedReason}${CC.GREEN}." else "."
 
-        val broadcastBody = "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has un${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
+        val broadcastBody =
+            "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has un${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
 
         punishment.save().thenRun {
             issuer.sendMessage("$broadcastPrefix${CC.GREEN}You've un${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN} for ${CC.WHITE}${punishment.removedReason}${CC.GREEN}.")
@@ -315,7 +383,8 @@ object PunishmentHandler {
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
 
-            if (broadcastPermission.isNotBlank()) {
+            if (broadcastPermission.isNotBlank())
+            {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
                     "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",

@@ -431,7 +431,7 @@ object PlayerListener : Listener
 
         if (ipRelativePunishment != null)
         {
-            cancel(event, "${CC.RED}You may not issue commands while being in relation to a punished player.")
+            cancel(event, "${CC.RED}You may not perform commands while being in relation to a punished player.")
             return
         }
 
@@ -439,7 +439,7 @@ object PlayerListener : Listener
 
         if (blacklistPunishment != null && command != "/register")
         {
-            cancel(event, "${CC.RED}You may not issue commands while being blacklisted.")
+            cancel(event, "${CC.RED}You may not perform commands while being blacklisted.")
             return
         }
 
@@ -447,7 +447,7 @@ object PlayerListener : Listener
 
         if (banPunishment != null && command != "/register")
         {
-            cancel(event, "${CC.RED}You may not issue commands while being banned.")
+            cancel(event, "${CC.RED}You may not perform commands while being banned.")
             return
         }
 
@@ -462,7 +462,7 @@ object PlayerListener : Listener
             Lemon.instance.settings.blacklistedCommands.forEach {
                 if (command.equals("/$it", true))
                 {
-                    cancel(event, "${CC.RED}You're not allowed to issue this command.")
+                    cancel(event, "${CC.RED}You're not allowed to perform this command.")
                     return
                 }
             }
