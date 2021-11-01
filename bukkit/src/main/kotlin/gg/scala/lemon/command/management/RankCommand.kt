@@ -482,6 +482,20 @@ class RankCommand : BaseCommand()
                         if (childRank.permissions.contains(permission))
                         {
                             shouldRemove = true
+                        } else
+                        {
+                            for (childChild in childRank.children)
+                            {
+                                val childChildRank = RankHandler.findRank(child)
+
+                                if (childChildRank != null)
+                                {
+                                    if (childChildRank.permissions.contains(permission))
+                                    {
+                                        shouldRemove = true
+                                    }
+                                }
+                            }
                         }
                     }
                 }
