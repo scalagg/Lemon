@@ -32,7 +32,7 @@ object BukkitUtil {
         lambda: (MutableList<Any>) -> Unit = {}
     ) {
         val players = Bukkit.getOnlinePlayers()
-            .mapNotNull { PlayerHandler.findPlayer(it).orElse(null) }
+            .map { PlayerHandler.findPlayer(it).orElse(null) }
             .sortedByDescending { QuickAccess.realRank(it.bukkitPlayer!!).weight }
             .map { MinecraftReflection.getHandle(it.bukkitPlayer!!) }
 
