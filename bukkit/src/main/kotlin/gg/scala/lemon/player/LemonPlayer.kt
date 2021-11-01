@@ -484,16 +484,16 @@ class LemonPlayer(
 
     fun pushCocoaUpdates()
     {
-        RedisHandler.buildMessage(
-            "permission-update",
-            hashMapOf<String, String>().also {
-                it["uniqueId"] = uniqueId.toString()
-                it["currentDisplayName"] = getColoredName()
-                it["currentBungeePermissions"] = bungeePermissions.joinToString(
-                    separator = ","
-                )
-            }
-        ).dispatchToCocoa()
+//        RedisHandler.buildMessage(
+//            "permission-update",
+//            hashMapOf<String, String>().also {
+//                it["uniqueId"] = uniqueId.toString()
+//                it["currentDisplayName"] = getColoredName()
+//                it["currentBungeePermissions"] = bungeePermissions.joinToString(
+//                    separator = ","
+//                )
+//            }
+//        ).dispatchToCocoa()
     }
 
     private fun fetchPreviousRank(grants: List<Grant>): UUID?
