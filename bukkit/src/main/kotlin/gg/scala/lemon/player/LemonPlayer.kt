@@ -614,9 +614,10 @@ class LemonPlayer(
 
     fun getColoredName(): String
     {
-        val bukkitPlayer = bukkitPlayer!!
+        val bukkitPlayer = bukkitPlayer
 
-        return QuickAccess.realRank(bukkitPlayer).color + bukkitPlayer.name
+        return activeGrant?.getRank()?.color +
+                if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
     fun getSetting(id: String): Boolean

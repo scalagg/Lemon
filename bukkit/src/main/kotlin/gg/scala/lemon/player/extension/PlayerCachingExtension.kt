@@ -1,9 +1,13 @@
 package gg.scala.lemon.player.extension
 
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
+import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.server.ServerInstance
+import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,11 +23,13 @@ object PlayerCachingExtension
 
     fun initialLoad()
     {
-        handle = RedisStorageLayer(
-            Lemon.instance.redisConnection,
-            "lemon:players",
-            FundamentalLemonPlayer::class.java
-        )
+        val builder = RedisStorageBuilder<FundamentalLemonPlayer>()
+
+        builder.setConnection(Lemon.instance.redisConnection)
+        builder.setSection("lemon:players")
+        builder.setType(FundamentalLemonPlayer::class.java)
+
+        handle = builder.build()
 
         loaded = true
     }
@@ -44,9 +50,9 @@ object PlayerCachingExtension
         fundamental.currentServer = Lemon.instance.settings.id
         fundamental.currentDisplayName = lemonPlayer.getColoredName()
 
-        handle.saveEntry(
-            lemonPlayer.uniqueId.toString(), fundamental
-        )
+        Tasks.sync {
+            handle.saveEntry(lemonPlayer.uniqueId.toString(), fundamental).join()
+        }
     }
 
     fun forget(lemonPlayer: LemonPlayer)

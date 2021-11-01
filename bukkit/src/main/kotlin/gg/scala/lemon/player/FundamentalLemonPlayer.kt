@@ -9,7 +9,7 @@ import java.util.*
  * @author GrowlyX
  * @since 10/19/2021
  */
-data class FundamentalLemonPlayer(
+class FundamentalLemonPlayer(
     val uniqueId: UUID,
     val username: String
 )
