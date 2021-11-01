@@ -479,23 +479,9 @@ class RankCommand : BaseCommand()
 
                     if (childRank != null)
                     {
-                        if (childRank.permissions.contains(permission))
+                        if (childRank.getCompoundedPermissions().contains(permission))
                         {
                             shouldRemove = true
-                        } else
-                        {
-                            for (childChild in childRank.children)
-                            {
-                                val childChildRank = RankHandler.findRank(child)
-
-                                if (childChildRank != null)
-                                {
-                                    if (childChildRank.permissions.contains(permission))
-                                    {
-                                        shouldRemove = true
-                                    }
-                                }
-                            }
                         }
                     }
                 }
