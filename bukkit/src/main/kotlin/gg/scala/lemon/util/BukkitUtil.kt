@@ -31,12 +31,12 @@ object BukkitUtil {
     fun updatePlayerList(
         lambda: (MutableList<Any>) -> Unit = {}
     ) {
-        val players = Bukkit.getOnlinePlayers()
-            .map { PlayerHandler.findPlayer(it).orElse(null) }
-            .sortedByDescending { QuickAccess.realRank(it.bukkitPlayer!!).weight }
-            .map { MinecraftReflection.getHandle(it.bukkitPlayer!!) }
-
-        playerField.isAccessible = true
-        playerField.set(playerList, players)
+//        val players = Bukkit.getOnlinePlayers()
+//            .map { PlayerHandler.findPlayer(it).orElse(null) }
+//            .sortedByDescending { QuickAccess.realRank(it.bukkitPlayer!!).weight }
+//            .map { MinecraftReflection.getHandle(it.bukkitPlayer!!) }
+//
+//        playerField.isAccessible = true
+//        playerField.set(playerList, players)
     }
 }
