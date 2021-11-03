@@ -267,8 +267,8 @@ class Lemon : ExtendedScalaPlugin()
 
         if (settings.logDataToFile)
         {
-            ChatAsyncFileLogger.start()
-            CommandAsyncFileLogger.start()
+            ChatAsyncFileLogger.initialize()
+            CommandAsyncFileLogger.initialize()
 
             logger.info("Started log queue for chat & commands.")
         }

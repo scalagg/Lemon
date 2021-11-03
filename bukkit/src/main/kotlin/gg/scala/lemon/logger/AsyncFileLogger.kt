@@ -1,6 +1,7 @@
 package gg.scala.lemon.logger
 
 import gg.scala.lemon.Lemon
+import net.evilblock.cubed.logging.LogFile
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,18 +20,19 @@ abstract class AsyncFileLogger<T>(
         val FORMAT = SimpleDateFormat("yyyy-dd-MM_hh.mm.ss")
     }
 
-    private lateinit var thread: Thread
-    internal lateinit var logFile: File
-
     private var started = false
 
-    internal val queue = LinkedList<T>()
+    lateinit var handle: LogFile
+    lateinit var flusher: AsyncFileLoggerThread<T>
 
     fun queueForUpdates(t: T) {
-        if (started) queue.add(t)
+        if (!started)
+            return
+
+        handle.commit(formatToString(t))
     }
 
-    fun start() {
+    fun initialize() {
         val logFolder = File(
             Lemon.instance.dataFolder,
             "/logs/${fileName.lowercase()}"
@@ -39,13 +41,15 @@ abstract class AsyncFileLogger<T>(
         if (!logFolder.exists())
             logFolder.mkdirs()
 
-        logFile = File(
+        val logFile = File(
             logFolder,
            "${FORMAT.format(Date())}.txt"
         )
 
-        thread = AsyncFileLoggerThread(this)
-        thread.start()
+        handle = LogFile(logFile)
+
+        flusher = AsyncFileLoggerThread(this)
+        flusher.start()
 
         started = true
     }
