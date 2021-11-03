@@ -28,6 +28,17 @@ jobs:
           port: 22
           source: ./bukkit/build/libs/Lemon.jar
           target: /root/home/pvpbar/downloader
+      - name: Transfer the jar to the root directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.BAR_HOST_1 }}
+          username: root
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          port: 22
+          script: |
+            mv /root/home/pvpbar/downloader/bukkit/build/libs/Lemon.jar /root/home/pvpbar/downloader
+            rm -rf /root/home/pvpbar/downloader/bukkit/build/libs
       - name: Cleanup Gradle Cache
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
