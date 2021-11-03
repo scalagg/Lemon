@@ -26,7 +26,7 @@ jobs:
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           port: 22
-          source: ./bukkit/build/libs
+          source: ./bukkit/build/libs/Lemon.jar
           target: /root/home/pvpbar/downloader
       - name: Cleanup Gradle Cache
         run: |
