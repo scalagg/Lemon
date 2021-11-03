@@ -311,13 +311,6 @@ class LemonPlayer(
         return getMetadata("auth-secret")?.asString() ?: ""
     }
 
-    private fun needsToReAuthenticate(): Boolean
-    {
-        val meta = getMetadata("last-auth")
-
-        return meta == null || System.currentTimeMillis() > meta.asString().toLong() + TimeUnit.HOURS.toMillis(12L)
-    }
-
     fun validatePlayerAuthentication()
     {
         if (!hasPermission("lemon.2fa.forced"))
@@ -335,7 +328,7 @@ class LemonPlayer(
 
         if (authSecret != null)
         {
-            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress || needsToReAuthenticate())
+            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress)
             {
                 authenticateInternal()
 
@@ -345,7 +338,7 @@ class LemonPlayer(
                 }
             } else
             {
-                savePreviousIpAddressAsCurrent = true
+                savePreviousIpAddressAsCurrent = true; save()
 
                 Schedulers.sync().callLater({
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate using ${CC.WHITE}/auth <code>${CC.SEC}.")
