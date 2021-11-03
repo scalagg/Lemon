@@ -5,7 +5,6 @@ on: [ push ]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
@@ -19,12 +18,17 @@ jobs:
         run: chmod +x ./gradlew
       - name: Build with Gradle
         run: ./gradlew clean shadowJar
-      - uses: actions/upload-artifact@v2
+      - name: Transfer to local Spigot deployment folder
+        uses: appleboy/scp-action@master
         with:
-          name: "Lemon"
-          path: bukkit/build/libs
+          host: ${{ secrets.BAR_HOST_1 }}
+          username: root
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          port: 22
+          source: ./bukkit/build/libs
+          target: /root/home/pvpbar/downloader
       - name: Cleanup Gradle Cache
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
-          rm -f ~/build
