@@ -51,7 +51,7 @@ object PlayerCachingExtension
         fundamental.currentDisplayName = lemonPlayer.getColoredName()
 
         Tasks.sync {
-            handle.saveEntry(lemonPlayer.uniqueId.toString(), fundamental).join()
+            handle.saveEntry(lemonPlayer.uniqueId.toString(), fundamental)
         }
     }
 
