@@ -57,9 +57,11 @@ object RedisHandler : BananaHandler
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
         sendMessage("$baseMessage$newMessage") {
-            if (permission == null) return@sendMessage true
+            if (permission == null)
+                return@sendMessage true
 
-            val lemonPlayer = PlayerHandler.findPlayer(it).orElse(null)
+            val lemonPlayer = PlayerHandler.findPlayer(it)
+                .orElse(null)
 
             return@sendMessage if (lemonPlayer != null)
             {
@@ -244,7 +246,6 @@ object RedisHandler : BananaHandler
                 it.sendMessage(message)
             }
         }
-
     }
 
     fun buildMessage(packet: String, message: Map<String, String>): Message
