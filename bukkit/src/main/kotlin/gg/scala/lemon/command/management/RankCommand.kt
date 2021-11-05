@@ -337,10 +337,10 @@ class RankCommand : BaseCommand()
         rank.permissions.add(permission)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've added the ${
+            sender.sendMessage("${CC.SEC}You've added the${
                 if (permission.startsWith("%"))
                 {
-                    "proxy-level"
+                    " proxy-level"
                 } else if (permission.startsWith("*"))
                 {
                     "blacklisted"
@@ -348,7 +348,7 @@ class RankCommand : BaseCommand()
                 {
                     ""
                 }
-            } permission ${CC.WHITE}$permission${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+            } permission ${CC.WHITE}${permission.replace("%", "").replace("*", "")}${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
         }
     }
 
