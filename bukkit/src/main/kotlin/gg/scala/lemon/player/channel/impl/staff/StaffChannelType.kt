@@ -6,7 +6,7 @@ enum class StaffChannelType(var prefix: String, var color: ChatColor) {
 
     STAFF("#", ChatColor.AQUA),
     ADMIN("@", ChatColor.RED),
-    MANAGER("$", ChatColor.DARK_RED),
-    OWNER("!", ChatColor.BLUE)
+    DEVELOPER("$", ChatColor.DARK_RED),
+    MANAGER("!", ChatColor.BLUE)
 
 }

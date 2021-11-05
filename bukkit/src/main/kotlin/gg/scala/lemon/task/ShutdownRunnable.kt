@@ -23,7 +23,11 @@ class ShutdownRunnable(seconds: Int): DiminutionRunnable(seconds) {
 
     override fun cancel() {
         super.cancel()
-        broadcast("${CC.RED}The scheduled server shutdown has been cancelled!")
+
+        if (seconds > 1)
+        {
+            broadcast("${CC.RED}The scheduled server shutdown has been cancelled!")
+        }
     }
 
     override fun getSeconds(): List<Int> {
