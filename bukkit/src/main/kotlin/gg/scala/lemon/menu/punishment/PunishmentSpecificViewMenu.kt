@@ -109,7 +109,12 @@ class PunishmentSpecificViewMenu(
             }
 
             lines.add("")
-            lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
+
+            if (player.hasPermission("lemon.history.punishment.view-issuer"))
+            {
+                lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
+            }
+
             lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${punishment.addedOn}")
 
             lines.addAll(
@@ -126,7 +131,12 @@ class PunishmentSpecificViewMenu(
                 }
 
                 lines.add("")
-                lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
+
+                if (player.hasPermission("lemon.history.punishment.view-issuer"))
+                {
+                    lines.add("${CC.GRAY}Removed By: ${CC.WHITE}$removedBy")
+                }
+
                 lines.add("${CC.GRAY}Removed On: ${CC.RED}${punishment.removedOn}")
 
                 lines.addAll(

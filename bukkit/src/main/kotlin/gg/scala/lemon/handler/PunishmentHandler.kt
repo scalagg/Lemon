@@ -230,7 +230,7 @@ object PunishmentHandler
             }
         }
 
-        if (category != PunishmentCategory.BLACKLIST)
+        if (category != PunishmentCategory.BLACKLIST && category != PunishmentCategory.KICK)
         {
             if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent"))
             {
