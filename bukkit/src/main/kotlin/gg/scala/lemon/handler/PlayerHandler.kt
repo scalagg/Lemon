@@ -214,7 +214,7 @@ object PlayerHandler {
             }
 
         if (currentList.size > 350) {
-            currentList = currentList.subList(0, 350) as ArrayList<LemonPlayer>
+            currentList = currentList.subList(0, 350)
         }
 
         if (sender.hasPermission("lemon.staff")) {
