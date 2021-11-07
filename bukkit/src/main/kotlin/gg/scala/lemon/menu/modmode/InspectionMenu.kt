@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack
 /**
  * @author puugz
  * @since 07/11/2021 18:15
+ *
+ * Menu that displays a player's inventory, exp, health and location
  */
 class InspectionMenu(val target: Player) : Menu() {
 
@@ -77,7 +79,7 @@ class InspectionMenu(val target: Player) : Menu() {
             return ItemBuilder(Material.PAPER)
                 .name("${CC.PRI}Location")
                 .addToLore(
-                    "${CC.SEC}World: ${CC.GRAY + location.world}",
+                    "${CC.SEC}World: ${CC.GRAY + location.world.name}",
                     "${CC.SEC}X: ${CC.GRAY + String.format("%.3f", location.x)}",
                     "${CC.SEC}Y: ${CC.GRAY + String.format("%.3f", location.y)}",
                     "${CC.SEC}Z: ${CC.GRAY + String.format("%.3f", location.z)}",
