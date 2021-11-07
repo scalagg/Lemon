@@ -10,14 +10,17 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.potion.PotionEffect
 
 /**
  * @author puugz
  * @since 07/11/2021 18:15
- *
- * Menu that displays a player's inventory, exp, health and location
  */
 class InspectionMenu(val target: Player) : Menu() {
+
+    init {
+        autoUpdate = true
+    }
 
     override fun getTitle(player: Player): String {
         return "${target.name}'s Inventory"
@@ -36,19 +39,45 @@ class InspectionMenu(val target: Player) : Menu() {
             buttons[i] = GlassButton(15)
         }
 
-        target.inventory.armorContents.forEachIndexed { index, item ->
+        target.inventory.armorContents.reversed().forEachIndexed { index, item ->
             if (item != null) {
                 buttons[45 + index] = StaticItemStackButton(item)
             }
         }
 
         buttons[49] = GlassButton(15)
-
+        buttons[50] = EffectsButton(target.activePotionEffects)
         buttons[51] = ExperienceButton(target.exp, target.totalExperience, target.level)
         buttons[52] = HealthButton(target.health, target.maxHealth)
         buttons[53] = LocationButton(target.location)
 
+        // debug stuff
+        if (player.name == "puugz") {
+            player.sendMessage("${target.name} info:")
+            player.sendMessage("XP: ${target.exp}")
+            player.sendMessage("Total XP: ${target.totalExperience}")
+            player.sendMessage("Level: ${target.level}")
+        }
+
         return buttons
+    }
+
+    inner class EffectsButton(private val effects: Collection<PotionEffect>) : Button() {
+        override fun getButtonItem(player: Player): ItemStack {
+            return ItemBuilder(Material.POTION)
+                .name("${CC.PRI}Potion Effects")
+                .addToLore(
+                    "${
+//                        if (effects.isEmpty()) {
+                            "${CC.RED}No active potion effects."
+//                        } else {
+//                            effects.forEach { 
+//                                // val effectName = StringUtil.toNiceString(it.type.name.toLowerCase())
+//                            }
+//                        }
+                    }"
+                ).build()
+        }
     }
 
     inner class ExperienceButton(private val exp: Float, private val totalExp: Int, private val level: Int) : Button() {
@@ -56,9 +85,9 @@ class InspectionMenu(val target: Player) : Menu() {
             return ItemBuilder(Material.EXP_BOTTLE)
                 .name("${CC.PRI}Experience")
                 .addToLore(
-                    "${CC.SEC}Level: ${CC.GRAY + level}",
-                    "${CC.SEC}XP Percent: ${CC.GRAY}${(exp / totalExp) * 100}%",
-                    "${CC.SEC}XP: ${CC.GRAY + exp}/${totalExp}",
+                    "${CC.GRAY}Level: ${CC.WHITE + level}",
+                    "${CC.GRAY}XP Percent: ${CC.WHITE}${(exp / totalExp) * 100}%",
+                    "${CC.GRAY}XP: ${CC.WHITE + exp}/${totalExp}",
                 ).build()
         }
     }
@@ -69,7 +98,7 @@ class InspectionMenu(val target: Player) : Menu() {
                 .data(1)
                 .name("${CC.PRI}Health")
                 .addToLore(
-                    "${CC.SEC}Health: ${CC.GRAY + String.format("%.2f", health)}/${String.format("%.2f", maxHealth)}",
+                    "${CC.GRAY}Health: ${CC.WHITE + String.format("%.2f", health)}/${String.format("%.2f", maxHealth)}",
                 ).build()
         }
     }
@@ -79,10 +108,10 @@ class InspectionMenu(val target: Player) : Menu() {
             return ItemBuilder(Material.PAPER)
                 .name("${CC.PRI}Location")
                 .addToLore(
-                    "${CC.SEC}World: ${CC.GRAY + location.world.name}",
-                    "${CC.SEC}X: ${CC.GRAY + String.format("%.3f", location.x)}",
-                    "${CC.SEC}Y: ${CC.GRAY + String.format("%.3f", location.y)}",
-                    "${CC.SEC}Z: ${CC.GRAY + String.format("%.3f", location.z)}",
+                    "${CC.GRAY}World: ${CC.WHITE + location.world.name}",
+                    "${CC.GRAY}X: ${CC.WHITE + String.format("%.3f", location.x)}",
+                    "${CC.GRAY}Y: ${CC.WHITE + String.format("%.3f", location.y)}",
+                    "${CC.GRAY}Z: ${CC.WHITE + String.format("%.3f", location.z)}",
                 ).build()
         }
     }
