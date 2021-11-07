@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.menu.modmode.InspectionMenu
 import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
@@ -100,9 +101,11 @@ object PlayerHandler {
             .filter { it.player.hasMetadata("mod-mode") }
             .handler {
                 val rightClicked = it.rightClicked as Player
-                val isHoldingViewInventory =  it.player.inventory.itemInHand.isSimilar(inventory[0])
+                val isHoldingViewInventory = it.player.inventory.itemInHand.isSimilar(inventory[0])
 
-                // TODO: 10/10/2021 finish view inv
+                if (isHoldingViewInventory) {
+                    InspectionMenu(rightClicked).openMenu(it.player)
+                }
             }
     }
 
