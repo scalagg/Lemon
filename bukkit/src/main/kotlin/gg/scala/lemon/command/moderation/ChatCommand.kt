@@ -23,12 +23,12 @@ import java.util.concurrent.ThreadLocalRandom
 class ChatCommand : BaseCommand() {
 
     @Syntax("[-h]")
-    @CommandAlias("mutechat|silencechat")
+    @CommandAlias("unmutechat|unsilencechat")
     @CommandPermission("lemon.command.mutechat")
-    fun onMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
-        if (ChatHandler.chatMuted)
+    fun onUnMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
+        if (!ChatHandler.chatMuted)
         {
-            throw ConditionFailedException("The chat is already silenced. Use ${CC.BOLD}/unmutechat${CC.RED} to unmute the chat!")
+            throw ConditionFailedException("The chat is not silenced. Use ${CC.BOLD}/mutechat${CC.RED} to mute the chat!")
         }
 
         ChatHandler.chatMuted = true
@@ -46,12 +46,12 @@ class ChatCommand : BaseCommand() {
     }
 
     @Syntax("[-h]")
-    @CommandAlias("unmutechat|unsilencechat")
+    @CommandAlias("mutechat|silencechat")
     @CommandPermission("lemon.command.mutechat")
-    fun onUnMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
-        if (!ChatHandler.chatMuted)
+    fun onMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
+        if (ChatHandler.chatMuted)
         {
-            throw ConditionFailedException("The chat is not silenced. Use ${CC.BOLD}/mutechat${CC.RED} to mute the chat!")
+            throw ConditionFailedException("The chat is silenced. Use ${CC.BOLD}/unmutechat${CC.RED} to unmute the chat!")
         }
 
         ChatHandler.chatMuted = false
