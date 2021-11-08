@@ -225,7 +225,7 @@ object PunishmentHandler
         {
             if (issuer.uniqueId == uuid)
             {
-                issuer.sendMessage("${CC.RED}You may not issue punishments towards yourself.")
+                issuer.sendMessage("${CC.RED}You're not allowed to issue punishments towards yourself.")
                 return
             }
         }

@@ -3,10 +3,7 @@ package gg.scala.lemon.task
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.util.QuickAccess
-import me.lucko.helper.Schedulers
-import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
-import java.util.concurrent.ForkJoinPool
 
 /**
  * @author GrowlyX
@@ -15,7 +12,8 @@ import java.util.concurrent.ForkJoinPool
 object ResourceUpdateRunnable : Runnable {
 
     override fun run() {
-        Bukkit.getOnlinePlayers().forEach { player ->
+        for (player in Bukkit.getOnlinePlayers())
+        {
             val lemonPlayer = PlayerHandler.findPlayer(player)
 
             lemonPlayer.ifPresent {
@@ -23,7 +21,9 @@ object ResourceUpdateRunnable : Runnable {
             }
 
             PunishmentHandler.fetchAllPunishmentsForTarget(player.uniqueId).thenAccept {
-                it.forEach { punishment -> QuickAccess.attemptExpiration(punishment) }
+                it.forEach { punishment ->
+                    QuickAccess.attemptExpiration(punishment)
+                }
             }
         }
     }

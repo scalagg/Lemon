@@ -2,6 +2,7 @@ package gg.scala.lemon.player.grant
 
 import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.DataStoreHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
@@ -58,20 +59,21 @@ class Grant(
     {
         if (scopes.contains("global"))
         {
-            return scopes.contains("global")
+            return true
         }
 
-        var boolean = false
+        var applicable = false
 
-        scopes.forEach {
-            if (Lemon.instance.settings.id.equals(it, true))
+        for (scope in scopes)
+        {
+            if (Lemon.instance.settings.id.equals(scope, true))
             {
-                boolean = true
-                return@forEach
+                applicable = true
+                break
             }
         }
 
-        return boolean
+        return applicable
     }
 
     fun canRemove(lemonPlayer: LemonPlayer): Boolean

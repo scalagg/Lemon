@@ -13,7 +13,7 @@ object GrantRecalculationUtil {
         return grants
             .sortedByDescending { it.addedAt }
             .sortedByDescending { it.getRank().weight }
-            .firstOrNull { !it.isRemoved && !it.hasExpired && it.getRank().visible && it.isApplicable() }
+            .firstOrNull { it.isActive && it.getRank().visible && it.isApplicable() }
     }
 
     @JvmStatic

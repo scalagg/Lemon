@@ -451,9 +451,9 @@ object PlayerListener : Listener
             return
         }
 
-        if (command.contains(":") && !lemonPlayer.hasPermission("lemon.dev"))
+        if (command.contains(":") && !player.isOp)
         {
-            cancel(event, "${CC.RED}You may not use this syntax.")
+            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
             return
         }
 
@@ -507,12 +507,12 @@ object PlayerListener : Listener
 
         if (player.hasMetadata("vanished"))
         {
-            player.sendMessage("${CC.RED}You may not damage entities while in vanish.")
+            player.sendMessage("${CC.RED}You cannot damage entities while in vanish.")
             event.isCancelled = true
         }
         if (player.hasMetadata("mod-mode"))
         {
-            player.sendMessage("${CC.RED}You may not damage entities while in mod-mode.")
+            player.sendMessage("${CC.RED}You cannot damage entities while in mod-mode.")
             event.isCancelled = true
         }
     }

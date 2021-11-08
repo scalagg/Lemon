@@ -41,13 +41,13 @@ class ReportMenu(
                     .toButton { _, _ ->
                         sendStaffMessageWithFlag(
                             player,
-                            "${CC.YELLOW}${coloredName(player)} ${CC.RED}reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.YELLOW}${it.fancyName}${CC.RED}.",
+                            "${CC.YELLOW}${coloredName(player)} ${CC.RED} reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${it.fancyName}.",
                             true,
                             QuickAccess.MessageType.NOTIFICATION,
                             "reports-disabled"
                         ).whenComplete { _, throwable ->
                             if (throwable != null) {
-                                player.sendMessage("${CC.RED}Something went wrong while submitting your report, try again later.")
+                                player.sendMessage("${CC.RED}Something went wrong while processing your report, try again later.")
                             } else {
                                 val report = CooldownHandler.find(
                                     ReportCooldown::class.java
