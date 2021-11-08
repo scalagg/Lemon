@@ -248,11 +248,14 @@ object PlayerListener : Listener
                     chat.addOrOverride(player)
                 }
             }
+        }
 
-            if (event.isCancelled)
-                return
+        if (event.isCancelled)
+            return
 
-            if (FilterHandler.checkIfMessageFiltered(event.message, player))
+        if (FilterHandler.checkIfMessageFiltered(event.message, player))
+        {
+            if (!player.hasPermission("lemon.filter.bypass"))
             {
                 player.sendMessage(
                     channelMatch?.getFormatted(
@@ -262,9 +265,16 @@ object PlayerListener : Listener
                 )
 
                 event.isCancelled = true
-                return
+            } else
+            {
+                player.sendMessage(
+                    "${CC.RED}That message would've been filtered!"
+                )
             }
         }
+
+        if (event.isCancelled)
+            return
 
         event.isCancelled = true
 
@@ -453,7 +463,7 @@ object PlayerListener : Listener
 
         if (command.contains(":") && !player.isOp)
         {
-            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
+            cancel(event, "${CC.RED}This syntax is not accepted!")
             return
         }
 
