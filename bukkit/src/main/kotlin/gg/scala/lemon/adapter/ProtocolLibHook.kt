@@ -44,7 +44,7 @@ object ProtocolLibHook
 
                         val command = split[0]
 
-                        if (command.contains(":"))
+                        if (command.contains(":") && command.endsWith(" "))
                         {
                             event.isCancelled = true
                             return
