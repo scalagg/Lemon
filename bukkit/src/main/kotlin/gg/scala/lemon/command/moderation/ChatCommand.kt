@@ -46,7 +46,7 @@ class ChatCommand : BaseCommand() {
     }
 
     @Syntax("[-h]")
-    @CommandAlias("mutechat|silencechat")
+    @CommandAlias("unmutechat|unsilencechat")
     @CommandPermission("lemon.command.mutechat")
     fun onUnMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
         if (!ChatHandler.chatMuted)
