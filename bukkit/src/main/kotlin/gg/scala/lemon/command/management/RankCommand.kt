@@ -15,6 +15,7 @@ import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
@@ -171,7 +172,7 @@ class RankCommand : BaseCommand()
 
     @Subcommand("meta prefix")
     @CommandCompletion("@ranks")
-    @Description("Edit a ranks prefix.")
+    @Description("Edit a rank's prefix.")
     @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaPrefix(sender: CommandSender, rank: Rank, prefix: String)
     {
@@ -182,9 +183,24 @@ class RankCommand : BaseCommand()
         }
     }
 
+    @Subcommand("meta name")
+    @CommandCompletion("@ranks")
+    @Description("Edit a rank's name.")
+    @CommandPermission("lemon.command.rank.meta.edit")
+    fun onMetaName(sender: CommandSender, rank: Rank, name: String)
+    {
+        rank.name = ChatColor.stripColor(
+            Color.translate(name)
+        )
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} name to ${CC.WHITE}${rank.name}${CC.SEC}.")
+        }
+    }
+
     @Subcommand("meta suffix")
     @CommandCompletion("@ranks")
-    @Description("Edit a ranks suffix.")
+    @Description("Edit a rank's suffix.")
     @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaSuffix(sender: CommandSender, rank: Rank, suffix: String)
     {
@@ -197,7 +213,7 @@ class RankCommand : BaseCommand()
 
     @Subcommand("meta color")
     @CommandCompletion("@ranks")
-    @Description("Edit a ranks color.")
+    @Description("Edit a rank's color.")
     @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaColor(sender: CommandSender, rank: Rank, color: String)
     {
@@ -210,7 +226,7 @@ class RankCommand : BaseCommand()
 
     @Subcommand("meta visible")
     @CommandCompletion("@ranks")
-    @Description("Edit a ranks visibility.")
+    @Description("Edit a rank's visibility.")
     @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaVisible(sender: CommandSender, rank: Rank, visibility: Boolean)
     {
@@ -223,7 +239,7 @@ class RankCommand : BaseCommand()
 
     @Subcommand("meta weight")
     @CommandCompletion("@ranks")
-    @Description("Edit a ranks weight.")
+    @Description("Edit a rank's weight.")
     @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaWeight(sender: CommandSender, rank: Rank, weight: Int)
     {

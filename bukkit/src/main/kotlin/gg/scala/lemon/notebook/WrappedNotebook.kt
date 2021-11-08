@@ -19,20 +19,19 @@ import org.bukkit.inventory.meta.BookMeta
  */
 class WrappedNotebook
 {
-
     private var handle = ItemStack(
         XMaterial.WRITTEN_BOOK.parseMaterial()
     )
 
-    internal var internalTitle = "Not Identified"
-    internal var internalMainPageDescription = listOf("Not Identified")
+    private var internalTitle = "Not Identified"
+    private var internalMainPageDescription = listOf("Not Identified")
 
-    internal var buffer: ByteBuf? = null
+    private var buffer: ByteBuf? = null
 
-    internal var hasFinalized = false
+    private var hasFinalized = false
 
-    internal var shouldGlow = false
-    internal var shouldReplace = false
+    private var shouldGlow = false
+    private var shouldReplace = false
 
     fun setTitle(title: String)
     {
@@ -96,7 +95,6 @@ class WrappedNotebook
                 hasFinalized = true
             } catch (exception: Exception) {
                 exception.printStackTrace()
-                player.sendMessage("${CC.RED}Sorry, we couldn't open this notebook.")
                 return
             }
         }
