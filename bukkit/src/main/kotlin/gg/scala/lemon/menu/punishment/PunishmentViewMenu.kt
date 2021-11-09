@@ -12,6 +12,7 @@ import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -98,9 +99,11 @@ class PunishmentViewMenu(
                                 return@whenComplete
                             }
 
-                            PunishmentDetailedViewMenu(
-                                uuid, it, viewType, list
-                            ).openMenu(player)
+                            Tasks.sync {
+                                PunishmentDetailedViewMenu(
+                                    uuid, it, viewType, list
+                                ).openMenu(player)
+                            }
                         }
                     }
 

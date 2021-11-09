@@ -81,9 +81,11 @@ class GrantsCommand : BaseCommand()
                     return@thenAccept
                 }
 
-                GrantViewMenu(
-                    uuid, type, grants
-                ).openMenu(player)
+                Tasks.sync {
+                    GrantViewMenu(
+                        uuid, type, grants
+                    ).openMenu(player)
+                }
             } catch (e: Exception)
             {
                 e.printStackTrace()

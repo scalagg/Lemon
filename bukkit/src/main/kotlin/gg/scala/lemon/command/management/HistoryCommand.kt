@@ -14,6 +14,7 @@ import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -50,9 +51,11 @@ class HistoryCommand : BaseCommand() {
     fun handleStaffHistory(uuid: UUID, it: List<Punishment>, type: HistoryViewType, player: Player)
     {
         PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
-            PunishmentViewMenu(
-                uuid, type, it, removed
-            ).openMenu(player)
+            Tasks.sync {
+                PunishmentViewMenu(
+                    uuid, type, it, removed
+                ).openMenu(player)
+            }
         }
     }
 
