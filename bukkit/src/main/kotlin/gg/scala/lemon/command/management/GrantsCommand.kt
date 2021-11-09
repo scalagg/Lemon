@@ -4,6 +4,7 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.menu.grant.GrantViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
+import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.coloredNameOrNull
@@ -81,11 +82,9 @@ class GrantsCommand : BaseCommand()
                     return@thenAccept
                 }
 
-                Tasks.sync {
-                    GrantViewMenu(
-                        uuid, type, grants
-                    ).openMenu(player)
-                }
+                GrantViewMenu(
+                    uuid, type, grants
+                ).openMenu(player)
             } catch (e: Exception)
             {
                 e.printStackTrace()

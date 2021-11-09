@@ -51,14 +51,11 @@ class HistoryCommand : BaseCommand() {
     fun handleStaffHistory(uuid: UUID, it: List<Punishment>, type: HistoryViewType, player: Player)
     {
         PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
-            Tasks.sync {
-                PunishmentViewMenu(
-                    uuid, type, it, removed
-                ).openMenu(player)
-            }
+            PunishmentViewMenu(
+                uuid, type, it, removed
+            ).openMenu(player)
         }
     }
-
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandAlias("staffhistory|staffhist|csp|cp")
