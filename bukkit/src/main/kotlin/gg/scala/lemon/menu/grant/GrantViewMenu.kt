@@ -50,7 +50,7 @@ class GrantViewMenu(
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return HashMap<Int, Button>().also {
-            grants.sortedByDescending { it.addedAt }.forEach { grant ->
+            grants.sortedBy { it.addedAt }.forEach { grant ->
                 it[it.size] = GrantButton(grant, viewType, viewingFor!!)
             }
         }
