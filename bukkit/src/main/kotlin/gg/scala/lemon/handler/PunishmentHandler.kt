@@ -256,7 +256,7 @@ object PunishmentHandler
 
                     if (targetWeight >= issuerWeight)
                     {
-                        issuer.sendMessage("${CC.RED}Failed to issue a punishment for $targetName${CC.RED} due to them having a higher rank priority than you.")
+                        issuer.sendMessage("${CC.RED}You're not allowed to ban $targetName${CC.RED}.")
                         return@thenAccept
                     }
 

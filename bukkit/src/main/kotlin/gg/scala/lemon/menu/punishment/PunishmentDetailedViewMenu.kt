@@ -35,20 +35,24 @@ class PunishmentDetailedViewMenu(
     private val category: PunishmentCategory,
     private val viewType: HistoryViewType,
     private val punishments: List<Punishment>
-): PaginatedMenu() {
+) : PaginatedMenu()
+{
 
     private val viewingFor = CubedCacheUtil.fetchName(uuid)!!
 
-    override fun getPrePaginatedTitle(player: Player): String {
+    override fun getPrePaginatedTitle(player: Player): String
+    {
         val base = "History ${Constants.DOUBLE_ARROW_RIGHT} ${category.fancyVersion + "s"}"
 
-        return when (viewType) {
+        return when (viewType)
+        {
             HistoryViewType.STAFF_HIST -> "Staff $base"
             HistoryViewType.TARGET_HIST -> base
         }
     }
 
-    override fun getAllPagesButtons(player: Player): Map<Int, Button> {
+    override fun getAllPagesButtons(player: Player): Map<Int, Button>
+    {
         return HashMap<Int, Button>().also {
             punishments.sortedByDescending { it.addedAt }.forEach { punishment ->
                 it[it.size] = PunishmentButton(punishment, viewType, viewingFor)
@@ -56,25 +60,37 @@ class PunishmentDetailedViewMenu(
         }
     }
 
-    override fun onClose(player: Player, manualClose: Boolean) {
-        if (manualClose) {
-            when (viewType) {
-                HistoryViewType.STAFF_HIST -> {
+    override fun onClose(player: Player, manualClose: Boolean)
+    {
+        if (manualClose)
+        {
+            when (viewType)
+            {
+                HistoryViewType.STAFF_HIST ->
+                {
                     Bukkit.dispatchCommand(player, "staffhistory $uuid")
                 }
-                HistoryViewType.TARGET_HIST -> {
+                HistoryViewType.TARGET_HIST ->
+                {
                     Bukkit.dispatchCommand(player, "history $uuid")
                 }
             }
         }
     }
 
-    open class PunishmentButton(private val punishment: Punishment, private val viewType: HistoryViewType, private val viewingFor: String): Button() {
+    open class PunishmentButton(
+        private val punishment: Punishment,
+        private val viewType: HistoryViewType,
+        private val viewingFor: String
+    ) : Button()
+    {
 
-        override fun getButtonItem(player: Player): ItemStack {
+        override fun getButtonItem(player: Player): ItemStack
+        {
             val lines = arrayListOf<String>()
 
-            val statusLore = if (punishment.hasExpired) "${CC.YELLOW}(Expired)" else if (!punishment.isRemoved) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
+            val statusLore =
+                if (punishment.hasExpired) "${CC.YELLOW}(Expired)" else if (!punishment.isRemoved) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
             val addedBy = punishment.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
@@ -83,19 +99,23 @@ class PunishmentDetailedViewMenu(
 
             lines.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(punishment.addedAt)))
 
-            if (punishment.hasExpired) {
+            if (punishment.hasExpired)
+            {
                 lines.add(CC.GRAY + "* " + TimeUtil.formatIntoCalendarString(punishment.expireDate))
-            } else if (punishment.isRemoved) {
+            } else if (punishment.isRemoved)
+            {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(punishment.removedAt)))
             }
 
             lines.add("")
             lines.add("${CC.GRAY}Target: ${CC.WHITE}${CubedCacheUtil.fetchName(punishment.target)}")
 
-            if (!punishment.category.instant) {
+            if (!punishment.category.instant)
+            {
                 lines.add("${CC.GRAY}Duration: ${CC.WHITE + punishment.durationString}")
             }
-            if (punishment.isActive) {
+            if (punishment.isActive)
+            {
                 lines.add("${CC.GRAY}Expire Date: ${CC.WHITE + punishment.expirationString}")
             }
 
@@ -108,12 +128,15 @@ class PunishmentDetailedViewMenu(
 
             lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${punishment.addedOn}")
 
-            lines.addAll(TextSplitter.split(
-                text = "${CC.GRAY}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
-                linePrefix = CC.WHITE
-            ))
+            lines.addAll(
+                TextSplitter.split(
+                    text = "${CC.GRAY}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
+                    linePrefix = CC.WHITE
+                )
+            )
 
-            if (punishment.isRemoved) {
+            if (punishment.isRemoved)
+            {
                 val removedBy = punishment.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
@@ -124,15 +147,17 @@ class PunishmentDetailedViewMenu(
 
                 if (player.hasPermission("lemon.history.punishment.view-issuer"))
                 {
-                    lines.add("${CC.GRAY}Removed By: ${CC.WHITE}$removedBy")
+                    lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
                 }
 
                 lines.add("${CC.GRAY}Removed On: ${CC.RED}${punishment.removedOn}")
 
-                lines.addAll(TextSplitter.split(
-                    text = "${CC.GRAY}Removed Reason: ${CC.RED}${punishment.removedReason}",
-                    linePrefix = CC.RED
-                ))
+                lines.addAll(
+                    TextSplitter.split(
+                        text = "${CC.GRAY}Removed Reason: ${CC.RED}${punishment.removedReason}",
+                        linePrefix = CC.RED
+                    )
+                )
             }
 
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
@@ -141,15 +166,16 @@ class PunishmentDetailedViewMenu(
                 "lemon.punishment.remove." + punishment.category.name.lowercase()
             ) && punishment.isActive
 
-            if (punishment.isActive) {
+            if (punishment.isActive)
+            {
                 lines.add("")
 
                 if (canRemove)
                 {
                     lines.addAll(
                         TextSplitter.split(
-                            "Right-Click to remove this punishment!",
-                            CC.YELLOW, ""
+                            text = "Right-Click to remove this punishment!",
+                            linePrefix = CC.YELLOW
                         )
                     )
                 } else
@@ -165,12 +191,16 @@ class PunishmentDetailedViewMenu(
                 .build()
         }
 
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
+        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView)
+        {
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             if (clickType.name.contains("LEFT"))
             {
-                PunishmentSpecificViewMenu(punishment, "${ if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history" } $viewingFor").openMenu(player)
+                PunishmentSpecificViewMenu(
+                    punishment,
+                    "${if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history"} $viewingFor"
+                ).openMenu(player)
             } else
             {
                 val canRemove: Boolean = lemonPlayer.hasPermission(
@@ -182,7 +212,8 @@ class PunishmentDetailedViewMenu(
                 InputPrompt()
                     .withText("${CC.SEC}Please enter the ${CC.PRI}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
                     .acceptInput { context, input ->
-                        if (input.equals("stop", true) || input.equals("cancel", true)) {
+                        if (input.equals("stop", true) || input.equals("cancel", true))
+                        {
                             context.sendMessage("${CC.RED}You've cancelled the removal operation.")
                             return@acceptInput
                         }
@@ -200,7 +231,8 @@ class PunishmentDetailedViewMenu(
                                 "${CC.GRAY}player ${grantTarget}?"
                             ), true
                         ) {
-                            if (it) {
+                            if (it)
+                            {
                                 QuickAccess.attemptRemoval(
                                     punishment,
                                     reason = input,
@@ -210,9 +242,10 @@ class PunishmentDetailedViewMenu(
                                 player.sendMessage("${CC.SEC}You've removed punishment ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.PRI}$grantTarget${CC.SEC}.")
 
                                 Tasks.sync {
-                                    player.performCommand("${ if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history" } $viewingFor")
+                                    player.performCommand("${if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history"} $viewingFor")
                                 }
-                            } else {
+                            } else
+                            {
                                 player.sendMessage("${CC.RED}You've cancelled the removal operation.")
                             }
                         }.openMenu(player)
