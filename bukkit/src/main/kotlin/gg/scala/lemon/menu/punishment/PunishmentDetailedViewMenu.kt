@@ -143,7 +143,12 @@ class PunishmentDetailedViewMenu(
 
             if (punishment.isActive) {
                 lines.add("")
-                lines.add(if (canRemove) "${CC.YELLOW}Right-Click to remove this punishment!" else "${CC.RED}You can't remove this punishment.")
+                lines.add(if (canRemove) "${CC.YELLOW}Right-Click to remove" else "${CC.RED}You can't remove this punishment.")
+
+                if (canRemove)
+                {
+                    lines.add("${CC.YELLOW}this punishment!")
+                }
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
