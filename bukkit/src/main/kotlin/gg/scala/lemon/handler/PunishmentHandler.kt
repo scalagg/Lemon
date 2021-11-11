@@ -187,10 +187,7 @@ object PunishmentHandler
                 if (it.isNullOrEmpty())
                 {
                     issuer.sendMessage(
-                        arrayOf(
-                            "${CC.RED}While attempting to issue an un-punishment for $targetName${CC.RED}",
-                            "${CC.RED}there was no pre-existing punishment found."
-                        )
+                        "${CC.RED}No pre-existing punishment was found for $targetName${CC.RED}."
                     )
                     return@thenAccept
                 }
@@ -243,61 +240,58 @@ object PunishmentHandler
             val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
             val targetName = QuickAccess.fetchColoredName(uuid)
-            val targetWeight = QuickAccess.fetchRankWeight(uuid).getNow(0)
 
             val issuerUuid = QuickAccess.uuidOf(issuer)
             val issuerWeight = QuickAccess.weightOf(issuer)
 
-            activePunishments.thenAccept {
-                if (!it.isNullOrEmpty() && !rePunishing)
-                {
-                    issuer.sendMessage(
-                        arrayOf(
-                            "${CC.RED}While attempting to issue a punishment for $targetName${CC.RED}",
-                            "${CC.RED}there was an active, pre-existing punishment found."
-                        )
-                    )
-                    return@thenAccept
-                }
-
-                if (targetWeight >= issuerWeight)
-                {
-                    issuer.sendMessage("${CC.RED}Failed to issue a punishment for $targetName${CC.RED} due to them having a higher rank priority than you.")
-                    return@thenAccept
-                }
-
-                if (rePunishing)
-                {
-                    if (!it.isNullOrEmpty())
+            QuickAccess.fetchRankWeight(uuid).thenApply { targetWeight ->
+                activePunishments.thenAccept {
+                    if (!it.isNullOrEmpty() && !rePunishing)
                     {
                         issuer.sendMessage(
-                            arrayOf(
-                                "${CC.RED}While attempting to issue a re-punishment for $targetName${CC.RED}",
-                                "${CC.RED}there was no pre-existing punishment found.",
-                                "${CC.RED}Please use ${CC.YELLOW}/${category.name.lowercase()} ${CC.RED}instead."
-                            )
+                            "${CC.B_RED}$targetName${CC.RED} already has an active punishment within this category."
                         )
                         return@thenAccept
                     }
 
-                    attemptRemoval(
-                        punishment = it[0],
-                        remover = issuerUuid,
-                        reason = "Re-${it[0].category.ing}"
-                    )
-                }
+                    if (targetWeight >= issuerWeight)
+                    {
+                        issuer.sendMessage("${CC.RED}Failed to issue a punishment for $targetName${CC.RED} due to them having a higher rank priority than you.")
+                        return@thenAccept
+                    }
 
-                fetchIpAddress(uuid).thenAccept { ipAddress ->
-                    val punishment = Punishment(
-                        UUID.randomUUID(), uuid, ipAddress, issuerUuid,
-                        System.currentTimeMillis(), Lemon.instance.settings.id,
-                        reason, duration, category
-                    )
+                    if (rePunishing)
+                    {
+                        if (!it.isNullOrEmpty())
+                        {
+                            issuer.sendMessage(
+                                arrayOf(
+                                    "${CC.RED}No pre-existing punishment was found for $targetName${CC.RED}.",
+                                    "${CC.RED}Please use ${CC.BOLD}/${category.name.lowercase()} ${CC.RED}instead."
+                                )
+                            )
+                            return@thenAccept
+                        }
 
-                    handlePostPunishmentCheck(
-                        punishment, silent, uuid,
-                        issuer, issuerUuid, targetName
-                    )
+                        attemptRemoval(
+                            punishment = it[0],
+                            remover = issuerUuid,
+                            reason = "Re-${it[0].category.ing}"
+                        )
+                    }
+
+                    fetchIpAddress(uuid).thenAccept { ipAddress ->
+                        val punishment = Punishment(
+                            UUID.randomUUID(), uuid, ipAddress, issuerUuid,
+                            System.currentTimeMillis(), Lemon.instance.settings.id,
+                            reason, duration, category
+                        )
+
+                        handlePostPunishmentCheck(
+                            punishment, silent, uuid,
+                            issuer, issuerUuid, targetName
+                        )
+                    }
                 }
             }
         }
