@@ -2,6 +2,7 @@ package gg.scala.lemon.logger
 
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.logging.LogFile
+import net.evilblock.cubed.logging.LogHandler
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,7 +24,6 @@ abstract class AsyncFileLogger<T>(
     private var started = false
 
     lateinit var handle: LogFile
-    lateinit var flusher: AsyncFileLoggerThread<T>
 
     fun queueForUpdates(t: T) {
         if (!started)
@@ -47,9 +47,7 @@ abstract class AsyncFileLogger<T>(
         )
 
         handle = LogFile(logFile)
-
-        flusher = AsyncFileLoggerThread(this)
-        flusher.start()
+        LogHandler.trackLogFile(handle)
 
         started = true
     }
