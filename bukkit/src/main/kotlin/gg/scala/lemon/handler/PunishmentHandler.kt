@@ -262,7 +262,7 @@ object PunishmentHandler
 
                     if (rePunishing)
                     {
-                        if (!it.isNullOrEmpty())
+                        if (it.isNullOrEmpty())
                         {
                             issuer.sendMessage(
                                 arrayOf(
