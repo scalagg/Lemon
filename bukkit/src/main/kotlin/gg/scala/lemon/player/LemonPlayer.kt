@@ -233,7 +233,16 @@ class LemonPlayer(
         return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
             if (grants == null || grants.isEmpty())
             {
-                setupAutomaticGrant()
+                if (activeGrant != null)
+                {
+                    if (LemonConstants.DEBUG)
+                    {
+                        println("[Lemon] Skipping entity grant update for $name as their active grant is not-null.")
+                    }
+                } else
+                {
+                    setupAutomaticGrant()
+                }
 
                 return@thenAccept
             }

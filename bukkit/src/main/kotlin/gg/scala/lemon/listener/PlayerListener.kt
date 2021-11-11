@@ -383,8 +383,6 @@ object PlayerListener : Listener
         }
     }
 
-
-
     @EventHandler
     fun onEntityTarget(event: EntityTargetEvent)
     {
