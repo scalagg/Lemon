@@ -3,6 +3,7 @@ package gg.scala.lemon.player.color
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -65,7 +66,9 @@ class PlayerColorMenu : PaginatedMenu()
                 .color(playerColor.bukkitColor)
                 .name("${playerColor.chatColor}${CC.BOLD}${playerColor.name}")
                 .addToLore(
-                    "${CC.SEC}Display: ${playerColor.chatColor}${player.name}",
+                    "${CC.SEC}Display: ${
+                        QuickAccess.realRank(player).prefix
+                    }${playerColor.chatColor}${player.name}",
                     "",
                     if (!hasEquipped) "${CC.GREEN}Click to equip!" else "${CC.GOLD}Click to un-equip!"
                 )

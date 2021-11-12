@@ -17,14 +17,14 @@ object PlayerColorHandler
     fun initialLoad()
     {
         initialize(
-            PlayerColor(ChatColor.RED, Color.RED, "Red"),
-            PlayerColor(ChatColor.BLUE, Color.BLUE, "Blue"),
-            PlayerColor(ChatColor.AQUA, Color.AQUA, "Light Blue"),
-            PlayerColor(ChatColor.DARK_AQUA, Color.fromRGB(0, 255, 255), "Cyan"),
-            PlayerColor(ChatColor.DARK_PURPLE, Color.PURPLE, "Purple"),
-            PlayerColor(ChatColor.LIGHT_PURPLE, Color.fromRGB(255,20,147), "Pink"),
-            PlayerColor(ChatColor.DARK_GREEN, Color.GREEN, "Green"),
-            PlayerColor(ChatColor.GREEN, Color.LIME, "Lime")
+            PlayerColor(ChatColor.RED, Color.fromRGB(255, 85, 85), "Red"),
+            PlayerColor(ChatColor.BLUE, Color.fromRGB(85, 85, 255), "Blue"),
+            PlayerColor(ChatColor.AQUA, Color.fromRGB(85, 255, 255), "Light Blue"),
+            PlayerColor(ChatColor.DARK_AQUA, Color.fromRGB(0, 170, 170), "Cyan"),
+            PlayerColor(ChatColor.DARK_PURPLE, Color.fromRGB(170, 0, 170), "Purple"),
+            PlayerColor(ChatColor.LIGHT_PURPLE, Color.fromRGB(255, 85, 255), "Pink"),
+            PlayerColor(ChatColor.DARK_GREEN, Color.fromRGB(0, 170, 0), "Green"),
+            PlayerColor(ChatColor.GREEN, Color.fromRGB(85, 255, 85), "Lime")
         )
     }
 
