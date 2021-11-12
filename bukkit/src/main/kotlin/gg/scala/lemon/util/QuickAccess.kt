@@ -143,8 +143,6 @@ object QuickAccess {
                         shouldCalculateNow = true
                     )
                 }
-
-                lemonPlayer.pushCocoaUpdates()
             }
         }
     }

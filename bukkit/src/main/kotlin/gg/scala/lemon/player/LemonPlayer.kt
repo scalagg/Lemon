@@ -6,6 +6,8 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.player.color.PlayerColor
+import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
 import gg.scala.lemon.player.extension.PlayerCachingExtension
@@ -484,20 +486,6 @@ class LemonPlayer(
         }
     }
 
-    fun pushCocoaUpdates()
-    {
-//        RedisHandler.buildMessage(
-//            "permission-update",
-//            hashMapOf<String, String>().also {
-//                it["uniqueId"] = uniqueId.toString()
-//                it["currentDisplayName"] = getColoredName()
-//                it["currentBungeePermissions"] = bungeePermissions.joinToString(
-//                    separator = ","
-//                )
-//            }
-//        ).dispatchToCocoa()
-    }
-
     private fun fetchPreviousRank(grants: List<Grant>): UUID?
     {
         var uuid: UUID? = null
@@ -575,13 +563,11 @@ class LemonPlayer(
             if (bukkitPlayer != null)
             {
                 handlePlayerSetup.invoke(bukkitPlayer!!)
-                pushCocoaUpdates()
             }
         } else
         {
             handleOnConnection.add {
                 handlePlayerSetup.invoke(it)
-                pushCocoaUpdates()
             }
         }
     }
@@ -618,8 +604,20 @@ class LemonPlayer(
     {
         val bukkitPlayer = bukkitPlayer
 
-        return activeGrant?.getRank()?.color +
+        return activeGrant?.getRank()?.color + customColor() +
                 if (bukkitPlayer != null) bukkitPlayer.name else name
+    }
+
+    fun customColor(): String
+    {
+        val metadata = getMetadata("color")
+
+        return if (metadata != null)
+        {
+            val color = PlayerColorHandler.find(metadata.asString())
+
+            color?.chatColor?.toString() ?: ""
+        } else ""
     }
 
     fun getSetting(id: String): Boolean

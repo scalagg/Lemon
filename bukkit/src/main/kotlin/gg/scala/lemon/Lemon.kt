@@ -30,6 +30,7 @@ import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
+import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
@@ -286,42 +287,15 @@ class Lemon : ExtendedScalaPlugin()
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
 
-        Events.subscribe(NametagUpdateEvent::class.java).handler {
-            val player = it.player
-
-            clientAdapters.forEach { adapter ->
-                if (player.hasMetadata("mod-mode"))
-                {
-                    adapter.updateNametag(
-                        player, listOf(
-                            player.playerListName,
-                            "${CC.GRAY}[Mod Mode]"
-                        )
-                    )
-                    return@forEach
-                }
-
-                if (player.hasMetadata("vanished"))
-                {
-                    adapter.updateNametag(
-                        player, listOf(
-                            player.playerListName,
-                            "${CC.GRAY}[Vanished]"
-                        )
-                    )
-                    return@forEach
-                }
-
-                adapter.resetNametag(player)
-            }
-        }
-
         if (settings.redisCachePlayers)
         {
             PlayerCachingExtension.initialLoad()
 
             logger.info("Now memorizing fundamental player data to your redis server.")
         }
+
+        // Loading all default player colors
+        PlayerColorHandler.initialLoad()
 
         // filter through the different client implementations
         // & register the ones which have the plugins enabled
