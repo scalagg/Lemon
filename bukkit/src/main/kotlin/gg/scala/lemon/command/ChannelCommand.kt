@@ -7,10 +7,7 @@ import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.data
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.Default
-import net.evilblock.cubed.acf.annotation.Optional
-import net.evilblock.cubed.acf.annotation.Subcommand
+import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
@@ -18,6 +15,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/9/2021
  */
+@Private
 @CommandAlias("channel")
 class ChannelCommand : BaseCommand()
 {
