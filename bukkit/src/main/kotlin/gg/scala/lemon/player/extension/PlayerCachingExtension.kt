@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture
  */
 object PlayerCachingExtension
 {
-    private lateinit var handle: RedisStorageLayer<FundamentalLemonPlayer>
+    lateinit var handle: RedisStorageLayer<FundamentalLemonPlayer>
 
     var loaded = false
 
