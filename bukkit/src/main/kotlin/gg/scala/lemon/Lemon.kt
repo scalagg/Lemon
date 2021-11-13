@@ -18,6 +18,7 @@ import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
+import gg.scala.lemon.annotation.DoNotRegister
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.handler.LemonCooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
@@ -58,7 +59,6 @@ import net.evilblock.cubed.entity.animation.EntityAnimation
 import net.evilblock.cubed.menu.template.MenuTemplate
 import net.evilblock.cubed.menu.template.MenuTemplateButton
 import net.evilblock.cubed.nametag.NametagHandler
-import net.evilblock.cubed.nametag.update.NametagUpdateEvent
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serialize.BlockVectorAdapter
 import net.evilblock.cubed.serialize.ItemStackAdapter
@@ -422,45 +422,23 @@ class Lemon : ExtendedScalaPlugin()
         ClassUtils.getClassesInPackage(
             commandManager.plugin, commandPackage
         ).forEach { clazz ->
+            if (clazz.isAnnotationPresent(DoNotRegister::class.java))
+                return@forEach
+
             try
             {
-                // kotlin `object`s have the INSTANCE field set as
-                // its instance during runtime.
-
-                // filtering through fields so it returns a Field? instead of throwing an error
-
                 commandManager.registerCommand(
                     clazz.newInstance() as BaseCommand
                 )
-
-//                val instance = clazz.fields.firstOrNull {
-//                    it.name == "INSTANCE"
-//                }
-//
-//                if (instance != null)
-//                {
-//                    val instanceObject = instance.get(null)
-//
-//                    commandManager.registerCommand(
-//                        instanceObject as BaseCommand
-//                    )
-//                } else
-//                {
-//                    commandManager.registerCommand(
-//                        clazz.newInstance() as BaseCommand
-//                    )
-//                }
             } catch (e: Exception)
             {
                 e.printStackTrace()
 
-                // kotlin stream stuff
                 if (e.message?.contains("can not access a member of") == true)
                 {
                     return
                 }
 
-                // ...more kotlin stream/lambda stuff
                 if (e.message?.contains("$") == true)
                 {
                     return

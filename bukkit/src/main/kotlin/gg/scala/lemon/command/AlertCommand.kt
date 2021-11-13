@@ -1,15 +1,14 @@
 package gg.scala.lemon.command
 
-import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.util.QuickAccess.sendGlobalBroadcast
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
-import org.bukkit.command.CommandSender
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.Color.translate
+import org.bukkit.command.CommandSender
 
 /**
  * @author GrowlyX
@@ -17,16 +16,6 @@ import net.evilblock.cubed.util.Color.translate
  */
 class AlertCommand : BaseCommand()
 {
-    companion object
-    {
-        @JvmStatic
-        val FLAGS = mutableMapOf<String, (String) -> String>(
-            "r" to {
-                "${CC.D_GRAY}[${CC.D_RED}Alert${CC.D_GRAY}] ${CC.RESET}$it"
-            }
-        )
-    }
-
     @CommandAlias("alert")
     @CommandPermission("op")
     @Syntax("<message> [-r]")
@@ -34,11 +23,11 @@ class AlertCommand : BaseCommand()
     {
         var finalMessage = translate(message)
 
-        for (flag in FLAGS)
+        for (flag in LemonConstants.FLAGS)
         {
             if (message.contains(" -${flag.key}"))
             {
-                finalMessage = message.replace(" -$${flag.key}", "")
+                finalMessage = message.replace(" -${flag.key}", "")
                 finalMessage = flag.value.invoke(finalMessage)
             }
         }
