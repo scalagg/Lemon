@@ -36,7 +36,7 @@ class ChatCommand : BaseCommand() {
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
-        Bukkit.broadcastMessage("${CC.GREEN}Chat has been enabled by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
+        Bukkit.broadcastMessage("${CC.GREEN}The chat has been enabled by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
             sender,
@@ -59,7 +59,7 @@ class ChatCommand : BaseCommand() {
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
-        Bukkit.broadcastMessage("${CC.RED}Chat has been disabled by ${if (hidden) "staff" else coloredName}${CC.RED}.")
+        Bukkit.broadcastMessage("${CC.RED}The chat has been disabled by ${if (hidden) "staff" else coloredName}${CC.RED}.")
 
         sendStaffMessage(
             sender,
@@ -83,7 +83,7 @@ class ChatCommand : BaseCommand() {
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
-        Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}Chat has been slowed to $seconds seconds by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
+        Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}The chat has been slowed to $seconds seconds by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
             sender,
@@ -111,7 +111,7 @@ class ChatCommand : BaseCommand() {
                 }
             }
 
-        Bukkit.broadcastMessage("${CC.GREEN}Chat has been cleared by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
+        Bukkit.broadcastMessage("${CC.GREEN}The chat has been cleared by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
             sender,
