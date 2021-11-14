@@ -8,6 +8,7 @@ import org.bukkit.entity.Player
  */
 interface PlayerClientAdapter {
 
+    fun getPluginName(): String
     fun getClientName(): String
 
     fun shouldHandle(player: Player): Boolean

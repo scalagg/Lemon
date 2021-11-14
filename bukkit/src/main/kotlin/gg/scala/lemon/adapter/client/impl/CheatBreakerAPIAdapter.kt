@@ -13,6 +13,7 @@ import java.time.Duration
  */
 class CheatBreakerAPIAdapter : PlayerClientAdapter {
 
+    override fun getPluginName(): String = "CheatBreaker-API"
     override fun getClientName() = "CheatBreaker+"
 
     override fun shouldHandle(player: Player): Boolean {
