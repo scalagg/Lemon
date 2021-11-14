@@ -201,7 +201,7 @@ object PlayerListener : Listener
 
         if (channelMatch == null)
         {
-            cancel(event, "${CC.RED}Something's wrong with global chat, please contact a developer. (104)")
+            cancel(event, "${CC.RED}Something went wrong while sending your chat message")
             return
         }
 
@@ -209,13 +209,13 @@ object PlayerListener : Listener
         {
             if (lemonPlayer.getSetting("global-chat-disabled"))
             {
-                cancel(event, "${CC.RED}You may not send messages while having global chat muted.")
+                cancel(event, "${CC.RED}You have chat disabled, please re-enable it to continue talking.")
                 return
             }
 
             if (ChatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass"))
             {
-                cancel(event, "${CC.RED}Global chat is currently muted.")
+                cancel(event, "${CC.RED}The chat is currently muted, please wait until it is no longer muted to talk.")
             } else if (ChatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass"))
             {
                 val slowChat = CooldownHandler.find(
@@ -226,7 +226,7 @@ object PlayerListener : Listener
                 {
                     val formatted = slowChat.getRemainingFormatted(player)
 
-                    cancel(event, "${CC.RED}Global chat is currently slowed, please wait $formatted.")
+                    cancel(event, "${CC.RED}The chat is currently slowed, please wait $formatted before talking again.")
                     return
                 }
 
