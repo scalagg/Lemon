@@ -1,4 +1,4 @@
-package gg.scala.lemon.adapter.client
+package gg.scala.lemon.adapter.client.annotation
 
 /**
  * @author GrowlyX

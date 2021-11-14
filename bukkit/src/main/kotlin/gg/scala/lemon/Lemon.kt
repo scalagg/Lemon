@@ -14,7 +14,7 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.UUIDAdapter
-import gg.scala.lemon.adapter.client.ClientMetadata
+import gg.scala.lemon.adapter.client.annotation.ClientMetadata
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
@@ -126,6 +126,8 @@ class Lemon : ExtendedScalaPlugin()
 
         loadBaseConfigurations()
 
+        logger.info("Fetching server information using provided password...")
+
         val webData = ScalaValidateUtil.fetchServerData(
             settings.serverPassword,
             settings.serverPasswordHttps,
@@ -190,6 +192,10 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         startUuidCacheImplementation()
+
+        logger.info("Finished Lemon resource initialization in ${
+            System.currentTimeMillis() - init
+        }ms")
     }
 
     private fun startUuidCacheImplementation()
