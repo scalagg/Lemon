@@ -16,7 +16,7 @@ object PlayerColorHandler
 
     fun initialLoad()
     {
-        initialize(
+        register(
             PlayerColor(ChatColor.RED, Color.fromRGB(255, 85, 85), "Red"),
             PlayerColor(ChatColor.BLUE, Color.fromRGB(85, 85, 255), "Blue"),
             PlayerColor(ChatColor.AQUA, Color.fromRGB(85, 255, 255), "Light Blue"),
@@ -28,7 +28,7 @@ object PlayerColorHandler
         )
     }
 
-    fun initialize(vararg color: PlayerColor)
+    private fun register(vararg color: PlayerColor)
     {
         for (playerColor in color)
         {

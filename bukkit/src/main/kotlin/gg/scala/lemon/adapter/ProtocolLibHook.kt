@@ -9,7 +9,6 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.listener.PlayerListener
 import net.evilblock.cubed.util.CC
 
-
 /**
  * @author GrowlyX
  * @since 10/27/2021

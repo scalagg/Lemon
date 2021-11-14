@@ -27,6 +27,9 @@ class SettingsConfigProcessor {
     @Comment("Should we enable our disguise system on this server?")
     val disguiseEnabled: Boolean = false
 
+    @Comment("Should we enable the /color command?")
+    val playerColorsEnabled = true
+
     val blacklistedCommands = listOf(
         "/ver", "/icanhasbukkit"
     )

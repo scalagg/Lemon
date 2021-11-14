@@ -19,6 +19,7 @@ import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.annotation.DoNotRegister
+import gg.scala.lemon.command.ColorCommand
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.handler.LemonCooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
@@ -44,7 +45,6 @@ import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ResourceUpdateRunnable
-import gg.scala.lemon.task.ServerMonitorRunnable
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
@@ -188,15 +188,11 @@ class Lemon : ExtendedScalaPlugin()
             0L, 100L
         )
 
-        Schedulers.async().runRepeating(
-            ServerMonitorRunnable(this.serverStatisticProvider),
-            0L, 600L
-        )
+        startUuidCacheImplementation()
+    }
 
-        server.consoleSender.sendMessage(
-            "${CC.PRI}Lemon${CC.SEC} version ${CC.PRI}${description.version}${CC.SEC} has loaded. Players will be able to join in ${CC.GREEN}3 seconds${CC.SEC}."
-        )
-
+    private fun startUuidCacheImplementation()
+    {
         val uuidCacheBanana = BananaBuilder()
             .options(
                 BananaOptions(
@@ -239,10 +235,17 @@ class Lemon : ExtendedScalaPlugin()
         {
             registerCommandsInPackage(commandManager, "gg.scala.lemon.disguise.command")
         }
+
+        if (settings.playerColorsEnabled)
+        {
+            commandManager.registerCommand(ColorCommand())
+        }
     }
 
     private fun setupPlayerLookAndFeel()
     {
+        val initialization = System.currentTimeMillis()
+
         CC.setup(
             toCCColorFormat(lemonWebData.primary),
             toCCColorFormat(lemonWebData.secondary)
@@ -295,15 +298,20 @@ class Lemon : ExtendedScalaPlugin()
         }
 
         // Loading all default player colors
-        PlayerColorHandler.initialLoad()
+        if (settings.playerColorsEnabled)
+        {
+            PlayerColorHandler.initialLoad()
+
+            logger.info("Loaded default player colors for /colors.")
+        }
 
         // filter through the different client implementations
         // & register the ones which have the plugins enabled
         ClassUtils.getClassesInPackage(
-            this, "gg.scala.lemon.adapt.client"
+            this, "gg.scala.lemon.adapter.client.impl"
         ).filter {
             Bukkit.getPluginManager().plugins.firstOrNull { plugin ->
-                plugin.name.contains(it.simpleName.replace("Adapter", ""))
+                plugin.name.equals(it.simpleName.replace("Adapter", ""), true)
             } != null
         }.forEach {
             val clientAdapter = it.newInstance() as PlayerClientAdapter
@@ -314,17 +322,25 @@ class Lemon : ExtendedScalaPlugin()
             )
         }
 
-        ProtocolLibHook.initialLoad()
-        logger.info("Attempted initial load of ProtocolLib hook.")
+        if (server.pluginManager.getPlugin("ProtocolLib") != null)
+        {
+            ProtocolLibHook.initialLoad()
+
+            logger.info("Now handling tab-completion through ProtocolLib.")
+        }
 
         serverStatisticProvider = DefaultSparkServerStatisticProvider
 
-        if (Bukkit.getPluginManager().getPlugin("spark") != null)
+        if (server.pluginManager.getPlugin("spark") != null)
         {
             serverStatisticProvider = SparkServerStatisticProvider()
 
             logger.info("Now utilizing spark for server statistics.")
         }
+
+        logger.info("Finished player qol initialization in ${
+            System.currentTimeMillis() - initialization
+        }ms.")
     }
 
     private fun toCCColorFormat(string: String): String
