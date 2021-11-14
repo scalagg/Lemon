@@ -20,11 +20,11 @@ class LunarClientAPIAdapter : PlayerClientAdapter {
     }
 
     override fun enableStaffModules(player: Player) {
-        LunarClientAPI.getInstance().giveAllStaffModules(player)
+        // LunarClient no longer supports staff modules
     }
 
     override fun disableStaffModules(player: Player) {
-        LunarClientAPI.getInstance().disableAllStaffModules(player)
+        // LunarClient no longer supports staff modules
     }
 
     override fun updateNametag(player: Player, tagLines: List<String>) {
