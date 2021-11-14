@@ -31,7 +31,7 @@ class ChatCommand : BaseCommand() {
             throw ConditionFailedException("The chat is not silenced. Use ${CC.BOLD}/mutechat${CC.RED} to mute the chat!")
         }
 
-        ChatHandler.chatMuted = true
+        ChatHandler.chatMuted = false
 
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
@@ -54,7 +54,7 @@ class ChatCommand : BaseCommand() {
             throw ConditionFailedException("The chat is silenced. Use ${CC.BOLD}/unmutechat${CC.RED} to unmute the chat!")
         }
 
-        ChatHandler.chatMuted = false
+        ChatHandler.chatMuted = true
 
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"

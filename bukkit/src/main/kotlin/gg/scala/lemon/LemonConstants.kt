@@ -29,7 +29,7 @@ object LemonConstants {
     @JvmStatic
     val FLAGS = mutableMapOf<String, (String) -> String>(
         "r" to {
-            "${CC.D_GRAY}[${CC.D_RED}Alert${CC.D_GRAY}] ${CC.RESET}$it"
+            "${CC.D_GRAY}[${CC.D_RED}Alert${CC.D_GRAY}] ${CC.RESET}${net.evilblock.cubed.util.Color.translate(it)}"
         }
     )
 
