@@ -86,6 +86,7 @@ import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import java.util.UUID
+import kotlin.properties.Delegates
 
 class Lemon : ExtendedScalaPlugin()
 {
@@ -118,11 +119,12 @@ class Lemon : ExtendedScalaPlugin()
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
-    val init = System.currentTimeMillis()
+    var initialization by Delegates.notNull<Long>()
 
     override fun enable()
     {
         instance = this
+        initialization = System.currentTimeMillis()
 
         loadBaseConfigurations()
 
@@ -194,7 +196,7 @@ class Lemon : ExtendedScalaPlugin()
         startUuidCacheImplementation()
 
         logger.info("Finished Lemon resource initialization in ${
-            System.currentTimeMillis() - init
+            System.currentTimeMillis() - initialization
         }ms")
     }
 
