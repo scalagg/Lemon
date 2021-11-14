@@ -2,6 +2,7 @@ package gg.scala.lemon.adapter.client.impl
 
 import com.lunarclient.bukkitapi.LunarClientAPI
 import com.lunarclient.bukkitapi.`object`.TitleType
+import gg.scala.lemon.adapter.client.ClientMetadata
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -11,9 +12,9 @@ import java.time.Duration
  * @author GrowlyX
  * @since 9/27/2021
  */
+@ClientMetadata(plugin = "LunarClient-API")
 class LunarClientAPIAdapter : PlayerClientAdapter {
 
-    override fun getPluginName(): String = "LunarClient-API"
     override fun getClientName() = "Lunar Client"
 
     override fun shouldHandle(player: Player): Boolean {

@@ -14,6 +14,7 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.UUIDAdapter
+import gg.scala.lemon.adapter.client.ClientMetadata
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
@@ -310,16 +311,22 @@ class Lemon : ExtendedScalaPlugin()
         ClassUtils.getClassesInPackage(
             this, "gg.scala.lemon.adapter.client.impl"
         ).filter {
-            Bukkit.getPluginManager().plugins.firstOrNull { plugin ->
-                plugin.name.equals(it.simpleName.replace("Adapter", ""), true)
-            } != null
+            server.pluginManager.getPlugin(
+                it.getAnnotation(ClientMetadata::class.java).plugin
+            ) != null
         }.forEach {
-            val clientAdapter = it.newInstance() as PlayerClientAdapter
-            clientAdapters.add(clientAdapter)
+            try
+            {
+                val clientAdapter = it.newInstance() as PlayerClientAdapter
+                clientAdapters.add(clientAdapter)
 
-            logger.info(
-                "${clientAdapter.getClientName()} implementation has been enabled."
-            )
+                logger.info(
+                    "${clientAdapter.getClientName()} implementation has been enabled."
+                )
+            } catch (ignored: Exception)
+            {
+                logger.info("Failed to instantiate PlayerClientAdapter: ${it.simpleName}.kt")
+            }
         }
 
         if (server.pluginManager.getPlugin("ProtocolLib") != null)
