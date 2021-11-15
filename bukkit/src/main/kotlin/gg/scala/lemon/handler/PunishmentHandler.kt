@@ -256,7 +256,7 @@ object PunishmentHandler
 
                     if (targetWeight >= issuerWeight)
                     {
-                        issuer.sendMessage("${CC.RED}You're not allowed to ban $targetName${CC.RED}.")
+                        issuer.sendMessage("${CC.RED}You do not have enough power to ${category.name.lowercase()} $targetName${CC.RED}.")
                         return@thenAccept
                     }
 

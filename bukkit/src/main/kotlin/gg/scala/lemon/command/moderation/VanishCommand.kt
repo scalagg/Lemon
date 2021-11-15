@@ -1,5 +1,6 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.QuickAccess.coloredName
@@ -41,11 +42,11 @@ class VanishCommand : BaseCommand() {
                 power = priority ?: lemonPlayer.activeGrant!!.getRank().weight
             )
 
-            sender.sendMessage("$youHave been ${CC.GREEN}vanished${CC.SEC} with a priority of ${CC.WHITE}${priority ?: lemonPlayer.activeGrant!!.getRank().weight}.")
+            sender.sendMessage("${LemonConstants.AUTH_PREFIX}$youHave been ${CC.GREEN}vanished${CC.SEC} with a power of ${CC.WHITE}${priority ?: lemonPlayer.activeGrant!!.getRank().weight}.")
         } else {
             PlayerHandler.unvanishPlayer(playerToVanish)
 
-            sender.sendMessage("$youHave been ${CC.RED}un-vanished${CC.SEC}.")
+            sender.sendMessage("${LemonConstants.AUTH_PREFIX}$youHave been ${CC.RED}un-vanished${CC.SEC}.")
         }
     }
 }

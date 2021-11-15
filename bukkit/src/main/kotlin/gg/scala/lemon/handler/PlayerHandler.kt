@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.menu.modmode.InspectionMenu
 import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.LemonPlayer
@@ -164,7 +165,7 @@ object PlayerHandler {
 
         target.setMetadata("mod-mode", FixedMetadataValue(Lemon.instance, true))
 
-        player.sendMessage("${CC.SEC}${
+        player.sendMessage("${LemonConstants.AUTH_PREFIX}${CC.SEC}${
             if (player == target) "You are" else CC.SEC + target.name + " is"
         } now ${CC.GREEN}in mod mode${CC.SEC}.")
 
@@ -174,7 +175,7 @@ object PlayerHandler {
     fun unModModePlayer(player: Player, target: Player) {
         unModModePlayerSilent(target)
 
-        player.sendMessage("${CC.SEC}${
+        player.sendMessage("${LemonConstants.AUTH_PREFIX}${CC.SEC}${
             if (player == target) "You are" else CC.SEC + target.name + " is"
         } no longer ${CC.RED}in mod mode${CC.SEC}.")
     }

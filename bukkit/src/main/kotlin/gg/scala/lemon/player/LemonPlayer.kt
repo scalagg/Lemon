@@ -233,71 +233,74 @@ class LemonPlayer(
         val current = System.currentTimeMillis()
 
         return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
-            if (grants == null || grants.isEmpty())
+            synchronized(this)
             {
-                if (activeGrant != null)
+                if (grants == null || grants.isEmpty())
                 {
-                    if (LemonConstants.DEBUG)
+                    if (activeGrant != null)
                     {
-                        println("[Lemon] Skipping entity grant update for $name as their active grant is not-null.")
+                        if (LemonConstants.DEBUG)
+                        {
+                            println("[Lemon] Skipping entity grant update for $name as their active grant is not-null.")
+                        }
+                    } else
+                    {
+                        setupAutomaticGrant()
                     }
-                } else
+
+                    return@thenAccept
+                }
+
+                var shouldNotifyPlayer = autoNotify
+                val previousRank = fetchPreviousRank(grants)
+
+                grants.forEach { grant ->
+                    if (!grant.isRemoved && grant.hasExpired)
+                    {
+                        grant.removedReason = "Expired"
+                        grant.removedAt = System.currentTimeMillis()
+                        grant.removedOn = Lemon.instance.settings.id
+                        grant.isRemoved = true
+
+                        grant.save()
+
+                        shouldNotifyPlayer = true
+                    }
+                }
+
+                activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+
+                var shouldRecalculatePermissions = forceRecalculatePermissions
+
+                if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.getRank().uuid)
+                {
+                    shouldRecalculatePermissions = true
+                    shouldNotifyPlayer = true
+                }
+
+                if (shouldNotifyPlayer && !connecting)
+                {
+                    bukkitPlayer?.ifPresent {
+                        notifyPlayerOfRankUpdate(it)
+
+                        RankChangeEvent(
+                            it, previousRank, activeGrant!!.rankId
+                        ).dispatch()
+                    }
+                }
+
+                if (activeGrant == null)
                 {
                     setupAutomaticGrant()
                 }
 
-                return@thenAccept
-            }
+                if (shouldRecalculatePermissions)
+                    handlePermissionApplication(grants, shouldCalculateNow)
 
-            var shouldNotifyPlayer = autoNotify
-            val previousRank = fetchPreviousRank(grants)
-
-            grants.forEach { grant ->
-                if (!grant.isRemoved && grant.hasExpired)
+                if (connecting && LemonConstants.DEBUG)
                 {
-                    grant.removedReason = "Expired"
-                    grant.removedAt = System.currentTimeMillis()
-                    grant.removedOn = Lemon.instance.settings.id
-                    grant.isRemoved = true
-
-                    grant.save()
-
-                    shouldNotifyPlayer = true
+                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
                 }
-            }
-
-            activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
-
-            var shouldRecalculatePermissions = forceRecalculatePermissions
-
-            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.getRank().uuid)
-            {
-                shouldRecalculatePermissions = true
-                shouldNotifyPlayer = true
-            }
-
-            if (shouldNotifyPlayer && !connecting)
-            {
-                bukkitPlayer?.ifPresent {
-                    notifyPlayerOfRankUpdate(it)
-
-                    RankChangeEvent(
-                        it, previousRank, activeGrant!!.rankId
-                    ).dispatch()
-                }
-            }
-
-            if (activeGrant == null)
-            {
-                setupAutomaticGrant()
-            }
-
-            if (shouldRecalculatePermissions)
-                handlePermissionApplication(grants, shouldCalculateNow)
-
-            if (connecting && LemonConstants.DEBUG)
-            {
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
             }
         }
     }
@@ -553,8 +556,7 @@ class LemonPlayer(
             it.recalculatePermissions()
 
             QuickAccess.reloadPlayer(
-                uniqueId,
-                recalculateGrants = false
+                uniqueId, recalculateGrants = false
             )
         }
 

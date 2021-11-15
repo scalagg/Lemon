@@ -70,6 +70,6 @@ object LemonConstants {
         }
 
     @JvmStatic
-    val NO_PERMISSION_SUB: String = "${CC.RED}You do not have permission to perform this subcommand!"
+    val NO_PERMISSION_SUB = "${CC.RED}You do not have permission to perform this subcommand!"
 
 }

@@ -193,7 +193,7 @@ object RedisHandler : BananaHandler
         )
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
-            QuickAccess.reloadPlayer(targetUuid, recalculateGrants = true)
+            QuickAccess.reloadPlayer(targetUuid)
         }
     }
 
