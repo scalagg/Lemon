@@ -2,7 +2,7 @@ package gg.scala.lemon.adapter.client.impl
 
 import com.oldcheatbreaker.api.CheatBreakerAPI
 import com.oldcheatbreaker.api.`object`.TitleType
-import gg.scala.lemon.adapter.client.annotation.ClientMetadata
+import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -12,7 +12,7 @@ import java.time.Duration
  * @author GrowlyX
  * @since 9/27/2021
  */
-@ClientMetadata(plugin = "CheatBreaker-API")
+@RequiredPlugin("CheatBreaker-API")
 class CheatBreakerAPIAdapter : PlayerClientAdapter
 {
 

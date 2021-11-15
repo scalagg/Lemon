@@ -14,8 +14,9 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.UUIDAdapter
-import gg.scala.lemon.adapter.client.annotation.ClientMetadata
+import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
+import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
@@ -316,13 +317,9 @@ class Lemon : ExtendedScalaPlugin()
 
         // filter through the different client implementations
         // & register the ones which have the plugins enabled
-        ClassUtils.getClassesInPackage(
-            this, "gg.scala.lemon.adapter.client.impl"
-        ).filter {
-            server.pluginManager.getPlugin(
-                it.getAnnotation(ClientMetadata::class.java).plugin
-            ) != null
-        }.forEach {
+        findClassesWithinPackageWithPluginEnabled(
+            "gg.scala.lemon.adapter.client.impl"
+        ).forEach {
             try
             {
                 val clientAdapter = it.newInstance() as PlayerClientAdapter
@@ -334,6 +331,25 @@ class Lemon : ExtendedScalaPlugin()
             } catch (ignored: Exception)
             {
                 logger.info("Failed to instantiate PlayerClientAdapter: ${it.simpleName}.kt")
+            }
+        }
+
+        // filter through all placeholder implementations
+        // & register the ones which have the specified plugin enabled
+        findClassesWithinPackageWithPluginEnabled(
+            "gg.scala.lemon.adapter.placeholder.impl"
+        ).forEach {
+            try
+            {
+                val placeholderAdapter = it.newInstance() as PlaceholderAdapter
+                placeholderAdapter.register()
+
+                logger.info(
+                    "${placeholderAdapter.getId()} placeholders have been registered."
+                )
+            } catch (ignored: Exception)
+            {
+                logger.info("Failed to instantiate PlaceholderAdapter: ${it.simpleName}.kt")
             }
         }
 
@@ -356,6 +372,17 @@ class Lemon : ExtendedScalaPlugin()
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
         }ms.")
+    }
+
+    private fun findClassesWithinPackageWithPluginEnabled(`package`: String): List<Class<*>>
+    {
+        return ClassUtils.getClassesInPackage(
+            this, `package`
+        ).filter {
+            server.pluginManager.getPlugin(
+                it.getAnnotation(RequiredPlugin::class.java).value
+            ) != null
+        }
     }
 
     private fun toCCColorFormat(string: String): String
