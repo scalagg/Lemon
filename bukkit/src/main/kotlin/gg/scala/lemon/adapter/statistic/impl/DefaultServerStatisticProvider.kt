@@ -8,7 +8,7 @@ import java.lang.management.ManagementFactory
  * @author GrowlyX
  * @since 10/8/2021
  */
-object DefaultSparkServerStatisticProvider : ServerStatisticProvider
+object DefaultServerStatisticProvider : ServerStatisticProvider
 {
     override fun ticksPerSecond(): Double
     {

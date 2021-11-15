@@ -18,7 +18,7 @@ import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
-import gg.scala.lemon.adapter.statistic.impl.DefaultSparkServerStatisticProvider
+import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.annotation.DoNotRegister
 import gg.scala.lemon.command.ColorCommand
@@ -360,7 +360,7 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Now handling tab-completion through ProtocolLib.")
         }
 
-        serverStatisticProvider = DefaultSparkServerStatisticProvider
+        serverStatisticProvider = DefaultServerStatisticProvider
 
         if (server.pluginManager.getPlugin("spark") != null)
         {
