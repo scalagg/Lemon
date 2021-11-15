@@ -56,18 +56,10 @@ import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
-import net.evilblock.cubed.entity.EntitySerializer
-import net.evilblock.cubed.entity.animation.EntityAnimation
-import net.evilblock.cubed.menu.template.MenuTemplate
-import net.evilblock.cubed.menu.template.MenuTemplateButton
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
-import net.evilblock.cubed.serialize.BlockVectorAdapter
-import net.evilblock.cubed.serialize.ItemStackAdapter
-import net.evilblock.cubed.serialize.LocationAdapter
-import net.evilblock.cubed.serialize.VectorAdapter
 import net.evilblock.cubed.serializers.Serializers
-import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
+import net.evilblock.cubed.serializers.Serializers.useGsonBuilderThenRebuild
 import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
@@ -75,17 +67,12 @@ import net.evilblock.cubed.util.bukkit.EventUtils
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.Location
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.util.BlockVector
 import xyz.mkotb.configapi.ConfigFactory
-import java.util.*
 import java.util.UUID
 import kotlin.properties.Delegates
 
@@ -127,10 +114,16 @@ class Lemon : ExtendedScalaPlugin()
         instance = this
         initialization = System.currentTimeMillis()
 
-        loadBaseConfigurations()
-
         logger.info("Fetching server information using provided password...")
 
+        loadBaseConfigurations()
+
+        validatePlatformInformation()
+        runAfterDataValidation()
+    }
+
+    private fun validatePlatformInformation()
+    {
         val webData = ScalaValidateUtil.fetchServerData(
             settings.serverPassword,
             settings.serverPasswordHttps,
@@ -154,36 +147,35 @@ class Lemon : ExtendedScalaPlugin()
         logger.info(
             "Now loading Lemon with ${lemonWebData.serverName}'s information..."
         )
-
-        runAfterDataValidation()
     }
 
     private fun runAfterDataValidation()
     {
-        Serializers.useGsonBuilderThenRebuild { builder ->
-            builder.serializeNulls()
-                .setLongSerializationPolicy(LongSerializationPolicy.STRING)
-                .registerTypeHierarchyAdapter(ItemStack::class.java, ItemStackAdapter())
-                .registerTypeHierarchyAdapter(Location::class.java, LocationAdapter())
-                .registerTypeHierarchyAdapter(Vector::class.java, VectorAdapter())
-                .registerTypeHierarchyAdapter(BlockVector::class.java, BlockVectorAdapter())
-                .registerTypeAdapter(Entity::class.java, EntitySerializer)
+        useGsonBuilderThenRebuild {
+            it.setLongSerializationPolicy(LongSerializationPolicy.STRING)
                 .registerTypeAdapter(UUID::class.java, UUIDAdapter)
                 .registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
-                .registerTypeAdapter(EntityAnimation::class.java, AbstractTypeSerializer<EntityAnimation>())
-                .registerTypeAdapter(MenuTemplate::class.java, AbstractTypeSerializer<MenuTemplate<*>>())
-                .registerTypeAdapter(MenuTemplateButton::class.java, AbstractTypeSerializer<MenuTemplateButton>())
         }
 
-        loadExtraConfigurations()
+        initialLoadConfigurations()
 
         loadListeners()
         loadHandlers()
         loadCommands()
 
-        startMessageQueues()
-        setupPlayerLookAndFeel()
+        initialLoadMessageQueues()
+        initialLoadPlayerQol()
+        initialLoadScheduledTasks()
 
+        startUuidCacheImplementation()
+
+        logger.info("Finished Lemon resource initialization in ${
+            System.currentTimeMillis() - initialization
+        }ms")
+    }
+
+    private fun initialLoadScheduledTasks()
+    {
         Schedulers.async().runRepeating(
             ResourceUpdateRunnable,
             0L, 20L
@@ -193,12 +185,6 @@ class Lemon : ExtendedScalaPlugin()
             BukkitInstanceUpdateRunnable,
             0L, 100L
         )
-
-        startUuidCacheImplementation()
-
-        logger.info("Finished Lemon resource initialization in ${
-            System.currentTimeMillis() - initialization
-        }ms")
     }
 
     private fun startUuidCacheImplementation()
@@ -218,7 +204,7 @@ class Lemon : ExtendedScalaPlugin()
         Cubed.instance.uuidCache.load()
     }
 
-    private fun startMessageQueues()
+    private fun initialLoadMessageQueues()
     {
         LemonOutgoingMessageQueue.start()
 
@@ -252,7 +238,7 @@ class Lemon : ExtendedScalaPlugin()
         }
     }
 
-    private fun setupPlayerLookAndFeel()
+    private fun initialLoadPlayerQol()
     {
         val initialization = System.currentTimeMillis()
 
@@ -412,7 +398,7 @@ class Lemon : ExtendedScalaPlugin()
         settings = configFactory.fromFile("settings", SettingsConfigProcessor::class.java)
     }
 
-    private fun loadExtraConfigurations()
+    private fun initialLoadConfigurations()
     {
         languageConfig = configFactory.fromFile("language", LanguageConfigProcessor::class.java)
         credentials = configFactory.fromFile("redis", BananaCredentials::class.java)
