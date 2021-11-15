@@ -13,7 +13,6 @@ import gg.scala.banana.options.BananaOptions
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
-import gg.scala.lemon.adapter.UUIDAdapter
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
@@ -23,7 +22,6 @@ import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.annotation.DoNotRegister
 import gg.scala.lemon.command.ColorCommand
 import gg.scala.lemon.cooldown.CooldownHandler
-import gg.scala.lemon.handler.LemonCooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
@@ -46,8 +44,9 @@ import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.lemon.server.ServerInstance
-import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
+import gg.scala.lemon.task.ResourceUpdateRunnable
+import gg.scala.lemon.testing.TestingCommand
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
@@ -73,7 +72,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.mkotb.configapi.ConfigFactory
-import java.util.UUID
 import kotlin.properties.Delegates
 
 class Lemon : ExtendedScalaPlugin()
@@ -153,7 +151,6 @@ class Lemon : ExtendedScalaPlugin()
     {
         useGsonBuilderThenRebuild {
             it.setLongSerializationPolicy(LongSerializationPolicy.STRING)
-                .registerTypeAdapter(UUID::class.java, UUIDAdapter)
                 .registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
         }
 
@@ -236,6 +233,8 @@ class Lemon : ExtendedScalaPlugin()
         {
             commandManager.registerCommand(ColorCommand())
         }
+
+        commandManager.registerCommand(TestingCommand)
     }
 
     private fun initialLoadPlayerQol()
@@ -322,22 +321,22 @@ class Lemon : ExtendedScalaPlugin()
 
         // filter through all placeholder implementations
         // & register the ones which have the specified plugin enabled
-        findClassesWithinPackageWithPluginEnabled(
-            "gg.scala.lemon.adapter.placeholder.impl"
-        ).forEach {
-            try
-            {
-                val placeholderAdapter = it.newInstance() as PlaceholderAdapter
-                placeholderAdapter.register()
-
-                logger.info(
-                    "${placeholderAdapter.getId()} placeholders have been registered."
-                )
-            } catch (ignored: Exception)
-            {
-                logger.info("Failed to instantiate PlaceholderAdapter: ${it.simpleName}.kt")
-            }
-        }
+//        findClassesWithinPackageWithPluginEnabled(
+//            "gg.scala.lemon.adapter.placeholder.impl"
+//        ).forEach {
+//            try
+//            {
+//                val placeholderAdapter = it.newInstance() as PlaceholderAdapter
+//                placeholderAdapter.register()
+//
+//                logger.info(
+//                    "${placeholderAdapter.getId()} placeholders have been registered."
+//                )
+//            } catch (ignored: Exception)
+//            {
+//                logger.info("Failed to instantiate PlaceholderAdapter: ${it.simpleName}.kt")
+//            }
+//        }
 
         if (server.pluginManager.getPlugin("ProtocolLib") != null)
         {
@@ -548,7 +547,6 @@ class Lemon : ExtendedScalaPlugin()
     {
         banana.useResource {
             it.hdel("lemon:heartbeats", settings.id)
-            it.close()
         }
     }
 }
