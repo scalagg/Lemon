@@ -33,7 +33,7 @@ object BukkitUtil {
     ) {
 //        val players = Bukkit.getOnlinePlayers()
 //            .map { PlayerHandler.findPlayer(it).orElse(null) }
-//            .sortedByDescending { QuickAccess.realRank(it.bukkitPlayer!!).weight }
+//            .sortedByDescending {  }
 //            .map { MinecraftReflection.getHandle(it.bukkitPlayer!!) }
 //
 //        playerField.isAccessible = true

@@ -38,6 +38,7 @@ import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
@@ -299,6 +300,14 @@ class Lemon : ExtendedScalaPlugin()
 
             logger.info("Loaded default player colors for /colors.")
         }
+
+        try
+        {
+            val classCheck = Class.forName("ScalaSpigot")
+            ScalaSpigotSorterExtension.initialLoad()
+
+            logger.info("Enabled ScalaSpigot Sorter implementation.")
+        } catch (ignored: Exception) { }
 
         // filter through the different client implementations
         // & register the ones which have the plugins enabled
