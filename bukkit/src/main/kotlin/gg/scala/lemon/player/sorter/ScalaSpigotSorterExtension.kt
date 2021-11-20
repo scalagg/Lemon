@@ -27,7 +27,7 @@ object ScalaSpigotSorterExtension
     {
         MinecraftServer.getServer().playerList.sortPlayerList(
             Comparator.comparingInt { entity ->
-                -QuickAccess.realRank(Bukkit.getPlayer(entity.uniqueID)).weight
+                QuickAccess.realRank(Bukkit.getPlayer(entity.uniqueID)).weight
             }
         )
     }
