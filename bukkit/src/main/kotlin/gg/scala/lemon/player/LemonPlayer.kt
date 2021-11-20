@@ -743,9 +743,11 @@ class LemonPlayer(
 
         handleOnConnection.add {
             validatePlayerAuthentication()
-
             checkChannelPermission(it)
-            handleAutomaticStaffModules(it)
+
+            Tasks.delayed(1L) {
+                handleAutomaticStaffModules(it)
+            }
         }
     }
 
