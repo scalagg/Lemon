@@ -775,14 +775,9 @@ class LemonPlayer(
         )
         {
             handleApplicableClient(player) {
-                try
-                {
-                    it.enableStaffModules(player)
+                it.enableStaffModules(player)
 
-                    player.sendMessage("${CC.GREEN}We've automatically enabled ${it.getClientName()} staff modules for you.")
-                } catch (ignored: RuntimeException)
-                {
-                }
+                player.sendMessage("${CC.GREEN}${it.getClientName()} staff modules have been enabled.")
             }
         }
     }
