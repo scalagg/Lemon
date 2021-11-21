@@ -91,7 +91,7 @@ class Lemon : ExtendedScalaPlugin()
     lateinit var settings: SettingsConfigProcessor
     lateinit var languageConfig: LanguageConfigProcessor
 
-    private lateinit var configFactory: ConfigFactory
+    lateinit var configFactory: ConfigFactory
 
     lateinit var banana: Banana
     lateinit var credentials: BananaCredentials
