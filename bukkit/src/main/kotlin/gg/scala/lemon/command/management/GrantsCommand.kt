@@ -94,7 +94,7 @@ class GrantsCommand : BaseCommand()
 
     @Syntax("<player>")
     @CommandCompletion("@players")
-    @CommandAlias("granthistory|granthist|gh|ghist")
+    @CommandAlias("grantstaffhistory|grantstaffhist|gsh|gstaffhist")
     @CommandPermission("lemon.command.staffhistory.grants")
     fun onStaffHistory(player: Player, uuid: UUID)
     {

@@ -23,9 +23,8 @@ class PlaytimeCommand : BaseCommand() {
     fun onPlayTime(
         player: Player, @Optional target: LemonPlayer?
     ) {
-        val lemonPlayer = PlayerHandler.findPlayer(
-            if (target == null) player else null
-        ).orElse(null) ?: target
+        val lemonPlayer = target ?: PlayerHandler
+            .findPlayer(player).orElse(null)
 
         if (target != null && !player.hasPermission("lemon.command.playtime.other")) {
             throw ConditionFailedException("You do not have permission to view playtime of other players!")

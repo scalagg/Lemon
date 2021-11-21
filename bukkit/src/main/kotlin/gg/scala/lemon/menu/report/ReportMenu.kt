@@ -2,7 +2,6 @@ package gg.scala.lemon.menu.report
 
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ReportCooldown
-import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.enums.ReportType
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName

@@ -28,15 +28,14 @@ object BukkitUtil {
      * giving the user a chance to modify the list before it updates.
      */
     @JvmStatic
+    @JvmOverloads
     fun updatePlayerList(
         lambda: (MutableList<Any>) -> Unit = {}
     ) {
-//        val players = Bukkit.getOnlinePlayers()
-//            .map { PlayerHandler.findPlayer(it).orElse(null) }
-//            .sortedByDescending {  }
-//            .map { MinecraftReflection.getHandle(it.bukkitPlayer!!) }
-//
-//        playerField.isAccessible = true
-//        playerField.set(playerList, players)
+        val players = playerField.get(playerList)
+        lambda.invoke(players as MutableList<Any>)
+
+        playerField.isAccessible = true
+        playerField.set(playerList, players)
     }
 }

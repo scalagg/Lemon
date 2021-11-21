@@ -65,14 +65,14 @@ object QuickAccess {
         val lemonPlayer = name?.let { PlayerHandler.findOnlinePlayer(it) }
 
         lemonPlayer?.let {
-            return it.getColoredName()
+            return it.getOriginalColoredName()
         } ?: return name
     }
 
     @JvmStatic
     fun coloredNameOrNull(name: String): String? {
         return PlayerHandler.findPlayer(name)
-            .orElse(null)?.getColoredName()
+            .orElse(null)?.getOriginalColoredName()
     }
 
     @JvmStatic
@@ -132,8 +132,10 @@ object QuickAccess {
     fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true) {
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
-                it.displayName = lemonPlayer.getColoredName()
-                it.playerListName = lemonPlayer.getColoredName()
+                val realRank = realRank(it)
+
+                it.displayName = lemonPlayer.getColoredName(realRank)
+                it.playerListName = lemonPlayer.getColoredName(realRank)
 
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)
@@ -353,6 +355,18 @@ object QuickAccess {
         val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
 
         return if (lemonPlayer != null && (player.name == lemonPlayer.name || !player.hasMetadata("disguised"))) {
+            lemonPlayer.activeGrant?.getRank() ?: RankHandler.getDefaultRank()
+        } else {
+            RankHandler.getDefaultRank()
+        }
+    }
+
+    fun originalRank(player: Player?): Rank {
+        player ?: return RankHandler.getDefaultRank()
+
+        val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
+
+        return if (lemonPlayer != null) {
             lemonPlayer.activeGrant?.getRank() ?: RankHandler.getDefaultRank()
         } else {
             RankHandler.getDefaultRank()

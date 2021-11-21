@@ -17,8 +17,11 @@ import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
+import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.*
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
+import gg.scala.lemon.util.QuickAccess.originalRank
+import gg.scala.lemon.util.QuickAccess.realRank
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -41,7 +44,6 @@ class LemonPlayer(
     var ipAddress: String?
 ) : Savable
 {
-
     private val bungeePermissions = mutableListOf<String>()
 
     var previousIpAddress: String? = null
@@ -602,13 +604,24 @@ class LemonPlayer(
         GrantHandler.registerGrant(activeGrant!!)
     }
 
-    fun getColoredName(): String
+    @JvmOverloads
+    fun getColoredName(rank: Rank = realRank(bukkitPlayer)): String
     {
         val bukkitPlayer = bukkitPlayer
 
-        return activeGrant?.getRank()?.color + customColor() +
+        return rank.color + customColor() +
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
+
+    fun getOriginalColoredName(): String
+    {
+        val bukkitPlayer = bukkitPlayer
+        val rank = originalRank(bukkitPlayer)
+
+        return rank.color + customColor() +
+                if (bukkitPlayer != null) bukkitPlayer.name else name
+    }
+
 
     fun customColor(): String
     {

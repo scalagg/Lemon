@@ -7,12 +7,15 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider.useRandomAvailableDisguise
+import gg.scala.lemon.disguise.update.event.PostDisguiseEvent
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.disguise.update.event.UnDisguiseEvent
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
+import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.util.BukkitUtil
 import gg.scala.lemon.util.QuickAccess
+import me.lucko.helper.Events
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.entity.npc.protocol.NpcProtocol
 import net.evilblock.cubed.serializers.Serializers
@@ -69,7 +72,7 @@ internal object DisguiseProvider
         I_CHAT_BASE_COMPONENT_CLASS
     )!!
 
-    internal var initialized = false
+    private var initialized = false
 
     fun initialLoad()
     {
@@ -122,38 +125,49 @@ internal object DisguiseProvider
                 player, disguiseInfo
             )
 
-            preDisguiseEvent.call()
+            sync {
+                preDisguiseEvent.call()
+            }
 
             if (preDisguiseEvent.isCancelled)
                 return@useRandomAvailableDisguise
 
             handleDisguiseInternal(player, disguiseInfo)
 
-            player.sendMessage("${CC.SEC}You've disguised yourself as ${CC.PRI}${disguiseInfo.username}${CC.SEC}. ${CC.GRAY}(with the same skin)")
+            sync {
+                PostDisguiseEvent(player).call()
+            }
+
+            player.sendMessage("${CC.SEC}You've disguised yourself as ${CC.PRI}${disguiseInfo.username}${CC.SEC}. ${CC.GRAY}(with a random skin)")
         }
     }
 
-    fun handleUnDisguise(player: Player)
+    fun handleUnDisguise(player: Player, callInternal: Boolean = true, sendNotification: Boolean = true, suppressUnDisguiseEvent: Boolean = false)
     {
         val disguiseInfo = uuidToDisguiseInfo[player.uniqueId]
             ?: throw ConditionFailedException("You're not currently disguised.")
 
-        val unDisguiseEvent = UnDisguiseEvent(
-            player, disguiseInfo
-        )
+        if (!suppressUnDisguiseEvent)
+        {
+            val unDisguiseEvent = UnDisguiseEvent(
+                player, disguiseInfo
+            )
 
-        sync {
-            unDisguiseEvent.call()
+            sync {
+                unDisguiseEvent.call()
+            }
+
+            // players will be forced to disconnect or switch
+            // to a separate server to un-disguise themselves.
+            if (unDisguiseEvent.isCancelled)
+                return
         }
 
-        // players will be forced to disconnect or switch
-        // to a separate server to un-disguise themselves.
-        if (unDisguiseEvent.isCancelled)
-            return
+        if (callInternal)
+            handleUnDisguiseInternal(player, disguiseInfo)
 
-        handleUnDisguiseInternal(player, disguiseInfo)
-
-        player.sendMessage("${CC.GREEN}You've undisguised yourself.")
+        if (sendNotification)
+            player.sendMessage("${CC.GREEN}You've undisguised yourself.")
     }
 
     internal fun handleUnDisguiseInternal(
@@ -323,14 +337,8 @@ internal object DisguiseProvider
         player.updateInventory()
         player.teleport(previousLocation)
 
-        val usernameField = handle.javaClass.getMethod("getUniqueID")
-
         BukkitUtil.updatePlayerList {
-            val fetchedHandle = it.firstOrNull { any ->
-                usernameField.invoke(any) == player.uniqueId
-            }
-
-            it.remove(fetchedHandle ?: handle)
+            it.remove(handle)
             it.add(MinecraftReflection.getHandle(player))
         }
 
@@ -340,7 +348,7 @@ internal object DisguiseProvider
             it.authenticateInternal()
         }
 
-        QuickAccess.reloadPlayer(player.uniqueId)
+        QuickAccess.reloadPlayer(player.uniqueId, false)
     }
 
     fun fetchDisguiseInfo(name: String, uuid: UUID): DisguiseInfo?

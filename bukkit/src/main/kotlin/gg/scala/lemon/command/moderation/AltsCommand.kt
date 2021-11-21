@@ -4,6 +4,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess.coloredName
+import gg.scala.lemon.util.QuickAccess.originalRank
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
@@ -30,7 +31,7 @@ class AltsCommand : BaseCommand() {
 
         PlayerHandler.fetchAlternateAccountsFor(target.bukkitPlayer!!.uniqueId).thenAccept {
             if (it.isEmpty()) {
-                sender.sendMessage("${CC.RED}${targetLemon.getColoredName()}${CC.RED} does not have any alts.")
+                sender.sendMessage("${CC.RED}${targetLemon.getOriginalColoredName()}${CC.RED} does not have any alts.")
                 return@thenAccept
             }
 
@@ -70,16 +71,16 @@ class AltsCommand : BaseCommand() {
 
                         if (ipAddress != null) {
                             if (ipAddress != targetLastIpAddress) {
-                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.RED} is not matching ${CC.WHITE}${targetLemon.getColoredName()}${CC.RED}.")
+                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.RED} is not matching ${CC.WHITE}${targetLemon.getOriginalColoredName()}${CC.RED}.")
                             } else {
-                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.GREEN} is matching ${CC.WHITE}${targetLemon.getColoredName()}${CC.GREEN}.")
+                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.GREEN} is matching ${CC.WHITE}${targetLemon.getOriginalColoredName()}${CC.GREEN}.")
                             }
                         }
                     }
                 }
 
                 hoverList.add("${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------")
-                hoverList.add("${targetLemon.getColoredName()}'s ${CC.SEC}Current IP Info:")
+                hoverList.add("${targetLemon.getOriginalColoredName()}'s ${CC.SEC}Current IP Info:")
                 hoverList.add(" ${CC.SEC}Logins: ${CC.WHITE}${targetLemon.pastLogins.size}")
                 hoverList.add(" ${CC.SEC}First Login: ${CC.WHITE}${
                     TimeUtil.formatIntoFullCalendarString(

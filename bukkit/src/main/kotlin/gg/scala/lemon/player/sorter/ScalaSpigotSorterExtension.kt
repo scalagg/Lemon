@@ -1,7 +1,10 @@
 package gg.scala.lemon.player.sorter
 
+import gg.scala.lemon.disguise.update.event.PostDisguiseEvent
+import gg.scala.lemon.disguise.update.event.UnDisguiseEvent
 import gg.scala.lemon.player.event.impl.RankChangeEvent
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.realRank
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.minecraft.server.v1_8_R3.MinecraftServer
@@ -22,6 +25,13 @@ object ScalaSpigotSorterExtension
         Events.subscribe(RankChangeEvent::class.java).handler {
             asyncInternalListSort()
         }
+
+        Events.subscribe(PostDisguiseEvent::class.java).handler {
+            asyncInternalListSort()
+        }
+        Events.subscribe(UnDisguiseEvent::class.java).handler {
+            asyncInternalListSort()
+        }
     }
 
     private fun asyncInternalListSort()
@@ -29,7 +39,7 @@ object ScalaSpigotSorterExtension
         Tasks.async {
             MinecraftServer.getServer().playerList.sortPlayerList(
                 Comparator.comparingInt { entity ->
-                    QuickAccess.realRank(Bukkit.getPlayer(entity.uniqueID)).weight
+                    realRank(Bukkit.getPlayer(entity.uniqueID)).weight
                 }
             )
         }

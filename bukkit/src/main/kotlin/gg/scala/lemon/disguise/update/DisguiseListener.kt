@@ -44,11 +44,14 @@ object DisguiseListener : Listener {
 
     @EventHandler
     fun onLeave(event: PlayerQuitEvent) {
-        val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null)
-
-        if (lemonPlayer != null) {
-            DisguiseProvider.originalGameProfiles.remove(event.player.uniqueId)
-            DisguiseProvider.uuidToDisguiseInfo.remove(event.player.uniqueId)
+        if (event.player.hasMetadata("disguised"))
+        {
+            DisguiseProvider.handleUnDisguise(
+                player = event.player,
+                suppressUnDisguiseEvent = true,
+                sendNotification = false,
+                callInternal = false
+            )
         }
     }
 }
