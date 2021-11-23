@@ -447,7 +447,7 @@ class LemonPlayer(
         notNullPlayer.updateInventory()
     }
 
-    fun checkForIpRelative()
+    private fun checkForIpRelative()
     {
         val current = System.currentTimeMillis()
 
@@ -760,7 +760,9 @@ class LemonPlayer(
             connecting = true,
             forceRecalculatePermissions = true
         ).thenRun {
-            PlayerCachingExtension.memorize(this)
+            run {
+                PlayerCachingExtension.memorize(this)
+            }
         }
 
         recalculatePunishments(

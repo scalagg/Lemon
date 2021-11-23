@@ -15,7 +15,6 @@ import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
-import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
@@ -34,6 +33,7 @@ import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.extension.PlayerCachingExtension
+import gg.scala.lemon.player.extension.network.NetworkOnlineStaffCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
@@ -159,11 +159,11 @@ class Lemon : ExtendedScalaPlugin()
 
         loadListeners()
         loadHandlers()
-        loadCommands()
 
         initialLoadMessageQueues()
         initialLoadPlayerQol()
         initialLoadScheduledTasks()
+        initialLoadCommands()
 
         startUuidCacheImplementation()
 
@@ -214,7 +214,7 @@ class Lemon : ExtendedScalaPlugin()
         server.pluginManager.registerEvents(PlayerListener, this)
     }
 
-    private fun loadCommands()
+    private fun initialLoadCommands()
     {
         val commandManager = CubedCommandManager(
             plugin = this,
@@ -233,6 +233,11 @@ class Lemon : ExtendedScalaPlugin()
         if (settings.playerColorsEnabled)
         {
             commandManager.registerCommand(ColorCommand())
+        }
+
+        if (PlayerCachingExtension.loaded)
+        {
+            commandManager.registerCommand(NetworkOnlineStaffCommand)
         }
 
         commandManager.registerCommand(TestingCommand)

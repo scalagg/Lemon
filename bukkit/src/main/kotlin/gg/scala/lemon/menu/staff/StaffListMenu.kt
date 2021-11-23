@@ -18,9 +18,24 @@ import org.bukkit.inventory.ItemStack
  */
 class StaffListMenu : PaginatedMenu()
 {
+    companion object
+    {
+        @JvmStatic
+        val SLOTS = listOf(
+            10, 11, 12, 13, 14, 15, 16,
+            19, 20, 21, 22, 23, 24, 25,
+            28, 29, 30, 31, 32, 33, 34
+        )
+    }
+
+    init
+    {
+        placeholdBorders = true
+    }
 
     override fun getPrePaginatedTitle(player: Player): String = "Staff List"
 
+    override fun getAllPagesButtonSlots(): List<Int> = SLOTS
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
         return hashMapOf<Int, Button>().also {
@@ -31,6 +46,8 @@ class StaffListMenu : PaginatedMenu()
                 }
         }
     }
+
+    override fun getMaxItemsPerPage(player: Player) = 21
 
     inner class StaffButton(
         private val target: Player

@@ -6,6 +6,7 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.menu.better.BetterConfirmMenu
+import gg.scala.lemon.menu.punishment.PunishmentDetailedViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.util.CubedCacheUtil
@@ -38,6 +39,16 @@ class GrantViewMenu(
 ) : PaginatedMenu() {
 
     private val viewingFor = CubedCacheUtil.fetchName(uuid)
+
+    init
+    {
+        placeholdBorders = true
+    }
+
+    override fun getMaxItemsPerPage(player: Player) = PunishmentDetailedViewMenu.SLOTS.size
+    override fun getAllPagesButtonSlots() = PunishmentDetailedViewMenu.SLOTS
+
+    override fun size(buttons: Map<Int, Button>) = 36
 
     override fun getPrePaginatedTitle(player: Player): String {
         val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} $viewingFor"

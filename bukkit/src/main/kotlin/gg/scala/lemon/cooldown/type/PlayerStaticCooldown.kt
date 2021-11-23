@@ -49,6 +49,8 @@ abstract class PlayerStaticCooldown(
         {
             tasks.remove(t.uniqueId)?.cancel()
         }
+
+        super.reset(t)
     }
 
     override fun durationFor(t: Player): Long

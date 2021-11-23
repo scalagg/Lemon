@@ -38,7 +38,26 @@ class PunishmentDetailedViewMenu(
 ) : PaginatedMenu()
 {
 
+    companion object
+    {
+        @JvmStatic
+        val SLOTS = listOf(
+            10, 11, 12, 13, 14, 15, 16,
+            19, 20, 21, 22, 23, 24, 25
+        )
+    }
+
     private val viewingFor = CubedCacheUtil.fetchName(uuid)!!
+
+    init
+    {
+        placeholdBorders = true
+    }
+
+    override fun getMaxItemsPerPage(player: Player) = SLOTS.size
+    override fun getAllPagesButtonSlots() = SLOTS
+
+    override fun size(buttons: Map<Int, Button>) = 36
 
     override fun getPrePaginatedTitle(player: Player): String
     {

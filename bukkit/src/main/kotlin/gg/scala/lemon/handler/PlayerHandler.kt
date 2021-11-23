@@ -110,6 +110,11 @@ object PlayerHandler {
             }
     }
 
+    fun findKPlayer(uuid: UUID): LemonPlayer?
+    {
+        return players[uuid]
+    }
+
     fun findPlayer(uuid: UUID): Optional<LemonPlayer> {
         return Optional.ofNullable(players[uuid])
     }

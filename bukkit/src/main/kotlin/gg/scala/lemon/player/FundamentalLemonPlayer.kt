@@ -16,4 +16,5 @@ class FundamentalLemonPlayer(
 {
     var currentServer = ""
     var currentDisplayName = ""
+    var currentRank = UUID.randomUUID()
 }

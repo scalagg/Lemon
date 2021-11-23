@@ -3,6 +3,7 @@ package gg.scala.lemon.player.extension
 import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.server.ServerInstance
@@ -29,9 +30,7 @@ object PlayerCachingExtension
         builder.setSection("lemon:players")
         builder.setType(FundamentalLemonPlayer::class.java)
 
-        handle = builder.build()
-
-        loaded = true
+        handle = builder.build(); loaded = true
     }
 
     fun retrieve(uniqueId: UUID): CompletableFuture<FundamentalLemonPlayer?>
@@ -41,7 +40,11 @@ object PlayerCachingExtension
 
     fun memorize(lemonPlayer: LemonPlayer)
     {
-        if (!loaded) return
+        if (!loaded)
+        {
+            println("Not saving")
+            return
+        }
 
         val fundamental = FundamentalLemonPlayer(
             lemonPlayer.uniqueId, lemonPlayer.name
@@ -49,6 +52,9 @@ object PlayerCachingExtension
 
         fundamental.currentServer = Lemon.instance.settings.id
         fundamental.currentDisplayName = lemonPlayer.getColoredName()
+
+        fundamental.currentRank = lemonPlayer.activeGrant?.getRank()?.uuid
+            ?: RankHandler.getDefaultRank().uuid
 
         Tasks.sync {
             handle.saveEntry(lemonPlayer.uniqueId.toString(), fundamental)

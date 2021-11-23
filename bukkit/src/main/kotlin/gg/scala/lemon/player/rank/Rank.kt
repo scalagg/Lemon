@@ -18,7 +18,6 @@ constructor(
     var name: String
 ) : Savable
 {
-
     var weight: Int = 0
 
     var prefix: String = CC.GRAY
@@ -34,7 +33,7 @@ constructor(
      * Validates all [Rank]'s
      * in the [children] list.
      */
-    fun crosscheck()
+    private fun crosscheck()
     {
         children.toList().forEach {
             if (RankHandler.findRank(it) == null)
