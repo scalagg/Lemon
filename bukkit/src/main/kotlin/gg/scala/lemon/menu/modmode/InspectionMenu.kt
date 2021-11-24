@@ -1,11 +1,13 @@
 package gg.scala.lemon.menu.modmode
 
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.buttons.GlassButton
 import net.evilblock.cubed.menu.buttons.StaticItemStackButton
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -51,14 +53,6 @@ class InspectionMenu(val target: Player) : Menu() {
         buttons[52] = HealthButton(target.health, target.maxHealth)
         buttons[53] = LocationButton(target.location)
 
-        // debug stuff
-        if (player.name == "puugz") {
-            player.sendMessage("${target.name} info:")
-            player.sendMessage("XP: ${target.exp}")
-            player.sendMessage("Total XP: ${target.totalExperience}")
-            player.sendMessage("Level: ${target.level}")
-        }
-
         return buttons
     }
 
@@ -68,13 +62,13 @@ class InspectionMenu(val target: Player) : Menu() {
                 .name("${CC.PRI}Potion Effects")
                 .addToLore(
                     "${
-//                        if (effects.isEmpty()) {
+                        if (effects.isEmpty()) {
                             "${CC.RED}No active potion effects."
-//                        } else {
-//                            effects.forEach { 
-//                                // val effectName = StringUtil.toNiceString(it.type.name.toLowerCase())
-//                            }
-//                        }
+                        } else {
+                            effects.forEach { 
+                                "${QuickAccess.toNiceString(it.type.name.toLowerCase())} ${it.amplifier + 1} - ${TimeUtil.formatIntoMMSS(it.duration)}"
+                            }
+                        }
                     }"
                 ).build()
         }
@@ -86,7 +80,7 @@ class InspectionMenu(val target: Player) : Menu() {
                 .name("${CC.PRI}Experience")
                 .addToLore(
                     "${CC.GRAY}Level: ${CC.WHITE + level}",
-                    "${CC.GRAY}XP Percent: ${CC.WHITE}${(exp / totalExp) * 100}%",
+//                    "${CC.GRAY}XP Percent: ${CC.WHITE}${(exp / totalExp) * 100}%",
                     "${CC.GRAY}XP: ${CC.WHITE + exp}/${totalExp}",
                 ).build()
         }
