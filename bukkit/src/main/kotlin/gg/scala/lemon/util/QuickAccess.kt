@@ -349,6 +349,22 @@ object QuickAccess {
         return true
     }
 
+    @JvmStatic
+    fun toNiceString(string: String): String {
+        var output = string.toLowerCase().replace("_", " ").trim()
+
+        for (s in output.split(" ")) {
+            val char = s[0]
+
+            if (!char.isUpperCase()) {
+                val replace = s.replaceFirst(char, char.toUpperCase())
+                output = output.replace(s, replace)
+            }
+        }
+
+        return output
+    }
+
     fun realRank(player: Player?): Rank {
         player ?: return RankHandler.getDefaultRank()
 
