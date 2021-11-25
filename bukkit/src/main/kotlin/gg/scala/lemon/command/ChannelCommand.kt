@@ -66,7 +66,7 @@ class ChannelCommand : BaseCommand()
         player.sendMessage(
             "${CC.SEC}Channels: ${CC.PRI}${
                 viewable.joinToString(
-                    separator = "${CC.YELLOW}, ${CC.PRI}"
+                    separator = "${CC.SEC}, ${CC.PRI}"
                 )
             }${CC.SEC}."
         )
@@ -83,6 +83,7 @@ class ChannelCommand : BaseCommand()
         }
 
         lemonPlayer remove "channel"
+        lemonPlayer.save()
 
         player.sendMessage("${CC.GREEN}You've reset your channel.")
     }

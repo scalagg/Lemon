@@ -9,7 +9,6 @@ import org.apache.commons.lang.time.DurationFormatUtils
  */
 abstract class Cooldown<T>
 {
-
     private val expiringTimes = mutableMapOf<T, Long>()
     private val start = System.currentTimeMillis()
 

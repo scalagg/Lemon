@@ -45,7 +45,7 @@ class GrantViewMenu(
         placeholdBorders = true
     }
 
-    override fun getMaxItemsPerPage(player: Player) = PunishmentDetailedViewMenu.SLOTS.size
+    override fun getMaxItemsPerPage(player: Player) = PunishmentDetailedViewMenu.SLOTS.size - 1
     override fun getAllPagesButtonSlots() = PunishmentDetailedViewMenu.SLOTS
 
     override fun size(buttons: Map<Int, Button>) = 36
@@ -99,7 +99,7 @@ class GrantViewMenu(
                                 clicker.sendMessage("${CC.GRAY}Finished grant wipe, now updating menu...")
 
                                 Tasks.sync {
-                                    player.performCommand("granthistory $viewingFor")
+                                    player.performCommand("grantstaffhistory $viewingFor")
                                 }
                             }
                         }

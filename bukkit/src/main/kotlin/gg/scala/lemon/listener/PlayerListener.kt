@@ -121,7 +121,7 @@ object PlayerListener : Listener
 
             Bukkit.getOnlinePlayers()
                 .mapNotNull { PlayerHandler.findPlayer(player).orElse(null) }
-                .filter { it.hasPermission("lemon.frozen.messages") && !it.hasMetadata("frozen-messages-disabled") }
+                .filter { it.hasPermission("lemon.frozen.messages") && !it.hasMetadata("frozen-messages-disabled") && player.uniqueId != it.uniqueId }
                 .forEach {
                     it.bukkitPlayer?.sendMessage("${CC.D_RED}[Frozen] ${coloredName(player)}${CC.GRAY}: ${CC.WHITE}${event.message}")
                 }
@@ -423,13 +423,9 @@ object PlayerListener : Listener
             commandCoolDown.addOrOverride(player)
         }
 
-        val command = event.message.split(" ")[0]
+        val command = event.message.split(" ")[0].lowercase()
 
-        if (!command.startsWith("/auth", true) && !command.startsWith("/2fa", true) && !command.startsWith(
-                "/setup",
-                true
-            ) && shouldBlock(event.player)
-        )
+        if (!command.startsWith("/auth") && !command.startsWith("/2fa") && !command.startsWith("/setup") && shouldBlock(event.player))
         {
             cancel(event, "${CC.RED}You must authenticate before performing commands.")
             return
@@ -468,7 +464,7 @@ object PlayerListener : Listener
         if (!lemonPlayer.hasPermission("lemon.command-blacklist.bypass"))
         {
             Lemon.instance.settings.blacklistedCommands.forEach {
-                if (command.equals("/$it", true))
+                if (command == "/$it")
                 {
                     cancel(event, "${CC.RED}You're not allowed to perform this command.")
                     return
