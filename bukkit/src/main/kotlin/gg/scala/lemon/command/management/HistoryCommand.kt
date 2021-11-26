@@ -96,7 +96,15 @@ class HistoryCommand : BaseCommand()
             } history..."
         )
 
-        PunishmentHandler.fetchAllPunishmentsForTarget(uuid).thenAccept {
+        val completableFuture = if (type == HistoryViewType.TARGET_HIST)
+        {
+            PunishmentHandler.fetchAllPunishmentsForTarget(uuid)
+        } else
+        {
+            PunishmentHandler.fetchAllPunishmentsByExecutor(uuid)
+        }
+
+        completableFuture.thenAccept {
             if (it.isEmpty())
             {
                 player.sendMessage(

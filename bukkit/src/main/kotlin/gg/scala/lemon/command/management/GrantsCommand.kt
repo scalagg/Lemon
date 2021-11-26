@@ -2,6 +2,7 @@ package gg.scala.lemon.command.management
 
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
+import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.grant.GrantViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.grant.Grant
@@ -73,7 +74,15 @@ class GrantsCommand : BaseCommand()
             }
         }...")
 
-        GrantHandler.fetchGrantsFor(uuid).thenAccept { grants ->
+        val completableFuture = if (type == HistoryViewType.TARGET_HIST)
+        {
+            GrantHandler.fetchGrantsFor(uuid)
+        } else
+        {
+            GrantHandler.fetchGrantsByExecutor(uuid)
+        }
+
+        completableFuture.thenAccept { grants ->
             try
             {
                 if (grants.isEmpty())
