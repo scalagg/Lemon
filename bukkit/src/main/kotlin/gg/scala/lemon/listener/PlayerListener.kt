@@ -68,7 +68,13 @@ object PlayerListener : Listener
 
             } else
             {
-                lemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                lemonPlayer.name = event.name
+
+                if (!lemonPlayer.savePreviousIpAddressAsCurrent)
+                {
+                    lemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                }
+
                 created = false
             }
 
