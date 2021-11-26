@@ -77,7 +77,6 @@ import kotlin.properties.Delegates
 
 class Lemon : ExtendedScalaPlugin()
 {
-
     companion object
     {
         @JvmStatic

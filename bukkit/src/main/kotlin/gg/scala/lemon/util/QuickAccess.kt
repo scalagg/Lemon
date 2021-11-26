@@ -110,7 +110,10 @@ object QuickAccess {
     @JvmStatic
     fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int> {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
-            val prominent = GrantRecalculationUtil.getProminentGrant(it) ?: return@thenApplyAsync 0
+            it ?: return@thenApplyAsync 0
+
+            val prominent = GrantRecalculationUtil.getProminentGrant(it)
+                ?: return@thenApplyAsync 0
 
             return@thenApplyAsync prominent.getRank().weight
         }
@@ -119,6 +122,8 @@ object QuickAccess {
     @JvmStatic
     fun fetchIpAddress(uuid: UUID?): CompletableFuture<String?> {
         return DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
+            it ?: return@thenApply null
+
             return@thenApply it.previousIpAddress
         }
     }
