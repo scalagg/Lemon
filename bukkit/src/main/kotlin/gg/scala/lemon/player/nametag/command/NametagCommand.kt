@@ -7,6 +7,7 @@ import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.acf.annotation.Subcommand
+import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
@@ -31,6 +32,8 @@ object NametagCommand : BaseCommand()
             player.sendMessage("${CC.RED}Disabled rainbow nametag for: ${
                 target?.getColoredName() ?: player.displayName
             }")
+
+            NametagHandler.reloadPlayer(target?.bukkitPlayer ?: player)
         } else
         {
             RainbowNametagHandler.rainbowNametagEnabled.add(uniqueId)
