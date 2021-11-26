@@ -7,6 +7,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.attemptRemoval
+import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.fetchIpAddress
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
@@ -153,7 +154,7 @@ object PunishmentHandler
     {
         Tasks.async {
             val issuerName = nameOrConsole(issuer)
-            val targetName = QuickAccess.fetchColoredName(uuid)
+            val targetName = fetchColoredName(uuid)
 
             issuer.sendMessage("${CC.GREEN}You've warned $targetName${CC.GREEN} for ${CC.WHITE}$reason${CC.GREEN}.")
 
@@ -180,7 +181,7 @@ object PunishmentHandler
         Tasks.async {
             val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
-            val targetName = QuickAccess.fetchColoredName(uuid)
+            val targetName = fetchColoredName(uuid)
             val issuerUuid = QuickAccess.uuidOf(issuer)
 
             activePunishments.thenAccept {
@@ -239,7 +240,7 @@ object PunishmentHandler
         ForkJoinPool.commonPool().execute {
             val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
-            val targetName = QuickAccess.fetchColoredName(uuid)
+            val targetName = fetchColoredName(uuid)
 
             val issuerUuid = QuickAccess.uuidOf(issuer)
             val issuerWeight = QuickAccess.weightOf(issuer)
@@ -306,7 +307,7 @@ object PunishmentHandler
         targetName: String
     )
     {
-        val issuerName = QuickAccess.fetchColoredName(issuerUuid)
+        val issuerName = fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
         val broadcastPermission = if (silent) "lemon.staff" else ""
@@ -362,7 +363,7 @@ object PunishmentHandler
         targetName: String
     )
     {
-        val issuerName = QuickAccess.fetchColoredName(issuerUuid)
+        val issuerName = fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
         val broadcastPermission = if (silent) "lemon.staff" else ""
@@ -377,11 +378,13 @@ object PunishmentHandler
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
 
+            val coloredNameOfAddedBy = fetchColoredName(punishment.addedBy)
+
             if (broadcastPermission.isNotBlank())
             {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
-                    "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",
+                    "${CC.SEC}Issued By: ${CC.PRI}$coloredNameOfAddedBy ${CC.GRAY}(${punishment.addedOn})",
                     "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
                     "${CC.SEC}Removed By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.removedOn})",
                     "${CC.SEC}Removed Reason: ${CC.WHITE}${punishment.removedReason}",
