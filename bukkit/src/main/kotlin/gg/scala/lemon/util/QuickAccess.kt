@@ -421,3 +421,5 @@ infix fun Player.data(uuid: UUID): LemonPlayer?
 {
     return PlayerHandler.findPlayer(uuid).orElse(null)
 }
+
+private fun Player.isStaff(): Boolean = this.hasPermission("lemon.staff")

@@ -22,7 +22,6 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.ExperienceOrb
 import org.bukkit.entity.LivingEntity
@@ -38,11 +37,9 @@ import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
 import java.util.concurrent.ForkJoinPool
-import kotlin.math.roundToInt
 
 object PlayerListener : Listener
 {
-
     @EventHandler(
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true
@@ -87,7 +84,7 @@ object PlayerListener : Listener
 
             if (LemonConstants.DEBUG)
             {
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load the profile. (${event.name})")
+                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load resources. (${event.name})")
             }
         }
     }
@@ -137,15 +134,15 @@ object PlayerListener : Listener
             return
         }
 
-        val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
+        val ipRelativePunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.IP_RELATIVE)
 
         if (ipRelativePunishment != null)
         {
-            cancel(event, "${CC.RED}You may not chat while being in relation to a punished player.")
+            cancel(event, "${CC.RED}You cannot chat while being in relation to a banned player.")
             return
         }
 
-        val mutePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.MUTE)
+        val mutePunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.MUTE)
 
         if (mutePunishment != null)
         {
@@ -153,19 +150,19 @@ object PlayerListener : Listener
             return
         }
 
-        val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
+        val blacklistPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BLACKLIST)
 
         if (blacklistPunishment != null)
         {
-            cancel(event, "${CC.RED}You may not chat while being blacklist.")
+            cancel(event, "${CC.RED}You cannot chat while being blacklisted.")
             return
         }
 
-        val banPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BAN)
+        val banPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BAN)
 
         if (banPunishment != null)
         {
-            cancel(event, "${CC.RED}You may not chat while being banned.")
+            cancel(event, "${CC.RED}You cannot chat while being banned.")
             return
         }
 
@@ -201,7 +198,7 @@ object PlayerListener : Listener
 
         if (channelMatch == null)
         {
-            cancel(event, "${CC.RED}Something went wrong while sending your chat message")
+            cancel(event, "${CC.RED}We could not process your chat message")
             return
         }
 
@@ -311,9 +308,12 @@ object PlayerListener : Listener
 
                 if (lemonTarget != null)
                 {
-                    if (lemonTarget.getSetting("global-chat-disabled"))
+                    if (channelMatch!!.getId() == "default" && !player.hasPermission("lemon.staff"))
                     {
-                        continue
+                        if (lemonTarget.getSetting("global-chat-disabled"))
+                        {
+                            continue
+                        }
                     }
 
                     if (lemonTarget.getSetting(channelMatch?.getId() + "-disabled"))
@@ -431,27 +431,27 @@ object PlayerListener : Listener
             return
         }
 
-        val ipRelativePunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.IP_RELATIVE)
+        val ipRelativePunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.IP_RELATIVE)
 
         if (ipRelativePunishment != null)
         {
-            cancel(event, "${CC.RED}You may not perform commands while being in relation to a punished player.")
+            cancel(event, "${CC.RED}You cannot perform commands while being in relation to a punished player.")
             return
         }
 
-        val blacklistPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BLACKLIST)
+        val blacklistPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BLACKLIST)
 
         if (blacklistPunishment != null && command != "/register")
         {
-            cancel(event, "${CC.RED}You may not perform commands while being blacklisted.")
+            cancel(event, "${CC.RED}You cannot perform commands while being blacklisted.")
             return
         }
 
-        val banPunishment = lemonPlayer.fetchPunishmentOf(PunishmentCategory.BAN)
+        val banPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BAN)
 
         if (banPunishment != null && command != "/register")
         {
-            cancel(event, "${CC.RED}You may not perform commands while being banned.")
+            cancel(event, "${CC.RED}You cannot perform commands while being banned.")
             return
         }
 
@@ -536,7 +536,7 @@ object PlayerListener : Listener
     {
         if (event.player.hasMetadata("mod-mode"))
         {
-            event.player.sendMessage("${CC.RED}You may not break blocks while in mod-mode.")
+            event.player.sendMessage("${CC.RED}You cannot break blocks while in mod-mode.")
             event.isCancelled = true
         }
     }
@@ -546,7 +546,7 @@ object PlayerListener : Listener
     {
         if (event.player.hasMetadata("mod-mode"))
         {
-            event.player.sendMessage("${CC.RED}You may not place blocks while in mod-mode.")
+            event.player.sendMessage("${CC.RED}You cannot place blocks while in mod-mode.")
             event.isCancelled = true
         }
     }

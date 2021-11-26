@@ -656,7 +656,7 @@ class LemonPlayer(
         return data != null && data.asBoolean()
     }
 
-    fun fetchPunishmentOf(category: PunishmentCategory): Punishment?
+    fun fetchApplicablePunishmentInCategory(category: PunishmentCategory): Punishment?
     {
         return this.activePunishments[category]
     }
