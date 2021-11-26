@@ -173,6 +173,7 @@ object PunishmentHandler
         }
     }
 
+    @JvmOverloads
     fun handleUnPunishmentForTargetPlayerGlobally(
         issuer: CommandSender, uuid: UUID, reason: String,
         category: PunishmentCategory, silent: Boolean = false
@@ -213,6 +214,7 @@ object PunishmentHandler
      *
      * @author GrowlyX
      */
+    @JvmOverloads
     fun handlePunishmentForTargetPlayerGlobally(
         issuer: CommandSender, uuid: UUID,
         category: PunishmentCategory, duration: Long, reason: String,
@@ -279,22 +281,40 @@ object PunishmentHandler
                             remover = issuerUuid,
                             reason = "Re-${it[0].category.ing}"
                         )
-                    }
 
-                    fetchIpAddress(uuid).thenAccept { ipAddress ->
-                        val punishment = Punishment(
-                            UUID.randomUUID(), uuid, ipAddress, issuerUuid,
-                            System.currentTimeMillis(), Lemon.instance.settings.id,
-                            reason, duration, category
-                        )
-
-                        handlePostPunishmentCheck(
-                            punishment, silent, uuid,
-                            issuer, issuerUuid, targetName
+                        handlePostUnPunishmentCheck(it[0], silent, uuid, issuer, issuerUuid, targetName) {
+                            continuedPrePunishmentHandling(
+                                issuer, uuid, category, duration, reason, silent, issuerUuid, targetName
+                            )
+                        }
+                    } else
+                    {
+                        continuedPrePunishmentHandling(
+                            issuer, uuid, category, duration, reason, silent, issuerUuid, targetName
                         )
                     }
                 }
             }
+        }
+    }
+
+    private fun continuedPrePunishmentHandling(
+        issuer: CommandSender, uuid: UUID,
+        category: PunishmentCategory, duration: Long, reason: String,
+        silent: Boolean = false, issuerUuid: UUID?, targetName: String
+    )
+    {
+        fetchIpAddress(uuid).thenAccept { ipAddress ->
+            val punishment = Punishment(
+                UUID.randomUUID(), uuid, ipAddress, issuerUuid,
+                System.currentTimeMillis(), Lemon.instance.settings.id,
+                reason, duration, category
+            )
+
+            handlePostPunishmentCheck(
+                punishment, silent, uuid,
+                issuer, issuerUuid, targetName
+            )
         }
     }
 
@@ -360,7 +380,8 @@ object PunishmentHandler
         uuid: UUID,
         issuer: CommandSender,
         issuerUuid: UUID?,
-        targetName: String
+        targetName: String,
+        completed: (Boolean) -> Unit = {}
     )
     {
         val issuerName = fetchColoredName(issuerUuid)
@@ -400,6 +421,8 @@ object PunishmentHandler
                     "recalculate-punishments",
                     "uniqueId" to uuid.toString()
                 ).dispatchImmediately()
+
+                completed.invoke(true)
             }
         }
     }
