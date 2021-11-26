@@ -70,7 +70,7 @@ class PunishmentViewMenu(
                             }
                         }${it.fancyVersion + "s"}"
                     )
-                    .data(if (active >= 1) 5 else 14)
+                    .data(if (active >= 1 && viewType == HistoryViewType.TARGET_HIST) 5 else 14)
                     .amount(totalAmount)
                     .addToLore(
                         "${CC.GRAY}Viewing statistics for the",
