@@ -20,9 +20,6 @@ class Punishment(
     duration: Long,
     val category: PunishmentCategory
 ): Expirable(addedAt, duration), Savable {
-
-    val shortened = SplitUtil.splitUuid(uuid)
-
     var removedReason: String? = null
     var removedOn: String? = null
     var removedBy: UUID? = null
