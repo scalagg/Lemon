@@ -188,7 +188,7 @@ object PunishmentHandler
                 if (it.isNullOrEmpty())
                 {
                     issuer.sendMessage(
-                        "${CC.RED}No pre-existing punishment was found for $targetName${CC.RED}."
+                        "${CC.RED}$targetName${CC.RED} does not have an active punishment within this category."
                     )
                     return@thenAccept
                 }
@@ -267,8 +267,8 @@ object PunishmentHandler
                         {
                             issuer.sendMessage(
                                 arrayOf(
-                                    "${CC.RED}No pre-existing punishment was found for $targetName${CC.RED}.",
-                                    "${CC.RED}Please use ${CC.BOLD}/${category.name.lowercase()} ${CC.RED}instead."
+                                    "${CC.RED}$targetName${CC.RED} does not have an active punishment within this category.",
+                                    "${CC.RED}Please use ${CC.BOLD}/${category.name.lowercase()}${CC.RED} instead."
                                 )
                             )
                             return@thenAccept
