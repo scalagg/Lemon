@@ -37,6 +37,8 @@ import gg.scala.lemon.player.extension.network.NetworkOnlineStaffCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
+import gg.scala.lemon.player.nametag.rainbow.RainbowNametagCommand
+import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
@@ -240,6 +242,7 @@ class Lemon : ExtendedScalaPlugin()
         }
 
         commandManager.registerCommand(TestingCommand)
+        commandManager.registerCommand(RainbowNametagCommand)
     }
 
     private fun initialLoadPlayerQol()
@@ -251,9 +254,11 @@ class Lemon : ExtendedScalaPlugin()
             toCCColorFormat(lemonWebData.secondary)
         )
 
-        NametagHandler.registerProvider(DefaultNametagProvider())
-        NametagHandler.registerProvider(VanishNametagProvider())
-        NametagHandler.registerProvider(ModModeNametagProvider())
+        NametagHandler.registerProvider(DefaultNametagProvider)
+        NametagHandler.registerProvider(VanishNametagProvider)
+        NametagHandler.registerProvider(ModModeNametagProvider)
+
+        NametagHandler.registerProvider(RainbowNametagProvider)
 
         ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
 
