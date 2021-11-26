@@ -234,6 +234,12 @@ object QuickAccess {
         preParsedReason = preParsedReason.removePrefix("-S ")
         preParsedReason = preParsedReason.removeSuffix(" -S")
 
+        preParsedReason = preParsedReason.removePrefix("-S")
+        preParsedReason = preParsedReason.removeSuffix("-S")
+
+        preParsedReason = preParsedReason.removePrefix("-s")
+        preParsedReason = preParsedReason.removeSuffix("-s")
+
         return preParsedReason.ifBlank { fallback }
     }
 
