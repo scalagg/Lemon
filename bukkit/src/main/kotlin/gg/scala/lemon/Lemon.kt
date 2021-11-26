@@ -15,6 +15,7 @@ import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
+import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
@@ -37,7 +38,8 @@ import gg.scala.lemon.player.extension.network.NetworkOnlineStaffCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
-import gg.scala.lemon.player.nametag.rainbow.RainbowNametagCommand
+import gg.scala.lemon.player.nametag.command.NametagCommand
+import gg.scala.lemon.player.nametag.rainbow.RainbowNametagHandler
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
@@ -242,7 +244,7 @@ class Lemon : ExtendedScalaPlugin()
         }
 
         commandManager.registerCommand(TestingCommand)
-        commandManager.registerCommand(RainbowNametagCommand)
+        commandManager.registerCommand(NametagCommand)
     }
 
     private fun initialLoadPlayerQol()
@@ -372,6 +374,8 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Now utilizing spark for server statistics.")
         }
 
+        RainbowNametagHandler.initialLoad()
+
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
         }ms.")
@@ -379,12 +383,18 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun findClassesWithinPackageWithPluginEnabled(`package`: String): List<Class<*>>
     {
-        return ClassUtils.getClassesInPackage(
-            this, `package`
-        ).filter {
-            server.pluginManager.getPlugin(
-                it.getAnnotation(RequiredPlugin::class.java).value
-            ) != null
+        return try
+        {
+            ClassUtils.getClassesInPackage(
+                this, `package`
+            ).filter {
+                server.pluginManager.getPlugin(
+                    it.getAnnotation(RequiredPlugin::class.java).value
+                ) != null
+            }
+        } catch (ignored: Exception)
+        {
+            emptyList()
         }
     }
 

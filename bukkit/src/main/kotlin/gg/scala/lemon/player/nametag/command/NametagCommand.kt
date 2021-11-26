@@ -1,10 +1,12 @@
-package gg.scala.lemon.player.nametag.rainbow
+package gg.scala.lemon.player.nametag.command
 
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.nametag.rainbow.RainbowNametagHandler
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Optional
+import net.evilblock.cubed.acf.annotation.Subcommand
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
@@ -12,9 +14,11 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 11/25/2021
  */
-object RainbowNametagCommand : BaseCommand()
+@CommandAlias("nametag")
+@CommandPermission("lemon.command.nametag")
+object NametagCommand : BaseCommand()
 {
-    @CommandAlias("nametag rainbow")
+    @Subcommand("rainbow")
     @CommandPermission("lemon.command.nametag.rainbow")
     fun onRainbow(player: Player, @Optional target: LemonPlayer?)
     {

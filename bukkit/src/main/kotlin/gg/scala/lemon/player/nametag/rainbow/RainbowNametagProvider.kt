@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @since 11/25/2021
  */
 object RainbowNametagProvider : NametagProvider(
-    "rainbow", 20
+    "rainbow", 1000
 )
 {
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo?

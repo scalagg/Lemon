@@ -44,6 +44,17 @@ object RainbowNametagHandler : Runnable
         }
 
         currentColor = options[index]
+
+        nametagInfo = NametagProvider.createNametag(
+            currentColor.toString(), ""
+        )
+
+        rainbowNametagEnabled.forEach {
+            val bukkitPlayer = Bukkit.getPlayer(it)
+                ?: return@forEach
+
+            NametagHandler.reloadPlayer(bukkitPlayer)
+        }
     }
 
     val rainbowNametagEnabled = mutableSetOf<UUID>()
@@ -54,20 +65,7 @@ object RainbowNametagHandler : Runnable
 
     fun initialLoad()
     {
-        Schedulers.async().runRepeating(Runnable {
-            Rainbow.run()
-
-            nametagInfo = NametagProvider.createNametag(
-                currentColor.toString(), ""
-            )
-
-            rainbowNametagEnabled.forEach {
-                val bukkitPlayer = Bukkit.getPlayer(it)
-                    ?: return@forEach
-
-                NametagHandler.reloadPlayer(bukkitPlayer)
-            }
-        }, 0L, 20L)
+        Schedulers.async().runRepeating(this, 0L, 20L)
 
         Events.subscribe(PlayerQuitEvent::class.java).handler {
             rainbowNametagEnabled.remove(it.player.uniqueId)
