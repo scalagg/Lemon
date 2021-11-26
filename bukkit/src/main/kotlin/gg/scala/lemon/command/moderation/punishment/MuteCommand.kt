@@ -3,6 +3,8 @@ package gg.scala.lemon.command.moderation.punishment
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlayerGlobally
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.isSilent
 import gg.scala.lemon.util.QuickAccess.parseReason
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -23,14 +25,14 @@ class MuteCommand : BaseCommand() {
     @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onMute(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.MUTE,
-            duration = durationFinal, reason = parseReason(reason, fallback = "Spamming"),
-            silent = silent
+            duration = durationFinal,
+            reason = parseReason(reason, fallback = "Spamming"),
+            silent = isSilent(reason),
         )
     }
 
@@ -39,14 +41,14 @@ class MuteCommand : BaseCommand() {
     @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onReMute(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.MUTE,
-            duration = durationFinal, reason = parseReason(reason, fallback = "Spamming"),
-            silent = silent, rePunishing = true
+            duration = durationFinal,
+            reason = parseReason(reason, fallback = "Spamming"),
+            silent = isSilent(reason), rePunishing = true
         )
     }
 
@@ -55,12 +57,11 @@ class MuteCommand : BaseCommand() {
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.mute.remove")
     fun onUnMute(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
-
         handleUnPunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.MUTE,
-            reason = parseReason(reason, fallback = "Appealed"), silent = silent,
+            reason = parseReason(reason, fallback = "Appealed"),
+            silent = isSilent(reason),
         )
     }
 }

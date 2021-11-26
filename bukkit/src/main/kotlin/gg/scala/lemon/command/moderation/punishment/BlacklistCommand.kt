@@ -3,6 +3,8 @@ package gg.scala.lemon.command.moderation.punishment
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlayerGlobally
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.isSilent
 import gg.scala.lemon.util.QuickAccess.parseReason
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.*
@@ -21,13 +23,12 @@ class BlacklistCommand : BaseCommand() {
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@all-players Unfair Advantage")
     fun onBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
-
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BLACKLIST,
             duration = Long.MAX_VALUE,
-            reason = parseReason(reason), silent = silent
+            reason = parseReason(reason),
+            silent = isSilent(reason),
         )
     }
 
@@ -36,13 +37,12 @@ class BlacklistCommand : BaseCommand() {
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@all-players Unfair Advantage")
     fun onReBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
-
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BLACKLIST,
             duration = Long.MAX_VALUE,
-            reason = parseReason(reason), silent = silent,
+            reason = parseReason(reason),
+            silent = isSilent(reason),
             rePunishing = true
         )
     }
@@ -52,12 +52,11 @@ class BlacklistCommand : BaseCommand() {
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.blacklist.remove")
     fun onUnBlacklist(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
-
         handleUnPunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BLACKLIST,
-            reason = parseReason(reason, fallback = "Appealed"), silent = silent,
+            reason = parseReason(reason, fallback = "Appealed"),
+            silent = isSilent(reason)
         )
     }
 }

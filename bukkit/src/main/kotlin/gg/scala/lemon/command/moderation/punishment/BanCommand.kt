@@ -3,6 +3,7 @@ package gg.scala.lemon.command.moderation.punishment
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlayerGlobally
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.util.QuickAccess.isSilent
 import gg.scala.lemon.util.QuickAccess.parseReason
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -23,14 +24,13 @@ class BanCommand : BaseCommand() {
     @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BAN,
             duration = durationFinal, reason = parseReason(reason),
-            silent = silent
+            silent = isSilent(reason)
         )
     }
 
@@ -39,14 +39,13 @@ class BanCommand : BaseCommand() {
     @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onReBan(sender: CommandSender, uuid: UUID, @Optional duration: Duration?, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BAN,
             duration = durationFinal, reason = parseReason(reason),
-            silent = silent, rePunishing = true
+            silent = isSilent(reason), rePunishing = true
         )
     }
 
@@ -55,12 +54,11 @@ class BanCommand : BaseCommand() {
     @CommandCompletion("@all-players Appealed")
     @CommandPermission("lemon.command.ban.remove")
     fun onUnBan(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
-
         handleUnPunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
             category = PunishmentCategory.BAN,
-            reason = parseReason(reason, fallback = "Appealed"), silent = silent,
+            reason = parseReason(reason, fallback = "Appealed"),
+            silent = isSilent(reason),
         )
     }
 }

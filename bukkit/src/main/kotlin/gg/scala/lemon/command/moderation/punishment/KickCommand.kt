@@ -2,6 +2,8 @@ package gg.scala.lemon.command.moderation.punishment
 
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.isSilent
 import gg.scala.lemon.util.QuickAccess.parseReason
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.*
@@ -20,13 +22,11 @@ class KickCommand : BaseCommand() {
     @CommandPermission("lemon.command.kick")
     @CommandCompletion("@all-players Camping")
     fun onKick(sender: CommandSender, uuid: UUID, @Optional reason: String?) {
-        val silent = reason?.endsWith(" -s") == true || reason?.startsWith("-s ") ?: false
-
         handlePunishmentForTargetPlayerGlobally(
             issuer = sender, uuid = uuid,
-            category = PunishmentCategory.KICK,
-            duration = 1L, reason = parseReason(reason, fallback = "Camping"),
-            silent = silent
+            category = PunishmentCategory.KICK, duration = 1L,
+            reason = parseReason(reason, fallback = "Camping"),
+            silent = isSilent(reason),
         )
     }
 }

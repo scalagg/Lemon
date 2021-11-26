@@ -220,6 +220,9 @@ object QuickAccess {
     }
 
     @JvmStatic
+    fun isSilent(reason: String?) = reason?.endsWith("-s", true) == true || reason?.startsWith("-s", true) ?: false
+
+    @JvmStatic
     fun parseReason(
         reason: String?,
         fallback: String = "Unfair Advantage"
@@ -227,6 +230,9 @@ object QuickAccess {
         var preParsedReason = reason ?: fallback
         preParsedReason = preParsedReason.removePrefix("-s ")
         preParsedReason = preParsedReason.removeSuffix(" -s")
+
+        preParsedReason = preParsedReason.removePrefix("-S ")
+        preParsedReason = preParsedReason.removeSuffix(" -S")
 
         return preParsedReason.ifBlank { fallback }
     }
