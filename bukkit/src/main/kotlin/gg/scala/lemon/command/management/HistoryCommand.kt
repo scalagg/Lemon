@@ -86,10 +86,12 @@ class HistoryCommand : BaseCommand()
     {
         player.sendMessage(
             "${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC}${
-                when (type)
+                if (type == HistoryViewType.STAFF_HIST)
                 {
-                    HistoryViewType.STAFF_HIST -> " staff"
-                    else -> ""
+                    " staff"
+                } else
+                {
+                    ""
                 }
             } history..."
         )
@@ -99,10 +101,12 @@ class HistoryCommand : BaseCommand()
             {
                 player.sendMessage(
                     "${CC.RED}No punishments found ${
-                        when (type)
+                        if (type == HistoryViewType.STAFF_HIST)
                         {
-                            HistoryViewType.STAFF_HIST -> "by"
-                            HistoryViewType.TARGET_HIST -> "for"
+                            "by"
+                        } else
+                        {
+                            "for"
                         }
                     } ${CC.YELLOW}$original${CC.RED}."
                 )

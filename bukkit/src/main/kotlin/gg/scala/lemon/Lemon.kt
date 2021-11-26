@@ -33,6 +33,8 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.color.PlayerColorHandler
+import gg.scala.lemon.player.entity.superboat.EntitySuperBoatCommand
+import gg.scala.lemon.player.entity.superboat.EntitySuperBoatHandler
 import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.extension.network.NetworkOnlineStaffCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
@@ -245,6 +247,7 @@ class Lemon : ExtendedScalaPlugin()
 
         commandManager.registerCommand(TestingCommand)
         commandManager.registerCommand(NametagCommand)
+        commandManager.registerCommand(EntitySuperBoatCommand)
     }
 
     private fun initialLoadPlayerQol()
@@ -375,6 +378,10 @@ class Lemon : ExtendedScalaPlugin()
         }
 
         RainbowNametagHandler.initialLoad()
+        logger.info("Setup rainbow nametag resources.")
+
+        EntitySuperBoatHandler.initialLoad()
+        logger.info("Setup superboat resources.")
 
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
