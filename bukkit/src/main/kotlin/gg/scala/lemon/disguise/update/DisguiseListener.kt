@@ -3,6 +3,7 @@ package gg.scala.lemon.disguise.update
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.handler.PlayerHandler
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -46,12 +47,18 @@ object DisguiseListener : Listener {
     fun onLeave(event: PlayerQuitEvent) {
         if (event.player.hasMetadata("disguised"))
         {
-            DisguiseProvider.handleUnDisguise(
-                player = event.player,
-                suppressUnDisguiseEvent = true,
-                sendNotification = false,
-                callInternal = false
-            )
+            try
+            {
+                DisguiseProvider.handleUnDisguise(
+                    player = event.player,
+                    suppressUnDisguiseEvent = true,
+                    sendNotification = false,
+                    callInternal = false
+                )
+            } catch (ignored: ConditionFailedException)
+            {
+
+            }
         }
     }
 }
