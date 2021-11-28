@@ -26,6 +26,7 @@ import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.hotbar.HotbarPresetHandler
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -382,6 +383,9 @@ class Lemon : ExtendedScalaPlugin()
 
         EntitySuperBoatHandler.initialLoad()
         logger.info("Setup superboat resources.")
+
+        HotbarPresetHandler.initialLoad()
+        logger.info("Setup hotbar preset resources.")
 
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
