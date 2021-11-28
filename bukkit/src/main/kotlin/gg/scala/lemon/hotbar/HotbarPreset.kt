@@ -3,7 +3,6 @@ package gg.scala.lemon.hotbar
 import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import gg.scala.lemon.hotbar.entry.impl.defaults.NoHotbarPresetEntry
 import org.bukkit.entity.Player
-import kotlin.reflect.KClass
 
 /**
  * @author GrowlyX
@@ -14,14 +13,14 @@ class HotbarPreset
     companion object
     {
         @JvmStatic
-        val HOTBAR_RANGE = 0 until 8
+        val HOTBAR_RANGE = 0 until 9
     }
 
     val entries = mutableMapOf<Int, HotbarPresetEntry>()
 
     init
     {
-        for (slot in 0 until 8)
+        for (slot in HOTBAR_RANGE)
         {
             entries[slot] = NoHotbarPresetEntry
         }
@@ -43,9 +42,11 @@ class HotbarPreset
                 entry.key, entry.value.finalizedItemStack(player)
             )
         }
+
+        player.updateInventory()
     }
 
-    inline fun <reified T : Any> mutateSlot(
+    inline fun <reified T : HotbarPresetEntry> mutateSlot(
         int: Int, lambda: (T) -> Unit
     )
     {
@@ -56,5 +57,5 @@ class HotbarPreset
         slot.apply(lambda)
     }
 
-    inline fun <reified T : Any> getSlotAs(int: Int): T = entries[int] as T
+    inline fun <reified T : HotbarPresetEntry> getSlotAs(int: Int): T = entries[int] as T
 }
