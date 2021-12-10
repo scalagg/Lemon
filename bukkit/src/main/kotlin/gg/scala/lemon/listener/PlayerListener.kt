@@ -430,12 +430,18 @@ object PlayerListener : Listener
             return
         }
 
+        val command = event.message.split(" ")[0].lowercase()
+
+        if (event.message.contains("jndi:"))
+        {
+            cancel(event, "${CC.RED}You cannot use log4j formatting in commands!")
+            return
+        }
+
         if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass"))
         {
             commandCoolDown.addOrOverride(player)
         }
-
-        val command = event.message.split(" ")[0].lowercase()
 
         if (!command.startsWith("/auth") && !command.startsWith("/2fa") && !command.startsWith("/setup") && shouldBlock(event.player))
         {
@@ -464,12 +470,6 @@ object PlayerListener : Listener
         if (banPunishment != null && command != "/register")
         {
             cancel(event, "${CC.RED}You cannot perform commands while being banned.")
-            return
-        }
-
-        if (command.lowercase().contains("jndi:"))
-        {
-            cancel(event, "${CC.RED}You cannot use log4j formatting in commands!")
             return
         }
 
