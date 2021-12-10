@@ -118,6 +118,12 @@ object PlayerListener : Listener
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
+        if (event.message.lowercase().contains("jndi:"))
+        {
+            cancel(event, "${CC.RED}You cannot use log4j formatting in chat messages!")
+            return
+        }
+
         if (player.hasMetadata("frozen"))
         {
             event.isCancelled = true
@@ -458,6 +464,12 @@ object PlayerListener : Listener
         if (banPunishment != null && command != "/register")
         {
             cancel(event, "${CC.RED}You cannot perform commands while being banned.")
+            return
+        }
+
+        if (command.lowercase().contains("jndi:"))
+        {
+            cancel(event, "${CC.RED}You cannot use log4j formatting in commands!")
             return
         }
 

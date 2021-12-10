@@ -33,23 +33,11 @@ object ChatHandler {
     }
 
     fun findChannelOverride(player: Player): Optional<ChannelOverride> {
-        var override: ChannelOverride? = null
-
-        if (channelOverrides.isEmpty()) {
-            return Optional.ofNullable(null)
-        }
-
-        var index = 0
-
-        while (override == null || !override.shouldOverride(player)) {
-            override = channelOverrides[index++]
-
-            if (index == channelOverrides.size) {
-                break
-            }
-        }
-
-        return Optional.ofNullable(override)
+        return Optional.ofNullable(
+            channelOverrides
+                .sortedByDescending { it.getWeight() }
+                .firstOrNull { it.shouldOverride(player) }
+        )
     }
 
     private fun registerChannel(id: String, channel: Channel) {
