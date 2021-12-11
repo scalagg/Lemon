@@ -30,19 +30,16 @@ object HotbarPresetHandler
         Events.subscribe(PlayerInteractEvent::class.java)
             .filter { it.action.name.contains("RIGHT") }
             .filter { it.item != null }
-            .filter { ItemUtils.itemTagHasKey(it.item, "lemon_uuid") }
             .handler { event ->
-                val uuidOfItem = UUID.fromString(
-                    ItemUtils.readItemTagKey(
-                        event.item, "lemon_uuid"
-                    ).toString()
-                )
-
                 var matchingEntry: HotbarPresetEntry? = null
 
                 trackedHotbars.forEach { tracked ->
                     val first = tracked.value.entries
-                        .values.firstOrNull { it.uniqueId() == uuidOfItem }
+                        .values.firstOrNull {
+                            val stack = it.buildItemStack(player = event.player) ?: return@firstOrNull false
+
+                            return@firstOrNull ItemUtils.isSimilar(event.item, stack)
+                        }
                         ?: return@forEach
 
                     matchingEntry = first
