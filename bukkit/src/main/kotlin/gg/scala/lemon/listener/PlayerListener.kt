@@ -118,7 +118,7 @@ object PlayerListener : Listener
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-        if (event.message.lowercase().contains("jndi:"))
+        if (event.message.lowercase().matches(Regex.fromLiteral("\\\$\\{*\\}")) || event.message.lowercase().contains("jndi:"))
         {
             cancel(event, "${CC.RED}You cannot use log4j formatting in chat messages!")
             return
@@ -432,7 +432,7 @@ object PlayerListener : Listener
 
         val command = event.message.split(" ")[0].lowercase()
 
-        if (event.message.contains("jndi:"))
+        if (event.message.lowercase().matches(Regex.fromLiteral("\\\$\\{*\\}")) || event.message.lowercase().contains("jndi:"))
         {
             cancel(event, "${CC.RED}You cannot use log4j formatting in commands!")
             return
