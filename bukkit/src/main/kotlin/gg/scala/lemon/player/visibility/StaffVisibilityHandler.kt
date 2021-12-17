@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 /**
  * @author puugz, GrowlyX
  */
-class StaffVisibilityHandler : VisibilityAdapter {
+object StaffVisibilityHandler : VisibilityAdapter {
 
     override fun getAction(toRefresh: Player, refreshFor: Player): VisibilityAction {
         val lemonPlayer = PlayerHandler.findPlayer(toRefresh).orElse(null)

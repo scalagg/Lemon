@@ -306,12 +306,7 @@ object PlayerListener : Listener
         {
             for (target in Bukkit.getOnlinePlayers())
             {
-                var canReceive = true
-
-                if (channelMatch!!.getPermission() != null)
-                {
-                    canReceive = target.hasPermission(channelMatch!!.getPermission())
-                }
+                val canReceive = channelMatch!!.hasPermission(target)
 
                 if (!canReceive)
                 {

@@ -303,7 +303,7 @@ object QuickAccess {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-fancy-message",
-                "message" to Serializers.gson.toJson(fancyMessage),
+                "message" to gson.toJson(fancyMessage),
                 "permission" to (permission ?: "")
             ).queueForDispatch()
         }

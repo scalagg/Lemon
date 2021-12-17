@@ -268,7 +268,7 @@ class Lemon : ExtendedScalaPlugin()
 
         ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
 
-        VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler())
+        VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler)
 
         if (settings.disguiseEnabled)
         {
@@ -318,7 +318,7 @@ class Lemon : ExtendedScalaPlugin()
 
         try
         {
-            val classCheck = Class.forName("ScalaSpigot")
+            Class.forName("ScalaSpigot")
             ScalaSpigotSorterExtension.initialLoad()
 
             logger.info("Enabled ScalaSpigot Sorter implementation.")

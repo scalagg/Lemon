@@ -20,13 +20,12 @@ object ModModeBoardProvider: ScoreboardOverride() {
         val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            board.add("${CC.GRAY}${CC.S}--------------------")
             board.add(getVanishStatus(it))
+            board.add("")
             board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size} ${CC.GRAY}(${Lemon.instance.localInstance.metaData["highest-player-count"]})")
             board.add("Channel: ${CC.PRI}${it.getMetadata("channel")?.asString() ?: "${CC.PRI}Regular"}")
             board.add("Ping: ${CC.PRI}${MinecraftReflection.getPing(player)}ms")
             board.add("TPS: ${CC.PRI}${String.format("%.2f", Lemon.instance.localInstance.ticksPerSecond)}")
-            board.add("${CC.GRAY}${CC.S}--------------------")
         }
     }
 
