@@ -182,19 +182,6 @@ object PlayerListener : Listener
 
         var channelMatch: Channel? = null
 
-        ChatHandler.channels.forEach { (_, channel) ->
-            if (channel.isPrefixed(event.message))
-            {
-                channelMatch = channel
-                return@forEach
-            }
-        }
-
-        if (channelMatch == null)
-        {
-            channelMatch = ChatHandler.channels["default"]
-        }
-
         lemonPlayer.getMetadata("channel")?.let {
             val possibleChannel = ChatHandler.channels[it.asString()]
 
@@ -208,6 +195,19 @@ object PlayerListener : Listener
 
         channelOverride.ifPresent {
             channelMatch = it
+        }
+
+        ChatHandler.channels.forEach { (_, channel) ->
+            if (channel.isPrefixed(event.message))
+            {
+                channelMatch = channel
+                return@forEach
+            }
+        }
+
+        if (channelMatch == null)
+        {
+            channelMatch = ChatHandler.channels["default"]
         }
 
         if (channelMatch == null)
