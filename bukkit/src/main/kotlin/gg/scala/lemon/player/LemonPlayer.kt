@@ -44,8 +44,6 @@ class LemonPlayer(
     var ipAddress: String?
 ) : Savable
 {
-    private val bungeePermissions = mutableListOf<String>()
-
     var previousIpAddress: String? = null
 
     var pastIpAddresses = mutableMapOf<String, Long>()
@@ -536,10 +534,7 @@ class LemonPlayer(
     private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false)
     {
         val handleAddPermission: (String, Player) -> Unit = { it, player ->
-            if (it.startsWith("%"))
-            {
-                bungeePermissions.add(it.removePrefix("%"))
-            } else
+            if (!it.startsWith("%"))
             {
                 attachment!!.setPermission(it, !it.startsWith("*"))
 
