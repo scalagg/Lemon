@@ -5,7 +5,7 @@ import net.evilblock.cubed.nametag.NametagProvider
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
-object ModModeNametagProvider: NametagProvider("mod-mode", 50) {
+object ModModeNametagProvider: NametagProvider("mod-mode", 100) {
 
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo? {
         return if (toRefresh.hasMetadata("mod-mode") && refreshFor.hasPermission("lemon.staff")) {

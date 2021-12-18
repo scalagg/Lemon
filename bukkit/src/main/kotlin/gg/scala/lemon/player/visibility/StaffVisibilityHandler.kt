@@ -19,7 +19,7 @@ object StaffVisibilityHandler : VisibilityAdapter {
         }
 
         if (toRefresh.hasMetadata("vanished")) {
-            if (!refreshFor.hasPermission("lemon.staff") || lemonPlayerTarget.activeGrant!!.getRank().weight < toRefresh.getMetadata("vanish-power")[0].asInt()) {
+            if (lemonPlayerTarget.activeGrant!!.getRank().weight < toRefresh.getMetadata("vanish-power")[0].asInt()) {
                 return VisibilityAction.HIDE
             }
         }
