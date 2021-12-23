@@ -46,6 +46,7 @@ class HotbarPreset
         player.updateInventory()
     }
 
+    @JvmSynthetic
     inline fun <reified T : HotbarPresetEntry> mutateSlot(
         int: Int, lambda: (T) -> Unit
     )
@@ -57,5 +58,6 @@ class HotbarPreset
         slot.apply(lambda)
     }
 
+    @JvmSynthetic
     inline fun <reified T : HotbarPresetEntry> getSlotAs(int: Int): T = entries[int] as T
 }

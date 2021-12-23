@@ -343,25 +343,6 @@ class Lemon : ExtendedScalaPlugin()
             }
         }
 
-        // filter through all placeholder implementations
-        // & register the ones which have the specified plugin enabled
-//        findClassesWithinPackageWithPluginEnabled(
-//            "gg.scala.lemon.adapter.placeholder.impl"
-//        ).forEach {
-//            try
-//            {
-//                val placeholderAdapter = it.newInstance() as PlaceholderAdapter
-//                placeholderAdapter.register()
-//
-//                logger.info(
-//                    "${placeholderAdapter.getId()} placeholders have been registered."
-//                )
-//            } catch (ignored: Exception)
-//            {
-//                logger.info("Failed to instantiate PlaceholderAdapter: ${it.simpleName}.kt")
-//            }
-//        }
-
         if (server.pluginManager.getPlugin("ProtocolLib") != null)
         {
             ProtocolLibHook.initialLoad()
@@ -575,9 +556,19 @@ class Lemon : ExtendedScalaPlugin()
 
         commandManager.commandCompletions.registerAsyncCompletion("all-players") {
             return@registerAsyncCompletion mutableListOf<String>().also {
-                Bukkit.getOnlinePlayers().forEach { player ->
-                    it.add(player.name)
-                }
+                Bukkit.getOnlinePlayers()
+                    .filter { !it.hasMetadata("vanished") }
+                    .forEach { player ->
+                        it.add(player.name)
+                    }
+            }
+        }
+
+        commandManager.commandCompletions.registerAsyncCompletion("players") {
+            return@registerAsyncCompletion mutableListOf<String>().also {
+                Bukkit.getOnlinePlayers()
+                    .filter { !it.hasMetadata("vanished") }
+                    .forEach { player -> it.add(player.name) }
             }
         }
     }
