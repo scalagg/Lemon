@@ -63,9 +63,6 @@ class LemonPlayer(
 
     var metadata = mutableMapOf<String, Metadata>()
 
-    val isStaff: Boolean
-        get() = hasPermission("lemon.staff")
-
     val bukkitPlayer: Player?
         get() = Bukkit.getPlayer(uniqueId)
 
@@ -261,8 +258,6 @@ class LemonPlayer(
                     grant.isRemoved = true
 
                     grant.save()
-
-                    shouldNotifyPlayer = true
                 }
             }
 
@@ -271,7 +266,7 @@ class LemonPlayer(
                 this.activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
 
                 // This should never happen, so we will
-                // revert the grant back to the old one.
+                // revert the grant back to the old grant.
                 if (this.activeGrant == null && oldGrant != null)
                 {
                     this.activeGrant = oldGrant
