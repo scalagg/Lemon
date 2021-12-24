@@ -1,4 +1,0 @@
-allprojects {
-    group 'gg.scala.lemon'
-    version '1.0.0'
-}
