@@ -114,7 +114,7 @@ object ChatMessageFilterHandler
                 }
         }
 
-        return shouldAllowMessage
+        return !shouldAllowMessage
     }
 
     private fun String.sanitized(): String

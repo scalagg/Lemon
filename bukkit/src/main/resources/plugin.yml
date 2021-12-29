@@ -1,5 +1,5 @@
 name: Lemon
-version: @version
+version: 1.1.0
 main: gg.scala.lemon.Lemon
 
 author: Scala
