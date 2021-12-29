@@ -25,6 +25,7 @@ import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
+import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.hotbar.HotbarPresetHandler
 import gg.scala.lemon.listener.PlayerListener
@@ -363,10 +364,13 @@ class Lemon : ExtendedScalaPlugin()
         logger.info("Setup rainbow nametag resources.")
 
         EntitySuperBoatHandler.initialLoad()
-        logger.info("Setup superboat resources.")
+        logger.info("Setup super-boat resources.")
 
         HotbarPresetHandler.initialLoad()
         logger.info("Setup hotbar preset resources.")
+
+        ChatMessageFilterHandler.initialLoad()
+        logger.info("Setup chat message filter resources.")
 
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
