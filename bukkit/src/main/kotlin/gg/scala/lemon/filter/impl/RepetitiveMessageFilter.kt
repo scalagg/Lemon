@@ -26,7 +26,7 @@ object RepetitiveMessageFilter : ChatMessageFilter
     }
 
     override fun formDescription(player: Player) =
-        "The message matched the last message the player sent."
+        "This message matches their previous message."
 
     override fun isFiltered(
         player: Player, message: String
