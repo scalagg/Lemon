@@ -121,9 +121,11 @@ object ChatMessageFilterHandler
 
             Bukkit.getOnlinePlayers()
                 .mapNotNull { PlayerHandler.findPlayer(it).orElse(null) }
-                .filter { it.hasPermission("lemon.staff") && !it.getSetting("filtered-messages-disabled") }
+                .filter { it.hasPermission("lemon.staff")/* && !it.getSetting("filtered-messages-disabled")*/ }
                 .forEach {
                     fancyMessage.sendToPlayer(it.bukkitPlayer!!)
+
+                    println("sent to ${it.name}")
                 }
         }
 
