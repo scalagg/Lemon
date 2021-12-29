@@ -85,9 +85,9 @@ object ChatMessageFilterHandler
             report.add(CC.GRAY + "This message contains ${CC.WHITE}${containsFiltered.size}${CC.GRAY} phrase${
                 if (containsFiltered.size == 1) "" else "s"
             } which")
-            report.add(CC.GRAY + "flagged ${CC.WHITE}$filteredPhrasesCount${CC.GRAY} filter${
+            report.add(CC.GRAY + "violated ${CC.WHITE}$filteredPhrasesCount${CC.GRAY} filter${
                 if (filteredPhrasesCount == 1) "" else "s"
-            } altogether.")
+            }.")
         }
 
         val shouldAllowMessage =
@@ -124,8 +124,6 @@ object ChatMessageFilterHandler
                 .filter { it.hasPermission("lemon.staff")/* && !it.getSetting("filtered-messages-disabled")*/ }
                 .forEach {
                     fancyMessage.sendToPlayer(it.bukkitPlayer!!)
-
-                    println("sent to ${it.name}")
                 }
         }
 

@@ -33,13 +33,14 @@ object RepetitiveMessageFilter : ChatMessageFilter
     ): Boolean
     {
         val lastMessage = lastMessages[player.uniqueId]
-            ?: return false
-
-        val similarity = InternalSimilarityCheck
-            .findSimilarityBetween(message, lastMessage)
-
         lastMessages[player.uniqueId] = message
 
-        return similarity >= MAX_SIMILARITY_FLAG
+        return if (lastMessage != null)
+        {
+            val similarity = InternalSimilarityCheck
+                .findSimilarityBetween(message, lastMessage)
+
+            similarity >= MAX_SIMILARITY_FLAG
+        } else false
     }
 }
