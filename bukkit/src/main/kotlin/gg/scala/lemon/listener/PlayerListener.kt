@@ -6,6 +6,7 @@ import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
 import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.cooldown.impl.SlowChatCooldown
+import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -40,8 +41,6 @@ import java.util.concurrent.ForkJoinPool
 
 object PlayerListener : Listener
 {
-    private val regex = Lemon.instance.settings.blacklistedRegex.toRegex()
-
     @EventHandler(
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true
@@ -119,12 +118,6 @@ object PlayerListener : Listener
     {
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
-        if (event.message.lowercase().matches(regex) || event.message.lowercase().contains("jndi:"))
-        {
-            cancel(event, "${CC.RED}You cannot use log4j formatting in chat messages!")
-            return
-        }
 
         if (player.hasMetadata("frozen"))
         {
@@ -264,9 +257,15 @@ object PlayerListener : Listener
         if (event.isCancelled)
             return
 
-        if (FilterHandler.checkIfMessageFiltered(event.message, player))
+        val result = ChatMessageFilterHandler
+            .handleMessageFilter(player, event.message)
+
+        if (result)
         {
-            if (!player.hasPermission("lemon.filter.bypass"))
+            if (player.hasPermission("lemon.filter.bypass"))
+            {
+                player.sendMessage("${CC.RED}That message would've been filtered!")
+            } else
             {
                 player.sendMessage(
                     channelMatch?.getFormatted(
@@ -276,11 +275,6 @@ object PlayerListener : Listener
                 )
 
                 event.isCancelled = true
-            } else
-            {
-                player.sendMessage(
-                    "${CC.RED}That message would've been filtered!"
-                )
             }
         }
 
@@ -411,6 +405,9 @@ object PlayerListener : Listener
         }
     }
 
+    @JvmStatic
+    val BLACKLISTED_SYNTAX = "\\\$\\{*\\}".toRegex()
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent)
     {
@@ -429,9 +426,9 @@ object PlayerListener : Listener
 
         val command = event.message.split(" ")[0].lowercase()
 
-        if (event.message.lowercase().matches(regex) || event.message.lowercase().contains("jndi:"))
+        if (event.message.matches(BLACKLISTED_SYNTAX))
         {
-            cancel(event, "${CC.RED}You cannot use log4j formatting in commands!")
+            cancel(event, "${CC.RED}You cannot use this syntax in commands!")
             return
         }
 

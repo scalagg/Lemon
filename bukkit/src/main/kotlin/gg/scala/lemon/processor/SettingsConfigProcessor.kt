@@ -12,7 +12,7 @@ class SettingsConfigProcessor {
 
     @Comment("What's the password to your network details?")
     val serverPassword: String = "server_password"
-    val serverPasswordSupplier: String = "api.scala.gg"
+    val serverPasswordSupplier: String = "127.0.0.1"
     val serverPasswordHttps: Boolean = false
 
     @Comment("Shall console be able to view chat messages?")
@@ -34,10 +34,9 @@ class SettingsConfigProcessor {
         "/ver", "/icanhasbukkit"
     )
 
-    val blacklistedRegex = "\\\$\\{*\\}"
-
     val blacklistedPhraseRegex = listOf(
-        "(n|i){1,32}((g{2,32}|q){1,32}|[gq]{2,32})[e3ra]{1,32}"
+        "(n|i){1,32}((g{2,32}|q){1,32}|[gq]{2,32})[e3ra]{1,32}",
+        "\\\$\\{*\\}"
     )
 
 }

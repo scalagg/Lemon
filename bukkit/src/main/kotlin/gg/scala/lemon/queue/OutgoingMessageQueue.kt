@@ -61,9 +61,6 @@ open class OutgoingMessageQueue(
 
     /**
      * Dispatches the [message] immediately.
-     *
-     * Should only be used with messages
-     * which are deemed urgent.
      */
     fun dispatchUrgently(message: Message)
     {
