@@ -24,6 +24,19 @@ object ChatMessageFilterHandler
     {
         phraseFilters.add(RegexPhraseFilter)
         messageFilters.add(RepetitiveMessageFilter)
+
+        continuedInitialLoad()
+    }
+
+    private fun continuedInitialLoad()
+    {
+        phraseFilters.forEach {
+            it.loadResources()
+        }
+
+        messageFilters.forEach {
+            it.loadResources()
+        }
     }
 
     fun handleMessageFilter(
