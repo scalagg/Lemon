@@ -257,24 +257,27 @@ object PlayerListener : Listener
         if (event.isCancelled)
             return
 
-        val result = ChatMessageFilterHandler
-            .handleMessageFilter(player, event.message)
-
-        if (result)
+        if (channelMatch?.getId() == "default")
         {
-            if (player.hasPermission("lemon.filter.bypass"))
-            {
-                player.sendMessage("${CC.RED}That message would've been filtered!")
-            } else
-            {
-                player.sendMessage(
-                    channelMatch?.getFormatted(
-                        event.message, player.name,
-                        lemonPlayer.activeGrant!!.getRank(), player
-                    )
-                )
+            val result = ChatMessageFilterHandler
+                .handleMessageFilter(player, event.message)
 
-                event.isCancelled = true
+            if (result)
+            {
+                if (player.hasPermission("lemon.filter.bypass"))
+                {
+                    player.sendMessage("${CC.RED}That message would've been filtered!")
+                } else
+                {
+                    player.sendMessage(
+                        channelMatch?.getFormatted(
+                            event.message, player.name,
+                            lemonPlayer.activeGrant!!.getRank(), player
+                        )
+                    )
+
+                    event.isCancelled = true
+                }
             }
         }
 
