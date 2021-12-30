@@ -15,7 +15,6 @@ import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
-import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
@@ -48,6 +47,7 @@ import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
@@ -62,6 +62,7 @@ import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
+import net.evilblock.cubed.acf.BukkitCommandExecutionContext
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
@@ -72,6 +73,7 @@ import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
+import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -81,6 +83,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.mkotb.configapi.ConfigFactory
+import java.util.*
 import kotlin.properties.Delegates
 
 class Lemon : ExtendedScalaPlugin()
@@ -529,6 +532,13 @@ class Lemon : ExtendedScalaPlugin()
                 ?: throw ConditionFailedException("No rank matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
         }
 
+        commandManager.commandContexts
+            .registerContext(AsyncLemonPlayer::class.java) {
+                return@registerContext AsyncLemonPlayer.of(
+                    parseUniqueIdFromContext(it)
+                )
+            }
+
         commandManager.commandContexts.registerContext(Channel::class.java) {
             val firstArgument = it.popFirstArg()
 
@@ -574,6 +584,27 @@ class Lemon : ExtendedScalaPlugin()
                     .filter { !it.hasMetadata("vanished") }
                     .forEach { player -> it.add(player.name) }
             }
+        }
+    }
+
+    fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): UUID
+    {
+        val firstArg = context.popFirstArg()
+
+        if (firstArg.length == 32) {
+            return UUIDUtil.formatUUID(firstArg)
+                ?: throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")
+        } else if (firstArg.length <= 16) {
+            return Cubed.instance.uuidCache.uuid(firstArg) ?: Cubed.instance.uuidCache.fetchUUID(
+                firstArg
+            )
+            ?: throw ConditionFailedException("No player with the username ${CC.YELLOW}${firstArg}${CC.RED} exists.")
+        }
+
+        return try {
+            UUID.fromString(firstArg)
+        } catch (ignored: Exception) {
+            throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")
         }
     }
 

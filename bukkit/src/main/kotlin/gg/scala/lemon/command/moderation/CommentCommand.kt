@@ -3,12 +3,15 @@ package gg.scala.lemon.command.moderation
 import gg.scala.lemon.handler.CommentHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.result.CommentPaginatedResult
+import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
+import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -30,14 +33,16 @@ class CommentCommand : BaseCommand()
     @Syntax("<player> [page]")
     @CommandCompletion("@all-players")
     @Description("List all comments attached to a player.")
-    fun onList(sender: CommandSender, target: LemonPlayer, @Optional page: Int?)
+    fun onList(sender: CommandSender, uniqueId: UUID, @Optional page: Int?)
     {
-        sender.sendMessage("${CC.GRAY}Loading comments for ${target.getColoredName()}${CC.GRAY}...")
+        sender.sendMessage("${CC.SEC}Loading comments for ${CC.PRI}${
+            CubedCacheUtil.fetchName(uniqueId)
+        }${CC.SEC}...")
 
-        CommentHandler.fetchComments(target = target.uniqueId).thenAccept {
+        CommentHandler.fetchComments(target = uniqueId).thenAccept {
             CommentPaginatedResult.display(
                 sender, listOf(*it.values.toTypedArray()),
-                page ?: 1, command = "comment list ${target.name} %s"
+                page ?: 1, command = "comment list ${CubedCacheUtil.fetchName(uniqueId)} %s"
             )
         }
     }
@@ -46,9 +51,9 @@ class CommentCommand : BaseCommand()
     @Syntax("<player> <comment>")
     @CommandCompletion("@all-players")
     @Description("Attach a comment to a player.")
-    fun onAdd(player: Player, target: LemonPlayer, comment: String)
+    fun onAdd(player: Player, uniqueId: UUID, comment: String)
     {
-        CommentHandler.addCommentToPlayer(player, target.uniqueId, comment)
+        CommentHandler.addCommentToPlayer(player, uniqueId, comment)
     }
 
     @Syntax("<id>")
