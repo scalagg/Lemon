@@ -20,10 +20,10 @@ import org.bukkit.metadata.FixedMetadataValue
  */
 class AuthenticationCommand : BaseCommand()
 {
-
     @Syntax("[code]")
     @CommandPermission("lemon.2fa.forced")
     @CommandAlias("auth|2fa|authenticate")
+    @CommandCompletion("@all-players")
     fun onAuth(player: Player, code: String)
     {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
@@ -68,6 +68,7 @@ class AuthenticationCommand : BaseCommand()
     @Syntax("<target>")
     @CommandAlias("2faexempt")
     @CommandPermission("op")
+    @CommandCompletion("@all-players")
     @Description("Exempt a user from 2fa.")
     fun onExempt2fa(sender: CommandSender, target: LemonPlayer)
     {
