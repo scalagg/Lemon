@@ -18,6 +18,6 @@ object CommentPaginatedResult : PaginatedResult<Comment>()
 
     override fun getHeader(page: Int, maxPages: Int): String
     {
-        return "${CC.SEC}Comments ${CC.GRAY}($page/$maxPages)${CC.SEC}:"
+        return "${CC.PRI}=== ${CC.SEC}Notes ${CC.GRAY}($page/$maxPages) ${CC.PRI}==="
     }
 }

@@ -265,7 +265,10 @@ object PlayerListener : Listener
         if (channelMatch?.getId() == "default")
         {
             val result = ChatMessageFilterHandler
-                .handleMessageFilter(player, event.message)
+                .handleMessageFilter(
+                    player, event.message,
+                    !player.hasPermission("lemon.filter.bypass")
+                )
 
             if (result)
             {
@@ -282,6 +285,7 @@ object PlayerListener : Listener
                     )
 
                     event.isCancelled = true
+                    return
                 }
             }
         }

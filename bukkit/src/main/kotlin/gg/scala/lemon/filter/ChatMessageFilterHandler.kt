@@ -40,7 +40,8 @@ object ChatMessageFilterHandler
     }
 
     fun handleMessageFilter(
-        player: Player, message: String, target: Player? = null
+        player: Player, message: String,
+        reportToStaff: Boolean = true, target: Player? = null
     ): Boolean
     {
         val report = mutableListOf<String>()
