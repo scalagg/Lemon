@@ -5,7 +5,7 @@ plugins {
 }
 
 group "gg.scala.lemon"
-version "1.0.3"
+version "1.1.0"
 
 repositories {
     mavenLocal()
@@ -21,8 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
-
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
 
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
     compileOnly "me.lucko:helper:5.6.8"
