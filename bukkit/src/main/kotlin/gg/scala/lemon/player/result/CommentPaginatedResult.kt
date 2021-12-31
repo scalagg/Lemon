@@ -13,7 +13,7 @@ object CommentPaginatedResult : PaginatedResult<Comment>()
 {
     override fun format(result: Comment, resultIndex: Int): String
     {
-        return "${CC.GRAY} ${resultIndex}. ${CC.SEC}${CubedCacheUtil.fetchName(result.issuer)} ${CC.GRAY}(${result.shortenedUniqueId})${CC.WHITE}: ${result.value}"
+        return "${CC.PRI}#$resultIndex ${CC.WHITE}- ${CC.SEC}${CubedCacheUtil.fetchName(result.issuer)} ${CC.GRAY}(${result.shortenedUniqueId})${CC.WHITE}: ${result.value}"
     }
 
     override fun getHeader(page: Int, maxPages: Int): String

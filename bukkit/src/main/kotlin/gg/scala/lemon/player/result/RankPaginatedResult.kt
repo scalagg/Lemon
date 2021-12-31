@@ -12,7 +12,7 @@ object RankPaginatedResult : PaginatedResult<Rank>()
 {
     override fun format(result: Rank, resultIndex: Int): String
     {
-        return "${CC.GRAY} ${resultIndex}. ${CC.WHITE}${result.getColoredName()} ${CC.SEC}(${result.weight})"
+        return "${CC.PRI}#$resultIndex ${CC.WHITE}- ${result.getColoredName()} ${CC.WHITE}- ${CC.GRAY}[weight: ${result.weight}]"
     }
 
     override fun getHeader(page: Int, maxPages: Int): String
