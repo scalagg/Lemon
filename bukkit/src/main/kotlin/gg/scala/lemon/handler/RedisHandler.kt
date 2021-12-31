@@ -7,7 +7,6 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.broadcast
-import gg.scala.lemon.util.queueForDispatch
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -230,7 +229,7 @@ object RedisHandler : BananaHandler
     @Subscribe("rank-update")
     fun onRankUpdate(message: Message)
     {
-        val completableFuture = DataStoreHandler.rankLayer
+        val completableFuture = DataStoreOrchestrator.rankLayer
             .fetchEntryByKey(message["uniqueId"])
 
         completableFuture.thenAccept {

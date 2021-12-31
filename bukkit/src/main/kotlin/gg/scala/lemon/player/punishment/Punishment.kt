@@ -1,11 +1,11 @@
 package gg.scala.lemon.player.punishment
 
-import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.other.Expirable
 import gg.scala.common.Savable
-import gg.scala.lemon.util.SplitUtil
+import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +19,11 @@ class Punishment(
     val addedReason: String,
     duration: Long,
     val category: PunishmentCategory
-): Expirable(addedAt, duration), Savable {
+): Expirable(addedAt, duration), Savable, IDataStoreObject
+{
+    override val identifier: UUID
+        get() = uuid
+
     var removedReason: String? = null
     var removedOn: String? = null
     var removedBy: UUID? = null
@@ -30,7 +34,7 @@ class Punishment(
         get() = !isRemoved && !hasExpired
 
     override fun save(): CompletableFuture<Void> {
-        return DataStoreHandler.punishmentLayer.saveEntry(uuid.toString(), this)
+        return DataStoreOrchestrator.punishmentLayer.saveEntry(uuid.toString(), this)
     }
 
     fun isIntensity(intensity: PunishmentCategoryIntensity): Boolean {

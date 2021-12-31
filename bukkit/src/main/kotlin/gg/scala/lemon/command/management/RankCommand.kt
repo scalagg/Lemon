@@ -1,13 +1,16 @@
 package gg.scala.lemon.command.management
 
-import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.result.RankPaginatedResult
 import gg.scala.lemon.util.QuickAccess.replaceEmpty
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.lemon.util.dispatchImmediately
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -99,9 +102,11 @@ class RankCommand : BaseCommand()
                 sender.sendMessage(" ${CC.GRAY}Proxy Level:")
 
                 bungee.forEach {
-                    sender.sendMessage("${CC.GRAY}  - ${CC.WHITE}${
-                        it.removePrefix("%").removePrefix("-")
-                    } ${CC.GRAY}")
+                    sender.sendMessage(
+                        "${CC.GRAY}  - ${CC.WHITE}${
+                            it.removePrefix("%").removePrefix("-")
+                        } ${CC.GRAY}"
+                    )
                 }
             }
 
@@ -110,9 +115,11 @@ class RankCommand : BaseCommand()
                 sender.sendMessage(" ${CC.GRAY}Spigot Level:")
 
                 spigot.forEach {
-                    sender.sendMessage("${CC.GRAY}  - ${CC.WHITE}${
-                        it.removePrefix("%").removePrefix("-")
-                    } ${CC.GRAY}")
+                    sender.sendMessage(
+                        "${CC.GRAY}  - ${CC.WHITE}${
+                            it.removePrefix("%").removePrefix("-")
+                        } ${CC.GRAY}"
+                    )
                 }
             }
         }
@@ -158,16 +165,18 @@ class RankCommand : BaseCommand()
             throw ConditionFailedException("You're not allowed to delete the ${CC.YELLOW}${rank.name}${CC.RED} rank.")
         }
 
-        DataStoreHandler.rankLayer.deleteEntry(rank.uuid.toString()).thenAccept {
-            RedisHandler.buildMessage(
-                "rank-delete",
-                hashMapOf<String, String>().also {
-                    it["uniqueId"] = rank.uuid.toString()
-                }
-            ).dispatchImmediately()
+        DataStoreObjectControllerCache.findNotNull<Rank>()
+            .delete(rank.uuid, DataStoreStorageType.MONGO)
+            .thenAccept {
+                RedisHandler.buildMessage(
+                    "rank-delete",
+                    hashMapOf<String, String>().also {
+                        it["uniqueId"] = rank.uuid.toString()
+                    }
+                ).dispatchImmediately()
 
-            sender.sendMessage("${CC.SEC}You've deleted the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
-        }
+                sender.sendMessage("${CC.SEC}You've deleted the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+            }
     }
 
     @Subcommand("meta prefix")
@@ -353,18 +362,22 @@ class RankCommand : BaseCommand()
         rank.permissions.add(permission)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've added the${
-                if (permission.startsWith("%"))
-                {
-                    " proxy-level"
-                } else if (permission.startsWith("*"))
-                {
-                    "blacklisted"
-                } else
-                {
-                    ""
-                }
-            } permission ${CC.WHITE}${permission.replace("%", "").replace("*", "")}${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank.")
+            sender.sendMessage(
+                "${CC.SEC}You've added the${
+                    if (permission.startsWith("%"))
+                    {
+                        " proxy-level"
+                    } else if (permission.startsWith("*"))
+                    {
+                        "blacklisted"
+                    } else
+                    {
+                        ""
+                    }
+                } permission ${CC.WHITE}${
+                    permission.replace("%", "").replace("*", "")
+                }${CC.SEC} to the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank."
+            )
         }
     }
 

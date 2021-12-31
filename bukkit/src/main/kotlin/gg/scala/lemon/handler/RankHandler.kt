@@ -19,7 +19,7 @@ object RankHandler {
         }
 
     fun loadRanks() {
-        DataStoreHandler.rankLayer.fetchAllEntries().whenComplete { entries, _ ->
+        DataStoreOrchestrator.rankLayer.fetchAllEntries().whenComplete { entries, _ ->
             entries.forEach {
                 ranks[it.value.uuid] = it.value
             }

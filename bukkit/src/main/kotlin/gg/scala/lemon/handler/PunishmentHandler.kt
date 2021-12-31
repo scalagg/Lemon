@@ -31,7 +31,7 @@ object PunishmentHandler
 
     private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>>
     {
-        return DataStoreHandler.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {
+        return DataStoreOrchestrator.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {
             val mutableList = mutableListOf<Punishment>()
 
             it.forEach { entry ->
@@ -142,7 +142,7 @@ object PunishmentHandler
 
     fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment>
     {
-        return DataStoreHandler.punishmentLayer.fetchEntryByKey(uuid.toString())
+        return DataStoreOrchestrator.punishmentLayer.fetchEntryByKey(uuid.toString())
     }
 
     /**

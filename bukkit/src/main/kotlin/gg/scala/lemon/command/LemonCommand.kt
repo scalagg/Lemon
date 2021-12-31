@@ -1,7 +1,10 @@
 package gg.scala.lemon.command
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.player.grant.Grant
+import gg.scala.lemon.player.punishment.Punishment
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
@@ -69,9 +72,9 @@ class LemonCommand : BaseCommand()
     {
         sender.sendMessage("${CC.RED}Loading punishment information...")
 
-        DataStoreHandler.punishmentLayer.fetchAllEntries().thenAccept {
-            sender.sendMessage("${it.size} punishments exist.")
-        }
+        DataStoreObjectControllerCache.findNotNull<Punishment>()
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAccept { sender.sendMessage("${it.size} punishments exist.") }
     }
 
     @Subcommand("grant-dump")
@@ -80,8 +83,8 @@ class LemonCommand : BaseCommand()
     {
         sender.sendMessage("${CC.RED}Loading grant information...")
 
-        DataStoreHandler.grantLayer.fetchAllEntries().thenAccept {
-            sender.sendMessage("${it.size} grants exist.")
-        }
+        DataStoreObjectControllerCache.findNotNull<Grant>()
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAccept { sender.sendMessage("${it.size} grants exist.") }
     }
 }

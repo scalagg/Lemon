@@ -33,7 +33,7 @@ object DisguiseInfoProvider
         activeDisguises = RedisStorageBuilder<DisguiseInfo>()
             .setSection("lemon:disguised")
             .setType(DisguiseInfo::class.java)
-            .setConnection(Lemon.instance.redisConnection)
+            .setConnection(Lemon.instance.redisConnectionDetails)
             .build()
 
         disguiseLayer.supplyWithCustomGson(Serializers.gson)

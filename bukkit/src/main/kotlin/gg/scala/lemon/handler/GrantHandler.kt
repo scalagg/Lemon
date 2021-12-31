@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture
 object GrantHandler {
 
     private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
-        return DataStoreHandler.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {
+        return DataStoreOrchestrator.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {
             val mutableList = mutableListOf<Grant>()
 
             it.forEach { entry ->
@@ -88,7 +88,7 @@ object GrantHandler {
     }
 
     fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant> {
-        return DataStoreHandler.grantLayer
+        return DataStoreOrchestrator.grantLayer
             .fetchEntryByKey(uuid.toString())
     }
 

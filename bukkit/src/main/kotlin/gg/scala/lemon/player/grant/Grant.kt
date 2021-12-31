@@ -2,13 +2,13 @@ package gg.scala.lemon.player.grant
 
 import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.other.Expirable
+import gg.scala.store.storage.storable.IDataStoreObject
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -22,8 +22,10 @@ class Grant(
     var addedOn: String,
     var addedReason: String,
     duration: Long
-) : Expirable(addedAt, duration), Savable
+) : Expirable(addedAt, duration), Savable, IDataStoreObject
 {
+    override val identifier: UUID
+        get() = uuid
 
     var scopes: MutableList<String> = mutableListOf("global")
 
@@ -97,6 +99,6 @@ class Grant(
             )
         }
 
-        return DataStoreHandler.grantLayer.saveEntry(uuid.toString(), this)
+        return DataStoreOrchestrator.grantLayer.saveEntry(uuid.toString(), this)
     }
 }

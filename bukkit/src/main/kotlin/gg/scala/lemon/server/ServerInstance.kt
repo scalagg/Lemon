@@ -1,9 +1,13 @@
 package gg.scala.lemon.server
 
+import gg.scala.store.storage.storable.IDataStoreObject
+import java.util.*
+
 data class ServerInstance(
     val serverId: String,
-    val serverGroup: String
-) {
+    val serverGroup: String,
+    override val identifier: UUID = UUID.randomUUID()
+) : IDataStoreObject {
     val metaData = mutableMapOf<String, String>()
 
     var maxPlayers: Int = 0

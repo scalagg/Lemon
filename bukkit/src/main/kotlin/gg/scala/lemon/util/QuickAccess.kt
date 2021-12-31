@@ -9,7 +9,6 @@ import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import net.evilblock.cubed.nametag.NametagHandler
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -121,7 +120,7 @@ object QuickAccess {
 
     @JvmStatic
     fun fetchIpAddress(uuid: UUID?): CompletableFuture<String?> {
-        return DataStoreHandler.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
+        return DataStoreOrchestrator.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
             it ?: return@thenApply null
 
             return@thenApply it.previousIpAddress

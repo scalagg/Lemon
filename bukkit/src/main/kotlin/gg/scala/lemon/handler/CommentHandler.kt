@@ -18,7 +18,7 @@ object CommentHandler
 
     fun fetchComments(target: UUID): CompletableFuture<Map<String, Comment>>
     {
-        return DataStoreHandler.commentLayer.fetchAllEntriesWithFilter(
+        return DataStoreOrchestrator.commentLayer.fetchAllEntriesWithFilter(
             Filters.eq("target", target.toString())
         )
     }
@@ -37,7 +37,7 @@ object CommentHandler
             Date(), commentValue
         )
 
-        DataStoreHandler.commentLayer.saveEntry(
+        DataStoreOrchestrator.commentLayer.saveEntry(
             comment.uniqueId.toString(), comment
         ).thenRun {
             issuer.sendMessage("${CC.GREEN}You've attached a comment with the value ${CC.WHITE}$commentValue${CC.GREEN} to ${CC.WHITE}${CubedCacheUtil.fetchName(target)}'s${CC.GREEN} profile with the ID ${CC.YELLOW}#${SplitUtil.splitUuid(comment.uniqueId)}${CC.GREEN}.")
@@ -55,7 +55,7 @@ object CommentHandler
         shortenedUniqueId: String
     )
     {
-        DataStoreHandler.commentLayer.fetchAllEntriesWithFilter(
+        DataStoreOrchestrator.commentLayer.fetchAllEntriesWithFilter(
             Filters.eq("shortenedUniqueId", shortenedUniqueId)
         ).thenAccept {
             if (it.isEmpty()) {
@@ -65,7 +65,7 @@ object CommentHandler
 
             val first = it.values.first()!!
 
-            DataStoreHandler.commentLayer.deleteEntry(
+            DataStoreOrchestrator.commentLayer.deleteEntry(
                 first.uniqueId.toString()
             ).thenRun {
                 remover.sendMessage("${CC.GREEN}You've removed a comment with the id ${CC.YELLOW}#${first.shortenedUniqueId}${CC.GREEN}.")

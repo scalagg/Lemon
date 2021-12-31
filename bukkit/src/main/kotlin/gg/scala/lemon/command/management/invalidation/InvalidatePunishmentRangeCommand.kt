@@ -1,8 +1,10 @@
 package gg.scala.lemon.command.management.invalidation
 
-import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandPermission
@@ -27,7 +29,8 @@ class InvalidatePunishmentRangeCommand : BaseCommand() {
     ) {
         sender.sendMessage("${CC.GOLD}Now fetching punishments...")
 
-        DataStoreHandler.punishmentLayer.fetchAllEntries()
+        DataStoreObjectControllerCache.findNotNull<Punishment>()
+            .loadAll(DataStoreStorageType.MONGO)
             .thenAcceptAsync { punishments ->
                 var invalidated = 0
 

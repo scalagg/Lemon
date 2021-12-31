@@ -1,36 +1,11 @@
 plugins {
     id "maven-publish"
-    id 'net.kyori.blossom' version '1.1.0'
     id "org.jetbrains.kotlin.jvm" version "1.6.0"
     id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
-def gitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-
-    return stdout.toString()
-            .trim().toString()
-} as String
-
-def gitBranch = { ->
-    def stdout = new ByteArrayOutputStream()
-
-    exec {
-        commandLine 'git', 'branch', '--show-current'
-        standardOutput = stdout
-    }
-
-    return stdout.toString()
-            .trim().toString()
-} as String
-
 group "gg.scala.lemon"
-version gitHash
+version "1.0.3"
 
 repositories {
     mavenLocal()
@@ -47,15 +22,15 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
-    implementation project(":common")
+
 
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
     compileOnly "me.lucko:helper:5.6.8"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.10'
 
-    implementation fileTree("internal")
-    compileOnly fileTree(dir: "lib")
+    implementation project(":common")
+    compileOnly fileTree("lib")
 }
 
 compileKotlin {
@@ -79,10 +54,6 @@ publishing {
             project.shadow.component(publication)
         }
     }
-}
-
-blossom {
-    replaceToken '@version', "origin/$gitBranch/$gitHash"
 }
 
 tasks.build.dependsOn(shadowJar, publishing)

@@ -6,8 +6,6 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.server.ServerInstance
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -26,7 +24,7 @@ object PlayerCachingExtension
     {
         val builder = RedisStorageBuilder<FundamentalLemonPlayer>()
 
-        builder.setConnection(Lemon.instance.redisConnection)
+        builder.setConnection(Lemon.instance.redisConnectionDetails)
         builder.setSection("lemon:players")
         builder.setType(FundamentalLemonPlayer::class.java)
 

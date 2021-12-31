@@ -1,11 +1,6 @@
 package gg.scala.lemon
 
 import com.google.gson.LongSerializationPolicy
-import com.solexgames.datastore.commons.connection.impl.RedisConnection
-import com.solexgames.datastore.commons.connection.impl.redis.AuthRedisConnection
-import com.solexgames.datastore.commons.connection.impl.redis.NoAuthRedisConnection
-import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
-import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.banana.Banana
 import gg.scala.banana.BananaBuilder
 import gg.scala.banana.credentials.BananaCredentials
@@ -56,6 +51,9 @@ import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.testing.TestingCommand
+import gg.scala.store.connection.redis.impl.details.DataStoreRedisConnectionDetails
+import gg.scala.store.controller.DataStoreObjectController
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
@@ -97,7 +95,6 @@ class Lemon : ExtendedScalaPlugin()
         var canJoin: Boolean = true
     }
 
-    lateinit var mongoConfig: MongoDBConfigProcessor
     lateinit var settings: SettingsConfigProcessor
     lateinit var languageConfig: LanguageConfigProcessor
 
@@ -106,13 +103,13 @@ class Lemon : ExtendedScalaPlugin()
     lateinit var banana: Banana
     lateinit var credentials: BananaCredentials
 
-    lateinit var serverLayer: RedisStorageLayer<ServerInstance>
+    lateinit var serverLayer: DataStoreObjectController<ServerInstance>
     lateinit var localInstance: ServerInstance
 
     lateinit var lemonWebData: ScalaValidateData
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
-    lateinit var redisConnection: RedisConnection
+    lateinit var redisConnectionDetails: DataStoreRedisConnectionDetails
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
@@ -428,7 +425,6 @@ class Lemon : ExtendedScalaPlugin()
     {
         languageConfig = configFactory.fromFile("language", LanguageConfigProcessor::class.java)
         credentials = configFactory.fromFile("redis", BananaCredentials::class.java)
-        mongoConfig = configFactory.fromFile("mongodb", MongoDBConfigProcessor::class.java)
     }
 
     private fun loadHandlers()
@@ -438,25 +434,18 @@ class Lemon : ExtendedScalaPlugin()
         CooldownHandler.initialLoad()
         LemonCooldownHandler.initialLoad()
 
+        DataStoreOrchestrator.initialLoad()
+
         localInstance = ServerInstance(
             settings.id,
             settings.group
         )
 
-        redisConnection = if (!credentials.authenticate)
-        {
-            NoAuthRedisConnection(
-                credentials.address,
-                credentials.port
-            )
-        } else
-        {
-            AuthRedisConnection(
-                credentials.address,
-                credentials.port,
-                credentials.password
-            )
-        }
+        redisConnectionDetails = DataStoreRedisConnectionDetails(
+            credentials.address,
+            credentials.port,
+            credentials.password
+        )
 
         banana = BananaBuilder()
             .options(
@@ -473,15 +462,9 @@ class Lemon : ExtendedScalaPlugin()
         banana.registerClass(RedisHandler)
         banana.subscribe()
 
-        val builder = RedisStorageBuilder<ServerInstance>()
+        serverLayer = DataStoreObjectControllerCache.create()
 
-        builder.setConnection(redisConnection)
-        builder.setSection("lemon:heartbeats")
-        builder.setType(ServerInstance::class.java)
-
-        serverLayer = builder.build()
-
-        logger.info("Setup redis data-store handling.")
+        logger.info("Setup data store controllers.")
     }
 
     fun registerCommandsInPackage(

@@ -1,6 +1,6 @@
 package gg.scala.lemon.player.wrapper
 
-import gg.scala.lemon.handler.DataStoreHandler
+import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import org.bukkit.Bukkit
@@ -41,7 +41,7 @@ data class AsyncLemonPlayer(
             } else
             {
                 return AsyncLemonPlayer(
-                    DataStoreHandler.lemonPlayerLayer
+                    DataStoreOrchestrator.lemonPlayerLayer
                         .fetchEntryByKey(
                             uniqueId.toString()
                         )

@@ -56,7 +56,7 @@ object PlayerListener : Listener
         val current = System.currentTimeMillis()
 
         ForkJoinPool.commonPool().execute {
-            var lemonPlayer = DataStoreHandler.lemonPlayerLayer
+            var lemonPlayer = DataStoreOrchestrator.lemonPlayerLayer
                 .fetchEntryByKeySync(event.uniqueId.toString())
             val created: Boolean
 

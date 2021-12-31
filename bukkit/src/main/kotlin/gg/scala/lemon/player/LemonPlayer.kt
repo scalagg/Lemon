@@ -24,6 +24,7 @@ import gg.scala.lemon.util.QuickAccess.originalRank
 import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.lemon.util.VaultUtil
+import gg.scala.store.storage.storable.IDataStoreObject
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -41,10 +42,14 @@ class LemonPlayer(
     var uniqueId: UUID,
     var name: String,
 
+    @JvmField
     @Transient
     var ipAddress: String?
-) : Savable
+) : Savable, IDataStoreObject
 {
+    override val identifier: UUID
+        get() = uniqueId
+
     var previousIpAddress: String? = null
 
     var pastIpAddresses = mutableMapOf<String, Long>()
@@ -709,7 +714,7 @@ class LemonPlayer(
     {
         finalizeMetaData()
 
-        return DataStoreHandler.lemonPlayerLayer.saveEntry(
+        return DataStoreOrchestrator.lemonPlayerLayer.saveEntry(
             uniqueId.toString(), this
         )
     }
