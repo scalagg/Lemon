@@ -5,7 +5,9 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.other.Expirable
 import gg.scala.common.Savable
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
+import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -34,7 +36,8 @@ class Punishment(
         get() = !isRemoved && !hasExpired
 
     override fun save(): CompletableFuture<Void> {
-        return DataStoreOrchestrator.punishmentLayer.saveEntry(uuid.toString(), this)
+        return DataStoreObjectControllerCache.findNotNull<Punishment>()
+            .save(this, DataStoreStorageType.MONGO)
     }
 
     fun isIntensity(intensity: PunishmentCategoryIntensity): Boolean {

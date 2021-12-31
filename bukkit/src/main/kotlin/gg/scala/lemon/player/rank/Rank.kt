@@ -1,11 +1,14 @@
 package gg.scala.lemon.player.rank
 
 import gg.scala.common.Savable
+import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.dispatchImmediately
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -82,7 +85,8 @@ constructor(
 
     override fun save(): CompletableFuture<Void>
     {
-        return DataStoreOrchestrator.rankLayer.saveEntry(uuid.toString(), this)
+        return DataStoreObjectControllerCache.findNotNull<Rank>()
+            .save(this, DataStoreStorageType.MONGO)
     }
 
     fun saveAndPushUpdatesGlobally(): CompletableFuture<Void>

@@ -7,6 +7,9 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.senderUuid
 import gg.scala.lemon.util.dispatchImmediately
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
@@ -19,17 +22,24 @@ import java.util.concurrent.CompletableFuture
  */
 object GrantHandler {
 
-    private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>> {
-        return DataStoreOrchestrator.grantLayer.fetchAllEntriesWithFilter(filter).thenApply {
-            val mutableList = mutableListOf<Grant>()
+    private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>>
+    {
+        val controller = DataStoreObjectControllerCache.findNotNull<Grant>()
 
-            it.forEach { entry ->
-                if (test.invoke(entry.value)) {
-                    mutableList.add(entry.value)
+        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(
+            DataStoreStorageType.MONGO
+        ) {
+            return@useLayerWithReturn this.loadAllWithFilter(filter).thenApply {
+                val mutableList = mutableListOf<Grant>()
+
+                it.forEach { entry ->
+                    if (test.invoke(entry.value)) {
+                        mutableList.add(entry.value)
+                    }
                 }
-            }
 
-            return@thenApply mutableList
+                return@thenApply mutableList
+            }
         }
     }
 
@@ -87,9 +97,9 @@ object GrantHandler {
         }
     }
 
-    fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant> {
-        return DataStoreOrchestrator.grantLayer
-            .fetchEntryByKey(uuid.toString())
+    fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant?> {
+        return DataStoreObjectControllerCache.findNotNull<Grant>()
+            .load(uuid, DataStoreStorageType.MONGO)
     }
 
     fun handleGrant(sender: CommandSender, grant: Grant) {

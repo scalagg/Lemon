@@ -7,7 +7,10 @@ import gg.scala.lemon.cooldown.impl.ChatCooldown
 import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.cooldown.impl.SlowChatCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
-import gg.scala.lemon.handler.*
+import gg.scala.lemon.handler.ChatHandler
+import gg.scala.lemon.handler.FrozenPlayerHandler
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
@@ -19,6 +22,8 @@ import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.lemon.util.queueForDispatch
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -37,7 +42,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
-import java.util.concurrent.ForkJoinPool
 
 object PlayerListener : Listener
 {
@@ -55,45 +59,46 @@ object PlayerListener : Listener
 
         val current = System.currentTimeMillis()
 
-        ForkJoinPool.commonPool().execute {
-            var lemonPlayer = DataStoreOrchestrator.lemonPlayerLayer
-                .fetchEntryByKeySync(event.uniqueId.toString())
-            val created: Boolean
+        DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
+            .load(event.uniqueId, DataStoreStorageType.MONGO)
+            .thenAccept { lemonPlayer ->
+                val created: Boolean
+                var newLemonPlayer = lemonPlayer
 
-            if (lemonPlayer == null)
-            {
-                lemonPlayer = LemonPlayer(
-                    event.uniqueId, event.name, event.address.hostAddress ?: ""
-                )
-                created = true
-
-            } else
-            {
-                lemonPlayer.name = event.name
-
-                if (!lemonPlayer.savePreviousIpAddressAsCurrent)
+                if (newLemonPlayer == null)
                 {
-                    lemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                    newLemonPlayer = LemonPlayer(
+                        event.uniqueId, event.name, event.address.hostAddress ?: ""
+                    )
+                    created = true
+
+                } else
+                {
+                    newLemonPlayer.name = event.name
+
+                    if (!newLemonPlayer.savePreviousIpAddressAsCurrent)
+                    {
+                        newLemonPlayer.ipAddress = event.address.hostAddress ?: ""
+                    }
+
+                    created = false
                 }
 
-                created = false
-            }
+                PlayerHandler.players[event.uniqueId] = newLemonPlayer
 
-            PlayerHandler.players[event.uniqueId] = lemonPlayer
+                if (created)
+                {
+                    newLemonPlayer.handleIfFirstCreated()
+                } else
+                {
+                    newLemonPlayer.handlePostLoad()
+                }
 
-            if (created)
-            {
-                lemonPlayer.handleIfFirstCreated()
-            } else
-            {
-                lemonPlayer.handlePostLoad()
+                if (LemonConstants.DEBUG)
+                {
+                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load resources. (${event.name})")
+                }
             }
-
-            if (LemonConstants.DEBUG)
-            {
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load resources. (${event.name})")
-            }
-        }
     }
 
     @EventHandler(

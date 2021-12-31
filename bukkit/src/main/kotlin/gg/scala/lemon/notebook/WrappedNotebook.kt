@@ -95,6 +95,8 @@ class WrappedNotebook
                 hasFinalized = true
             } catch (exception: Exception) {
                 exception.printStackTrace()
+                player.sendMessage("${CC.RED}Couldn't open this book...")
+
                 return
             }
         }

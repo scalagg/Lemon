@@ -1,5 +1,6 @@
 package gg.scala.lemon.disguise.information
 
+import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*
 
 /**
@@ -11,8 +12,11 @@ data class DisguiseInfo(
     val username: String,
     val skinInfo: String,
     val skinSignature: String
-)
+) : IDataStoreObject
 {
+    override val identifier: UUID
+        get() = uuid
+
     companion object
     {
         @JvmStatic

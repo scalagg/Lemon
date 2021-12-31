@@ -1,8 +1,11 @@
 package gg.scala.lemon.player.wrapper
 
+import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import org.bukkit.Bukkit
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -41,10 +44,8 @@ data class AsyncLemonPlayer(
             } else
             {
                 return AsyncLemonPlayer(
-                    DataStoreOrchestrator.lemonPlayerLayer
-                        .fetchEntryByKey(
-                            uniqueId.toString()
-                        )
+                    DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
+                        .load(uniqueId, DataStoreStorageType.MONGO)
                 )
             }
         }

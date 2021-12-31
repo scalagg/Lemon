@@ -8,6 +8,8 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
@@ -25,7 +27,8 @@ import java.util.concurrent.ForkJoinPool
 /**
  * @author GrowlyX, puugz
  */
-object QuickAccess {
+object QuickAccess
+{
 
     @JvmStatic
     fun broadcast(message: String, permission: String = "")
@@ -40,8 +43,10 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun nameOrConsole(sender: CommandSender): String {
-        if (sender is ConsoleCommandSender) {
+    fun nameOrConsole(sender: CommandSender): String
+    {
+        if (sender is ConsoleCommandSender)
+        {
             return LemonConstants.CONSOLE
         }
 
@@ -53,14 +58,16 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun nameOrConsole(uuid: UUID?): String {
+    fun nameOrConsole(uuid: UUID?): String
+    {
         uuid ?: return LemonConstants.CONSOLE
 
         return CubedCacheUtil.fetchName(uuid)!!
     }
 
     @JvmStatic
-    fun coloredName(name: String?): String? {
+    fun coloredName(name: String?): String?
+    {
         val lemonPlayer = name?.let { PlayerHandler.findOnlinePlayer(it) }
 
         lemonPlayer?.let {
@@ -69,22 +76,25 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun coloredNameOrNull(name: String): String? {
+    fun coloredNameOrNull(name: String): String?
+    {
         return PlayerHandler.findPlayer(name)
             .orElse(null)?.getOriginalColoredName()
     }
 
     @JvmStatic
-    fun coloredName(uuid: UUID): String? {
+    fun coloredName(uuid: UUID): String?
+    {
         val lemonPlayer = PlayerHandler.findPlayer(uuid).orElse(null)
 
         lemonPlayer?.let {
             return it.getColoredName()
-        }  ?: return null
+        } ?: return null
     }
 
     @JvmStatic
-    fun fetchColoredName(uuid: UUID?): String {
+    fun fetchColoredName(uuid: UUID?): String
+    {
         uuid ?: return LemonConstants.CONSOLE
 
         val grants = GrantHandler.fetchGrantsFor(uuid).get()
@@ -97,7 +107,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun computeColoredName(uuid: UUID, name: String): CompletableFuture<String> {
+    fun computeColoredName(uuid: UUID, name: String): CompletableFuture<String>
+    {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             val prominent = GrantRecalculationUtil.getProminentGrant(it)
                 ?: return@thenApplyAsync RankHandler.getDefaultRank().color + name
@@ -107,7 +118,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int> {
+    fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int>
+    {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             it ?: return@thenApplyAsync 0
 
@@ -119,21 +131,26 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun fetchIpAddress(uuid: UUID?): CompletableFuture<String?> {
-        return DataStoreOrchestrator.lemonPlayerLayer.fetchEntryByKey(uuid.toString()).thenApply {
-            it ?: return@thenApply null
+    fun fetchIpAddress(uuid: UUID): CompletableFuture<String?>
+    {
+        return DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
+            .load(uuid, DataStoreStorageType.MONGO)
+            .thenApply {
+                it ?: return@thenApply null
 
-            return@thenApply it.previousIpAddress
-        }
+                return@thenApply it.previousIpAddress
+            }
     }
 
     @JvmStatic
-    fun coloredName(player: Player): String? {
+    fun coloredName(player: Player): String?
+    {
         return coloredName(player.uniqueId)
     }
 
     @JvmStatic
-    fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true) {
+    fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true)
+    {
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
                 val realRank = realRank(it)
@@ -144,7 +161,8 @@ object QuickAccess {
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)
 
-                if (recalculateGrants) {
+                if (recalculateGrants)
+                {
                     lemonPlayer.recalculateGrants(
                         shouldCalculateNow = true
                     )
@@ -154,21 +172,25 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun uuidOf(sender: CommandSender): UUID? {
-        return if (sender is Player) {
+    fun uuidOf(sender: CommandSender): UUID?
+    {
+        return if (sender is Player)
+        {
             sender.uniqueId
         } else null
     }
 
     @JvmStatic
-    fun replaceEmpty(string: String): String {
+    fun replaceEmpty(string: String): String
+    {
         return ChatColor.stripColor(string).ifBlank {
             "${CC.RED}None"
         }
     }
 
     @JvmStatic
-    fun senderUuid(sender: CommandSender): UUID? {
+    fun senderUuid(sender: CommandSender): UUID?
+    {
         return if (sender is ConsoleCommandSender) null else (sender as Player).uniqueId
     }
 
@@ -178,7 +200,8 @@ object QuickAccess {
         message: String,
         addServer: Boolean,
         messageType: MessageType
-    ): CompletableFuture<Void> {
+    ): CompletableFuture<Void>
+    {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "staff-message",
@@ -201,7 +224,8 @@ object QuickAccess {
         addServer: Boolean,
         messageType: MessageType,
         flag: String
-    ): CompletableFuture<Void> {
+    ): CompletableFuture<Void>
+    {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "staff-message",
@@ -225,7 +249,8 @@ object QuickAccess {
     fun parseReason(
         reason: String?,
         fallback: String = "Unfair Advantage"
-    ): String {
+    ): String
+    {
         var preParsedReason = reason ?: fallback
         preParsedReason = preParsedReason.removePrefix("-s ")
         preParsedReason = preParsedReason.removeSuffix(" -s")
@@ -247,7 +272,8 @@ object QuickAccess {
         punishment: Punishment,
         reason: String = "Expired",
         remover: UUID? = null
-    ) {
+    )
+    {
         punishment.isRemoved = true
         punishment.removedAt = System.currentTimeMillis()
         punishment.removedOn = Lemon.instance.settings.id
@@ -265,8 +291,10 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun attemptExpiration(punishment: Punishment, reason: String = "Expired", remover: UUID? = null) : Boolean {
-        return if (!punishment.isRemoved && punishment.hasExpired && !punishment.category.instant) {
+    fun attemptExpiration(punishment: Punishment, reason: String = "Expired", remover: UUID? = null): Boolean
+    {
+        return if (!punishment.isRemoved && punishment.hasExpired && !punishment.category.instant)
+        {
             punishment.isRemoved = true
             punishment.removedAt = System.currentTimeMillis()
             punishment.removedOn = Lemon.instance.settings.id
@@ -287,7 +315,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void> {
+    fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void>
+    {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-message",
@@ -298,7 +327,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void> {
+    fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void>
+    {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "global-fancy-message",
@@ -309,7 +339,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void> {
+    fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void>
+    {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "player-message",
@@ -322,7 +353,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void> {
+    fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void>
+    {
         return CompletableFuture.runAsync {
             RedisHandler.buildMessage(
                 "player-fancy-message",
@@ -335,13 +367,16 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun messageType(name: String): MessageType {
+    fun messageType(name: String): MessageType
+    {
         return MessageType.valueOf(name)
     }
 
     @JvmStatic
-    fun weightOf(issuer: CommandSender): Int {
-        if (issuer is ConsoleCommandSender) {
+    fun weightOf(issuer: CommandSender): Int
+    {
+        if (issuer is ConsoleCommandSender)
+        {
             return Int.MAX_VALUE
         }
 
@@ -355,7 +390,8 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun shouldBlock(player: Player): Boolean {
+    fun shouldBlock(player: Player): Boolean
+    {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
         if (!lemonPlayer.hasPermission("lemon.2fa.forced")) return false
@@ -366,14 +402,17 @@ object QuickAccess {
     }
 
     @JvmStatic
-    fun toNiceString(string: String): String {
-        var output = string.toLowerCase().replace("_", " ").trim()
+    fun toNiceString(string: String): String
+    {
+        var output = string.lowercase(Locale.getDefault()).replace("_", " ").trim()
 
-        for (s in output.split(" ")) {
+        for (s in output.split(" "))
+        {
             val char = s[0]
 
-            if (!char.isUpperCase()) {
-                val replace = s.replaceFirst(char, char.toUpperCase())
+            if (!char.isUpperCase())
+            {
+                val replace = s.replaceFirst(char, char.uppercaseChar())
                 output = output.replace(s, replace)
             }
         }
@@ -381,45 +420,55 @@ object QuickAccess {
         return output
     }
 
-    fun realRank(player: Player?): Rank {
+    fun realRank(player: Player?): Rank
+    {
         player ?: return RankHandler.getDefaultRank()
 
         val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
 
-        return if (lemonPlayer != null && (player.name == lemonPlayer.name || !player.hasMetadata("disguised"))) {
+        return if (lemonPlayer != null && (player.name == lemonPlayer.name || !player.hasMetadata("disguised")))
+        {
             lemonPlayer.activeGrant?.getRank() ?: RankHandler.getDefaultRank()
-        } else {
+        } else
+        {
             RankHandler.getDefaultRank()
         }
     }
 
-    fun originalRank(player: Player?): Rank {
+    fun originalRank(player: Player?): Rank
+    {
         player ?: return RankHandler.getDefaultRank()
 
         val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
 
-        return if (lemonPlayer != null) {
+        return if (lemonPlayer != null)
+        {
             lemonPlayer.activeGrant?.getRank() ?: RankHandler.getDefaultRank()
-        } else {
+        } else
+        {
             RankHandler.getDefaultRank()
         }
     }
 
-    enum class MessageType {
+    enum class MessageType
+    {
         PLAYER_MESSAGE,
         NOTIFICATION
     }
 }
 
-fun Message.queueForDispatch() {
+fun Message.queueForDispatch()
+{
     LemonOutgoingMessageQueue.dispatchSafe(this)
 }
 
-fun Message.dispatchImmediately() {
+fun Message.dispatchImmediately()
+{
     LemonOutgoingMessageQueue.dispatchUrgently(this)
 }
 
-fun Message.dispatchToCocoa() {
+fun Message.dispatchToCocoa()
+{
     ForkJoinPool.commonPool().execute {
         Lemon.instance.banana.useResource {
             it.publish("cocoa", gson.toJson(this))
@@ -432,5 +481,3 @@ infix fun Player.data(uuid: UUID): LemonPlayer?
 {
     return PlayerHandler.findPlayer(uuid).orElse(null)
 }
-
-private fun Player.isStaff(): Boolean = this.hasPermission("lemon.staff")

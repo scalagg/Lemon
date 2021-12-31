@@ -1,8 +1,11 @@
 package gg.scala.lemon.handler
 
-import gg.scala.lemon.Lemon
+import com.mongodb.client.model.Filters
 import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ShutdownRunnable
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.ConditionFailedException
 import java.util.concurrent.CompletableFuture
 
@@ -34,21 +37,32 @@ object ServerHandler
 
     fun fetchServerInstanceById(id: String) : CompletableFuture<ServerInstance?>
     {
-        return Lemon.instance.serverLayer.fetchEntryByKey(id)
+        val controller = DataStoreObjectControllerCache
+            .findNotNull<ServerInstance>()
+
+        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<ServerInstance>, CompletableFuture<ServerInstance?>>(
+            DataStoreStorageType.REDIS
+        ) {
+            this.loadWithFilter(
+                Filters.eq("serverId", id)
+            )
+        }
     }
 
     fun fetchOnlineServerInstancesByGroup(group: String): CompletableFuture<Map<String, ServerInstance>>
     {
-        return Lemon.instance.serverLayer.fetchAllEntries().thenApply {
-            val mutableMap = mutableMapOf<String, ServerInstance>()
+        return DataStoreObjectControllerCache.findNotNull<ServerInstance>()
+            .loadAll(DataStoreStorageType.REDIS)
+            .thenApply {
+                val mutableMap = mutableMapOf<String, ServerInstance>()
 
-            it.forEach { (t, u) ->
-                if (u.serverGroup.equals(group, true)) {
-                    mutableMap[t] = u
+                it.forEach { (t, u) ->
+                    if (u.serverGroup.equals(group, true)) {
+                        mutableMap[t.toString()] = u
+                    }
                 }
-            }
 
-            return@thenApply mutableMap
-        }
+                return@thenApply mutableMap
+            }
     }
 }

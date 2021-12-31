@@ -1,5 +1,6 @@
 package gg.scala.lemon.player
 
+import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*
 
 /**
@@ -12,8 +13,11 @@ import java.util.*
 class FundamentalLemonPlayer(
     val uniqueId: UUID,
     val username: String
-)
+) : IDataStoreObject
 {
+    override val identifier: UUID
+        get() = uniqueId
+
     var currentServer = ""
     var currentDisplayName = ""
     var currentRank = UUID.randomUUID()

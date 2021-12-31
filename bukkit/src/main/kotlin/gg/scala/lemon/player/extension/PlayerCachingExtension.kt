@@ -1,11 +1,11 @@
 package gg.scala.lemon.player.extension
 
-import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
-import com.solexgames.datastore.commons.storage.impl.RedisStorageBuilder
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.store.controller.DataStoreObjectController
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -16,31 +16,23 @@ import java.util.concurrent.CompletableFuture
  */
 object PlayerCachingExtension
 {
-    lateinit var handle: RedisStorageLayer<FundamentalLemonPlayer>
-
     var loaded = false
+    lateinit var controller: DataStoreObjectController<FundamentalLemonPlayer>
 
     fun initialLoad()
     {
-        val builder = RedisStorageBuilder<FundamentalLemonPlayer>()
-
-        builder.setConnection(Lemon.instance.redisConnectionDetails)
-        builder.setSection("lemon:players")
-        builder.setType(FundamentalLemonPlayer::class.java)
-
-        handle = builder.build(); loaded = true
+        loaded = true
     }
 
     fun retrieve(uniqueId: UUID): CompletableFuture<FundamentalLemonPlayer?>
     {
-        return handle.fetchEntryByKey(uniqueId.toString())
+        return controller.load(uniqueId, DataStoreStorageType.REDIS)
     }
 
     fun memorize(lemonPlayer: LemonPlayer)
     {
         if (!loaded)
         {
-            println("Not saving")
             return
         }
 
@@ -55,7 +47,7 @@ object PlayerCachingExtension
             ?: RankHandler.getDefaultRank().uuid
 
         Tasks.sync {
-            handle.saveEntry(lemonPlayer.uniqueId.toString(), fundamental)
+            controller.save(fundamental, DataStoreStorageType.REDIS)
         }
     }
 
@@ -63,8 +55,6 @@ object PlayerCachingExtension
     {
         if (!loaded) return
 
-        handle.deleteEntry(
-            lemonPlayer.uniqueId.toString()
-        )
+        controller.delete(lemonPlayer.uniqueId, DataStoreStorageType.REDIS)
     }
 }

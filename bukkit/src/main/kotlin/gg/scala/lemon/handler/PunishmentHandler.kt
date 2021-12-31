@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
@@ -12,6 +13,9 @@ import gg.scala.lemon.util.QuickAccess.fetchIpAddress
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
 import gg.scala.lemon.util.dispatchImmediately
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -31,17 +35,22 @@ object PunishmentHandler
 
     private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>>
     {
-        return DataStoreOrchestrator.punishmentLayer.fetchAllEntriesWithFilter(filter).thenApply {
-            val mutableList = mutableListOf<Punishment>()
+        val controller = DataStoreObjectControllerCache.findNotNull<Punishment>()
 
-            it.forEach { entry ->
-                if (test.invoke(entry.value))
-                {
-                    mutableList.add(entry.value)
+        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Punishment>, CompletableFuture<List<Punishment>>>(
+            DataStoreStorageType.MONGO
+        ) {
+            return@useLayerWithReturn this.loadAllWithFilter(filter).thenApply {
+                val mutableList = mutableListOf<Punishment>()
+
+                it.forEach { entry ->
+                    if (test.invoke(entry.value)) {
+                        mutableList.add(entry.value)
+                    }
                 }
-            }
 
-            return@thenApply mutableList
+                return@thenApply mutableList
+            }
         }
     }
 
@@ -140,9 +149,10 @@ object PunishmentHandler
         ) { true }
     }
 
-    fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment>
+    fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment?>
     {
-        return DataStoreOrchestrator.punishmentLayer.fetchEntryByKey(uuid.toString())
+        return DataStoreObjectControllerCache.findNotNull<Punishment>()
+            .load(uuid, DataStoreStorageType.MONGO)
     }
 
     /**

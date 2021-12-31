@@ -4,6 +4,9 @@ import com.mongodb.client.model.Filters
 import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.SplitUtil
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*
@@ -16,11 +19,17 @@ import java.util.concurrent.CompletableFuture
 object CommentHandler
 {
 
-    fun fetchComments(target: UUID): CompletableFuture<Map<String, Comment>>
+    fun fetchComments(target: UUID): CompletableFuture<Map<UUID, Comment>>
     {
-        return DataStoreOrchestrator.commentLayer.fetchAllEntriesWithFilter(
-            Filters.eq("target", target.toString())
-        )
+        val controller = DataStoreObjectControllerCache.findNotNull<Comment>()
+
+        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Comment>, CompletableFuture<Map<UUID, Comment>>>(
+            DataStoreStorageType.MONGO
+        ) {
+            return@useLayerWithReturn this.loadAllWithFilter(
+                Filters.eq("target", target.toString())
+            )
+        }
     }
 
     /**
@@ -37,11 +46,16 @@ object CommentHandler
             Date(), commentValue
         )
 
-        DataStoreOrchestrator.commentLayer.saveEntry(
-            comment.uniqueId.toString(), comment
-        ).thenRun {
-            issuer.sendMessage("${CC.GREEN}You've attached a comment with the value ${CC.WHITE}$commentValue${CC.GREEN} to ${CC.WHITE}${CubedCacheUtil.fetchName(target)}'s${CC.GREEN} profile with the ID ${CC.YELLOW}#${SplitUtil.splitUuid(comment.uniqueId)}${CC.GREEN}.")
-        }
+        DataStoreObjectControllerCache.findNotNull<Comment>()
+            .save(comment, DataStoreStorageType.MONGO)
+
+        issuer.sendMessage(
+            "${CC.GREEN}You've attached a comment with the value ${CC.WHITE}$commentValue${CC.GREEN} to ${CC.WHITE}${
+                CubedCacheUtil.fetchName(
+                    target
+                )
+            }'s${CC.GREEN} profile with the ID ${CC.YELLOW}#${SplitUtil.splitUuid(comment.uniqueId)}${CC.GREEN}."
+        )
     }
 
     /**
@@ -55,20 +69,27 @@ object CommentHandler
         shortenedUniqueId: String
     )
     {
-        DataStoreOrchestrator.commentLayer.fetchAllEntriesWithFilter(
-            Filters.eq("shortenedUniqueId", shortenedUniqueId)
-        ).thenAccept {
-            if (it.isEmpty()) {
-                remover.sendMessage("${CC.RED}No comment with the id ${CC.YELLOW}#${shortenedUniqueId}${CC.RED} was found.")
-                return@thenAccept
-            }
+        val controller = DataStoreObjectControllerCache.findNotNull<Comment>()
 
-            val first = it.values.first()!!
+        controller.useLayer<MongoDataStoreStorageLayer<Comment>>(
+            DataStoreStorageType.MONGO
+        ) {
+            this.loadAllWithFilter(
+                Filters.eq("shortenedUniqueId", shortenedUniqueId)
+            ).thenAccept {
+                if (it.isEmpty())
+                {
+                    remover.sendMessage("${CC.RED}No comment with the id ${CC.YELLOW}#${shortenedUniqueId}${CC.RED} was found.")
+                    return@thenAccept
+                }
 
-            DataStoreOrchestrator.commentLayer.deleteEntry(
-                first.uniqueId.toString()
-            ).thenRun {
-                remover.sendMessage("${CC.GREEN}You've removed a comment with the id ${CC.YELLOW}#${first.shortenedUniqueId}${CC.GREEN}.")
+                val first = it.values.first()
+
+                DataStoreObjectControllerCache.findNotNull<Comment>()
+                    .delete(first.uniqueId, DataStoreStorageType.MONGO)
+                    .thenRun {
+                        remover.sendMessage("${CC.GREEN}You've removed a comment with the id ${CC.YELLOW}#${first.shortenedUniqueId}${CC.GREEN}.")
+                    }
             }
         }
     }

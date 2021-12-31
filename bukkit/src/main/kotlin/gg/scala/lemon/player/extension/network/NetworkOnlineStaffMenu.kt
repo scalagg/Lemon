@@ -4,6 +4,7 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.player.extension.PlayerCachingExtension
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -31,21 +32,23 @@ class NetworkOnlineStaffMenu : PaginatedMenu()
 
     override fun asyncLoadResources(player: Player, callback: (Boolean) -> Unit)
     {
-        PlayerCachingExtension.handle.fetchAllEntries().thenApply {
-            val staffList = mutableListOf<FundamentalLemonPlayer>()
+        PlayerCachingExtension.controller.loadAll(DataStoreStorageType.REDIS)
+            .thenApply {
+                val staffList = mutableListOf<FundamentalLemonPlayer>()
 
-            it.values.forEach { staff ->
-                if (isStaffRank(staff.currentRank))
-                {
-                    staffList.add(staff)
+                it.values.forEach { staff ->
+                    if (isStaffRank(staff.currentRank))
+                    {
+                        staffList.add(staff)
+                    }
                 }
-            }
 
-            return@thenApply staffList
-        }.thenAccept {
-            onlineStaff = it
-            callback.invoke(true)
-        }
+                return@thenApply staffList
+            }
+            .thenAccept {
+                onlineStaff = it
+                callback.invoke(true)
+            }
     }
 
     private fun isStaffRank(uuid: UUID): Boolean

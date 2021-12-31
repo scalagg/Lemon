@@ -8,7 +8,9 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.other.Expirable
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -99,6 +101,7 @@ class Grant(
             )
         }
 
-        return DataStoreOrchestrator.grantLayer.saveEntry(uuid.toString(), this)
+        return DataStoreObjectControllerCache.findNotNull<Grant>()
+            .save(this, DataStoreStorageType.MONGO)
     }
 }

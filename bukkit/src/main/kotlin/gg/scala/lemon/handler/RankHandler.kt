@@ -1,6 +1,8 @@
 package gg.scala.lemon.handler
 
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import java.util.*
 
@@ -19,15 +21,17 @@ object RankHandler {
         }
 
     fun loadRanks() {
-        DataStoreOrchestrator.rankLayer.fetchAllEntries().whenComplete { entries, _ ->
-            entries.forEach {
-                ranks[it.value.uuid] = it.value
-            }
+        DataStoreObjectControllerCache.findNotNull<Rank>()
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAccept { entries ->
+                entries.forEach {
+                    ranks[it.value.uuid] = it.value
+                }
 
-            ranks.ifEmpty {
-                createDefaultRank()
+                ranks.ifEmpty {
+                    createDefaultRank()
+                }
             }
-        }
     }
 
     fun findRank(uuid: UUID): Rank? {

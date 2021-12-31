@@ -4,9 +4,12 @@ import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.broadcast
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -229,11 +232,16 @@ object RedisHandler : BananaHandler
     @Subscribe("rank-update")
     fun onRankUpdate(message: Message)
     {
-        val completableFuture = DataStoreOrchestrator.rankLayer
-            .fetchEntryByKey(message["uniqueId"])
+        val completableFuture = DataStoreObjectControllerCache.findNotNull<Rank>()
+            .load(
+                UUID.fromString(message["uniqueId"]),
+                DataStoreStorageType.MONGO
+            )
 
         completableFuture.thenAccept {
-            RankHandler.ranks[it.uuid] = it
+            it?.let { rank ->
+                RankHandler.ranks[rank.uuid] = rank
+            }
         }
     }
 

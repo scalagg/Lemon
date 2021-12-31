@@ -15,6 +15,8 @@ import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.util.BukkitUtil
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.entity.npc.protocol.NpcProtocol
@@ -197,9 +199,8 @@ internal object DisguiseProvider
             reloadPlayerInternal(player, handle)
         }
 
-        DisguiseInfoProvider.activeDisguises.deleteEntry(
-            disguiseInfo.uuid.toString()
-        )
+        DataStoreObjectControllerCache.findNotNull<DisguiseInfo>()
+            .delete(disguiseInfo.uuid, DataStoreStorageType.REDIS)
     }
 
     internal fun handleDisguiseInternal(
@@ -249,9 +250,8 @@ internal object DisguiseProvider
             reloadPlayerInternal(player, handle)
         }
 
-        DisguiseInfoProvider.activeDisguises.saveEntry(
-            disguiseInfo.uuid.toString(), disguiseInfo
-        )
+        DataStoreObjectControllerCache.findNotNull<DisguiseInfo>()
+            .save(disguiseInfo, DataStoreStorageType.REDIS)
     }
 
     private fun reloadPlayerInternal(

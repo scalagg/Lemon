@@ -1,6 +1,7 @@
 package gg.scala.lemon.task
 
 import gg.scala.lemon.Lemon
+import gg.scala.store.storage.type.DataStoreStorageType
 import org.bukkit.Bukkit
 
 object BukkitInstanceUpdateRunnable : Runnable
@@ -21,10 +22,7 @@ object BukkitInstanceUpdateRunnable : Runnable
 
         instance.metaData["init"] = Lemon.instance.initialization.toString()
 
-        Lemon.instance.serverLayer.saveEntry(
-            instance.serverId, instance
-        ).whenComplete { _, u ->
-            u?.printStackTrace()
-        }
+        Lemon.instance.serverLayer
+            .save(instance, DataStoreStorageType.REDIS)
     }
 }

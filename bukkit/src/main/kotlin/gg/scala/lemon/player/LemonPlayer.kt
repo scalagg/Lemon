@@ -24,7 +24,9 @@ import gg.scala.lemon.util.QuickAccess.originalRank
 import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.lemon.util.VaultUtil
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
+import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -714,9 +716,8 @@ class LemonPlayer(
     {
         finalizeMetaData()
 
-        return DataStoreOrchestrator.lemonPlayerLayer.saveEntry(
-            uniqueId.toString(), this
-        )
+        return DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
+            .save(this, DataStoreStorageType.MONGO)
     }
 
     private fun finalizeMetaData()
