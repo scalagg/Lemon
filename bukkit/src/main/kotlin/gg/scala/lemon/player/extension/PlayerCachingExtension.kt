@@ -5,7 +5,9 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.store.controller.DataStoreObjectController
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -21,6 +23,9 @@ object PlayerCachingExtension
 
     fun initialLoad()
     {
+        controller = DataStoreObjectControllerCache.create()
+        controller.provideCustomSerializer(Serializers.gson)
+
         loaded = true
     }
 

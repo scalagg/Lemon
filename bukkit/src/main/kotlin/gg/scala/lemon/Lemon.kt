@@ -164,6 +164,8 @@ class Lemon : ExtendedScalaPlugin()
 
         initialLoadConfigurations()
 
+        DataStoreOrchestrator.initialLoad()
+
         loadListeners()
         loadHandlers()
 
@@ -433,8 +435,6 @@ class Lemon : ExtendedScalaPlugin()
 
         CooldownHandler.initialLoad()
         LemonCooldownHandler.initialLoad()
-
-        DataStoreOrchestrator.initialLoad()
 
         localInstance = ServerInstance(
             settings.id,

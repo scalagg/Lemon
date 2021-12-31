@@ -8,6 +8,7 @@ website: https://scala.gg
 depend:
   - Cubed
   - helper
+  - store-spigot
 
 softdepend:
   - spark
