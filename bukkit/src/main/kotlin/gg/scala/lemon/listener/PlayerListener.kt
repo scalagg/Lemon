@@ -57,46 +57,30 @@ object PlayerListener : Listener
             return
         }
 
-        val current = System.currentTimeMillis()
+        var created = false
 
         DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
-            .load(event.uniqueId, DataStoreStorageType.MONGO)
-            .thenAccept { lemonPlayer ->
-                val created: Boolean
-                var newLemonPlayer = lemonPlayer
-
-                if (newLemonPlayer == null)
-                {
-                    newLemonPlayer = LemonPlayer(
-                        event.uniqueId, event.name, event.address.hostAddress ?: ""
-                    )
-                    created = true
-
-                } else
-                {
-                    newLemonPlayer.name = event.name
-
-                    if (!newLemonPlayer.savePreviousIpAddressAsCurrent)
-                    {
-                        newLemonPlayer.ipAddress = event.address.hostAddress ?: ""
-                    }
-
-                    created = false
-                }
-
-                PlayerHandler.players[event.uniqueId] = newLemonPlayer
-
+            .loadAndCache(event.uniqueId, {
+                created = true
+                return@loadAndCache LemonPlayer(
+                    event.uniqueId, event.name,
+                    event.address.hostAddress ?: ""
+                )
+            }, DataStoreStorageType.MONGO)
+            .thenAccept {
                 if (created)
                 {
-                    newLemonPlayer.handleIfFirstCreated()
+                    it.handleIfFirstCreated()
                 } else
                 {
-                    newLemonPlayer.handlePostLoad()
-                }
+                    it.name = event.name
 
-                if (LemonConstants.DEBUG)
-                {
-                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to load resources. (${event.name})")
+                    if (!it.savePreviousIpAddressAsCurrent)
+                    {
+                        it.ipAddress = event.address.hostAddress ?: ""
+                    }
+
+                    it.handlePostLoad()
                 }
             }
     }
