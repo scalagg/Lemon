@@ -24,15 +24,17 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
 
 object PlayerHandler
 {
-
     val inventory = mutableMapOf<Int, ItemStack>()
     val vanishItems = mutableMapOf<Boolean, ItemStack>()
     val snapshots = mutableMapOf<UUID, PlayerSnapshot>()
 
-    var players: HashMap<UUID, LemonPlayer> = hashMapOf()
+    val players: ConcurrentHashMap<UUID, LemonPlayer>
+        get() = DataStoreObjectControllerCache
+            .findNotNull<LemonPlayer>().localCache
 
     init
     {
