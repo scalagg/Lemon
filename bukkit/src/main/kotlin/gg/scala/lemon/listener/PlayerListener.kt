@@ -13,8 +13,10 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
+import gg.scala.lemon.menu.frozen.PlayerFrozenMenu
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.channel.Channel
+import gg.scala.lemon.player.event.impl.PostFreezeEvent
 import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
@@ -102,26 +104,17 @@ object PlayerListener : Listener
         }
     }
 
+    @EventHandler
+    fun onFreezeEvent(event: PostFreezeEvent)
+    {
+        PlayerFrozenMenu().openMenu(event.player)
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerChat(event: AsyncPlayerChatEvent)
     {
         val player = event.player
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
-        if (player.hasMetadata("frozen"))
-        {
-            event.isCancelled = true
-
-            Bukkit.getOnlinePlayers()
-                .mapNotNull { PlayerHandler.findPlayer(player).orElse(null) }
-                .filter { it.hasPermission("lemon.frozen.messages") && !it.hasMetadata("frozen-messages-disabled") && player.uniqueId != it.uniqueId }
-                .forEach {
-                    it.bukkitPlayer?.sendMessage("${CC.D_RED}[Frozen] ${coloredName(player)}${CC.GRAY}: ${CC.WHITE}${event.message}")
-                }
-
-            player.sendMessage("${CC.RED}Your message has been sent to our staff.")
-            return
-        }
 
         if (lemonPlayer.hasPermission("lemon.2fa.forced") && !lemonPlayer.isAuthExempt() && !player.hasMetadata("authenticated"))
         {
