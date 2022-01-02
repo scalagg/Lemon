@@ -3,6 +3,8 @@ package gg.scala.lemon.command
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
+import gg.scala.lemon.software.SoftwareDump
+import gg.scala.lemon.software.SoftwareDumpCategory
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.BaseCommand
@@ -33,18 +35,59 @@ class LemonCommand : BaseCommand()
 
     @Subcommand("dump")
     @Description("Dump general internal software details.")
-    fun onDump(sender: CommandSender)
+    fun onDump(player: Player)
     {
-        sender.sendMessage("=== Lemon Dump ===")
-        sender.sendMessage("Jedis:")
-        sender.sendMessage(" Subscriptions: ${Lemon.instance.banana.subscriptions.size}")
-        sender.sendMessage(" Handling Async: ${Lemon.instance.banana.options.async}")
-        sender.sendMessage(" Ignoring Non-Existent Handlers: ${Lemon.instance.banana.options.ignoreNonExistentHandlers}")
-        sender.sendMessage("")
-        sender.sendMessage("System:")
-        sender.sendMessage(" Threads: ${Thread.getAllStackTraces().values.size}")
-        sender.sendMessage(" Common Pool Parallelism: ${ForkJoinPool.getCommonPoolParallelism()}")
-        sender.sendMessage(" Using Common Pool: ${ForkJoinPool.getCommonPoolParallelism() > 1}")
+        val softwareDump = SoftwareDump("System Dump")
+
+        val banana = SoftwareDumpCategory("Redis")
+        banana.addEntry(
+            "Subscriptions" to Lemon.instance
+                .banana.subscriptions.size
+        )
+        banana.addEntry(
+            "Ignoring non-existent handlers" to Lemon
+                .instance.banana.options.ignoreNonExistentHandlers
+        )
+
+        val system = SoftwareDumpCategory("System")
+        system.addEntry(
+            "Threads ${CC.GRAY}(Total)${CC.SEC}" to Thread.getAllStackTraces().values.size
+        )
+        system.addEntry(
+            "Threads ${CC.GRAY}(Daemon)${CC.SEC}" to Thread
+                .getAllStackTraces().keys
+                .filter { it.isDaemon }
+                .size
+        )
+        system.addEntry(
+            "Threads ${CC.GRAY}(Interrupted)${CC.SEC}" to Thread
+                .getAllStackTraces().keys
+                .filter { it.isInterrupted }
+                .size
+        )
+        system.addEntry(
+            "Threads ${CC.GRAY}(Alive)${CC.SEC}" to Thread
+                .getAllStackTraces().keys
+                .filter { it.isAlive }
+                .size
+        )
+
+        val commonPool = SoftwareDumpCategory("Common Pool")
+        commonPool.addEntry(
+            "Parallelism" to ForkJoinPool
+                .getCommonPoolParallelism()
+        )
+        commonPool.addEntry(
+            "Active" to (ForkJoinPool
+                .getCommonPoolParallelism() > 1)
+        )
+
+        softwareDump.addCategory(system)
+        softwareDump.addCategory(commonPool)
+        softwareDump.addCategory(banana)
+
+        softwareDump.formFancyMessage()
+            .sendToPlayer(player)
     }
 
     @Subcommand("visibility-dump")
@@ -68,23 +111,71 @@ class LemonCommand : BaseCommand()
 
     @Subcommand("punishment-dump")
     @Description("Dump punishment information.")
-    fun onPunishmentDump(sender: CommandSender)
+    fun onPunishmentDump(player: Player)
     {
-        sender.sendMessage("${CC.RED}Loading punishment information...")
+        player.sendMessage("${CC.YELLOW}Loading punishment information...")
 
         DataStoreObjectControllerCache.findNotNull<Punishment>()
             .loadAll(DataStoreStorageType.MONGO)
-            .thenAccept { sender.sendMessage("${it.size} punishments exist.") }
+            .thenAccept {
+                val softwareDump = SoftwareDump("Punishment Dump")
+
+                val general = SoftwareDumpCategory("General")
+                general.addEntry(
+                    "Punishments ${CC.GRAY}(Total)${CC.SEC}" to it.size
+                )
+                general.addEntry(
+                    "Punishments ${CC.GRAY}(Active)${CC.SEC}" to
+                            it.filter { punishment -> punishment.value.isActive }.size
+                )
+                general.addEntry(
+                    "Punishments ${CC.GRAY}(Removed)${CC.SEC}" to
+                            it.filter { punishment -> punishment.value.isRemoved }.size
+                )
+                general.addEntry(
+                    "Punishments ${CC.GRAY}(Permanent)${CC.SEC}" to
+                            it.filter { punishment -> punishment.value.isPermanent }.size
+                )
+
+                softwareDump.addCategory(general)
+
+                softwareDump.formFancyMessage()
+                    .sendToPlayer(player)
+            }
     }
 
     @Subcommand("grant-dump")
     @Description("Dump grant information.")
-    fun onGrantDump(sender: CommandSender)
+    fun onGrantDump(player: Player)
     {
-        sender.sendMessage("${CC.RED}Loading grant information...")
+        player.sendMessage("${CC.YELLOW}Loading grant information...")
 
         DataStoreObjectControllerCache.findNotNull<Grant>()
             .loadAll(DataStoreStorageType.MONGO)
-            .thenAccept { sender.sendMessage("${it.size} grants exist.") }
+            .thenAccept {
+                val softwareDump = SoftwareDump("Grant Dump")
+
+                val general = SoftwareDumpCategory("General")
+                general.addEntry(
+                    "Grants ${CC.GRAY}(Total)${CC.SEC}" to it.size
+                )
+                general.addEntry(
+                    "Grants ${CC.GRAY}(Active)${CC.SEC}" to
+                            it.filter { grant -> grant.value.isActive }.size
+                )
+                general.addEntry(
+                    "Grants ${CC.GRAY}(Removed)${CC.SEC}" to
+                            it.filter { grant -> grant.value.isRemoved }.size
+                )
+                general.addEntry(
+                    "Grants ${CC.GRAY}(Permanent)${CC.SEC}" to
+                            it.filter { grant -> grant.value.isPermanent }.size
+                )
+
+                softwareDump.addCategory(general)
+
+                softwareDump.formFancyMessage()
+                    .sendToPlayer(player)
+            }
     }
 }
