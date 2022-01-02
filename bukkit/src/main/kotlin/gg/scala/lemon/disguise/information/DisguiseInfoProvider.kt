@@ -1,5 +1,8 @@
 package gg.scala.lemon.disguise.information
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.serializers.Serializers
@@ -9,11 +12,14 @@ import net.evilblock.cubed.util.bukkit.Tasks
  * @author GrowlyX
  * @since 9/29/2021
  */
+@Service
+@IgnoreAutoScan
 object DisguiseInfoProvider
 {
     var initialized = false
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         DataStoreObjectControllerCache.create<DisguiseInfo>(Serializers.gson)
 

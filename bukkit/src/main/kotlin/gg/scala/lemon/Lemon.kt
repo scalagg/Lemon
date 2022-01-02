@@ -6,6 +6,7 @@ import gg.scala.banana.BananaBuilder
 import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.flavor.Flavor
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
@@ -15,7 +16,6 @@ import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.annotation.DoNotRegister
 import gg.scala.lemon.command.ColorCommand
-import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
@@ -44,7 +44,6 @@ import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.processor.LanguageConfigProcessor
-import gg.scala.lemon.processor.MongoDBConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.lemon.server.ServerInstance
@@ -115,6 +114,8 @@ class Lemon : ExtendedScalaPlugin()
 
     var initialization by Delegates.notNull<Long>()
 
+    val flavor = Flavor.create<Lemon>()
+
     override fun enable()
     {
         instance = this
@@ -164,7 +165,7 @@ class Lemon : ExtendedScalaPlugin()
 
         initialLoadConfigurations()
 
-        DataStoreOrchestrator.initialLoad()
+        flavor.inject(DataStoreOrchestrator)
 
         loadListeners()
         loadHandlers()
@@ -275,8 +276,8 @@ class Lemon : ExtendedScalaPlugin()
 
         if (settings.disguiseEnabled)
         {
-            DisguiseInfoProvider.initialLoad()
-            DisguiseProvider.initialLoad()
+            flavor.inject(DisguiseInfoProvider)
+            flavor.inject(DisguiseProvider)
 
             server.pluginManager.registerEvents(DisguiseListener, this)
 
@@ -306,16 +307,14 @@ class Lemon : ExtendedScalaPlugin()
 
         if (settings.redisCachePlayers)
         {
-            PlayerCachingExtension.initialLoad()
-
+            flavor.inject(PlayerCachingExtension)
             logger.info("Now memorizing fundamental player data to your redis server.")
         }
 
         // Loading all default player colors
         if (settings.playerColorsEnabled)
         {
-            PlayerColorHandler.initialLoad()
-
+            flavor.inject(PlayerColorHandler)
             logger.info("Loaded default player colors for /colors.")
         }
 
@@ -348,8 +347,7 @@ class Lemon : ExtendedScalaPlugin()
 
         if (server.pluginManager.getPlugin("ProtocolLib") != null)
         {
-            ProtocolLibHook.initialLoad()
-
+            flavor.inject(ProtocolLibHook)
             logger.info("Now handling tab-completion through ProtocolLib.")
         }
 
@@ -362,17 +360,13 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Now utilizing spark for server statistics.")
         }
 
-        RainbowNametagHandler.initialLoad()
-        logger.info("Setup rainbow nametag resources.")
-
-        EntitySuperBoatHandler.initialLoad()
-        logger.info("Setup super-boat resources.")
-
-        HotbarPresetHandler.initialLoad()
-        logger.info("Setup hotbar preset resources.")
-
-        ChatMessageFilterHandler.initialLoad()
-        logger.info("Setup chat message filter resources.")
+        try
+        {
+            flavor.startup()
+        } catch (exception: Exception)
+        {
+            exception.printStackTrace()
+        }
 
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
@@ -431,10 +425,7 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun loadHandlers()
     {
-        RankHandler.loadRanks()
-
-        CooldownHandler.initialLoad()
-        LemonCooldownHandler.initialLoad()
+        flavor.inject(RankHandler)
 
         localInstance = ServerInstance(
             settings.id,

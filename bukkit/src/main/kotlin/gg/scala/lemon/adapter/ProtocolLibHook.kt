@@ -5,6 +5,9 @@ import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.listener.PlayerListener
 import net.evilblock.cubed.util.CC
@@ -13,9 +16,12 @@ import net.evilblock.cubed.util.CC
  * @author GrowlyX
  * @since 10/27/2021
  */
+@Service
+@IgnoreAutoScan
 object ProtocolLibHook
 {
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         try
         {

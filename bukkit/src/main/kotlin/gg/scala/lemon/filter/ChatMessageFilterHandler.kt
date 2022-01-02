@@ -1,5 +1,7 @@
 package gg.scala.lemon.filter
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
@@ -15,11 +17,13 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 12/29/2021
  */
+@Service
 object ChatMessageFilterHandler
 {
     private val phraseFilters = mutableListOf<MessagePhraseFilter>()
     private val messageFilters = mutableListOf<ChatMessageFilter>()
 
+    @Configure
     fun initialLoad()
     {
         phraseFilters.add(RegexPhraseFilter)

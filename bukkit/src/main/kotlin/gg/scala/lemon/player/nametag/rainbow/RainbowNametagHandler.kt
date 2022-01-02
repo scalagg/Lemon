@@ -1,5 +1,7 @@
 package gg.scala.lemon.player.nametag.rainbow
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
@@ -14,6 +16,7 @@ import java.util.*
  * @author GrowlyX
  * @since 11/25/2021
  */
+@Service
 object RainbowNametagHandler : Runnable
 {
     private var index = 0
@@ -63,6 +66,7 @@ object RainbowNametagHandler : Runnable
         currentColor.toString(), ""
     )
 
+    @Configure
     fun initialLoad()
     {
         Schedulers.async().runRepeating(this, 0L, 20L)

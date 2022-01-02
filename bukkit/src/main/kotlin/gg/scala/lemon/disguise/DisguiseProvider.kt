@@ -3,6 +3,9 @@ package gg.scala.lemon.disguise
 import com.google.gson.JsonParser
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
@@ -39,7 +42,9 @@ import java.util.*
  * @author GrowlyX
  * @since 9/29/2021
  */
-internal object DisguiseProvider
+@Service
+@IgnoreAutoScan
+object DisguiseProvider
 {
 
     internal val originalGameProfiles = mutableMapOf<UUID, Any>()
@@ -76,7 +81,8 @@ internal object DisguiseProvider
 
     private var initialized = false
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         val clazz = Class.forName(
             "net.minecraft.server.$serverVersion.EntityHuman"

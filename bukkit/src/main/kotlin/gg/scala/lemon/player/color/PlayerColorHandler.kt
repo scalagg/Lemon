@@ -1,5 +1,8 @@
 package gg.scala.lemon.player.color
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import org.bukkit.ChatColor
 import org.bukkit.Color
 
@@ -7,6 +10,8 @@ import org.bukkit.Color
  * @author GrowlyX
  * @since 11/12/2021
  */
+@Service
+@IgnoreAutoScan
 object PlayerColorHandler
 {
     val colorPairs = mutableListOf<PlayerColor>()
@@ -14,7 +19,8 @@ object PlayerColorHandler
     fun find(id: String): PlayerColor? = colorPairs
         .firstOrNull { it.name.equals(id, true) }
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         register(
             PlayerColor(ChatColor.RED, Color.fromRGB(255, 85, 85), "Red"),

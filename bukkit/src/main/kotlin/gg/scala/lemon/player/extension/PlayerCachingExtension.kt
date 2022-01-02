@@ -1,5 +1,8 @@
 package gg.scala.lemon.player.extension
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.FundamentalLemonPlayer
@@ -16,12 +19,15 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 10/19/2021
  */
+@Service
+@IgnoreAutoScan
 object PlayerCachingExtension
 {
     var loaded = false
     lateinit var controller: DataStoreObjectController<FundamentalLemonPlayer>
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         controller = DataStoreObjectControllerCache.create()
         controller.provideCustomSerializer(Serializers.gson)

@@ -1,5 +1,7 @@
 package gg.scala.lemon.cooldown
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.cooldown.type.PlayerCooldown
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
@@ -10,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent
  * @author GrowlyX
  * @since 10/15/2021
  */
+@Service
 object CooldownHandler
 {
     private val cooldowns = mutableMapOf<Class<*>, PlayerCooldown>()
@@ -19,7 +22,8 @@ object CooldownHandler
         return cooldowns[clazz]
     }
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         Events.subscribe(PlayerQuitEvent::class.java).handler {
             cooldowns.values.forEach { cooldown ->

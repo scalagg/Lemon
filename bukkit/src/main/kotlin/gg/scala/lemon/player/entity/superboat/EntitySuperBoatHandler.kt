@@ -1,5 +1,7 @@
 package gg.scala.lemon.player.entity.superboat
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import me.lucko.helper.Events
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
@@ -9,6 +11,7 @@ import java.util.*
  * @author GrowlyX
  * @since 11/25/2021
  */
+@Service
 object EntitySuperBoatHandler
 {
     private val superBoats = mutableMapOf<UUID, EntitySuperBoat>()
@@ -29,6 +32,7 @@ object EntitySuperBoatHandler
         superBoats.remove(player.uniqueId)?.onDeletion()
     }
 
+    @Configure
     fun initialLoad()
     {
         Events.subscribe(PlayerQuitEvent::class.java).handler {

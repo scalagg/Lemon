@@ -1,5 +1,8 @@
 package gg.scala.lemon.handler
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.player.grant.Grant
@@ -12,9 +15,12 @@ import net.evilblock.cubed.serializers.Serializers
  * @author GrowlyX
  * @since 9/7/2021
  */
+@Service
+@IgnoreAutoScan
 object DataStoreOrchestrator
 {
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         DataStoreObjectControllerCache.create<LemonPlayer>(Serializers.gson)
         DataStoreObjectControllerCache.create<Punishment>(Serializers.gson)

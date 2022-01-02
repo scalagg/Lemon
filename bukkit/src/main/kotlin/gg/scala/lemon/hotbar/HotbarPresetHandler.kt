@@ -1,5 +1,7 @@
 package gg.scala.lemon.hotbar
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.bukkit.ItemUtils
@@ -11,6 +13,7 @@ import java.util.*
  * @author GrowlyX
  * @since 11/28/2021
  */
+@Service
 object HotbarPresetHandler
 {
     private val trackedHotbars = mutableMapOf<String, HotbarPreset>()
@@ -25,6 +28,7 @@ object HotbarPresetHandler
         trackedHotbars.remove(string)
     }
 
+    @Configure
     fun initialLoad()
     {
         Events.subscribe(PlayerInteractEvent::class.java)
