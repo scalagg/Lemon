@@ -454,12 +454,14 @@ class Lemon : ExtendedScalaPlugin()
 
         serverLayer = DataStoreObjectControllerCache.create()
 
-        localInstance = serverLayer
-            .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
-                this.loadWithFilterSync { it.serverId == settings.id } ?: ServerInstance(
-                    settings.id, settings.group
-                )
-            }
+        invokeTrackedTask("server instance") {
+            localInstance = serverLayer
+                .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
+                    this.loadWithFilterSync { it.serverId == settings.id } ?: ServerInstance(
+                        settings.id, settings.group
+                    )
+                }
+        }
 
         redisConnectionDetails = DataStoreRedisConnectionDetails(
             credentials.address,
@@ -481,8 +483,6 @@ class Lemon : ExtendedScalaPlugin()
 
         banana.registerClass(RedisHandler)
         banana.subscribe()
-
-
 
         logger.info("Setup data store controllers.")
     }
