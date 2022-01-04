@@ -7,6 +7,7 @@ import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.flavor.Flavor
+import gg.scala.flavor.FlavorOptions
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
@@ -114,7 +115,11 @@ class Lemon : ExtendedScalaPlugin()
 
     var initialization by Delegates.notNull<Long>()
 
-    val flavor = Flavor.create<Lemon>()
+    val flavor by lazy {
+        Flavor.create<Lemon>(
+            FlavorOptions(logger)
+        )
+    }
 
     override fun enable()
     {
