@@ -50,6 +50,7 @@ import gg.scala.lemon.testing.TestingCommand
 import gg.scala.store.connection.redis.impl.details.DataStoreRedisConnectionDetails
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.spigot.ScalaDataStorePlugin
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
@@ -420,8 +421,24 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun initialLoadConfigurations()
     {
-        languageConfig = configFactory.fromFile("language", LanguageConfigProcessor::class.java)
-        credentials = configFactory.fromFile("redis", BananaCredentials::class.java)
+        languageConfig = configFactory.fromFile(
+            "language", LanguageConfigProcessor::class.java
+        )
+
+        convertScalaStoreRedisDetails()
+    }
+
+    private fun convertScalaStoreRedisDetails()
+    {
+        // Converting the scala-store redis
+        // details form to Banana's
+        val scalaStoreRedis = ScalaDataStorePlugin.INSTANCE.redis
+        credentials = BananaCredentials(
+            scalaStoreRedis.hostname,
+            scalaStoreRedis.port,
+            scalaStoreRedis.password != null,
+            scalaStoreRedis.password ?: ""
+        )
     }
 
     private fun loadHandlers()
@@ -530,7 +547,8 @@ class Lemon : ExtendedScalaPlugin()
                 throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
-            val lemonPlayer = lemonPlayerOptional.orElse(null)!!
+            val lemonPlayer = lemonPlayerOptional.orElse(null)
+                ?: throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
 
             if (it.player != null)
             {
