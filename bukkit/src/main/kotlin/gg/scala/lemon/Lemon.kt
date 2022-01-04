@@ -52,6 +52,8 @@ import gg.scala.store.connection.redis.impl.details.DataStoreRedisConnectionDeta
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.spigot.ScalaDataStoreSpigot
+import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
+import gg.scala.store.storage.type.DataStoreStorageType
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
@@ -450,10 +452,14 @@ class Lemon : ExtendedScalaPlugin()
     {
         flavor.inject(RankHandler)
 
-        localInstance = ServerInstance(
-            settings.id,
-            settings.group
-        )
+        serverLayer = DataStoreObjectControllerCache.create()
+
+        localInstance = serverLayer
+            .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
+                this.loadWithFilterSync { it.serverId == settings.id } ?: ServerInstance(
+                    settings.id, settings.group
+                )
+            }
 
         redisConnectionDetails = DataStoreRedisConnectionDetails(
             credentials.address,
@@ -476,7 +482,7 @@ class Lemon : ExtendedScalaPlugin()
         banana.registerClass(RedisHandler)
         banana.subscribe()
 
-        serverLayer = DataStoreObjectControllerCache.create()
+
 
         logger.info("Setup data store controllers.")
     }
