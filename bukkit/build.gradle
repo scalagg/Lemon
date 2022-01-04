@@ -14,6 +14,8 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.lucko.me' }
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url "https://repo.dmulloy2.net/repository/public/" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
@@ -23,10 +25,13 @@ repositories {
 dependencies {
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
 
+    compileOnly "gg.scala:sspigot-server:1.0-SNAPSHOT"
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
     compileOnly "me.lucko:helper:5.6.8"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.10'
+    compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
+    compileOnly 'me.lucko:spark-api:0.1-SNAPSHOT'
 
     implementation "gg.scala.flavor:flavor:0.1.1"
 
