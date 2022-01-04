@@ -20,11 +20,9 @@ rebel.xml
 # Keep libs
 #!lib/*.jar
 
-gradle
 .gradle
 **/build/
 !src/**/build/
-.idea
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -37,4 +35,3 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
-/.idea/
