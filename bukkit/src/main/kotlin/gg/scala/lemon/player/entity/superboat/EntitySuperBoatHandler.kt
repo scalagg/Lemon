@@ -33,7 +33,7 @@ object EntitySuperBoatHandler
     }
 
     @Configure
-    fun initialLoad()
+    fun configure()
     {
         Events.subscribe(PlayerQuitEvent::class.java).handler {
             superBoats.remove(it.player.uniqueId)?.onDeletion()

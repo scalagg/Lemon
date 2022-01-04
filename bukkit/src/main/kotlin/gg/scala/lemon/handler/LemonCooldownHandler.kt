@@ -13,7 +13,7 @@ import gg.scala.lemon.cooldown.impl.*
 object LemonCooldownHandler
 {
     @Configure
-    fun initialLoad()
+    fun configure()
     {
         CooldownHandler.register(
             ChatCooldown, SlowChatCooldown,

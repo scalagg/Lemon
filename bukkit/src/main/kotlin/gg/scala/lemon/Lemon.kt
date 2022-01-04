@@ -20,9 +20,7 @@ import gg.scala.lemon.command.ColorCommand
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
-import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.*
-import gg.scala.lemon.hotbar.HotbarPresetHandler
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -31,14 +29,12 @@ import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.entity.superboat.EntitySuperBoatCommand
-import gg.scala.lemon.player.entity.superboat.EntitySuperBoatHandler
 import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.extension.network.NetworkOnlineStaffCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
 import gg.scala.lemon.player.nametag.command.NametagCommand
-import gg.scala.lemon.player.nametag.rainbow.RainbowNametagHandler
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
@@ -326,7 +322,7 @@ class Lemon : ExtendedScalaPlugin()
         try
         {
             Class.forName("ScalaSpigot")
-            ScalaSpigotSorterExtension.initialLoad()
+            flavor.inject(ScalaSpigotSorterExtension)
 
             logger.info("Enabled ScalaSpigot Sorter implementation.")
         } catch (ignored: Exception) { }

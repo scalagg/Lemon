@@ -1,5 +1,7 @@
 package gg.scala.lemon.player.sorter
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.disguise.update.event.PostDisguiseEvent
 import gg.scala.lemon.disguise.update.event.UnDisguiseEvent
 import gg.scala.lemon.player.event.impl.RankChangeEvent
@@ -15,9 +17,11 @@ import org.bukkit.event.player.PlayerJoinEvent
  * @author GrowlyX
  * @since 11/19/2021
  */
+@Service
 object ScalaSpigotSorterExtension
 {
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         Events.subscribe(PlayerJoinEvent::class.java).handler {
             asyncInternalListSort()

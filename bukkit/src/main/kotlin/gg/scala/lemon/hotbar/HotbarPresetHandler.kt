@@ -29,7 +29,7 @@ object HotbarPresetHandler
     }
 
     @Configure
-    fun initialLoad()
+    fun configure()
     {
         Events.subscribe(PlayerInteractEvent::class.java)
             .filter { it.action.name.contains("RIGHT") }

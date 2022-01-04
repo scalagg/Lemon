@@ -67,7 +67,7 @@ object RainbowNametagHandler : Runnable
     )
 
     @Configure
-    fun initialLoad()
+    fun configure()
     {
         Schedulers.async().runRepeating(this, 0L, 20L)
 

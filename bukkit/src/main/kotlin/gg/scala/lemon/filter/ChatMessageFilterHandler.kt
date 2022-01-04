@@ -24,7 +24,7 @@ object ChatMessageFilterHandler
     private val messageFilters = mutableListOf<ChatMessageFilter>()
 
     @Configure
-    fun initialLoad()
+    fun configure()
     {
         phraseFilters.add(RegexPhraseFilter)
         messageFilters.add(RepetitiveMessageFilter)
