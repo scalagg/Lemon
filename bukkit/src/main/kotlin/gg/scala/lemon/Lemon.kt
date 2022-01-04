@@ -50,7 +50,7 @@ import gg.scala.lemon.testing.TestingCommand
 import gg.scala.store.connection.redis.impl.details.DataStoreRedisConnectionDetails
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
-import gg.scala.store.spigot.ScalaDataStorePlugin
+import gg.scala.store.spigot.ScalaDataStoreSpigot
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
@@ -432,7 +432,7 @@ class Lemon : ExtendedScalaPlugin()
     {
         // Converting the scala-store redis
         // details form to Banana's
-        val scalaStoreRedis = ScalaDataStorePlugin.INSTANCE.redis
+        val scalaStoreRedis = ScalaDataStoreSpigot.INSTANCE.redis
         credentials = BananaCredentials(
             scalaStoreRedis.hostname,
             scalaStoreRedis.port,

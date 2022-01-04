@@ -1,10 +1,9 @@
 package gg.scala.lemon.handler
 
-import com.mongodb.client.model.Filters
 import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.ShutdownRunnable
 import gg.scala.store.controller.DataStoreObjectControllerCache
-import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
+import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.ConditionFailedException
 import java.util.concurrent.CompletableFuture
@@ -40,12 +39,12 @@ object ServerHandler
         val controller = DataStoreObjectControllerCache
             .findNotNull<ServerInstance>()
 
-        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<ServerInstance>, CompletableFuture<ServerInstance?>>(
+        return controller.useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, CompletableFuture<ServerInstance?>>(
             DataStoreStorageType.REDIS
         ) {
-            this.loadWithFilter(
-                Filters.eq("serverId", id)
-            )
+            this.loadWithFilter {
+                it.serverId.equals(id, true)
+            }
         }
     }
 
