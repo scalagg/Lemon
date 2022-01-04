@@ -20,6 +20,7 @@ import gg.scala.lemon.command.ColorCommand
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
+import gg.scala.lemon.extension.AdditionalFlavorCommands
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
@@ -255,6 +256,10 @@ class Lemon : ExtendedScalaPlugin()
         commandManager.registerCommand(TestingCommand)
         commandManager.registerCommand(NametagCommand)
         commandManager.registerCommand(EntitySuperBoatCommand)
+
+        commandManager.registerCommand(
+            AdditionalFlavorCommands(flavor, this)
+        )
     }
 
     private fun initialLoadPlayerQol()
