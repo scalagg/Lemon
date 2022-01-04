@@ -16,7 +16,7 @@ import net.evilblock.cubed.util.CC
  * @author GrowlyX
  * @since 10/27/2021
  */
-@Service
+@Service(name = "protocol-lib")
 @IgnoreAutoScan
 object ProtocolLibHook
 {

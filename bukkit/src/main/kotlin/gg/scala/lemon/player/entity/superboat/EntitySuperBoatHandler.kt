@@ -11,7 +11,7 @@ import java.util.*
  * @author GrowlyX
  * @since 11/25/2021
  */
-@Service
+@Service(name = "superboat")
 object EntitySuperBoatHandler
 {
     private val superBoats = mutableMapOf<UUID, EntitySuperBoat>()

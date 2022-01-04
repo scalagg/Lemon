@@ -13,7 +13,7 @@ import java.util.*
  * @author GrowlyX
  * @since 11/28/2021
  */
-@Service
+@Service(name = "hotbar")
 object HotbarPresetHandler
 {
     private val trackedHotbars = mutableMapOf<String, HotbarPreset>()

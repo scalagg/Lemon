@@ -17,7 +17,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 12/29/2021
  */
-@Service
+@Service(name = "cm-filter")
 object ChatMessageFilterHandler
 {
     private val phraseFilters = mutableListOf<MessagePhraseFilter>()

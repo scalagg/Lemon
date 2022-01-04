@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent
  * @author GrowlyX
  * @since 11/19/2021
  */
-@Service
+@Service(name = "ssp-sorter")
 object ScalaSpigotSorterExtension
 {
     @Configure

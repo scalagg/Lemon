@@ -16,7 +16,7 @@ import java.util.*
  * @author GrowlyX
  * @since 11/25/2021
  */
-@Service
+@Service(name = "rainbow-nt")
 object RainbowNametagHandler : Runnable
 {
     private var index = 0

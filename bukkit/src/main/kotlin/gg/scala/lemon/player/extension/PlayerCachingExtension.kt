@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 10/19/2021
  */
-@Service
+@Service(name = "predi_caching")
 @IgnoreAutoScan
 object PlayerCachingExtension
 {

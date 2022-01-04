@@ -10,7 +10,7 @@ import org.bukkit.Color
  * @author GrowlyX
  * @since 11/12/2021
  */
-@Service
+@Service(name = "player-color")
 @IgnoreAutoScan
 object PlayerColorHandler
 {

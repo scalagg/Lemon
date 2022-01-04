@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent
  * @author GrowlyX
  * @since 10/15/2021
  */
-@Service
+@Service(name = "cooldown")
 object CooldownHandler
 {
     private val cooldowns = mutableMapOf<Class<*>, PlayerCooldown>()

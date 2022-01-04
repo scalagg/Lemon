@@ -15,7 +15,7 @@ import net.evilblock.cubed.serializers.Serializers
  * @author GrowlyX
  * @since 9/7/2021
  */
-@Service
+@Service(name = "ds-orchestrator")
 @IgnoreAutoScan
 object DataStoreOrchestrator
 {

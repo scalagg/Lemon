@@ -9,7 +9,7 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import java.util.*
 
-@Service
+@Service(name = "rank")
 @IgnoreAutoScan
 object RankHandler
 {
