@@ -196,7 +196,7 @@ class Lemon : ExtendedScalaPlugin()
 
         Schedulers.async().runRepeating(
             BukkitInstanceUpdateRunnable,
-            0L, 100L
+            0L, 20L
         )
     }
 

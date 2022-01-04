@@ -6,7 +6,6 @@ import org.bukkit.Bukkit
 
 object BukkitInstanceUpdateRunnable : Runnable
 {
-
     override fun run()
     {
         val instance = Lemon.instance.localInstance
