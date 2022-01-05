@@ -452,7 +452,7 @@ class LemonPlayer(
     {
         val current = System.currentTimeMillis()
 
-        PlayerHandler.fetchAlternateAccountsFor(uniqueId).thenAccept { lemonPlayers ->
+        PlayerHandler.fetchAlternateAccountsFor(uniqueId).thenAcceptAsync { lemonPlayers ->
             lemonPlayers.forEach {
                 val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
                 val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
@@ -465,12 +465,11 @@ class LemonPlayer(
                     {
                         val punishments = PunishmentHandler
                             .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
+                            .join()
 
-                        punishments.thenAccept { list ->
-                            if (list.isNotEmpty())
-                            {
-                                activePunishments[IP_RELATIVE] = list[0]
-                            }
+                        if (punishments.isNotEmpty())
+                        {
+                            activePunishments[IP_RELATIVE] = punishments[0]
                         }
                     }
                 }

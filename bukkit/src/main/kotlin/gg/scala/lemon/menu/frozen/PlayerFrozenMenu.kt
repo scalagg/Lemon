@@ -47,6 +47,21 @@ class PlayerFrozenMenu : Menu("You're frozen!")
                 .name("${CC.D_RED}You're frozen!")
                 .setLore(description)
                 .data(1).toButton()
+
+            it[8] = ItemBuilder(Material.NETHER_STAR)
+                .name("${CC.D_RED}Disconnect")
+                .addToLore(
+                    "${CC.GRAY}You may get banned by",
+                    "${CC.GRAY}our staff for logging out!",
+                    "",
+                    "${CC.I_WHITE}Logout at your own discretion!",
+                    "",
+                    "${CC.D_RED}Staff will receive a notification",
+                    "${CC.D_RED}regarding your disconnection.",
+                )
+                .data(1).toButton { _, _ ->
+                    player.kickPlayer("${CC.RED}You've logged out while frozen.")
+                }
         }
     }
 

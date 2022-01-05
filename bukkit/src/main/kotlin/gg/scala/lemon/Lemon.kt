@@ -71,6 +71,7 @@ import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
@@ -92,7 +93,7 @@ class Lemon : ExtendedScalaPlugin()
         lateinit var instance: Lemon
 
         @JvmStatic
-        var canJoin: Boolean = true
+        var canJoin: Boolean = false
     }
 
     lateinit var settings: SettingsConfigProcessor
@@ -112,7 +113,6 @@ class Lemon : ExtendedScalaPlugin()
     lateinit var redisConnectionDetails: DataStoreRedisConnectionDetails
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
-
     var initialization by Delegates.notNull<Long>()
 
     val flavor by lazy {
@@ -181,6 +181,11 @@ class Lemon : ExtendedScalaPlugin()
         initialLoadCommands()
 
         startUuidCacheImplementation()
+
+        Tasks.delayed(20L)
+        {
+            canJoin = true
+        }
 
         logger.info("Finished Lemon resource initialization in ${
             System.currentTimeMillis() - initialization

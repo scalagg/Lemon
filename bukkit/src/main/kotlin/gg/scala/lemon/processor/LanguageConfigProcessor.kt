@@ -35,14 +35,14 @@ class LanguageConfigProcessor {
         "${CC.RED}Your IP is temporarily banned from ${LemonConstants.SERVER_NAME}\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}${CC.GOLD}."
+                "${CC.GOLD}You may also purchase an unban for %s${CC.GOLD} at ${LemonConstants.STORE_LINK}."
 
     @Coloured
     val banRelationPermanentMessage =
         "${CC.RED}Your IP is permanently banned from ${LemonConstants.SERVER_NAME}\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban for %s at ${LemonConstants.STORE_LINK}${CC.GOLD}."
+                "${CC.GOLD}You may also purchase an unban for %s${CC.GOLD} at ${LemonConstants.STORE_LINK}."
 
     @Coloured
     val blacklistRelationMessage =
@@ -54,7 +54,7 @@ class LanguageConfigProcessor {
     var frozenPlayerHasTimeMessage = """
         ${CC.RED}  
         ${CC.RED}You've been frozen by a staff member!
-        ${CC.YELLOW}You have ${CC.WHITE}%s${CC.YELLOW} to join ${CC.GREEN}ts.scala.gg${CC.YELLOW}.
+        ${CC.YELLOW}You have ${CC.WHITE}%s${CC.YELLOW} to join ${CC.GREEN}discord.scala.gg${CC.YELLOW}.
         ${CC.GRAY}If you fail to comply with our staff team's orders, you will be banned.
         ${CC.RED}  
     """.trimIndent()
@@ -69,7 +69,7 @@ class LanguageConfigProcessor {
     """.trimIndent()
 
     @Coloured
-    var playerDataLoad = "${CC.RED}Your account did not load properly.\n${CC.GRAY}Please reconnect to resolve this issue."
+    var playerDataLoad = "${CC.RED}Your account did not load properly.\n${CC.RED}Please reconnect to resolve this issue."
 
     @Coloured
     var serverNotLoaded = "${CC.RED}The server is still loading.\n${CC.GRAY}Please reconnect in a few seconds."
