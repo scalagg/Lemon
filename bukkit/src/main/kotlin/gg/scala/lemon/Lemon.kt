@@ -91,9 +91,6 @@ class Lemon : ExtendedScalaPlugin()
     {
         @JvmStatic
         lateinit var instance: Lemon
-
-        @JvmStatic
-        var canJoin: Boolean = false
     }
 
     lateinit var settings: SettingsConfigProcessor
@@ -181,11 +178,6 @@ class Lemon : ExtendedScalaPlugin()
         initialLoadCommands()
 
         startUuidCacheImplementation()
-
-        Tasks.delayed(20L)
-        {
-            canJoin = true
-        }
 
         logger.info("Finished Lemon resource initialization in ${
             System.currentTimeMillis() - initialization
@@ -335,9 +327,12 @@ class Lemon : ExtendedScalaPlugin()
         try
         {
             Class.forName("ScalaSpigot")
-            flavor.inject(ScalaSpigotSorterExtension)
 
-            logger.info("Enabled ScalaSpigot Sorter implementation.")
+            if (settings.tablistSortingEnabled)
+            {
+                flavor.inject(ScalaSpigotSorterExtension)
+                logger.info("Enabled ScalaSpigot Sorter implementation.")
+            }
         } catch (ignored: Exception) { }
 
         // filter through the different client implementations

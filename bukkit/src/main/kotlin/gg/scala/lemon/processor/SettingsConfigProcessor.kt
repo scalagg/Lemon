@@ -30,6 +30,9 @@ class SettingsConfigProcessor {
     @Comment("Should we enable the /color command?")
     val playerColorsEnabled = true
 
+    @Comment("Should we enable rank-based tablist sorting?")
+    val tablistSortingEnabled = true
+
     val blacklistedCommands = listOf(
         "/ver", "/icanhasbukkit"
     )

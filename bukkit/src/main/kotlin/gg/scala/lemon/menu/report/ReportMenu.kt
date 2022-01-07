@@ -40,7 +40,7 @@ class ReportMenu(
                     .toButton { _, _ ->
                         sendStaffMessageWithFlag(
                             player,
-                            "${CC.YELLOW}${coloredName(player)} ${CC.RED} reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${it.fancyName}.",
+                            "${CC.YELLOW}${coloredName(target)}${CC.RED} was reported by ${CC.YELLOW}${coloredName(player)}${CC.RED} for: ${CC.WHITE}${it.fancyName}${CC.RED}.",
                             true,
                             QuickAccess.MessageType.NOTIFICATION,
                             "reports-disabled"

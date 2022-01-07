@@ -26,9 +26,7 @@ object GrantHandler {
     {
         val controller = DataStoreObjectControllerCache.findNotNull<Grant>()
 
-        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(
-            DataStoreStorageType.MONGO
-        ) {
+        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(DataStoreStorageType.MONGO) {
             return@useLayerWithReturn this.loadAllWithFilter(filter).thenApply {
                 val mutableList = mutableListOf<Grant>()
 

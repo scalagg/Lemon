@@ -15,7 +15,6 @@ import java.time.Duration
 @RequiredPlugin("LunarClient-API")
 class LunarClientAPIAdapter : PlayerClientAdapter
 {
-
     override fun getClientName() = "Lunar Client"
 
     override fun shouldHandle(player: Player): Boolean

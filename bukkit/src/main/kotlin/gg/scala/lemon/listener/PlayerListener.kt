@@ -53,12 +53,6 @@ object PlayerListener : Listener
     )
     fun onPlayerPreLoginHigh(event: AsyncPlayerPreLoginEvent)
     {
-        if (!Lemon.canJoin)
-        {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Lemon.instance.languageConfig.serverNotLoaded)
-            return
-        }
-
         var created = false
 
         DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
