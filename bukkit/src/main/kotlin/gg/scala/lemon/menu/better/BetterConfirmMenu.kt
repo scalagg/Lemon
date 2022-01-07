@@ -2,6 +2,7 @@ package gg.scala.lemon.menu.better
 
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.menus.ConfirmMenu
+import net.evilblock.cubed.util.CC
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player
  */
 open class BetterConfirmMenu(
     private val title: String = "Are you sure?",
-    private val extraInfo: List<String> = emptyList(),
+    private val extraInfo: List<String> = listOf("${CC.GRAY}Do you really want to do this?"),
     private val confirm: Boolean = true,
     callback: (Boolean) -> Unit
 ) : ConfirmMenu(title, extraInfo, confirm, callback) {

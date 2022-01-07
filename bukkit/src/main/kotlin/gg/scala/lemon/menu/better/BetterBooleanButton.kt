@@ -35,7 +35,21 @@ class BetterBooleanButton(
     }
 
     override fun getDescription(player: Player): List<String> {
-        return ArrayList()
+        return listOf(
+            if (value) {
+                if (confirm) {
+                    "${ChatColor.GRAY}I want to proceed with this action."
+                } else {
+                    "${ChatColor.GRAY}I agree with this action."
+                }
+            } else {
+                if (confirm) {
+                    "${ChatColor.GRAY}I want to cancel this procedure"
+                } else {
+                    "${ChatColor.GRAY}I do not agree with this action."
+                }
+            }
+        )
     }
 
     override fun getDamageValue(player: Player): Byte {
@@ -43,7 +57,7 @@ class BetterBooleanButton(
     }
 
     override fun getMaterial(player: Player): Material {
-        return Material.WOOL
+        return Material.CARPET
     }
 
     override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
