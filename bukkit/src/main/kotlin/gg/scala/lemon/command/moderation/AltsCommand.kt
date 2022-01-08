@@ -29,10 +29,10 @@ class AltsCommand : BaseCommand() {
     fun onAlts(sender: Player, target: LemonPlayer) {
         val targetLemon = PlayerHandler.findPlayer(target.bukkitPlayer!!.uniqueId).orElse(null)
 
-        PlayerHandler.fetchAlternateAccountsFor(target.bukkitPlayer!!.uniqueId).thenAccept {
+        PlayerHandler.fetchAlternateAccountsFor(target.bukkitPlayer!!.uniqueId).thenAcceptAsync {
             if (it.isEmpty()) {
                 sender.sendMessage("${CC.RED}${targetLemon.getOriginalColoredName()}${CC.RED} does not have any alts.")
-                return@thenAccept
+                return@thenAcceptAsync
             }
 
             val finalMessage = FancyMessage()
@@ -65,6 +65,7 @@ class AltsCommand : BaseCommand() {
                     }
                 )
 
+                lemonPlayer.recalculatePunishments(nothing = false).join()
                 lemonPlayer.activePunishments.forEach { entry ->
                     if (entry.value != null) {
                         val ipAddress = entry.value!!.targetCurrentIp

@@ -5,7 +5,6 @@ import gg.scala.flavor.service.Service
 import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
-import gg.scala.lemon.handler.FilterHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.util.CC
@@ -106,7 +105,7 @@ object ChatMessageFilterHandler
             if (target != null)
             {
                 fancyMessage.withMessage(
-                    "${CC.GRAY}(${player.name} -> ${target.name})"
+                    "${CC.GRAY}(${QuickAccess.coloredName(player)}${CC.GRAY} -> ${QuickAccess.coloredName(target)})"
                 )
             } else
             {

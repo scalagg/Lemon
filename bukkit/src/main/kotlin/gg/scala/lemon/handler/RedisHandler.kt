@@ -121,9 +121,9 @@ object RedisHandler : BananaHandler
     fun onPlayerMessage(message: Message)
     {
         val newMessage = message["message"]
-        val targetUuid = UUID.fromString(
-            message["target"]
-        )
+
+        val targetUuid = UUID
+            .fromString(message["target"])
 
         Bukkit.getPlayer(targetUuid)?.sendMessage(newMessage)
     }

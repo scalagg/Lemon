@@ -44,7 +44,7 @@ class BetterBooleanButton(
                 }
             } else {
                 if (confirm) {
-                    "${ChatColor.GRAY}I want to cancel this procedure"
+                    "${ChatColor.GRAY}I want to cancel this procedure."
                 } else {
                     "${ChatColor.GRAY}I do not agree with this action."
                 }

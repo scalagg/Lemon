@@ -25,9 +25,16 @@ object DataStoreOrchestrator
         DataStoreObjectControllerCache
             .create<LemonPlayer>(Serializers.gson)
 
-        DataStoreObjectControllerCache.create<Punishment>(Serializers.gson)
-        DataStoreObjectControllerCache.create<Rank>(Serializers.gson)
-        DataStoreObjectControllerCache.create<Grant>(Serializers.gson)
-        DataStoreObjectControllerCache.create<Comment>(Serializers.gson)
+        DataStoreObjectControllerCache
+            .create<Punishment>(Serializers.gson)
+
+        DataStoreObjectControllerCache
+            .create<Rank>(Serializers.gson)
+
+        DataStoreObjectControllerCache
+            .create<Grant>(Serializers.gson)
+
+        DataStoreObjectControllerCache
+            .create<Comment>(Serializers.gson)
     }
 }
