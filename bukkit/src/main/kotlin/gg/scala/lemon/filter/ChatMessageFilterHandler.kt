@@ -43,8 +43,8 @@ object ChatMessageFilterHandler
     }
 
     fun handleMessageFilter(
-        player: Player, message: String,
-        reportToStaff: Boolean = true, target: Player? = null
+        player: Player, message: String, reportToStaff: Boolean = true,
+        target: Player? = null
     ): Boolean
     {
         val report = mutableListOf<String>()
@@ -123,12 +123,13 @@ object ChatMessageFilterHandler
                 *report.toTypedArray()
             )
 
-            Bukkit.getOnlinePlayers()
-                .mapNotNull { PlayerHandler.findPlayer(it).orElse(null) }
-                .filter { it.hasPermission("lemon.staff")/* && !it.getSetting("filtered-messages-disabled")*/ }
-                .forEach {
-                    fancyMessage.sendToPlayer(it.bukkitPlayer!!)
-                }
+            if (reportToStaff)
+                Bukkit.getOnlinePlayers()
+                    .mapNotNull { PlayerHandler.findPlayer(it).orElse(null) }
+                    .filter { it.hasPermission("lemon.staff") }
+                    .forEach {
+                        fancyMessage.sendToPlayer(it.bukkitPlayer!!)
+                    }
         }
 
         return !shouldAllowMessage

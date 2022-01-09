@@ -47,6 +47,11 @@ import org.bukkit.event.server.ServerCommandEvent
 
 object PlayerListener : Listener
 {
+    private val playerController by lazy {
+        DataStoreObjectControllerCache
+            .findNotNull<LemonPlayer>()
+    }
+
     @EventHandler(
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true
@@ -55,46 +60,27 @@ object PlayerListener : Listener
     {
         var created = false
 
-        DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
-            .loadAndCache(event.uniqueId, {
-                created = true
-                return@loadAndCache LemonPlayer(
-                    event.uniqueId, event.name,
-                    event.address.hostAddress ?: ""
-                )
-            }, DataStoreStorageType.MONGO)
-            .thenAccept {
-                if (created)
-                {
-                    it.handleIfFirstCreated()
-                } else
-                {
-                    it.name = event.name
+        val lemonPlayer = playerController.loadAndCache(event.uniqueId, {
+            created = true
+            return@loadAndCache LemonPlayer(
+                event.uniqueId, event.name,
+                event.address.hostAddress ?: ""
+            )
+        }, DataStoreStorageType.MONGO).join()
 
-                    if (!it.savePreviousIpAddressAsCurrent)
-                    {
-                        it.ipAddress = event.address.hostAddress ?: ""
-                    }
-
-                    it.handlePostLoad()
-                }
-            }
-    }
-
-    @EventHandler(
-        priority = EventPriority.LOWEST,
-        ignoreCancelled = true
-    )
-    fun onPlayerPreLoginLow(event: AsyncPlayerPreLoginEvent)
-    {
-        val lemonPlayer = PlayerHandler.findPlayer(event.uniqueId).orElse(null)
-
-        if (lemonPlayer != null)
+        if (created)
         {
-            if (event.loginResult == AsyncPlayerPreLoginEvent.Result.KICK_FULL)
+            lemonPlayer.handleIfFirstCreated()
+        } else
+        {
+            lemonPlayer.name = event.name
+
+            if (!lemonPlayer.savePreviousIpAddressAsCurrent)
             {
-                event.loginResult = AsyncPlayerPreLoginEvent.Result.ALLOWED
+                lemonPlayer.ipAddress = event.address.hostAddress ?: ""
             }
+
+            lemonPlayer.handlePostLoad()
         }
     }
 
@@ -104,7 +90,7 @@ object PlayerListener : Listener
         PlayerFrozenMenu().openMenu(event.player)
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
     fun onPlayerChat(event: AsyncPlayerChatEvent)
     {
         val player = event.player
@@ -146,6 +132,12 @@ object PlayerListener : Listener
         if (banPunishment != null)
         {
             cancel(event, "${CC.RED}You cannot chat while being banned.")
+            return
+        }
+
+        if (event.message.contains("\${"))
+        {
+            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
             return
         }
 
@@ -420,7 +412,10 @@ object PlayerListener : Listener
             commandCoolDown.addOrOverride(player)
         }
 
-        if (!command.startsWith("/auth") && !command.startsWith("/2fa") && !command.startsWith("/setup") && shouldBlock(event.player))
+        if (!command.startsWith("/auth") && !command.startsWith("/2fa") && !command.startsWith("/setup") && shouldBlock(
+                event.player
+            )
+        )
         {
             cancel(event, "${CC.RED}You must authenticate before performing commands.")
             return
@@ -452,7 +447,13 @@ object PlayerListener : Listener
 
         if (command.contains(":") && !player.isOp)
         {
-            cancel(event, "${CC.RED}This syntax is not accepted!")
+            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
+            return
+        }
+
+        if (event.message.contains("\${"))
+        {
+            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
             return
         }
 

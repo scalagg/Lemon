@@ -369,7 +369,7 @@ class RankCommand : BaseCommand()
                         " proxy-level"
                     } else if (permission.startsWith("*"))
                     {
-                        "blacklisted"
+                        " blacklisted"
                     } else
                     {
                         ""

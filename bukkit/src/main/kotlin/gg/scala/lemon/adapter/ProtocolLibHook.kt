@@ -38,7 +38,8 @@ object ProtocolLibHook
                         }
 
                         val packet = event.packet
-                        val message = packet.getSpecificModifier(String::class.java).read(0).lowercase()
+                        val message = packet.getSpecificModifier(String::class.java)
+                            .read(0).lowercase()
 
                         val split = message.split(" ")
 
