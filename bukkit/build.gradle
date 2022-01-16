@@ -12,14 +12,12 @@ repositories {
     mavenCentral()
 
     maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.lucko.me' }
+
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url "https://repo.dmulloy2.net/repository/public/" }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
 dependencies {
@@ -29,7 +27,7 @@ dependencies {
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
     compileOnly "me.lucko:helper:5.6.9"
-    implementation "me.lucko:helper-redis:1.2.0"
+    implementation "me.lucko:helper-redis:1.2.1"
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.10'

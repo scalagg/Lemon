@@ -473,8 +473,7 @@ class Lemon : ExtendedScalaPlugin()
         listOf(
             DispatchModule(messenger, instanceData),
             FindCommandModule(network),
-            NetworkStatusModule(network),
-            NetworkSummaryModule(network, instanceData)
+            NetworkStatusModule(network)
         ).forEach {
             it.apply {
                 bindModuleWith(this@Lemon)
