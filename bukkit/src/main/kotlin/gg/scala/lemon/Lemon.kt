@@ -25,6 +25,8 @@ import gg.scala.lemon.handler.*
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
+import gg.scala.lemon.network.SyncLemonInstanceData
+import gg.scala.lemon.network.SyncLemonNetwork
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.channel.Channel
@@ -58,6 +60,13 @@ import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
+import me.lucko.helper.network.AbstractNetwork
+import me.lucko.helper.network.modules.DispatchModule
+import me.lucko.helper.network.modules.FindCommandModule
+import me.lucko.helper.network.modules.NetworkStatusModule
+import me.lucko.helper.network.modules.NetworkSummaryModule
+import me.lucko.helper.redis.RedisCredentials
+import me.lucko.helper.redis.plugin.HelperRedis
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.BukkitCommandExecutionContext
@@ -71,7 +80,6 @@ import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
@@ -108,6 +116,8 @@ class Lemon : ExtendedScalaPlugin()
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
     lateinit var redisConnectionDetails: DataStoreRedisConnectionDetails
+
+    var network by Delegates.notNull<AbstractNetwork>()
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
     var initialization by Delegates.notNull<Long>()
@@ -433,6 +443,44 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         convertScalaStoreRedisDetails()
+        configureHelperCommunications()
+    }
+
+    private fun configureHelperCommunications()
+    {
+        val scalaStoreRedis = ScalaDataStoreSpigot.INSTANCE.redis
+
+        val helperCredentials = if (scalaStoreRedis.password == null)
+        {
+            RedisCredentials.of(
+                scalaStoreRedis.hostname, scalaStoreRedis.port
+            )
+        } else
+        {
+            RedisCredentials.of(
+                scalaStoreRedis.hostname, scalaStoreRedis.port, scalaStoreRedis.password
+            )
+        }
+
+        val instanceData = SyncLemonInstanceData()
+        val messenger = HelperRedis(helperCredentials)
+
+        network = SyncLemonNetwork(
+            messenger, instanceData
+        )
+        network.bindWith(this)
+
+        listOf(
+            DispatchModule(messenger, instanceData),
+            FindCommandModule(network),
+            NetworkStatusModule(network),
+            NetworkSummaryModule(network, instanceData)
+        ).forEach {
+            it.apply {
+                bindModuleWith(this@Lemon)
+                setup(this@Lemon)
+            }
+        }
     }
 
     private fun convertScalaStoreRedisDetails()
