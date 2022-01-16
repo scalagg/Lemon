@@ -1,17 +1,17 @@
 package gg.scala.lemon.adapter.placeholder.impl
 
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.adapter.annotation.RequiredPlugin
-import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
-import gg.scala.lemon.handler.PlayerHandler
-import me.clip.placeholderapi.expansion.PlaceholderExpansion
-import org.bukkit.entity.Player
+//import gg.scala.lemon.Lemon
+//import gg.scala.lemon.adapter.annotation.RequiredPlugin
+//import gg.scala.lemon.adapter.placeholder.PlaceholderAdapter
+//import gg.scala.lemon.handler.PlayerHandler
+//import me.clip.placeholderapi.expansion.PlaceholderExpansion
+//import org.bukkit.entity.Player
 
 /**
  * @author GrowlyX
  * @since 11/14/2021
  */
-@RequiredPlugin("PlaceholderAPI")
+/*@RequiredPlugin("PlaceholderAPI")
 class PlaceholderAPIExpansion : PlaceholderExpansion(), PlaceholderAdapter
 {
     override fun getId() = "Placeholder API"
@@ -38,4 +38,4 @@ class PlaceholderAPIExpansion : PlaceholderExpansion(), PlaceholderAdapter
             else -> null
         }
     }
-}
+}*/

@@ -16,13 +16,7 @@ interface HotbarPresetEntry
 
     fun finalizedItemStack(player: Player): ItemStack?
     {
-        val built = buildItemStack(player)
-            ?: return null
-
-        return ItemUtils.addToItemTag(
-            itemStack = built, key = "lemon_uuid",
-            value = uniqueId().toString()
-        )
+        return buildItemStack(player)
     }
 
     fun onRightClick(player: Player)

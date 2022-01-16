@@ -27,7 +27,7 @@ dependencies {
 
     compileOnly "gg.scala:sspigot-server:1.0-SNAPSHOT"
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
-    compileOnly "me.lucko:helper:5.6.8"
+    compileOnly "me.lucko:helper:5.6.9"
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.10'
     compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
