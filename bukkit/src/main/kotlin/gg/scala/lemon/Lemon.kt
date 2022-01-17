@@ -61,10 +61,10 @@ import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.network.AbstractNetwork
-import me.lucko.helper.network.modules.DispatchModule
 import me.lucko.helper.network.modules.FindCommandModule
 import me.lucko.helper.network.modules.NetworkStatusModule
-import me.lucko.helper.network.modules.NetworkSummaryModule
+import me.lucko.helper.plugin.ap.Plugin
+import me.lucko.helper.plugin.ap.PluginDependency
 import me.lucko.helper.redis.RedisCredentials
 import me.lucko.helper.redis.plugin.HelperRedis
 import net.evilblock.cubed.Cubed
@@ -93,12 +93,33 @@ import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import kotlin.properties.Delegates
 
+@Plugin(
+    name = Lemon.NAME,
+    description = Lemon.DESCRIPTION,
+    depends = [
+        PluginDependency("Cubed"),
+        PluginDependency("helper"),
+        PluginDependency("store-spigot"),
+        PluginDependency(
+            "spark", soft = true
+        ),
+        PluginDependency(
+            "LunarClient-API", soft = true
+        ),
+        PluginDependency(
+            "PlaceholderAPI", soft = true
+        )
+    ]
+)
 class Lemon : ExtendedScalaPlugin()
 {
     companion object
     {
         @JvmStatic
         lateinit var instance: Lemon
+
+        const val NAME = "Lemon"
+        const val DESCRIPTION = "An extensive punishment, moderation, security and rank suite."
     }
 
     lateinit var settings: SettingsConfigProcessor
@@ -471,7 +492,6 @@ class Lemon : ExtendedScalaPlugin()
         network.bindWith(this)
 
         listOf(
-            DispatchModule(messenger, instanceData),
             FindCommandModule(network),
             NetworkStatusModule(network)
         ).forEach {
