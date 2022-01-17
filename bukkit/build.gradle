@@ -30,14 +30,14 @@ dependencies {
     compileOnly "me.lucko:helper:5.6.9"
     kapt "me.lucko:helper:5.6.9"
 
-    compileOnly "me.lucko:helper-redis:1.2.1"
+    implementation "me.lucko:helper-redis:1.2.1"
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.10.10'
     compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
     compileOnly 'me.lucko:spark-api:0.1-SNAPSHOT'
 
-    implementation "gg.scala.flavor:flavor:0.1.1"
+    implementation 'com.github.growlyx:flavor:aced8e79f1'
 
     implementation project(":common")
     compileOnly fileTree("lib")
