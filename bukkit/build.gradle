@@ -1,6 +1,6 @@
 plugins {
     id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.6.0"
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
     id "org.jetbrains.kotlin.kapt" version "1.6.10"
     id "com.github.johnrengelman.shadow" version "5.2.0"
 }
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
 
     compileOnly "gg.scala:sspigot-server:1.0-SNAPSHOT"
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
