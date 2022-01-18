@@ -60,6 +60,7 @@ import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
+import me.lucko.helper.messaging.Messenger
 import me.lucko.helper.network.AbstractNetwork
 import me.lucko.helper.network.modules.FindCommandModule
 import me.lucko.helper.network.modules.NetworkStatusModule
@@ -141,7 +142,9 @@ class Lemon : ExtendedScalaPlugin()
     var network by Delegates.notNull<AbstractNetwork>()
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
+
     var initialization by Delegates.notNull<Long>()
+    var messenger by Delegates.notNull<Messenger>()
 
     val flavor by lazy {
         Flavor.create<Lemon>(
@@ -484,10 +487,11 @@ class Lemon : ExtendedScalaPlugin()
         }
 
         val instanceData = SyncLemonInstanceData()
-        val messenger = HelperRedis(helperCredentials)
+        messenger = HelperRedis(helperCredentials)
 
         network = SyncLemonNetwork(
-            messenger, instanceData
+            messenger as HelperRedis,
+            instanceData
         )
         network.bindWith(this)
 

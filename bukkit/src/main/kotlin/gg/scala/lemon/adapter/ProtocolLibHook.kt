@@ -10,6 +10,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.listener.PlayerListener
+import me.lucko.helper.protocol.Protocol
 import net.evilblock.cubed.util.CC
 
 /**
@@ -23,54 +24,44 @@ object ProtocolLibHook
     @Configure
     fun configure()
     {
-        try
-        {
-            val adapter = object :
-                PacketAdapter(Lemon.instance, ListenerPriority.HIGHEST, PacketType.Play.Client.TAB_COMPLETE)
-            {
-                override fun onPacketReceiving(event: PacketEvent)
+        Protocol
+            .subscribe(PacketType.Play.Client.TAB_COMPLETE)
+            .handler { event ->
+                if (event.packetType == PacketType.Play.Client.TAB_COMPLETE)
                 {
-                    if (event.packetType == PacketType.Play.Client.TAB_COMPLETE)
+                    if (event.player.hasPermission("lemon.command-blacklist.bypass"))
                     {
-                        if (event.player.hasPermission("lemon.command-blacklist.bypass"))
-                        {
-                            return
-                        }
+                        return@handler
+                    }
 
-                        val packet = event.packet
-                        val message = packet.getSpecificModifier(String::class.java)
-                            .read(0).lowercase()
+                    val packet = event.packet
+                    val message = packet.getSpecificModifier(String::class.java)
+                        .read(0).lowercase()
 
-                        val split = message.split(" ")
+                    val split = message.split(" ")
 
-                        if (split.isEmpty())
-                        {
-                            return
-                        }
+                    if (split.isEmpty())
+                    {
+                        return@handler
+                    }
 
-                        val command = split[0]
+                    val command = split[0]
 
-                        if (command.contains(":") && command.endsWith(" "))
+                    if (command.contains(":") && command.endsWith(" "))
+                    {
+                        event.isCancelled = true
+                        return@handler
+                    }
+
+                    Lemon.instance.settings.blacklistedCommands.forEach {
+                        if (command.equals("/$it", true))
                         {
                             event.isCancelled = true
-                            return
-                        }
-
-                        Lemon.instance.settings.blacklistedCommands.forEach {
-                            if (command.equals("/$it", true))
-                            {
-                                event.isCancelled = true
-                                return
-                            }
+                            return@handler
                         }
                     }
                 }
             }
-
-            ProtocolLibrary.getProtocolManager().addPacketListener(adapter)
-        } catch (ignored: Exception)
-        {
-
-        }
+            .bindWith(Lemon.instance)
     }
 }

@@ -37,7 +37,7 @@ dependencies {
     compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
     compileOnly 'me.lucko:spark-api:0.1-SNAPSHOT'
 
-    implementation 'com.github.growlyx:flavor:aced8e79f1'
+    implementation 'gg.scala.flavor:flavor:0.1.2'
 
     implementation project(":common")
     compileOnly fileTree("lib")
