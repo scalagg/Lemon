@@ -275,12 +275,8 @@ object PlayerListener : Listener
         {
             for (target in Bukkit.getOnlinePlayers())
             {
-                val canReceive = channelMatch!!.hasPermission(target)
-
-                if (!canReceive)
-                {
+                if (!channelMatch!!.hasPermission(target))
                     continue
-                }
 
                 val lemonTarget = PlayerHandler.findPlayer(target).orElse(null)
 
@@ -298,11 +294,6 @@ object PlayerListener : Listener
                     {
                         continue
                     }
-                }
-
-                if (!canReceive)
-                {
-                    continue
                 }
 
                 target.sendMessage(
