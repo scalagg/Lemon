@@ -88,8 +88,8 @@ subprojects {
                 url "https://repository.scala.gg/repository/maven-releases/"
 
                 credentials {
-                    username property("SCALA_CREDENTIALS_USERNAME") as String
-                    password property("SCALA_CREDENTIALS_PASSWORD") as String
+                    username property("scala.credentials.username") as String
+                    password property("scala.credentials.password") as String
                 }
             }
         }
