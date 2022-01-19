@@ -1,8 +1,12 @@
+repositories {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
 dependencies {
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
-
-    compileOnly "gg.scala:sspigot-server:1.0-SNAPSHOT"
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
+
+    implementation project(":common")
 
     compileOnly "me.lucko:helper:5.6.9"
     kapt "me.lucko:helper:5.6.9"
@@ -16,6 +20,8 @@ dependencies {
 
     implementation 'gg.scala.flavor:flavor:0.1.2'
 
-    implementation project(":common")
+    compileOnly 'gg.scala.store:shared:0.1.0'
+    compileOnly 'gg.scala.store:spigot:0.1.0'
+
     compileOnly fileTree("lib")
 }

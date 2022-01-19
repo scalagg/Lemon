@@ -12,8 +12,18 @@ allprojects {
     version "1.1.0"
 
     repositories {
-        mavenLocal()
         mavenCentral()
+
+        maven {
+            name "Scala"
+            allowInsecureProtocol true
+            url "http://repository.scala.gg/repository/maven-releases/"
+
+            credentials {
+                username property("scala.credentials.username") as String
+                password property("scala.credentials.password") as String
+            }
+        }
 
         maven { url 'https://jitpack.io' }
 
@@ -85,7 +95,8 @@ subprojects {
         repositories {
             maven {
                 name "Scala"
-                url "https://repository.scala.gg/repository/maven-releases/"
+                allowInsecureProtocol true
+                url "http://repository.scala.gg/repository/maven-releases/"
 
                 credentials {
                     username property("scala.credentials.username") as String
