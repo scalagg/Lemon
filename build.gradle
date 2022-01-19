@@ -1,0 +1,99 @@
+import java.util.stream.Collectors
+
+plugins {
+    id "maven-publish"
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id "org.jetbrains.kotlin.kapt" version "1.6.10"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+allprojects {
+    group "gg.scala.lemon"
+    version "1.1.0"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven { url 'https://jitpack.io' }
+
+        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+        maven { url "https://repo.dmulloy2.net/repository/public/" }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+        maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    }
+}
+
+subprojects {
+    apply plugin: "maven-publish"
+    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "org.jetbrains.kotlin.kapt"
+    apply plugin: "com.github.johnrengelman.shadow"
+
+    compileKotlin {
+        kotlinOptions.javaParameters = true
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    shadowJar {
+        archiveClassifier.set("")
+
+        exclude "**/*.kotlin_metadata"
+        exclude "**/*.kotlin_builtins"
+        exclude "META-INF/"
+
+        archiveFileName = "Lemon.jar"
+    }
+
+    tasks.withType(GenerateMavenPom).all {
+        doLast {
+            final File file = new File(
+                    "$buildDir/publications/shadow/pom-default.xml"
+            )
+
+            final BufferedReader br = new BufferedReader(
+                    new FileReader(file)
+
+            )
+            final String lines = br.lines()
+                    .map((line) -> {
+                        if (line.contains("<dependencies/>")) "" else line
+                    })
+                    .collect(Collectors.joining("\n"))
+
+            final BufferedWriter wr = new BufferedWriter(
+                    new FileWriter(file, true)
+            )
+
+            final PrintWriter writer = new PrintWriter(file)
+            writer.print("")
+            writer.close()
+
+            wr.write(lines)
+            wr.close()
+        }
+    }
+
+    publishing {
+        publications {
+            shadow(MavenPublication) { publication ->
+                from components.kotlin
+            }
+        }
+
+        repositories {
+            maven {
+                name "Scala"
+                url "https://repository.scala.gg/repository/maven-releases/"
+
+                credentials {
+                    username property("SCALA_CREDENTIALS_USERNAME") as String
+                    password property("SCALA_CREDENTIALS_PASSWORD") as String
+                }
+            }
+        }
+    }
+
+    tasks.build.dependsOn(shadowJar, publishShadowPublicationToScalaRepository)
+}

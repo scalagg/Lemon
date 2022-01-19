@@ -12,7 +12,6 @@ import java.util.*
  */
 object ScalaValidateUtil
 {
-
     @JvmStatic
     private val GSON: Gson = GsonBuilder()
         .setLongSerializationPolicy(LongSerializationPolicy.STRING)
@@ -34,7 +33,7 @@ object ScalaValidateUtil
                         if (https) "https" else "http"
                     }://${
                         supplier
-                    }/routing/minecraft/$id"
+                    }:21/routing/minecraft/$id"
                 ).openStream()
             ).useDelimiter("\\A").use { scanner ->
                 GSON.fromJson(

@@ -1,34 +1,4 @@
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.0"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-}
-
-compileKotlin {
-    kotlinOptions.javaParameters = true
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-repositories {
-    mavenCentral()
-}
-
-task prepareKotlinBuildScriptModel {
-
-}
-
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
-    compileOnly 'com.google.code.gson:gson:2.8.8'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
+    compileOnly 'com.google.code.gson:gson:2.8.9'
 }
-
-shadowJar {
-    classifier = "all"
-
-    exclude "**/*.kotlin_metadata"
-    exclude "**/*.kotlin_builtins"
-    exclude "META-INF/"
-
-    archiveFileName = "lemon-commons.jar"
-}
-
-tasks.build.dependsOn(shadowJar)

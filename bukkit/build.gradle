@@ -1,26 +1,3 @@
-plugins {
-    id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id "org.jetbrains.kotlin.kapt" version "1.6.10"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-}
-
-group "gg.scala.lemon"
-version "1.1.0"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-
-    maven { url 'https://jitpack.io' }
-
-    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    maven { url "https://repo.dmulloy2.net/repository/public/" }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-
-    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-}
-
 dependencies {
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
 
@@ -42,28 +19,3 @@ dependencies {
     implementation project(":common")
     compileOnly fileTree("lib")
 }
-
-compileKotlin {
-    kotlinOptions.javaParameters = true
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-shadowJar {
-    archiveClassifier.set("")
-
-    exclude "**/*.kotlin_metadata"
-    exclude "**/*.kotlin_builtins"
-    exclude "META-INF/"
-
-    archiveFileName = "Lemon.jar"
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
-    }
-}
-
-tasks.build.dependsOn(shadowJar, publishShadowPublicationToMavenLocal)
