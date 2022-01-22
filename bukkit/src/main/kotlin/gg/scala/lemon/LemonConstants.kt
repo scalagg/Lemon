@@ -5,6 +5,7 @@ import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.CubedConfig
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.Reflection
 import net.evilblock.cubed.util.bukkit.Constants
 import org.bukkit.Note
@@ -15,21 +16,19 @@ object LemonConstants {
 
     // as CC.PRI & CC.SEC are instantiated later
     @JvmStatic
-    val AUTH_PREFIX: String
-        get() {
-            return "${CC.PRI}${CC.BOLD}Staff ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
-        }
+    val AUTH_PREFIX by lazy {
+        "${CC.PRI}${CC.BOLD}Staff ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
+    }
 
     @JvmStatic
-    val DEBUG: Boolean
-        get() {
-            return Reflection.DEBUG
-        }
+    val DEBUG by lazy {
+        Reflection.DEBUG
+    }
 
     @JvmStatic
     val FLAGS = mutableMapOf<String, (String) -> String>(
         "r" to {
-            "${CC.D_GRAY}[${CC.D_RED}Alert${CC.D_GRAY}] ${CC.RESET}${net.evilblock.cubed.util.Color.translate(it)}"
+            "${CC.D_GRAY}[${CC.D_RED}Alert${CC.D_GRAY}] ${CC.RESET}${Color.translate(it)}"
         }
     )
 

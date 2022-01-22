@@ -9,7 +9,7 @@ plugins {
 
 allprojects {
     group "gg.scala.lemon"
-    version "1.1.0"
+    version "1.1.1"
 
     repositories {
         mavenCentral()
@@ -88,7 +88,7 @@ subprojects {
     publishing {
         publications {
             shadow(MavenPublication) { publication ->
-                from components.kotlin
+                project.shadow.component(publication)
             }
         }
 
