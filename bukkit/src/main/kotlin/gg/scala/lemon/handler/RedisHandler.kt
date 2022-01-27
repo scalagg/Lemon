@@ -56,7 +56,7 @@ object RedisHandler : BananaHandler
         val potentialFlag = message["flag"]
         val withServer = message["with-server"]!!.toBoolean()
 
-        val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.GRAY}[$server] " else ""}"
+        val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
         sendMessage("$baseMessage$newMessage") {
             if (permission == null)

@@ -18,7 +18,6 @@ import java.util.concurrent.CompletableFuture
  */
 object CommentHandler
 {
-
     fun fetchComments(target: UUID): CompletableFuture<Map<UUID, Comment>>
     {
         val controller = DataStoreObjectControllerCache.findNotNull<Comment>()

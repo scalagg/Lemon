@@ -20,18 +20,21 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 8/27/2021
  */
-object GrantHandler {
-
+object GrantHandler
+{
     private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>>
     {
         val controller = DataStoreObjectControllerCache.findNotNull<Grant>()
 
-        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(DataStoreStorageType.MONGO) {
+        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(
+            DataStoreStorageType.MONGO
+        ) {
             return@useLayerWithReturn this.loadAllWithFilter(filter).thenApply {
                 val mutableList = mutableListOf<Grant>()
 
                 it.forEach { entry ->
-                    if (test.invoke(entry.value)) {
+                    if (test.invoke(entry.value))
+                    {
                         mutableList.add(entry.value)
                     }
                 }
@@ -41,42 +44,50 @@ object GrantHandler {
         }
     }
 
-    fun fetchGrantsByExecutor(uuid: UUID): CompletableFuture<List<Grant>> {
+    fun fetchGrantsByExecutor(uuid: UUID): CompletableFuture<List<Grant>>
+    {
         return fetchGrants(
             Filters.eq("addedBy", uuid.toString())
         ) { true }
     }
 
-    fun fetchGrantsFor(uuid: UUID?): CompletableFuture<List<Grant>> {
+    fun fetchGrantsFor(uuid: UUID?): CompletableFuture<List<Grant>>
+    {
         return fetchGrants(
             Filters.eq("target", uuid.toString())
         ) { true }
     }
 
-    fun registerGrant(grant: Grant) {
+    fun registerGrant(grant: Grant)
+    {
         grant.save().whenComplete { _, u ->
             u?.printStackTrace()
         }
     }
 
-    fun invalidateAllGrantsBy(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
+    fun invalidateAllGrantsBy(uuid: UUID, sender: CommandSender): CompletableFuture<Void>
+    {
         return fetchGrantsByExecutor(uuid).thenApply { handle(uuid, sender, it); return@thenApply null }
     }
 
-    fun invalidateAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void> {
+    fun invalidateAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void>
+    {
         return fetchGrantsFor(uuid).thenApply { handle(uuid, sender, it); return@thenApply null }
     }
 
-    fun handle(uuid: UUID, sender: CommandSender, list: List<Grant>) {
+    fun handle(uuid: UUID, sender: CommandSender, list: List<Grant>)
+    {
         this.handleInvalidation(uuid, sender).invoke(list)
     }
 
-    private fun handleInvalidation(uuid: UUID, sender: CommandSender): (List<Grant>) -> Unit {
+    private fun handleInvalidation(uuid: UUID, sender: CommandSender): (List<Grant>) -> Unit
+    {
         return { grants ->
             var wiped = 0
 
             grants.forEach {
-                if (!it.isRemoved) {
+                if (!it.isRemoved)
+                {
                     it.isRemoved = true
                     it.removedBy = senderUuid(sender)
                     it.removedAt = System.currentTimeMillis()
@@ -89,18 +100,21 @@ object GrantHandler {
                 }
             }
 
-            if (wiped == 0) {
+            if (wiped == 0)
+            {
                 sender.sendMessage("${CC.RED}No active grants related to $uuid were found.")
             }
         }
     }
 
-    fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant?> {
+    fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant?>
+    {
         return DataStoreObjectControllerCache.findNotNull<Grant>()
             .load(uuid, DataStoreStorageType.MONGO)
     }
 
-    fun handleGrant(sender: CommandSender, grant: Grant) {
+    fun handleGrant(sender: CommandSender, grant: Grant)
+    {
         grant.save().thenRun {
             val name = CubedCacheUtil.fetchName(grant.target)
 
@@ -109,16 +123,19 @@ object GrantHandler {
                 "uniqueId" to grant.target.toString()
             ).dispatchImmediately()
 
-            sender.sendMessage(arrayOf(
-                "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${grant.getRank().getColoredName()}${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
-                "${CC.SEC}Granted for scopes: ${CC.PRI}${
-                    grant.scopes.joinToString(
-                        separator = "${CC.SEC}, ${CC.PRI}"
-                    )
-                }${CC.SEC}.",
-                "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}."
-            ))
+            sender.sendMessage(
+                arrayOf(
+                    "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${
+                        grant.getRank().getColoredName()
+                    }${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
+                    "${CC.SEC}Granted for scopes: ${CC.PRI}${
+                        grant.scopes.joinToString(
+                            separator = "${CC.SEC}, ${CC.PRI}"
+                        )
+                    }${CC.SEC}.",
+                    "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}."
+                )
+            )
         }
     }
-
 }

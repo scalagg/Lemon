@@ -1,6 +1,9 @@
 package gg.scala.lemon.handler
 
 import com.google.common.primitives.Ints
+import gg.scala.flavor.service.Close
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.channel.ChannelOverride
 import gg.scala.lemon.player.channel.impl.DefaultChannel
@@ -9,6 +12,7 @@ import gg.scala.lemon.player.channel.impl.staff.StaffChannelType
 import org.bukkit.entity.Player
 import java.util.*
 
+@Service
 object ChatHandler {
 
     val channels = mutableMapOf<String, Channel>()
@@ -17,7 +21,9 @@ object ChatHandler {
     var chatMuted = false
     var slowChatTime = 0
 
-    init {
+    @Configure
+    fun configure()
+    {
         registerChannel("default", DefaultChannel())
 
         StaffChannelType.values().forEach {
@@ -25,6 +31,12 @@ object ChatHandler {
 
             registerChannel(staffChannel.getId(), staffChannel)
         }
+    }
+
+    @Close
+    fun close()
+    {
+        channels.clear()
     }
 
     fun registerChannelOverride(channelOverride: ChannelOverride) {

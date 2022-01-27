@@ -1,7 +1,6 @@
 package gg.scala.lemon.listener
 
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
 import gg.scala.lemon.cooldown.impl.CommandCooldown
@@ -28,6 +27,7 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -94,44 +94,29 @@ object PlayerListener : Listener
     fun onPlayerChat(event: AsyncPlayerChatEvent)
     {
         val player = event.player
-        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
+
+        val lemonPlayer = PlayerHandler
+            .findPlayer(player).orElse(null)
 
         if (lemonPlayer.hasPermission("lemon.2fa.forced") && !lemonPlayer.isAuthExempt() && !player.hasMetadata("authenticated"))
         {
-            event.isCancelled = true
-            event.player.sendMessage("${CC.RED}You must authenticate before chatting.")
+            cancel(event, "You must authenticate before chatting.")
             return
         }
 
-        val ipRelativePunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.IP_RELATIVE)
-
-        if (ipRelativePunishment != null)
-        {
-            cancel(event, "${CC.RED}You cannot chat while being in relation to a banned player.")
-            return
+        lemonPlayer.declinePunishedAction {
+            cancel(event, "${CC.RED}You cannot perform commands while being $it.")
         }
 
-        val mutePunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.MUTE)
+        if (event.isCancelled)
+            return
+
+        val mutePunishment = lemonPlayer
+            .findApplicablePunishment(PunishmentCategory.MUTE)
 
         if (mutePunishment != null)
         {
-            cancel(event, lemonPlayer.getPunishmentMessage(mutePunishment))
-            return
-        }
-
-        val blacklistPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BLACKLIST)
-
-        if (blacklistPunishment != null)
-        {
-            cancel(event, "${CC.RED}You cannot chat while being blacklisted.")
-            return
-        }
-
-        val banPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BAN)
-
-        if (banPunishment != null)
-        {
-            cancel(event, "${CC.RED}You cannot chat while being banned.")
+            cancel(event, lemonPlayer.getPunishmentMessage(mutePunishment, true))
             return
         }
 
@@ -173,7 +158,7 @@ object PlayerListener : Listener
 
         if (channelMatch == null)
         {
-            cancel(event, "${CC.RED}We could not process your chat message")
+            cancel(event, "${CC.RED}We were unable to process your chat message.")
             return
         }
 
@@ -320,7 +305,10 @@ object PlayerListener : Listener
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(
+        priority = EventPriority.HIGHEST,
+        ignoreCancelled = true
+    )
     fun onPlayerJoin(event: PlayerJoinEvent)
     {
         val lemonPlayer = PlayerHandler.findPlayer(event.player)
@@ -332,7 +320,24 @@ object PlayerListener : Listener
         }
 
         event.joinMessage = null
+        updatePlayerRecord()
 
+        lemonPlayer.get().let { player ->
+            player.handleOnConnection
+                .forEach { it.invoke(event.player) }
+
+            Tasks.delayed(15L) {
+                player.lateHandleOnConnection
+                    .forEach { it.invoke(event.player) }
+            }
+
+            VisibilityHandler.updateToAll(event.player)
+            NametagHandler.reloadPlayer(event.player)
+        }
+    }
+
+    private fun updatePlayerRecord()
+    {
         val highestPlayerCount = Lemon.instance.localInstance.metaData["highest-player-count"]
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
@@ -340,34 +345,23 @@ object PlayerListener : Listener
         {
             Lemon.instance.localInstance.metaData["highest-player-count"] = currentPlayerCount.toString()
         }
-
-        lemonPlayer.ifPresent { player ->
-            player.handleOnConnection.forEach {
-                it.invoke(event.player)
-            }
-            player.hasHandledOnConnection = true
-
-            VisibilityHandler.updateToAll(event.player)
-            NametagHandler.reloadPlayer(event.player)
-        }
     }
 
     @EventHandler
     fun onEntityTarget(event: EntityTargetEvent)
     {
-        if (event.reason == EntityTargetEvent.TargetReason.CUSTOM)
+        if (event.reason != EntityTargetEvent.TargetReason.CUSTOM)
         {
-            return
-        }
+            val entity = event.entity
+            val target = event.target
 
-        val entity = event.entity
-        val target = event.target
-
-        if (
-            (entity is ExperienceOrb || entity is LivingEntity) && target is Player && target.hasMetadata("vanished")
-        )
-        {
-            event.isCancelled = true
+            if (
+                (entity is ExperienceOrb || entity is LivingEntity) &&
+                target is Player && target.hasMetadata("vanished")
+            )
+            {
+                event.isCancelled = true
+            }
         }
     }
 
@@ -403,46 +397,25 @@ object PlayerListener : Listener
             commandCoolDown.addOrOverride(player)
         }
 
-        if (!command.startsWith("/auth") && !command.startsWith("/2fa") && !command.startsWith("/setup") && shouldBlock(
-                event.player
-            )
+        if (
+            !command.startsWith("/auth") &&
+            !command.startsWith("/2fa") &&
+            !command.startsWith("/setup") &&
+            shouldBlock(event.player)
         )
         {
             cancel(event, "${CC.RED}You must authenticate before performing commands.")
             return
         }
 
-        val ipRelativePunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.IP_RELATIVE)
-
-        if (ipRelativePunishment != null)
-        {
-            cancel(event, "${CC.RED}You cannot perform commands while being in relation to a punished player.")
-            return
+        lemonPlayer.declinePunishedAction {
+            cancel(event, "${CC.RED}You cannot perform commands while being $it.")
         }
 
-        val blacklistPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BLACKLIST)
-
-        if (blacklistPunishment != null && command != "/register")
-        {
-            cancel(event, "${CC.RED}You cannot perform commands while being blacklisted.")
+        if (event.isCancelled)
             return
-        }
-
-        val banPunishment = lemonPlayer.fetchApplicablePunishmentInCategory(PunishmentCategory.BAN)
-
-        if (banPunishment != null && command != "/register")
-        {
-            cancel(event, "${CC.RED}You cannot perform commands while being banned.")
-            return
-        }
 
         if (command.contains(":") && !player.isOp)
-        {
-            cancel(event, "${CC.RED}You're not allowed to use this syntax.")
-            return
-        }
-
-        if (event.message.contains("\${"))
         {
             cancel(event, "${CC.RED}You're not allowed to use this syntax.")
             return
@@ -464,6 +437,45 @@ object PlayerListener : Listener
         )
     }
 
+    @EventHandler(
+        priority = EventPriority.HIGHEST,
+        ignoreCancelled = true
+    )
+    fun onPlayerQuit(event: PlayerQuitEvent)
+    {
+        event.quitMessage = null
+        handleDisconnection(event.player)
+    }
+
+    private val interaction: (Player, Cancellable, String) -> Unit = { player, event, action ->
+        if (player.hasMetadata("mod-mode"))
+        {
+            cancel(event, player, "${CC.RED}You cannot $action while in mod-mode.")
+        } else if (player.hasMetadata("vanished"))
+        {
+            cancel(event, player, "${CC.RED}You cannot $action while vanished.")
+        }
+    }
+
+    @EventHandler
+    fun onInteract(event: PlayerInteractEvent)
+    {
+        if (shouldBlock(event.player))
+            event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onBlockBreak(event: BlockBreakEvent)
+    {
+        interaction.invoke(event.player, event, "break blocks")
+    }
+
+    @EventHandler
+    fun onBlockPlace(event: BlockPlaceEvent)
+    {
+        interaction.invoke(event.player, event, "place blocks")
+    }
+
     @EventHandler
     fun onConsoleCommand(event: ServerCommandEvent)
     {
@@ -475,76 +487,36 @@ object PlayerListener : Listener
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onPlayerQuit(event: PlayerQuitEvent)
-    {
-        event.quitMessage = null
-        onDisconnect(event.player)
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onPlayerKick(event: PlayerKickEvent)
-    {
-        event.leaveMessage = null
-        onDisconnect(event.player)
-    }
-
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent)
     {
-        if (event.damager !is Player) return
+        val damager = event.damager
 
-        val player = event.damager as Player
-
-        if (player.hasMetadata("vanished"))
+        if (damager is Player)
         {
-            player.sendMessage("${CC.RED}You cannot damage entities while in vanish.")
-            event.isCancelled = true
-        }
-        if (player.hasMetadata("mod-mode"))
-        {
-            player.sendMessage("${CC.RED}You cannot damage entities while in mod-mode.")
-            event.isCancelled = true
+            interaction.invoke(
+                damager, event, "damage entities"
+            )
         }
     }
 
-    @EventHandler
-    fun onInteract(event: PlayerInteractEvent)
+    private fun cancel(
+        event: Cancellable, player: Player, message: String
+    )
     {
-        if (shouldBlock(event.player))
-        {
-            event.isCancelled = true
-        }
-    }
-
-
-    @EventHandler
-    fun onBlockBreak(event: BlockBreakEvent)
-    {
-        if (event.player.hasMetadata("mod-mode"))
-        {
-            event.player.sendMessage("${CC.RED}You cannot break blocks while in mod-mode.")
-            event.isCancelled = true
-        }
-    }
-
-    @EventHandler
-    fun onBlockPlace(event: BlockPlaceEvent)
-    {
-        if (event.player.hasMetadata("mod-mode"))
-        {
-            event.player.sendMessage("${CC.RED}You cannot place blocks while in mod-mode.")
-            event.isCancelled = true
-        }
+        player.sendMessage("${CC.RED}$message")
+        event.isCancelled = true
     }
 
     private fun cancel(event: PlayerEvent, message: String)
     {
-        event.player.sendMessage(message)
-        (event as Cancellable).isCancelled = true
+        event.player.sendMessage("${CC.RED}$message")
+
+        if (event is Cancellable)
+            event.isCancelled = true
     }
 
-    private fun onDisconnect(player: Player)
+    private fun handleDisconnection(player: Player)
     {
         val lemonPlayer = PlayerHandler.findPlayer(player)
 

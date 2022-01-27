@@ -10,7 +10,6 @@ import java.util.concurrent.CompletableFuture
 
 object ServerHandler
 {
-
     var shutdownRunnable: ShutdownRunnable? = null
 
     fun initiateShutdown(seconds: Int)

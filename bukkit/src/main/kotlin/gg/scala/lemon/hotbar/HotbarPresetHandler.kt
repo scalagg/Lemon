@@ -59,9 +59,10 @@ object HotbarPresetHandler
                 )
             }
     }
-}
 
-infix fun Player.apply(preset: HotbarPreset)
-{
-    preset.applyToPlayer(player)
+    infix fun Player.apply(preset: HotbarPreset)
+    {
+        preset.applyToPlayer(player)
+    }
+
 }

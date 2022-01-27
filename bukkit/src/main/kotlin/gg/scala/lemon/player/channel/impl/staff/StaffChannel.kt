@@ -25,7 +25,7 @@ class StaffChannel(private val channel: StaffChannelType): Channel {
     }
 
     override fun getFormatted(message: String, sender: String, rank: Rank, receiver: Player): String {
-        return "${channel.color}[${channel.name[0]}] ${CC.GRAY}[%s] ${rank.color}${sender}${CC.WHITE}: ${CC.AQUA}${dePrefixed(message)}"
+        return "${channel.color}[${channel.name[0]}] ${CC.D_AQUA}[%s] ${rank.color}${sender}${CC.WHITE}: ${CC.AQUA}${dePrefixed(message)}"
     }
 
     override fun isGlobal(): Boolean {

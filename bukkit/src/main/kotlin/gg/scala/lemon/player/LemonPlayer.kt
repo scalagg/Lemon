@@ -63,7 +63,7 @@ class LemonPlayer(
     var ignoring = mutableListOf<UUID>()
 
     val handleOnConnection = arrayListOf<(Player) -> Any>()
-    var hasHandledOnConnection = false
+    val lateHandleOnConnection = arrayListOf<(Player) -> Any>()
 
     var activeGrant: Grant? = null
 
@@ -136,7 +136,8 @@ class LemonPlayer(
                     }
                 } else
                 {
-                    val sortedCategories = PunishmentCategory.PERSISTENT.sortedByDescending { it.ordinal }
+                    val sortedCategories = PunishmentCategory
+                        .WEIGHTED_DENIED.sortedByDescending { it.ordinal }
 
                     for (sortedCategory in sortedCategories)
                     {
@@ -144,11 +145,10 @@ class LemonPlayer(
 
                         if (punishmentInCategory != null)
                         {
-                            val message = getPunishmentMessage(punishmentInCategory, current = false)
+                            val message = getPunishmentMessage(punishmentInCategory)
 
-                            handleOnConnection.add {
-                                it.sendMessage(message)
-                            }
+                            lateHandleOnConnection
+                                .add { it.sendMessage(message) }
 
                             return@thenAccept
                         }
@@ -653,7 +653,32 @@ class LemonPlayer(
         return data != null && data.asBoolean()
     }
 
-    fun fetchApplicablePunishmentInCategory(category: PunishmentCategory): Punishment?
+    fun declinePunishedAction(
+        lambda: (String) -> Unit
+    )
+    {
+        for (category in PunishmentCategory.WEIGHTED_DENIED)
+        {
+            val punishment =
+                findApplicablePunishment(category)
+                ?: continue
+
+            val extension = if (category == IP_RELATIVE)
+            {
+                "in relation to a ${
+                    punishment.category.inf
+                }"
+            } else
+            {
+                punishment.category.inf
+            }
+
+            lambda.invoke(extension)
+            return
+        }
+    }
+
+    fun findApplicablePunishment(category: PunishmentCategory): Punishment?
     {
         return this.activePunishments[category]
     }

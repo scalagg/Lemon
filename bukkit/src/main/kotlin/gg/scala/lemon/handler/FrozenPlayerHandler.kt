@@ -14,21 +14,24 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 9/23/2021
  */
-object FrozenPlayerHandler : Runnable {
-
+object FrozenPlayerHandler : Runnable
+{
     val expirables = mutableMapOf<UUID, FrozenExpirable>()
 
-    override fun run() {
+    override fun run()
+    {
         Bukkit.getOnlinePlayers()
             .filter { it.hasMetadata("frozen") }
             .forEach {
                 val expirable = expirables[it.uniqueId]
 
-                if (expirable == null) {
+                if (expirable == null)
+                {
                     it.sendMessage(
                         Lemon.instance.languageConfig.frozenPlayerTimeIsUpMessage
                     )
-                } else {
+                } else
+                {
                     it.sendMessage(
                         Lemon.instance.languageConfig.frozenPlayerHasTimeMessage
                             .replace("%s", expirable.durationFromNowStringRaw)
@@ -42,9 +45,10 @@ object FrozenPlayerHandler : Runnable {
         TimeUnit.MINUTES.toMillis(5)
     )
 
-    class FrozenPlayerTick : Runnable {
-
-        override fun run() {
+    class FrozenPlayerTick : Runnable
+    {
+        override fun run()
+        {
             val finalMap = hashMapOf<UUID, FrozenExpirable>().also {
                 expirables.forEach { entry ->
                     it[entry.key] = entry.value
@@ -52,7 +56,8 @@ object FrozenPlayerHandler : Runnable {
             }
 
             finalMap.forEach { (uuid, expirable) ->
-                if (expirable.hasExpired) {
+                if (expirable.hasExpired)
+                {
                     sendStaffMessage(
                         null, "${CC.AQUA}${coloredName(uuid)}${CC.D_AQUA} has been frozen for 5 minutes.",
                         true, QuickAccess.MessageType.NOTIFICATION
