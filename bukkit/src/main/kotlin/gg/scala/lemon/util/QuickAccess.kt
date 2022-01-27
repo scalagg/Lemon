@@ -29,6 +29,13 @@ import java.util.concurrent.ForkJoinPool
  */
 object QuickAccess
 {
+    @JvmStatic
+    fun UUID.username(): String =
+        CubedCacheUtil.fetchName(this)!!
+
+    @JvmStatic
+    fun String.uniqueId(): UUID =
+        CubedCacheUtil.fetchUuid(this)!!
 
     @JvmStatic
     fun broadcast(message: String, permission: String = "")

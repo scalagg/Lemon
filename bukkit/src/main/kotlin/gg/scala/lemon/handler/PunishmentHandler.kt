@@ -2,7 +2,6 @@ package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
@@ -329,12 +328,8 @@ object PunishmentHandler
     }
 
     private fun handlePostPunishmentCheck(
-        punishment: Punishment,
-        silent: Boolean,
-        uuid: UUID,
-        issuer: CommandSender,
-        issuerUuid: UUID?,
-        targetName: String
+        punishment: Punishment, silent: Boolean, uuid: UUID,
+        issuer: CommandSender, issuerUuid: UUID?, targetName: String
     )
     {
         val issuerName = fetchColoredName(issuerUuid)
@@ -342,7 +337,7 @@ object PunishmentHandler
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
         val broadcastPermission = if (silent) "lemon.staff" else ""
         val broadcastPermanent = if (punishment.isPermanent) "permanently " else ""
-        val broadcastSuffix = if (silent) " for ${CC.WHITE}${punishment.addedReason}${CC.GREEN}." else "."
+        val broadcastSuffix = if (!punishment.isPermanent) " for ${punishment.durationString}${CC.GREEN}." else "."
 
         val broadcastBody =
             "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
