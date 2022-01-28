@@ -1,5 +1,8 @@
 package gg.scala.lemon.listener
 
+import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
@@ -45,11 +48,22 @@ import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
 
+@Service
 object PlayerListener : Listener
 {
+    @Inject
+    lateinit var plugin: Lemon
+
     private val playerController by lazy {
         DataStoreObjectControllerCache
             .findNotNull<LemonPlayer>()
+    }
+
+    @Configure
+    fun configure()
+    {
+        plugin.server.pluginManager
+            .registerEvents(this, plugin)
     }
 
     @EventHandler(
@@ -253,7 +267,7 @@ object PlayerListener : Listener
                     "sender" to lemonPlayer.name,
                     "rank" to lemonPlayer.activeGrant!!
                         .getRank().uuid.toString(),
-                    "server" to Lemon.instance.settings.id
+                    "server" to plugin.settings.id
                 )
             ).queueForDispatch()
         } else
@@ -296,7 +310,7 @@ object PlayerListener : Listener
                 lemonPlayer.activeGrant!!.getRank(), player
             )!!
 
-            if (Lemon.instance.settings.consoleChat)
+            if (plugin.settings.consoleChat)
             {
                 Bukkit.getConsoleSender().sendMessage(selfMessage)
             }
@@ -315,7 +329,7 @@ object PlayerListener : Listener
 
         if (!lemonPlayer.isPresent)
         {
-            event.player.kickPlayer(Lemon.instance.languageConfig.playerDataLoad)
+            event.player.kickPlayer(plugin.languageConfig.playerDataLoad)
             return
         }
 
@@ -338,12 +352,12 @@ object PlayerListener : Listener
 
     private fun updatePlayerRecord()
     {
-        val highestPlayerCount = Lemon.instance.localInstance.metaData["highest-player-count"]
+        val highestPlayerCount = plugin.localInstance.metaData["highest-player-count"]
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
         if (highestPlayerCount == null || currentPlayerCount > highestPlayerCount.toInt())
         {
-            Lemon.instance.localInstance.metaData["highest-player-count"] = currentPlayerCount.toString()
+            plugin.localInstance.metaData["highest-player-count"] = currentPlayerCount.toString()
         }
     }
 
@@ -423,7 +437,7 @@ object PlayerListener : Listener
 
         if (!lemonPlayer.hasPermission("lemon.command-blacklist.bypass"))
         {
-            Lemon.instance.settings.blacklistedCommands.forEach {
+            plugin.settings.blacklistedCommands.forEach {
                 if (command == "/$it")
                 {
                     cancel(event, "${CC.RED}You're not allowed to perform this command.")
@@ -537,6 +551,8 @@ object PlayerListener : Listener
 
             PlayerHandler.unModModePlayerSilent(player)
             PlayerCachingExtension.forget(it)
+
+            player.removeMetadata("vanished", plugin)
 
             PlayerHandler.players.remove(it.uniqueId)?.save()
         }

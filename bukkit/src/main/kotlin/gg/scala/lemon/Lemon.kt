@@ -257,7 +257,8 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun loadListeners()
     {
-        server.pluginManager.registerEvents(PlayerListener, this)
+        flavor.bind<Lemon>() to this
+        flavor.inject(PlayerListener)
     }
 
     private fun initialLoadCommands()
