@@ -105,7 +105,8 @@ object PlayerListener : Listener
     }
 
     @EventHandler(
-        priority = EventPriority.LOWEST
+        priority = EventPriority.MONITOR,
+        ignoreCancelled = true
     )
     fun onPlayerChat(event: AsyncPlayerChatEvent)
     {
@@ -220,6 +221,17 @@ object PlayerListener : Listener
 
                     chat.addOrOverride(player)
                 }
+            }
+        }
+
+        for (chatCheck in ChatHandler.chatChecks)
+        {
+            val result = chatCheck.invoke(event)
+
+            if (result.second)
+            {
+                cancel(event, result.first)
+                return
             }
         }
 

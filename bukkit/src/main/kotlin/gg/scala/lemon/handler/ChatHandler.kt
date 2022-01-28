@@ -10,13 +10,16 @@ import gg.scala.lemon.player.channel.impl.DefaultChannel
 import gg.scala.lemon.player.channel.impl.staff.StaffChannel
 import gg.scala.lemon.player.channel.impl.staff.StaffChannelType
 import org.bukkit.entity.Player
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.*
 
 @Service
 object ChatHandler {
 
     val channels = mutableMapOf<String, Channel>()
-    private val channelOverrides = ArrayList<ChannelOverride>()
+    val chatChecks = mutableListOf<(AsyncPlayerChatEvent) -> Pair<String, Boolean>>()
+
+    private val channelOverrides = mutableListOf<ChannelOverride>()
 
     var chatMuted = false
     var slowChatTime = 0
@@ -37,6 +40,14 @@ object ChatHandler {
     fun close()
     {
         channels.clear()
+        chatChecks.clear()
+    }
+
+    fun registerChatCheck(
+        lambda: (AsyncPlayerChatEvent) -> Pair<String, Boolean>
+    )
+    {
+        chatChecks.add(lambda)
     }
 
     fun registerChannelOverride(channelOverride: ChannelOverride) {
