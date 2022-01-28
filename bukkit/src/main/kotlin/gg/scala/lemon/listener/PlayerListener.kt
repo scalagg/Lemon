@@ -104,7 +104,9 @@ object PlayerListener : Listener
         PlayerFrozenMenu().openMenu(event.player)
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.LOWEST
+    )
     fun onPlayerChat(event: AsyncPlayerChatEvent)
     {
         val player = event.player
@@ -119,7 +121,7 @@ object PlayerListener : Listener
         }
 
         lemonPlayer.declinePunishedAction {
-            cancel(event, "${CC.RED}You cannot perform commands while being $it.")
+            cancel(event, "${CC.RED}You cannot chat while being $it.")
         }
 
         if (event.isCancelled)
@@ -412,9 +414,9 @@ object PlayerListener : Listener
         }
 
         if (
-            !command.startsWith("/auth") &&
-            !command.startsWith("/2fa") &&
-            !command.startsWith("/setup") &&
+            !command.startsWith("/auth", true) &&
+            !command.startsWith("/2fa", true) &&
+            !command.startsWith("/setup", true) &&
             shouldBlock(event.player)
         )
         {
@@ -422,8 +424,11 @@ object PlayerListener : Listener
             return
         }
 
-        lemonPlayer.declinePunishedAction {
-            cancel(event, "${CC.RED}You cannot perform commands while being $it.")
+        if (!command.startsWith("/discord", true))
+        {
+            lemonPlayer.declinePunishedAction {
+                cancel(event, "${CC.RED}You cannot perform commands while being $it.")
+            }
         }
 
         if (event.isCancelled)
