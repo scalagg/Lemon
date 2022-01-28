@@ -17,7 +17,7 @@ object LemonConstants {
     // as CC.PRI & CC.SEC are instantiated later
     @JvmStatic
     val AUTH_PREFIX by lazy {
-        "${CC.PRI}${CC.BOLD}Staff ${CC.GRAY}${CC.BOLD}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}"
+        "${CC.D_AQUA}[2FA] "
     }
 
     @JvmStatic

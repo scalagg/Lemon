@@ -336,12 +336,10 @@ class LemonPlayer(
         return getMetadata("auth-secret")?.asString() ?: ""
     }
 
-    fun validatePlayerAuthentication()
+    private fun validatePlayerAuthentication()
     {
         if (!hasPermission("lemon.2fa.forced"))
-        {
             return
-        }
 
         if (isAuthExempt())
         {
@@ -356,11 +354,6 @@ class LemonPlayer(
             if (this.previousIpAddress != null && this.previousIpAddress == ipAddress)
             {
                 authenticateInternal()
-
-                if (LemonConstants.LOBBY)
-                {
-                    bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been automatically authenticated.")
-                }
             } else
             {
                 savePreviousIpAddressAsCurrent = true; save()
