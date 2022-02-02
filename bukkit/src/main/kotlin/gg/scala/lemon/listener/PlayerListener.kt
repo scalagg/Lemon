@@ -334,8 +334,7 @@ object PlayerListener : Listener
     }
 
     @EventHandler(
-        priority = EventPriority.HIGHEST,
-        ignoreCancelled = true
+        priority = EventPriority.HIGHEST
     )
     fun onPlayerJoin(event: PlayerJoinEvent)
     {
@@ -350,14 +349,9 @@ object PlayerListener : Listener
         event.joinMessage = null
         updatePlayerRecord()
 
-        lemonPlayer.get().let { player ->
+        lemonPlayer.ifPresent { player ->
             player.handleOnConnection
                 .forEach { it.invoke(event.player) }
-
-            Tasks.delayed(15L) {
-                player.lateHandleOnConnection
-                    .forEach { it.invoke(event.player) }
-            }
 
             VisibilityHandler.updateToAll(event.player)
             NametagHandler.reloadPlayer(event.player)
