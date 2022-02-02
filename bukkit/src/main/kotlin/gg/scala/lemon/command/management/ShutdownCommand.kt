@@ -34,7 +34,7 @@ class ShutdownCommand : BaseCommand() {
         val seconds = try {
             (time.get() / 1000).toInt()
         } catch (e: Exception) {
-            throw ConditionFailedException("That duration is too long.")
+            throw ConditionFailedException("You must .")
         }
 
         player.sendMessage("${CC.GREEN}The shutdown has been initiated.")

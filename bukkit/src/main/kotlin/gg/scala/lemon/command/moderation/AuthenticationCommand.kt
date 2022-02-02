@@ -20,7 +20,6 @@ import org.bukkit.metadata.FixedMetadataValue
  */
 class AuthenticationCommand : BaseCommand()
 {
-    @Syntax("[code]")
     @CommandPermission("lemon.2fa.forced")
     @CommandAlias("auth|2fa|authenticate")
     @CommandCompletion("@all-players")
@@ -65,7 +64,6 @@ class AuthenticationCommand : BaseCommand()
         player.sendMessage("${AUTH_PREFIX}${CC.GREEN}You've been authenticated.")
     }
 
-    @Syntax("<target>")
     @CommandAlias("2faexempt")
     @CommandPermission("op")
     @CommandCompletion("@all-players")
@@ -143,8 +141,8 @@ class AuthenticationCommand : BaseCommand()
 
         player.sendMessage(
             arrayOf(
-                "${AUTH_PREFIX}A map with a QR code has been placed in your inventory.",
-                "${AUTH_PREFIX}${CC.GRAY}Scan the QR code on any applicable authentication app and use the code to authenticate yourself using ${CC.WHITE}/auth <code>${CC.GRAY}."
+                "$AUTH_PREFIX${CC.SEC}A map with a QR code has been placed in your inventory.",
+                "$AUTH_PREFIX${CC.GRAY}Scan the QR code on any applicable authentication app and use the code to authenticate yourself using ${CC.WHITE}/auth <code>${CC.GRAY}."
             )
         )
     }

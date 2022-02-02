@@ -20,7 +20,7 @@ dependencies {
 
     implementation 'gg.scala.flavor:flavor:0.1.3'
 
-    compileOnly 'net.evilblock.cubed:bukkit:1.3.3@jar'
+    compileOnly 'net.evilblock.cubed:bukkit:1.3.4@jar'
 
     compileOnly 'gg.scala.spigot:sspigot-server:1.0.6'
 

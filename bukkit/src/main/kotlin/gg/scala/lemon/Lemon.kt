@@ -5,6 +5,8 @@ import gg.scala.banana.Banana
 import gg.scala.banana.BananaBuilder
 import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.options.BananaOptions
+import gg.scala.cache.uuid.ScalaStoreUuidCache
+import gg.scala.cache.uuid.impl.distribution.DistributedRedisUuidCacheTranslator
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
@@ -77,7 +79,6 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.useGsonBuilderThenRebuild
-import net.evilblock.cubed.store.uuidcache.impl.RedisUUIDCache
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
@@ -244,8 +245,9 @@ class Lemon : ExtendedScalaPlugin()
                 credentials
             ).build()
 
-        Cubed.instance.uuidCache = RedisUUIDCache(uuidCacheBanana)
-        Cubed.instance.uuidCache.load()
+        ScalaStoreUuidCache.configure(
+            DistributedRedisUuidCacheTranslator(uuidCacheBanana)
+        )
     }
 
     private fun initialLoadMessageQueues()
@@ -663,23 +665,25 @@ class Lemon : ExtendedScalaPlugin()
         }
     }
 
-    fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): UUID
+    private fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): UUID
     {
         val firstArg = context.popFirstArg()
 
-        if (firstArg.length == 32) {
+        if (firstArg.length == 32)
+        {
             return UUIDUtil.formatUUID(firstArg)
                 ?: throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")
-        } else if (firstArg.length <= 16) {
-            return Cubed.instance.uuidCache.uuid(firstArg) ?: Cubed.instance.uuidCache.fetchUUID(
-                firstArg
-            )
-            ?: throw ConditionFailedException("No player with the username ${CC.YELLOW}${firstArg}${CC.RED} exists.")
+        } else if (firstArg.length <= 16)
+        {
+            return ScalaStoreUuidCache.uniqueId(firstArg)
+                ?: throw ConditionFailedException("No player with the username ${CC.YELLOW}${firstArg}${CC.RED} exists.")
         }
 
-        return try {
+        return try
+        {
             UUID.fromString(firstArg)
-        } catch (ignored: Exception) {
+        } catch (ignored: Exception)
+        {
             throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")
         }
     }
