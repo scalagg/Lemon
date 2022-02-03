@@ -355,7 +355,7 @@ object PlayerListener : Listener
             player.handleOnConnection
                 .forEach { it.invoke(event.player) }
 
-            Tasks.delayed(20L) {
+            Tasks.delayed(10L) {
                 player.lateHandleOnConnection
                     .forEach { it.invoke(event.player) }
             }
