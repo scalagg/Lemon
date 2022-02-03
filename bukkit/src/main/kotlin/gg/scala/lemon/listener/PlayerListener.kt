@@ -31,6 +31,7 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -354,7 +355,10 @@ object PlayerListener : Listener
             player.handleOnConnection
                 .forEach { it.invoke(event.player) }
 
-            println("Invoking lemon player?")
+            Tasks.delayed(20L) {
+                player.lateHandleOnConnection
+                    .forEach { it.invoke(event.player) }
+            }
 
             VisibilityHandler.updateToAll(event.player)
             NametagHandler.reloadPlayer(event.player)

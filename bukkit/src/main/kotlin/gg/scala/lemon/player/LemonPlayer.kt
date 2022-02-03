@@ -63,6 +63,8 @@ class LemonPlayer(
     var ignoring = mutableListOf<UUID>()
 
     val handleOnConnection = arrayListOf<(Player) -> Any>()
+    val lateHandleOnConnection = arrayListOf<(Player) -> Any>()
+
     var activeGrant: Grant? = null
 
     private var attachment: PermissionAttachment? = null
@@ -145,7 +147,7 @@ class LemonPlayer(
                         {
                             val message = getPunishmentMessage(punishmentInCategory)
 
-                            handleOnConnection
+                            lateHandleOnConnection
                                 .add { it.sendMessage(message) }
 
                             return@thenAccept
@@ -470,7 +472,7 @@ class LemonPlayer(
 
             if (ipRelPunishment != null)
             {
-                handleOnConnection.add {
+                lateHandleOnConnection.add {
                     CompletableFuture.supplyAsync {
                         QuickAccess.fetchColoredName(ipRelPunishment.target)
                     }.thenAccept { coloredName ->
