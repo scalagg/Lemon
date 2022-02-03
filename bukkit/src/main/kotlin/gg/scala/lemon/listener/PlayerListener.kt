@@ -3,6 +3,7 @@ package gg.scala.lemon.listener
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
@@ -30,7 +31,6 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -49,6 +49,7 @@ import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
 
 @Service
+@IgnoreAutoScan
 object PlayerListener : Listener
 {
     @Inject
@@ -352,6 +353,8 @@ object PlayerListener : Listener
         lemonPlayer.ifPresent { player ->
             player.handleOnConnection
                 .forEach { it.invoke(event.player) }
+
+            println("Invoking lemon player?")
 
             VisibilityHandler.updateToAll(event.player)
             NametagHandler.reloadPlayer(event.player)
