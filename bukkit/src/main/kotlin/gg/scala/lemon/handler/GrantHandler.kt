@@ -5,6 +5,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
+import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.senderUuid
 import gg.scala.lemon.util.dispatchImmediately
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -115,9 +116,7 @@ object GrantHandler
 
     fun handleGrant(sender: CommandSender, grant: Grant)
     {
-        grant.save().thenRun {
-            val name = CubedCacheUtil.fetchName(grant.target)
-
+        grant.save().thenRunAsync {
             RedisHandler.buildMessage(
                 "reload-player",
                 "uniqueId" to grant.target.toString()
@@ -125,7 +124,7 @@ object GrantHandler
 
             sender.sendMessage(
                 arrayOf(
-                    "${CC.SEC}You've granted ${coloredName(name)}${CC.SEC} the ${
+                    "${CC.SEC}You've granted ${fetchColoredName(grant.target)}${CC.SEC} the ${
                         grant.getRank().getColoredName()
                     }${CC.SEC} rank for ${CC.WHITE}${grant.addedReason}${CC.SEC}.",
                     "${CC.SEC}Granted for scopes: ${CC.PRI}${

@@ -23,18 +23,14 @@ object ScalaSpigotSorterExtension
     @Configure
     fun configure()
     {
-        Events.subscribe(PlayerJoinEvent::class.java).handler {
-            asyncInternalListSort()
-        }
-        Events.subscribe(RankChangeEvent::class.java).handler {
-            asyncInternalListSort()
-        }
-
-        Events.subscribe(PostDisguiseEvent::class.java).handler {
-            asyncInternalListSort()
-        }
-        Events.subscribe(UnDisguiseEvent::class.java).handler {
-            asyncInternalListSort()
+        listOf(
+            PlayerJoinEvent::class,
+            RankChangeEvent::class,
+            PostDisguiseEvent::class,
+            UnDisguiseEvent::class
+        ).forEach {
+            Events.subscribe(it.java)
+                .handler { asyncInternalListSort() }
         }
     }
 
