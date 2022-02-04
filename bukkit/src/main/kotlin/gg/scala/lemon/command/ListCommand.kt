@@ -12,10 +12,11 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 9/11/2021
  */
-class ListCommand : BaseCommand() {
-
+class ListCommand : BaseCommand()
+{
     @CommandAlias("list|who|online")
-    fun onList(sender: CommandSender) {
+    fun onList(sender: CommandSender)
+    {
         val sortedRanks = getSortedRankString()
         val correctedPlayerList = getCorrectedPlayerList(sender)
         val isMoreThan350 = correctedPlayerList.size > 350
@@ -31,9 +32,9 @@ class ListCommand : BaseCommand() {
             )
         )
 
-        if (isMoreThan350) {
+        if (isMoreThan350)
+        {
             sender.sendMessage("${CC.RED}(Only displaying first 350 players)")
         }
     }
-
 }

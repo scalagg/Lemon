@@ -25,7 +25,6 @@ import java.util.concurrent.ForkJoinPool
 @CommandPermission("op")
 class LemonCommand : BaseCommand()
 {
-
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)

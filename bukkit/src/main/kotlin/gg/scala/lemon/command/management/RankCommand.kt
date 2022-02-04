@@ -192,6 +192,19 @@ class RankCommand : BaseCommand()
         }
     }
 
+    @Subcommand("meta display")
+    @CommandCompletion("@ranks")
+    @Description("Edit a rank's display name.")
+    @CommandPermission("lemon.command.rank.meta.edit")
+    fun onMetaDisplay(sender: CommandSender, rank: Rank, display: String)
+    {
+        rank.displayName = Color.translate(display)
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} display name to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
+        }
+    }
+
     @Subcommand("meta name")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's name.")

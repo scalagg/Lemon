@@ -32,6 +32,8 @@ constructor(
 
     var visible = true
 
+    var displayName: String? = null
+
     val children = ArrayList<UUID>()
     val permissions = ArrayList<String>()
 
@@ -51,7 +53,7 @@ constructor(
 
     fun getColoredName(): String
     {
-        return color + name
+        return color + (displayName ?: name)
     }
 
     /**

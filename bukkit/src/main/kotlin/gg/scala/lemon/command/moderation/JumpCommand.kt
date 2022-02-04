@@ -11,6 +11,7 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bungee.BungeeUtil
@@ -25,7 +26,8 @@ import java.util.concurrent.CompletableFuture
 class JumpCommand : BaseCommand()
 {
     @CommandAlias("jump")
-    @CommandPermission("")
+    @CommandCompletion("@players")
+    @CommandPermission("lemon.command.jump")
     fun onJump(player: Player, target: UUID): CompletableFuture<Void>
     {
         player.sendMessage("${CC.GREEN}Locating player ${CC.YELLOW}${target.username()}...")

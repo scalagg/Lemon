@@ -15,12 +15,11 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/9/2021
  */
-@Private
-@CommandAlias("channel")
 class ChannelCommand : BaseCommand()
 {
-
-    @Default
+    @Private
+    @CommandAlias("channel")
+    @CommandPermission("lemon.command.channel")
     fun onDefault(player: Player, @Optional channel: Channel?)
     {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
