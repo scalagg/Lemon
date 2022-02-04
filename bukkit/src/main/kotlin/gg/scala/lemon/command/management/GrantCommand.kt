@@ -24,11 +24,12 @@ class GrantCommand : BaseCommand() {
     @CommandAlias("grant|g|grantscope")
     @CommandPermission("lemon.command.grant")
     fun onGrant(player: Player, uuid: UUID) {
-        val name = CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
-        val colored = QuickAccess.coloredName(name)
+        val name = CubedCacheUtil.fetchName(uuid)!!
 
-        player.sendMessage("${CC.SEC}Granting for ${CC.PRI}${colored}${CC.SEC}...")
+        QuickAccess.computeColoredName(uuid, name).thenAccept {
+            player.sendMessage("${CC.SEC}Granting for ${CC.PRI}$it${CC.SEC}...")
 
-        GrantRankContextMenu(uuid, name).openMenu(player)
+            GrantRankContextMenu(uuid, name).openMenu(player)
+        }
     }
 }
