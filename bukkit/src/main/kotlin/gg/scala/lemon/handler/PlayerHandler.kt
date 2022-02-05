@@ -6,6 +6,7 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.menu.modmode.InspectionMenu
 import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.extension.network.NetworkOnlineStaffMenu
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -99,7 +100,7 @@ object PlayerHandler
                         .direction.multiply(2.5F)
                 } else if (isHoldingFreeze)
                 {
-                    StaffListMenu().openMenu(it.player)
+                    NetworkOnlineStaffMenu().openMenu(it.player)
                 }
             }
 

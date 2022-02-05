@@ -774,9 +774,7 @@ class LemonPlayer(
             connecting = true,
             forceRecalculatePermissions = true
         ).thenRun {
-            run {
-                PlayerCachingExtension.memorize(this)
-            }
+            PlayerCachingExtension.memorize(this).join()
         }
 
         recalculatePunishments(

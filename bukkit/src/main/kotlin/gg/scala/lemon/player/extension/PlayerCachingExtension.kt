@@ -23,7 +23,6 @@ import java.util.concurrent.CompletableFuture
 @IgnoreAutoScan
 object PlayerCachingExtension
 {
-    var loaded = false
     lateinit var controller: DataStoreObjectController<FundamentalLemonPlayer>
 
     @Configure
@@ -31,8 +30,6 @@ object PlayerCachingExtension
     {
         controller = DataStoreObjectControllerCache.create()
         controller.provideCustomSerializer(Serializers.gson)
-
-        loaded = true
     }
 
     fun retrieve(uniqueId: UUID): CompletableFuture<FundamentalLemonPlayer?>
@@ -40,13 +37,8 @@ object PlayerCachingExtension
         return controller.load(uniqueId, DataStoreStorageType.REDIS)
     }
 
-    fun memorize(lemonPlayer: LemonPlayer)
+    fun memorize(lemonPlayer: LemonPlayer): CompletableFuture<Void>
     {
-        if (!loaded)
-        {
-            return
-        }
-
         val fundamental = FundamentalLemonPlayer(
             lemonPlayer.uniqueId, lemonPlayer.name
         )
@@ -57,15 +49,11 @@ object PlayerCachingExtension
         fundamental.currentRank = lemonPlayer.activeGrant?.getRank()?.uuid
             ?: RankHandler.getDefaultRank().uuid
 
-        Tasks.sync {
-            controller.save(fundamental, DataStoreStorageType.REDIS)
-        }
+        return controller.save(fundamental, DataStoreStorageType.REDIS)
     }
 
-    fun forget(lemonPlayer: LemonPlayer)
+    fun forget(lemonPlayer: LemonPlayer): CompletableFuture<Void>
     {
-        if (!loaded) return
-
-        controller.delete(lemonPlayer.uniqueId, DataStoreStorageType.REDIS)
+        return controller.delete(lemonPlayer.uniqueId, DataStoreStorageType.REDIS)
     }
 }

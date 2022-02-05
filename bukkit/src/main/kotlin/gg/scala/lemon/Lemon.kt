@@ -284,10 +284,7 @@ class Lemon : ExtendedScalaPlugin()
             commandManager.registerCommand(ColorCommand())
         }
 
-        if (PlayerCachingExtension.loaded)
-        {
-            commandManager.registerCommand(NetworkOnlineStaffCommand)
-        }
+        commandManager.registerCommand(NetworkOnlineStaffCommand)
 
         commandManager.registerCommand(TestingCommand)
         commandManager.registerCommand(NametagCommand)
