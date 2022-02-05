@@ -2,13 +2,10 @@ package gg.scala.lemon
 
 import com.google.gson.reflect.TypeToken
 import gg.scala.lemon.player.metadata.Metadata
-import net.evilblock.cubed.Cubed
-import net.evilblock.cubed.CubedConfig
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.Reflection
 import net.evilblock.cubed.util.bukkit.Constants
-import org.bukkit.Note
 import java.lang.reflect.Type
 import java.util.*
 
@@ -17,7 +14,7 @@ object LemonConstants {
     // as CC.PRI & CC.SEC are instantiated later
     @JvmStatic
     val AUTH_PREFIX by lazy {
-        "${CC.D_AQUA}[2FA] "
+        "${CC.B_PRI}Staff ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT} "
     }
 
     @JvmStatic
