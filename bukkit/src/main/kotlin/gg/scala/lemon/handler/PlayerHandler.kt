@@ -4,9 +4,9 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.menu.modmode.InspectionMenu
-import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.extension.network.NetworkOnlineStaffMenu
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -54,6 +54,14 @@ object PlayerHandler
                 .addToLore(
                     "${CC.GRAY}Click this item to",
                     "${CC.GRAY}push yourself forward."
+                ).build()
+
+        inventory[2] =
+            ItemBuilder(XMaterial.ORANGE_CARPET)
+                .name("${CC.B_PRI}Better View")
+                .addToLore(
+                    "${CC.GRAY}Hold this item to hide",
+                    "${CC.GRAY}your arm."
                 ).build()
 
         inventory[8] =
@@ -216,9 +224,13 @@ object PlayerHandler
     {
         return DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
             .loadAll(DataStoreStorageType.MONGO)
-            .thenApply {
+            .thenApplyAsync {
                 val accounts = mutableListOf<LemonPlayer>()
+
                 val lemonPlayer = findPlayer(uuid).orElse(null)
+                    ?: AsyncLemonPlayer
+                        .of(uuid).future.join()
+                    ?: return@thenApplyAsync accounts
 
                 for (entry in it)
                 {
@@ -233,7 +245,7 @@ object PlayerHandler
                     }
                 }
 
-                return@thenApply accounts
+                return@thenApplyAsync accounts
             }
     }
 

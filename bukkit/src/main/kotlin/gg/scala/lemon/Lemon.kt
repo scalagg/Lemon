@@ -345,11 +345,8 @@ class Lemon : ExtendedScalaPlugin()
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
 
-        if (settings.redisCachePlayers)
-        {
-            flavor.inject(PlayerCachingExtension)
-            logger.info("Now memorizing fundamental player data to your redis server.")
-        }
+        flavor.inject(PlayerCachingExtension)
+        logger.info("Memorizing fundamental player data to your redis server.")
 
         // Loading all default player colors
         if (settings.playerColorsEnabled)

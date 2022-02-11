@@ -11,7 +11,6 @@ import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.serializers.Serializers
-import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +18,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 10/19/2021
  */
-@Service(name = "predi_caching")
+@Service(name = "player_redis_cache")
 @IgnoreAutoScan
 object PlayerCachingExtension
 {
