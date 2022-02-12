@@ -610,11 +610,14 @@ class LemonPlayer(
     }
 
     @JvmOverloads
-    fun getColoredName(rank: Rank = realRank(bukkitPlayer)): String
+    fun getColoredName(
+        rank: Rank = realRank(bukkitPlayer),
+        customColor: Boolean = true
+    ): String
     {
         val bukkitPlayer = bukkitPlayer
 
-        return rank.color + customColor() +
+        return rank.color + if (customColor) customColor() else "" +
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 

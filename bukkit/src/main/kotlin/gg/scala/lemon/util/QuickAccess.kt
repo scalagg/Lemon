@@ -160,10 +160,8 @@ object QuickAccess
     {
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
-                val realRank = realRank(it)
-
-                it.displayName = lemonPlayer.getColoredName(realRank)
-                it.playerListName = lemonPlayer.getColoredName(realRank)
+                it.displayName = lemonPlayer.getColoredName()
+                it.playerListName = lemonPlayer.getColoredName(customColor = false)
 
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)
