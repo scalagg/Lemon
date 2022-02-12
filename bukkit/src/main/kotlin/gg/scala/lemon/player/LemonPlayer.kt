@@ -617,7 +617,7 @@ class LemonPlayer(
     {
         val bukkitPlayer = bukkitPlayer
 
-        return rank.color + if (customColor) customColor() else "" +
+        return rank.color + (if (customColor) customColor() else "") +
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
