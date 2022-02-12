@@ -1,7 +1,5 @@
 package gg.scala.lemon.filter.impl.internal
 
-import java.util.*
-
 /**
  * @author GrowlyX
  * @since 12/29/2021

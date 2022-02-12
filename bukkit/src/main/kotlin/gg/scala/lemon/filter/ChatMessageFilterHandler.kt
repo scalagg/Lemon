@@ -108,7 +108,7 @@ object ChatMessageFilterHandler
             if (target != null)
             {
                 fancyMessage.withMessage(
-                    "${CC.GRAY}(${QuickAccess.coloredName(player)}${CC.GRAY} -> ${QuickAccess.coloredName(target) ?: CubedCacheUtil.fetchName(target)})"
+                    "${CC.GRAY}(${QuickAccess.coloredName(player)}${CC.GRAY} -> ${QuickAccess.coloredName(target) ?: CubedCacheUtil.fetchName(target)}${CC.GRAY})"
                 )
             } else
             {
