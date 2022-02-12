@@ -684,8 +684,12 @@ class Lemon : ExtendedScalaPlugin()
 
     override fun disable()
     {
-        banana.useResource {
-            it.hdel("lemon:heartbeats", settings.id)
-        }
+        val controller = DataStoreObjectControllerCache
+            .findNotNull<ServerInstance>()
+
+        controller.delete(
+            localInstance.identifier,
+            DataStoreStorageType.REDIS
+        ).join()
     }
 }
