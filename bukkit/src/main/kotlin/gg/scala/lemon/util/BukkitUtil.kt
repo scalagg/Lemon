@@ -1,8 +1,6 @@
 package gg.scala.lemon.util
 
-import gg.scala.lemon.handler.PlayerHandler
 import net.evilblock.cubed.util.nms.MinecraftReflection
-import org.bukkit.Bukkit
 import java.lang.reflect.Field
 
 /**
@@ -12,15 +10,15 @@ import java.lang.reflect.Field
 object BukkitUtil {
 
     @JvmStatic
-    val minecraftServer = MinecraftReflection.getMinecraftServer()
+    val MINECRAFT_SERVER = MinecraftReflection.getMinecraftServer()
 
     @JvmStatic
-    val playerList: Any = minecraftServer.javaClass
+    val PLAYER_LIST: Any = MINECRAFT_SERVER.javaClass
         .getMethod("getPlayerList")
-        .invoke(minecraftServer)
+        .invoke(MINECRAFT_SERVER)
 
     @JvmStatic
-    val playerField: Field = playerList.javaClass
+    val playerField: Field = PLAYER_LIST.javaClass
         .superclass.getDeclaredField("players")
 
     /**
@@ -32,10 +30,10 @@ object BukkitUtil {
     fun updatePlayerList(
         lambda: (MutableList<Any>) -> Unit = {}
     ) {
-        val players = playerField.get(playerList)
+        val players = playerField.get(PLAYER_LIST)
         lambda.invoke(players as MutableList<Any>)
 
         playerField.isAccessible = true
-        playerField.set(playerList, players)
+        playerField.set(PLAYER_LIST, players)
     }
 }

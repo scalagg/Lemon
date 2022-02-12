@@ -4,11 +4,9 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.disguise.update.event.PostDisguiseEvent
 import gg.scala.lemon.disguise.update.event.UnDisguiseEvent
-import gg.scala.lemon.player.event.impl.RankChangeEvent
 import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.QuickAccess.realRank
 import me.lucko.helper.Events
-import net.evilblock.cubed.util.bukkit.Tasks
+import net.minecraft.server.v1_8_R3.EntityPlayer
 import net.minecraft.server.v1_8_R3.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,28 +18,27 @@ import org.bukkit.event.player.PlayerJoinEvent
 @Service(name = "ssp-sorter")
 object ScalaSpigotSorterExtension
 {
+    private val comparator: Comparator<EntityPlayer> =
+        Comparator.comparingInt {
+            QuickAccess.realRank(Bukkit.getPlayer(it.uniqueID)).weight
+        }
+
     @Configure
     fun configure()
     {
         listOf(
             PlayerJoinEvent::class,
-            RankChangeEvent::class,
             PostDisguiseEvent::class,
             UnDisguiseEvent::class
         ).forEach {
             Events.subscribe(it.java)
-                .handler { asyncInternalListSort() }
+                .handler { internalListSort() }
         }
     }
 
-    private fun asyncInternalListSort()
+    private fun internalListSort()
     {
-        Tasks.async {
-            MinecraftServer.getServer().playerList.sortPlayerList(
-                Comparator.comparingInt { entity ->
-                    realRank(Bukkit.getPlayer(entity.uniqueID)).weight
-                }
-            )
-        }
+        MinecraftServer.getServer()
+            .playerList.sortPlayerList(comparator)
     }
 }
