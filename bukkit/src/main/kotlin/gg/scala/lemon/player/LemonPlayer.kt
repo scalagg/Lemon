@@ -512,9 +512,9 @@ class LemonPlayer(
         return uuid
     }
 
-    fun checkForGrantUpdate()
+    fun checkForGrantUpdate(): CompletableFuture<Void>
     {
-        recalculateGrants(
+        return recalculateGrants(
             shouldCalculateNow = true
         )
     }
@@ -774,7 +774,8 @@ class LemonPlayer(
             connecting = true,
             forceRecalculatePermissions = true
         ).thenRun {
-            PlayerCachingExtension.memorize(this).join()
+            PlayerCachingExtension
+                .memorize(this).join()
         }
 
         recalculatePunishments(

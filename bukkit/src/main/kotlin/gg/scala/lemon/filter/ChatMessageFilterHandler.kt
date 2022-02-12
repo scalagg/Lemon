@@ -6,11 +6,13 @@ import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.util.UUID
 
 /**
  * @author GrowlyX
@@ -43,8 +45,9 @@ object ChatMessageFilterHandler
     }
 
     fun handleMessageFilter(
-        player: Player, message: String, reportToStaff: Boolean = true,
-        target: Player? = null
+        player: Player, message: String,
+        reportToStaff: Boolean = true,
+        target: UUID? = null
     ): Boolean
     {
         val report = mutableListOf<String>()
@@ -105,7 +108,7 @@ object ChatMessageFilterHandler
             if (target != null)
             {
                 fancyMessage.withMessage(
-                    "${CC.GRAY}(${QuickAccess.coloredName(player)}${CC.GRAY} -> ${QuickAccess.coloredName(target)})"
+                    "${CC.GRAY}(${QuickAccess.coloredName(player)}${CC.GRAY} -> ${QuickAccess.coloredName(target) ?: CubedCacheUtil.fetchName(target)})"
                 )
             } else
             {
