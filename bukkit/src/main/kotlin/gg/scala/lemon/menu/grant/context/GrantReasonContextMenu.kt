@@ -3,11 +3,11 @@ package gg.scala.lemon.menu.grant.context
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.GrantHandler
-import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.rank.Rank
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
@@ -92,7 +92,7 @@ class GrantReasonContextMenu(
     }
 
     private fun finalizeGrant(player: Player, reason: String) {
-        BetterConfirmMenu(
+        ConfirmMenu(
             "Grant ${Constants.DOUBLE_ARROW_RIGHT} $name ${Constants.DOUBLE_ARROW_RIGHT} Confirm",
             listOf(
                 "${CC.GRAY}Set ${CC.PRI}$name's${CC.GRAY} rank to:",

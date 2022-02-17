@@ -3,7 +3,6 @@ package gg.scala.lemon.menu.punishment
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -11,6 +10,7 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.SplitUtil
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
@@ -242,7 +242,7 @@ class PunishmentDetailedViewMenu(
                         val splitUuid = SplitUtil.splitUuid(punishment.uuid)
                         val grantTarget = CubedCacheUtil.fetchName(punishment.target)
 
-                        BetterConfirmMenu(
+                        ConfirmMenu(
                             "Punishment Expiration ${Constants.DOUBLE_ARROW_RIGHT} $splitUuid",
                             listOf(
                                 "${CC.GRAY}Would you like to expire",

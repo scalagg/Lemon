@@ -5,7 +5,6 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.menu.better.BetterConfirmMenu
 import gg.scala.lemon.menu.punishment.PunishmentDetailedViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.grant.Grant
@@ -13,6 +12,7 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.SplitUtil
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
@@ -205,7 +205,7 @@ class GrantViewMenu(
                     val splitUuid = SplitUtil.splitUuid(grant.uuid)
                     val grantTarget = CubedCacheUtil.fetchName(grant.target)
 
-                    BetterConfirmMenu(
+                    ConfirmMenu(
                         "Grant Removal ${Constants.DOUBLE_ARROW_RIGHT} $splitUuid",
                         listOf(
                             "${CC.GRAY}Would you like to remove",
