@@ -3,7 +3,9 @@ package gg.scala.lemon.player.entity.superboat
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import me.lucko.helper.Events
+import org.bukkit.entity.Boat
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 
@@ -29,14 +31,13 @@ object EntitySuperBoatHandler
 
     fun destroySuperBoatOf(player: Player)
     {
-        superBoats.remove(player.uniqueId)?.onDeletion()
+        superBoats.remove(player.uniqueId)?.destroy(player)
     }
 
     @Configure
     fun configure()
     {
-        Events.subscribe(PlayerQuitEvent::class.java).handler {
-            superBoats.remove(it.player.uniqueId)?.onDeletion()
-        }
+        Events.subscribe(PlayerQuitEvent::class.java)
+            .handler { destroySuperBoatOf(it.player) }
     }
 }

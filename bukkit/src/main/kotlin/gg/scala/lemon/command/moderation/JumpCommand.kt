@@ -1,13 +1,11 @@
 package gg.scala.lemon.command.moderation
 
-import gg.scala.lemon.player.FundamentalLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
+import gg.scala.lemon.util.QuickAccess.server
 import gg.scala.lemon.util.QuickAccess.username
-import gg.scala.store.controller.DataStoreObjectControllerCache
-import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -32,9 +30,7 @@ class JumpCommand : BaseCommand()
     {
         player.sendMessage("${CC.GREEN}Locating player ${CC.YELLOW}${target.username()}...")
 
-        return DataStoreObjectControllerCache
-            .findNotNull<FundamentalLemonPlayer>()
-            .load(target, DataStoreStorageType.REDIS)
+        return server(target)
             .thenAcceptAsync {
                 if (it == null)
                     throw ConditionFailedException(
@@ -49,7 +45,7 @@ class JumpCommand : BaseCommand()
                     false, QuickAccess.MessageType.NOTIFICATION
                 )
 
-                BungeeUtil.sendToServer(player, it.currentServer)
+                BungeeUtil.sendToServer(player, it.id)
             }
     }
 }

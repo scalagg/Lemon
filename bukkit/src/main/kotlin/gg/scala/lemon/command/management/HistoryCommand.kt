@@ -7,7 +7,6 @@ import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -15,7 +14,6 @@ import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -60,8 +58,8 @@ class HistoryCommand : BaseCommand()
     @CommandPermission("lemon.command.staffhistory.punishments")
     fun onStaffHistory(player: Player, uuid: UUID)
     {
-        val name =
-            CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
+        val name = CubedCacheUtil.fetchName(uuid)
+            ?: throw ConditionFailedException("Could not find a player by that uuid.")
 
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.punishments.other"))
         {

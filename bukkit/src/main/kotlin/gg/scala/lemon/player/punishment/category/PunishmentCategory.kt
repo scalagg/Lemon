@@ -12,10 +12,10 @@ enum class PunishmentCategory(
 )
 {
     KICK("kicked", "", "Kick", "Kicking", true, PunishmentCategoryIntensity.MEDIUM),
-    MUTE("muted", CC.I_WHITE, "Mute", "Muting", false, PunishmentCategoryIntensity.LIGHT),
+    MUTE("muted", CC.YELLOW, "Mute", "Muting", false, PunishmentCategoryIntensity.LIGHT),
     BAN("banned", CC.RED, "Ban", "Banning", false, PunishmentCategoryIntensity.MEDIUM),
     BLACKLIST("blacklisted", CC.D_RED, "Blacklist", "Blacklist", false, PunishmentCategoryIntensity.MEDIUM),
-    IP_RELATIVE("", CC.D_RED, "", "", false, PunishmentCategoryIntensity.MEDIUM);
+    IP_RELATIVE("", CC.ID_RED, "", "", false, PunishmentCategoryIntensity.MEDIUM);
 
     companion object
     {

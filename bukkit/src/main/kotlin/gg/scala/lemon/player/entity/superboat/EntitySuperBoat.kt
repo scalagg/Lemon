@@ -5,6 +5,7 @@ import net.evilblock.cubed.entity.Entity
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Boat
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 
 /**
@@ -38,6 +39,8 @@ class EntitySuperBoat(
             val entity = world.spawn(
                 location, Boat::class.java
             ).also { boat ->
+
+
                 Bukkit.getOnlinePlayers().forEach {
                     if (it != target)
                     {

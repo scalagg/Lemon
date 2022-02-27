@@ -86,6 +86,11 @@ class LemonPlayer(
         }
     }
 
+    fun sortedPunishments() = activePunishments.entries
+        .sortedByDescending { entry ->
+            entry.value?.category?.ordinal ?: 0
+        }
+
     fun recalculatePunishments(
         connecting: Boolean = false,
         nothing: Boolean = false

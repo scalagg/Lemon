@@ -10,6 +10,8 @@ import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import me.lucko.helper.network.Server
+import me.lucko.helper.profiles.Profile
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
@@ -23,6 +25,11 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
+import java.util.function.BinaryOperator
+import java.util.function.Function
+import java.util.function.Supplier
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
 /**
  * @author GrowlyX, puugz
@@ -197,6 +204,35 @@ object QuickAccess
     fun senderUuid(sender: CommandSender): UUID?
     {
         return if (sender is ConsoleCommandSender) null else (sender as Player).uniqueId
+    }
+
+    @JvmStatic
+    fun server(uniqueId: UUID): CompletableFuture<Server?>
+    {
+        return CompletableFuture.supplyAsync {
+            val network = Lemon.instance.network
+
+            return@supplyAsync network.servers.values
+                .firstOrNull {
+                    it.onlinePlayers
+                        .containsKey(uniqueId)
+                }
+        }
+    }
+
+
+    @JvmStatic
+    fun online(uniqueId: UUID): CompletableFuture<Boolean>
+    {
+        return CompletableFuture.supplyAsync {
+            val network = Lemon.instance.network
+
+            return@supplyAsync network.servers
+                .any {
+                    it.value.onlinePlayers
+                        .containsKey(uniqueId)
+                }
+        }
     }
 
     @JvmStatic
