@@ -8,7 +8,7 @@ data class ServerInstance(
     val serverGroup: String,
     override val identifier: UUID = UUID.randomUUID()
 ) : IDataStoreObject {
-    val metaData = mutableMapOf<String, String>()
+    var metaData = mutableMapOf<String, String>()
 
     var maxPlayers: Int = 0
     var onlinePlayers: Int = 0

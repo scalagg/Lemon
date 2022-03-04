@@ -19,8 +19,6 @@ object BukkitInstanceUpdateRunnable : Runnable
         instance.ticksPerSecond = Lemon.instance.serverStatisticProvider.ticksPerSecond()
         instance.lastHeartbeat = System.currentTimeMillis()
 
-        instance.metaData["init"] = Lemon.instance.initialization.toString()
-
         Lemon.instance.serverLayer
             .save(instance, DataStoreStorageType.REDIS)
     }

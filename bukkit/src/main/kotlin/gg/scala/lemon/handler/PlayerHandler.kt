@@ -35,12 +35,8 @@ object PlayerHandler
     val snapshots = mutableMapOf<UUID, PlayerSnapshot>()
 
     val players: ConcurrentHashMap<UUID, LemonPlayer>
-        get() = DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
-            .useLayerWithReturn<CachedDataStoreStorageLayer<LemonPlayer>, ConcurrentHashMap<UUID, LemonPlayer>>(
-                DataStoreStorageType.CACHE
-            ) {
-                this.connection.getConnection()
-            }
+        get() = DataStoreObjectControllerCache
+            .findNotNull<LemonPlayer>().localCache()
 
     init
     {

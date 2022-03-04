@@ -144,7 +144,7 @@ class Lemon : ExtendedScalaPlugin()
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
 
-    var initialization by Delegates.notNull<Long>()
+    var initialization = System.currentTimeMillis()
     var messenger by Delegates.notNull<Messenger>()
 
     val flavor by lazy {
@@ -156,8 +156,6 @@ class Lemon : ExtendedScalaPlugin()
     override fun enable()
     {
         instance = this
-        initialization = System.currentTimeMillis()
-
         logger.info("Fetching server information using provided password...")
 
         loadBaseConfigurations()
@@ -213,6 +211,9 @@ class Lemon : ExtendedScalaPlugin()
         initialLoadCommands()
 
         startUuidCacheImplementation()
+
+        localInstance.metaData = mutableMapOf()
+        localInstance.metaData["init"] = initialization.toString()
 
         logger.info("Finished Lemon resource initialization in ${
             System.currentTimeMillis() - initialization
@@ -400,13 +401,7 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Now utilizing spark for server statistics.")
         }
 
-        try
-        {
-            flavor.startup()
-        } catch (exception: Exception)
-        {
-            exception.printStackTrace()
-        }
+        flavor.startup()
 
         logger.info("Finished player qol initialization in ${
             System.currentTimeMillis() - initialization
@@ -483,7 +478,7 @@ class Lemon : ExtendedScalaPlugin()
             )
         }
 
-        val instanceData = SyncLemonInstanceData()
+        val instanceData = SyncLemonInstanceData
         messenger = HelperRedis(helperCredentials)
 
         network = SyncLemonNetwork(

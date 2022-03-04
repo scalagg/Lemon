@@ -7,7 +7,7 @@ import me.lucko.helper.messaging.InstanceData
  * @author GrowlyX
  * @since 1/16/2022
  */
-class SyncLemonInstanceData : InstanceData
+object SyncLemonInstanceData : InstanceData
 {
     override fun getId() = Lemon.instance.settings.id
     override fun getGroups() = mutableSetOf(Lemon.instance.settings.group)
