@@ -9,6 +9,7 @@ import gg.scala.lemon.player.extension.network.NetworkOnlineStaffMenu
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.CachedDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
 import net.evilblock.cubed.nametag.NametagHandler
@@ -34,8 +35,12 @@ object PlayerHandler
     val snapshots = mutableMapOf<UUID, PlayerSnapshot>()
 
     val players: ConcurrentHashMap<UUID, LemonPlayer>
-        get() = DataStoreObjectControllerCache
-            .findNotNull<LemonPlayer>().localCache
+        get() = DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
+            .useLayerWithReturn<CachedDataStoreStorageLayer<LemonPlayer>, ConcurrentHashMap<UUID, LemonPlayer>>(
+                DataStoreStorageType.CACHE
+            ) {
+                this.connection.getConnection()
+            }
 
     init
     {

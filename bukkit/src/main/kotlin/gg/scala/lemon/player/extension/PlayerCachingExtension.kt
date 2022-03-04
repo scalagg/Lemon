@@ -28,7 +28,6 @@ object PlayerCachingExtension
     fun configure()
     {
         controller = DataStoreObjectControllerCache.create()
-        controller.provideCustomSerializer(Serializers.gson)
     }
 
     fun retrieve(uniqueId: UUID): CompletableFuture<FundamentalLemonPlayer?>

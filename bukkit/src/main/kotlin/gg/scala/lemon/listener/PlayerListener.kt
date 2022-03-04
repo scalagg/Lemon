@@ -572,7 +572,8 @@ object PlayerListener : Listener
 
             player.removeMetadata("vanished", plugin)
 
-            PlayerHandler.players.remove(it.uniqueId)?.save()
+            PlayerHandler.players
+                .remove(it.uniqueId)?.save()
         }
     }
 }

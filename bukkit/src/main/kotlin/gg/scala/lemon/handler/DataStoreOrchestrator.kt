@@ -9,7 +9,9 @@ import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.storable.IDataStoreObject
 import net.evilblock.cubed.serializers.Serializers
+import kotlin.reflect.KClass
 
 /**
  * @author GrowlyX
@@ -22,19 +24,12 @@ object DataStoreOrchestrator
     @Configure
     fun configure()
     {
-        DataStoreObjectControllerCache
-            .create<LemonPlayer>(Serializers.gson)
-
-        DataStoreObjectControllerCache
-            .create<Punishment>(Serializers.gson)
-
-        DataStoreObjectControllerCache
-            .create<Rank>(Serializers.gson)
-
-        DataStoreObjectControllerCache
-            .create<Grant>(Serializers.gson)
-
-        DataStoreObjectControllerCache
-            .create<Comment>(Serializers.gson)
+        listOf(
+            LemonPlayer::class, Punishment::class,
+            Rank::class, Grant::class, Comment::class
+        ).forEach {
+            DataStoreObjectControllerCache
+                .create(it)
+        }
     }
 }

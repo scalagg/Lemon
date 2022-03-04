@@ -21,7 +21,8 @@ object DisguiseInfoProvider
     @Configure
     fun configure()
     {
-        DataStoreObjectControllerCache.create<DisguiseInfo>(Serializers.gson)
+        DataStoreObjectControllerCache
+            .create<DisguiseInfo>()
 
         initialized = true
     }
