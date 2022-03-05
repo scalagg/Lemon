@@ -24,6 +24,8 @@ object LemonRedirectService : PlayerRedirector
         val system = RedirectSystem.create(
             Lemon.instance.messenger, SyncLemonInstanceData, this
         )
+
+        system.setEnsure(false)
     }
 
     override fun redirectPlayer(

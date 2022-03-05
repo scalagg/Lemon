@@ -10,6 +10,6 @@ import me.lucko.helper.network.redirect.AbstractRedirectSystem
  */
 class LemonRedirectSystem : AbstractRedirectSystem(
     Lemon.instance.messenger,
-    SyncLemonInstanceData(),
+    SyncLemonInstanceData,
     LemonPlayerRedirector
 )
