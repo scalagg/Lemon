@@ -1,8 +1,7 @@
 package gg.scala.lemon.handler
 
-import gg.scala.banana.annotate.Subscribe
-import gg.scala.banana.message.Message
-import gg.scala.banana.subscribe.marker.BananaHandler
+import gg.scala.aware.annotation.Subscribe
+import gg.scala.aware.message.AwareMessage
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.task.ResourceUpdateRunnable
@@ -10,7 +9,6 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.broadcast
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks.sync
@@ -18,43 +16,54 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 
-object RedisHandler : BananaHandler
+object RedisHandler
 {
-
     @Subscribe("channel-message")
-    fun onChannelMessage(message: Message)
+    fun onChannelMessage(message: AwareMessage)
     {
-        val newMessage = message["message"]!!
-        val sender = message["sender"]!!
+        val newMessage = message
+            .retrieve<String>("message")
+
+        val sender = message
+            .retrieve<String>("sender")
 
         val rank = RankHandler.findRank(
-            UUID.fromString(message["rank"])
+            message.retrieve<UUID>("rank")
         ) ?: RankHandler.getDefaultRank()
 
-        val channel = ChatHandler.findChannel(message["channel"]!!) ?: return
+        val channel = ChatHandler.findChannel(
+            message.retrieve("channel")
+        ) ?: return
 
         Bukkit.getOnlinePlayers().forEach {
             if (channel.hasPermission(it))
             {
                 it.sendMessage(
-                    channel.getFormatted(newMessage, sender, rank, it).replace("%s", message["server"]!!)
+                    String.format(channel.getFormatted(newMessage, sender, rank, it), message.retrieve("server"))
                 )
             }
         }
     }
 
     @Subscribe(
-        value = "staff-message",
-        priority = 10
+        value = "staff-message"
     )
-    fun onStaffMessage(message: Message)
+    fun onStaffMessage(message: AwareMessage)
     {
-        val newMessage = message["message"]
-        val permission = message["permission"]
+        val newMessage = message
+            .retrieve<String>("message")
 
-        val server = message["server"]
-        val potentialFlag = message["flag"]
-        val withServer = message["with-server"]!!.toBoolean()
+        val permission = message
+            .retrieveNullable<String>("permission")
+
+        val server = message
+            .retrieve<String>("server")
+
+        val potentialFlag = message
+            .retrieveNullable<String>("flag")
+
+        val withServer = message
+            .retrieve<Boolean>("with-server")
 
         val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
 
@@ -78,14 +87,17 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("global-message")
-    fun onGlobalMessage(message: Message)
+    fun onGlobalMessage(message: AwareMessage)
     {
-        val newMessage = message["message"]
-        val permission = message["permission"]
+        val newMessage = message
+            .retrieve<String>("message")
+
+        val permission = message
+            .retrieveNullable<String>("permission")
 
         if (permission!!.isNotBlank())
         {
-            broadcast(newMessage ?: "", permission)
+            broadcast(newMessage, permission)
         } else
         {
             Bukkit.broadcastMessage(newMessage)
@@ -93,18 +105,24 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("mass-whitelist")
-    fun onMassWhitelist(message: Message)
+    fun onMassWhitelist(message: AwareMessage)
     {
-        val group = message["group"]!!
-        val setting = message["setting"]!!
+        val group = message
+            .retrieve<String>("group")
 
-        if (Lemon.instance.localInstance.serverGroup.equals(group, true))
+        val setting = message
+            .retrieve<Boolean>("setting")
+
+        val ourGroup = Lemon.instance
+            .localInstance.serverGroup
+
+        if (ourGroup.equals(group, true))
         {
-            Bukkit.setWhitelist(setting.toBoolean())
+            Bukkit.setWhitelist(setting)
 
             broadcast(
                 "${CC.RED}[A] ${CC.D_AQUA}Whitelist has been ${
-                    if (setting.toBoolean())
+                    if (setting)
                     {
                         "${CC.GREEN}enabled"
                     } else
@@ -118,24 +136,26 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("player-message")
-    fun onPlayerMessage(message: Message)
+    fun onPlayerMessage(message: AwareMessage)
     {
-        val newMessage = message["message"]
+        val newMessage = message
+            .retrieve<String>("message")
 
-        val targetUuid = UUID
-            .fromString(message["target"])
+        val targetUuid = message
+            .retrieve<UUID>("target")
 
-        Bukkit.getPlayer(targetUuid)?.sendMessage(newMessage)
+        Bukkit.getPlayer(targetUuid)
+            ?.sendMessage(newMessage)
     }
 
     @Subscribe("global-fancy-message")
-    fun onGlobalFancyMessage(message: Message)
+    fun onGlobalFancyMessage(message: AwareMessage)
     {
-        val newMessage = Serializers.gson.fromJson(
-            message["message"],
-            FancyMessage::class.java
-        )
-        val permission = message["permission"]
+        val newMessage = message
+            .retrieve<FancyMessage>("message")
+
+        val permission = message
+            .retrieveNullable<String>("permission")
 
         Bukkit.getOnlinePlayers()
             .filter { permission!!.isBlank() || it.hasPermission(permission) }
@@ -143,15 +163,13 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("player-fancy-message")
-    fun onPlayerFancyMessage(message: Message)
+    fun onPlayerFancyMessage(message: AwareMessage)
     {
-        val newMessage = Serializers.gson.fromJson(
-            message["message"],
-            FancyMessage::class.java
-        )
-        val targetUuid = UUID.fromString(
-            message["target"]
-        )
+        val newMessage = message
+            .retrieve<FancyMessage>("message")
+
+        val targetUuid = message
+            .retrieve<UUID>("target")
 
         val player = Bukkit.getPlayer(targetUuid)
 
@@ -162,11 +180,10 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("recalculate-grants")
-    fun onRecalculate(message: Message)
+    fun onRecalculate(message: AwareMessage)
     {
-        val targetUuid = UUID.fromString(
-            message["target"]
-        )
+        val targetUuid = message
+            .retrieve<UUID>("target")
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
             it.recalculateGrants(
@@ -176,11 +193,10 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("recalculate-punishments")
-    fun onPunishmentHandling(message: Message)
+    fun onPunishmentHandling(message: AwareMessage)
     {
-        val targetUuid = UUID.fromString(
-            message["uniqueId"]
-        )
+        val targetUuid = message
+            .retrieve<UUID>("uniqueId")
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
             it.recalculatePunishments()
@@ -188,11 +204,10 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("reload-player")
-    fun onReloadPlayer(message: Message)
+    fun onReloadPlayer(message: AwareMessage)
     {
-        val targetUuid = UUID.fromString(
-            message["uniqueId"]
-        )
+        val targetUuid = message
+            .retrieve<UUID>("uniqueId")
 
         PlayerHandler.findPlayer(targetUuid).ifPresent {
             QuickAccess.reloadPlayer(targetUuid)
@@ -200,12 +215,13 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("cross-kick")
-    fun onCrossKick(message: Message)
+    fun onCrossKick(message: AwareMessage)
     {
-        val targetUuid = UUID.fromString(
-            message["uniqueId"]
-        )
-        val reason = message["reason"]
+        val targetUuid = message
+            .retrieve<UUID>("uniqueId")
+
+        val reason = message
+            .retrieve<String>("reason")
 
         sync {
             Bukkit.getPlayer(targetUuid)?.kickPlayer(
@@ -218,11 +234,10 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("rank-delete")
-    fun onRankDelete(message: Message)
+    fun onRankDelete(message: AwareMessage)
     {
-        val rankUuid = UUID.fromString(
-            message["uniqueId"]
-        )
+        val rankUuid = message
+            .retrieve<UUID>("uniqueId")
 
         RankHandler.ranks.remove(rankUuid)
 
@@ -230,11 +245,12 @@ object RedisHandler : BananaHandler
     }
 
     @Subscribe("rank-update")
-    fun onRankUpdate(message: Message)
+    fun onRankUpdate(message: AwareMessage)
     {
-        val completableFuture = DataStoreObjectControllerCache.findNotNull<Rank>()
+        val completableFuture = DataStoreObjectControllerCache
+            .findNotNull<Rank>()
             .load(
-                UUID.fromString(message["uniqueId"]),
+                message.retrieve("uniqueId"),
                 DataStoreStorageType.MONGO
             )
 
@@ -255,24 +271,25 @@ object RedisHandler : BananaHandler
         }
     }
 
-    fun buildMessage(packet: String, message: Map<String, String>): Message
+    fun buildMessage(
+        packet: String,
+        message: Map<String, String>
+    ): AwareMessage
     {
-        return Message(packet).also {
-            message.forEach { (key, value) ->
-                it[key] = value
-            }
+        return AwareMessage.of(
+            packet, Lemon.instance.aware
+        ).apply {
+            content.putAll(message)
         }
     }
 
     fun buildMessage(
         packet: String,
         vararg pairs: Pair<String, String>
-    ): Message
+    ): AwareMessage
     {
-        return Message(packet).also {
-            pairs.forEach { pair ->
-                it[pair.first] = pair.second
-            }
-        }
+        return AwareMessage.of(
+            packet, Lemon.instance.aware, *pairs
+        )
     }
 }

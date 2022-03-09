@@ -1,7 +1,7 @@
 package gg.scala.lemon.disguise.update.event
 
 import gg.scala.lemon.disguise.information.DisguiseInfo
-import net.evilblock.cubed.plugin.PluginEvent
+import net.evilblock.cubed.event.PluginEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList

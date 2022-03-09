@@ -26,7 +26,6 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.QuickAccess.shouldBlock
-import gg.scala.lemon.util.queueForDispatch
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
@@ -285,7 +284,7 @@ object PlayerListener : Listener
                         .getRank().uuid.toString(),
                     "server" to plugin.settings.id
                 )
-            ).queueForDispatch()
+            ).publish()
         } else
         {
             for (target in Bukkit.getOnlinePlayers())

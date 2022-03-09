@@ -3,7 +3,6 @@ package gg.scala.lemon.command.environment
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.handler.ServerHandler
 import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.dispatchImmediately
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.*
@@ -49,7 +48,7 @@ class EnvironmentCommand : BaseCommand() {
             "group" to group,
             "setting" to boolean.toString(),
             "issuer" to QuickAccess.nameOrConsole(sender)
-        ).dispatchImmediately()
+        ).publish()
     }
 
     @Subcommand("fetch")

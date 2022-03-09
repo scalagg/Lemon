@@ -1,17 +1,14 @@
 package gg.scala.lemon.util
 
-import gg.scala.banana.message.Message
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.network.Server
-import me.lucko.helper.profiles.Profile
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
@@ -24,12 +21,6 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ForkJoinPool
-import java.util.function.BinaryOperator
-import java.util.function.Function
-import java.util.function.Supplier
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 /**
  * @author GrowlyX, puugz
@@ -254,7 +245,7 @@ object QuickAccess
                     "server" to Lemon.instance.settings.id,
                     "with-server" to addServer.toString(),
                 )
-            ).queueForDispatch()
+            ).publish()
         }
     }
 
@@ -279,7 +270,7 @@ object QuickAccess
                     "server" to Lemon.instance.settings.id,
                     "with-server" to addServer.toString(),
                 )
-            ).queueForDispatch()
+            ).publish()
         }
     }
 
@@ -327,7 +318,7 @@ object QuickAccess
                 hashMapOf(
                     "uniqueId" to punishment.target.toString()
                 )
-            ).dispatchImmediately()
+            ).publish()
         }
     }
 
@@ -348,7 +339,7 @@ object QuickAccess
                     hashMapOf(
                         "uniqueId" to punishment.target.toString()
                     )
-                ).dispatchImmediately()
+                ).publish()
             }
 
             false
@@ -363,7 +354,7 @@ object QuickAccess
                 "global-message",
                 "message" to message,
                 "permission" to (permission ?: "")
-            ).queueForDispatch()
+            ).publish()
         }
     }
 
@@ -375,7 +366,7 @@ object QuickAccess
                 "global-fancy-message",
                 "message" to gson.toJson(fancyMessage),
                 "permission" to (permission ?: "")
-            ).queueForDispatch()
+            ).publish()
         }
     }
 
@@ -389,7 +380,7 @@ object QuickAccess
                     "message" to message,
                     "target" to uuid.toString()
                 )
-            ).queueForDispatch()
+            ).publish()
         }
     }
 
@@ -403,7 +394,7 @@ object QuickAccess
                     "message" to gson.toJson(fancyMessage),
                     "target" to uuid.toString()
                 )
-            ).queueForDispatch()
+            ).publish()
         }
     }
 
@@ -495,26 +486,6 @@ object QuickAccess
     {
         PLAYER_MESSAGE,
         NOTIFICATION
-    }
-}
-
-fun Message.queueForDispatch()
-{
-    LemonOutgoingMessageQueue.dispatchSafe(this)
-}
-
-fun Message.dispatchImmediately()
-{
-    LemonOutgoingMessageQueue.dispatchUrgently(this)
-}
-
-fun Message.dispatchToCocoa()
-{
-    ForkJoinPool.commonPool().execute {
-        Lemon.instance.banana.useResource {
-            it.publish("cocoa", gson.toJson(this))
-            it.close()
-        }
     }
 }
 

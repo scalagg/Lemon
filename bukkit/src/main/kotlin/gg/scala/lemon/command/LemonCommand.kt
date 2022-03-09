@@ -38,16 +38,6 @@ class LemonCommand : BaseCommand()
     {
         val softwareDump = SoftwareDump("System Dump")
 
-        val banana = SoftwareDumpCategory("Redis")
-        banana.addEntry(
-            "Subscriptions" to Lemon.instance
-                .banana.subscriptions.size
-        )
-        banana.addEntry(
-            "Ignoring non-existent handlers" to Lemon
-                .instance.banana.options.ignoreNonExistentHandlers
-        )
-
         val system = SoftwareDumpCategory("System")
         system.addEntry(
             "Threads ${CC.GRAY}(Total)${CC.SEC}" to Thread.getAllStackTraces().values.size
@@ -83,7 +73,6 @@ class LemonCommand : BaseCommand()
 
         softwareDump.addCategory(system)
         softwareDump.addCategory(commonPool)
-        softwareDump.addCategory(banana)
 
         softwareDump.formFancyMessage()
             .sendToPlayer(player)

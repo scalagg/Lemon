@@ -1,6 +1,7 @@
 package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
+import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -11,7 +12,6 @@ import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.fetchIpAddress
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
-import gg.scala.lemon.util.dispatchImmediately
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -365,7 +365,7 @@ object PunishmentHandler
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
                     "uniqueId" to uuid.toString()
-                ).dispatchImmediately()
+                ).publish(AwareThreadContext.SYNC)
 
                 if (punishment.category == PunishmentCategory.KICK)
                 {
@@ -373,7 +373,7 @@ object PunishmentHandler
                         "cross-kick",
                         "uniqueId" to uuid.toString(),
                         "reason" to punishment.addedReason
-                    ).dispatchImmediately()
+                    ).publish(AwareThreadContext.SYNC)
                 }
             }
         }
@@ -425,7 +425,7 @@ object PunishmentHandler
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
                     "uniqueId" to uuid.toString()
-                ).dispatchImmediately()
+                ).publish(AwareThreadContext.SYNC)
 
                 completed.invoke(true)
             }

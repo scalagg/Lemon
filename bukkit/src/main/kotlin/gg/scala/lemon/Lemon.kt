@@ -1,12 +1,10 @@
 package gg.scala.lemon
 
 import com.google.gson.LongSerializationPolicy
-import gg.scala.banana.Banana
-import gg.scala.banana.BananaBuilder
-import gg.scala.banana.credentials.BananaCredentials
-import gg.scala.banana.options.BananaOptions
+import gg.scala.aware.AwareBuilder
+import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
+import gg.scala.aware.message.AwareMessage
 import gg.scala.cache.uuid.ScalaStoreUuidCache
-import gg.scala.cache.uuid.impl.distribution.DistributedRedisUuidCacheTranslator
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
@@ -47,12 +45,10 @@ import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
-import gg.scala.lemon.queue.impl.LemonOutgoingMessageQueue
 import gg.scala.lemon.server.ServerInstance
 import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.testing.TestingCommand
-import gg.scala.store.connection.redis.impl.details.DataStoreRedisConnectionDetails
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.spigot.ScalaDataStoreSpigot
@@ -70,14 +66,12 @@ import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 import me.lucko.helper.redis.RedisCredentials
 import me.lucko.helper.redis.plugin.HelperRedis
-import net.evilblock.cubed.Cubed
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.BukkitCommandExecutionContext
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.useGsonBuilderThenRebuild
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
@@ -87,10 +81,8 @@ import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
-import org.bukkit.plugin.java.JavaPlugin
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import kotlin.properties.Delegates
@@ -129,16 +121,11 @@ class Lemon : ExtendedScalaPlugin()
 
     lateinit var configFactory: ConfigFactory
 
-    lateinit var banana: Banana
-    lateinit var credentials: BananaCredentials
-
     lateinit var serverLayer: DataStoreObjectController<ServerInstance>
     lateinit var localInstance: ServerInstance
 
     lateinit var lemonWebData: ScalaValidateData
     lateinit var serverStatisticProvider: ServerStatisticProvider
-
-    lateinit var redisConnectionDetails: DataStoreRedisConnectionDetails
 
     var network by Delegates.notNull<AbstractNetwork>()
 
@@ -146,6 +133,13 @@ class Lemon : ExtendedScalaPlugin()
 
     var initialization = System.currentTimeMillis()
     var messenger by Delegates.notNull<Messenger>()
+
+    val aware by lazy {
+        AwareBuilder.of<AwareMessage>("lemon")
+            .logger(logger)
+            .codec(AwareMessageCodec)
+            .build()
+    }
 
     val flavor by lazy {
         Flavor.create<Lemon>(
@@ -205,12 +199,9 @@ class Lemon : ExtendedScalaPlugin()
         loadListeners()
         loadHandlers()
 
-        initialLoadMessageQueues()
         initialLoadPlayerQol()
         initialLoadScheduledTasks()
         initialLoadCommands()
-
-        startUuidCacheImplementation()
 
         localInstance.metaData = mutableMapOf()
         localInstance.metaData["init"] = initialization.toString()
@@ -231,31 +222,6 @@ class Lemon : ExtendedScalaPlugin()
             BukkitInstanceUpdateRunnable,
             0L, 20L
         )
-    }
-
-    private fun startUuidCacheImplementation()
-    {
-        val uuidCacheBanana = BananaBuilder()
-            .options(
-                BananaOptions(
-                    channel = "cubed",
-                    gson = Serializers.gson,
-                )
-            )
-            .credentials(
-                credentials
-            ).build()
-
-        ScalaStoreUuidCache.configure(
-            DistributedRedisUuidCacheTranslator(uuidCacheBanana)
-        )
-    }
-
-    private fun initialLoadMessageQueues()
-    {
-        LemonOutgoingMessageQueue.start()
-
-        logger.info("Started all outgoing jedis message queues.")
     }
 
     private fun loadListeners()
@@ -430,21 +396,6 @@ class Lemon : ExtendedScalaPlugin()
         return ChatColor.valueOf(string).toString()
     }
 
-    fun loadListenersInPackage(plugin: JavaPlugin, `package`: String)
-    {
-        ClassUtils.getClassesInPackage(plugin, `package`).forEach {
-            try
-            {
-                server.pluginManager.registerEvents(
-                    it.newInstance() as Listener, this
-                )
-            } catch (e: Exception)
-            {
-                plugin.logger.severe("Could not instantiate: ${it.simpleName} - ${e.message}")
-            }
-        }
-    }
-
     private fun loadBaseConfigurations()
     {
         configFactory = ConfigFactory.newFactory(this)
@@ -458,7 +409,6 @@ class Lemon : ExtendedScalaPlugin()
             "language", LanguageConfigProcessor::class.java
         )
 
-        convertScalaStoreRedisDetails()
         configureHelperCommunications()
     }
 
@@ -498,19 +448,6 @@ class Lemon : ExtendedScalaPlugin()
         }
     }
 
-    private fun convertScalaStoreRedisDetails()
-    {
-        // Converting the scala-store redis
-        // details form to Banana's
-        val scalaStoreRedis = ScalaDataStoreSpigot.INSTANCE.redis
-        credentials = BananaCredentials(
-            scalaStoreRedis.hostname,
-            scalaStoreRedis.port,
-            scalaStoreRedis.password != null,
-            scalaStoreRedis.password ?: ""
-        )
-    }
-
     private fun loadHandlers()
     {
         flavor.inject(RankHandler)
@@ -526,28 +463,10 @@ class Lemon : ExtendedScalaPlugin()
                 }
         }
 
-        redisConnectionDetails = DataStoreRedisConnectionDetails(
-            credentials.address,
-            credentials.port,
-            credentials.password
-        )
+        aware.listen(RedisHandler)
+        aware.connect()
 
-        banana = BananaBuilder()
-            .options(
-                BananaOptions(
-                    channel = "lemon:spigot",
-                    gson = Serializers.gson,
-                )
-            )
-            .credentials(
-                credentials
-            )
-            .build()
-
-        banana.registerClass(RedisHandler)
-        banana.subscribe()
-
-        logger.info("Setup data store controllers.")
+        logger.info("Setup data storage & distribution controllers.")
     }
 
     fun registerCommandsInPackage(
@@ -679,6 +598,8 @@ class Lemon : ExtendedScalaPlugin()
 
     override fun disable()
     {
+        aware.shutdown()
+
         val controller = DataStoreObjectControllerCache
             .findNotNull<ServerInstance>()
 

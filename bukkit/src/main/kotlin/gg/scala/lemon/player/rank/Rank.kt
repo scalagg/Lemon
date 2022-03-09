@@ -1,11 +1,9 @@
 package gg.scala.lemon.player.rank
 
+import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.common.Savable
-import gg.scala.lemon.disguise.information.DisguiseInfo
-import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.util.dispatchImmediately
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -101,7 +99,7 @@ constructor(
                 hashMapOf(
                     "uniqueId" to uuid.toString()
                 )
-            ).dispatchImmediately()
+            ).publish(AwareThreadContext.SYNC)
 
             return@thenApply null
         }

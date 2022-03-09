@@ -1,13 +1,11 @@
 package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
+import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
-import gg.scala.lemon.util.CubedCacheUtil
-import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.senderUuid
-import gg.scala.lemon.util.dispatchImmediately
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -120,7 +118,7 @@ object GrantHandler
             RedisHandler.buildMessage(
                 "reload-player",
                 "uniqueId" to grant.target.toString()
-            ).dispatchImmediately()
+            ).publish(AwareThreadContext.SYNC)
 
             sender.sendMessage(
                 arrayOf(
