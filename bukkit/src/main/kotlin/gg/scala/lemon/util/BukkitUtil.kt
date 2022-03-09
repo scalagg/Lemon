@@ -27,6 +27,7 @@ object BukkitUtil {
      */
     @JvmStatic
     @JvmOverloads
+    @Suppress("UNCHECKED_CAST")
     fun updatePlayerList(
         lambda: (MutableList<Any>) -> Unit = {}
     ) {

@@ -8,8 +8,10 @@ import gg.scala.lemon.util.data
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
+import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -48,7 +50,8 @@ class ChannelCommand : BaseCommand()
             Metadata(channel.getId())
         )
 
-        player.sendMessage("${CC.GREEN}You're now chatting in ${CC.YELLOW}${channel.getId().capitalize()}${CC.GREEN}.")
+        player.sendMessage("${CC.GREEN}You're now chatting in ${CC.YELLOW}${channel.getId()
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${CC.GREEN}.")
     }
 
     @Subcommand("list|showall")

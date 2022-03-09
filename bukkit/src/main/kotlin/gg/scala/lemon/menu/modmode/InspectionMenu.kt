@@ -60,17 +60,16 @@ class InspectionMenu(val target: Player) : Menu() {
         override fun getButtonItem(player: Player): ItemStack {
             return ItemBuilder(Material.POTION)
                 .name("${CC.PRI}Potion Effects")
-                .addToLore(
-                    "${
-                        if (effects.isEmpty()) {
-                            "${CC.RED}No active potion effects."
-                        } else {
-                            effects.forEach { 
-                                "${QuickAccess.toNiceString(it.type.name.toLowerCase())} ${it.amplifier + 1} - ${TimeUtil.formatIntoMMSS(it.duration)}"
-                            }
+                .apply {
+                    if (effects.isEmpty()) {
+                        addToLore("${CC.RED}No active potion effects.")
+                    } else {
+                        effects.forEach {
+                            addToLore("${QuickAccess.toNiceString(it.type.name.lowercase())} ${it.amplifier + 1} - ${TimeUtil.formatIntoMMSS(it.duration)}")
                         }
-                    }"
-                ).build()
+                    }
+                }
+                .build()
         }
     }
 
@@ -80,7 +79,7 @@ class InspectionMenu(val target: Player) : Menu() {
                 .name("${CC.PRI}Experience")
                 .addToLore(
                     "${CC.GRAY}Level: ${CC.WHITE + level}",
-//                    "${CC.GRAY}XP Percent: ${CC.WHITE}${(exp / totalExp) * 100}%",
+                    "${CC.GRAY}XP Percent: ${CC.WHITE}${(exp / totalExp) * 100}%",
                     "${CC.GRAY}XP: ${CC.WHITE + exp}/${totalExp}",
                 ).build()
         }
