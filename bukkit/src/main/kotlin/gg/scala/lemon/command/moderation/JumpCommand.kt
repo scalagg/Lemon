@@ -1,5 +1,6 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.fetchColoredName
@@ -12,7 +13,6 @@ import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bungee.BungeeUtil
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -45,7 +45,12 @@ class JumpCommand : BaseCommand()
                     false, QuickAccess.MessageType.NOTIFICATION
                 )
 
-                BungeeUtil.sendToServer(player, it.id)
+                player.sendMessage(
+                    "${CC.SEC}Attempting redirection to ${CC.GREEN}${it.id}${CC.SEC}..."
+                )
+
+                VelocityRedirectSystem
+                    .redirect(player, it.id)
             }
     }
 }
