@@ -1,5 +1,6 @@
 package gg.scala.lemon.util
 
+import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.*
@@ -245,7 +246,7 @@ object QuickAccess
                     "server" to Lemon.instance.settings.id,
                     "with-server" to addServer.toString(),
                 )
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 
@@ -270,7 +271,7 @@ object QuickAccess
                     "server" to Lemon.instance.settings.id,
                     "with-server" to addServer.toString(),
                 )
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 
@@ -318,7 +319,7 @@ object QuickAccess
                 hashMapOf(
                     "uniqueId" to punishment.target.toString()
                 )
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 
@@ -339,7 +340,7 @@ object QuickAccess
                     hashMapOf(
                         "uniqueId" to punishment.target.toString()
                     )
-                ).publish()
+                ).publish(AwareThreadContext.SYNC)
             }
 
             false
@@ -354,7 +355,7 @@ object QuickAccess
                 "global-message",
                 "message" to message,
                 "permission" to (permission ?: "")
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 
@@ -366,7 +367,10 @@ object QuickAccess
                 "global-fancy-message",
                 "message" to gson.toJson(fancyMessage),
                 "permission" to (permission ?: "")
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
+        }.exceptionally {
+            it.printStackTrace()
+            return@exceptionally null
         }
     }
 
@@ -380,7 +384,7 @@ object QuickAccess
                     "message" to message,
                     "target" to uuid.toString()
                 )
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 
@@ -394,7 +398,7 @@ object QuickAccess
                     "message" to gson.toJson(fancyMessage),
                     "target" to uuid.toString()
                 )
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 

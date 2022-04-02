@@ -365,7 +365,7 @@ object PunishmentHandler
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
                     "uniqueId" to uuid.toString()
-                ).publish(AwareThreadContext.SYNC)
+                ).publish()
 
                 if (punishment.category == PunishmentCategory.KICK)
                 {
@@ -373,7 +373,7 @@ object PunishmentHandler
                         "cross-kick",
                         "uniqueId" to uuid.toString(),
                         "reason" to punishment.addedReason
-                    ).publish(AwareThreadContext.SYNC)
+                    ).publish()
                 }
             }
         }

@@ -6,6 +6,8 @@ dependencies {
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+
     implementation project(":common")
 
     compileOnly "me.lucko:helper:5.6.9.1"

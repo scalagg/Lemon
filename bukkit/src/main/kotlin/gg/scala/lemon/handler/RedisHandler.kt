@@ -45,9 +45,7 @@ object RedisHandler
         }
     }
 
-    @Subscribe(
-        value = "staff-message"
-    )
+    @Subscribe("staff-message")
     fun onStaffMessage(message: AwareMessage)
     {
         val newMessage = message
