@@ -1,8 +1,5 @@
 package gg.scala.lemon.util
 
-import org.bukkit.WorldCreator.name
-
-
 /**
  * @author GrowlyX
  * @since 12/27/2021

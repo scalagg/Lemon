@@ -12,6 +12,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 /**
  * A re-write of helper's

@@ -21,9 +21,6 @@ class SettingsConfigProcessor {
     @Comment("Should we log important data to files?")
     val logDataToFile: Boolean = true
 
-    @Comment("Should we cache fundamental player data to a redis server?")
-    val redisCachePlayers: Boolean = true
-
     @Comment("Should we enable our disguise system on this server?")
     val disguiseEnabled: Boolean = false
 

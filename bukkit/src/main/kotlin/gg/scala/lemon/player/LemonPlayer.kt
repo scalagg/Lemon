@@ -635,7 +635,6 @@ class LemonPlayer(
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
-
     fun customColor(): String
     {
         val metadata = getMetadata("color")
@@ -883,5 +882,4 @@ class LemonPlayer(
             }
         }
     }
-
 }

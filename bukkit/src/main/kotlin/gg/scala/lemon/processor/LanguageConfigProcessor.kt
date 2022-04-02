@@ -72,9 +72,6 @@ class LanguageConfigProcessor {
     var playerDataLoad = "${CC.RED}Your account did not load properly.\n${CC.RED}Please reconnect to resolve this issue."
 
     @Coloured
-    var serverNotLoaded = "${CC.RED}The server is still loading.\n${CC.GRAY}Please reconnect in a few seconds."
-
-    @Coloured
     val consoleName = "${CC.BD_RED}Console"
 
 }
