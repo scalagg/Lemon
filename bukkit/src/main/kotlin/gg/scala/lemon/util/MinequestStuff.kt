@@ -66,3 +66,4 @@ object MinequestStuff
             .ifEmpty { original }
     }
 }
+

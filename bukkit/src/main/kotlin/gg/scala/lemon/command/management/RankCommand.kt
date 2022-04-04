@@ -30,7 +30,6 @@ import java.util.*
 @CommandPermission("lemon.command.rank")
 class RankCommand : BaseCommand()
 {
-
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)

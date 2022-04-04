@@ -246,7 +246,7 @@ object QuickAccess
                     "server" to Lemon.instance.settings.id,
                     "with-server" to addServer.toString(),
                 )
-            ).publish(AwareThreadContext.SYNC)
+            ).publish()
         }
     }
 
@@ -271,7 +271,7 @@ object QuickAccess
                     "server" to Lemon.instance.settings.id,
                     "with-server" to addServer.toString(),
                 )
-            ).publish(AwareThreadContext.SYNC)
+            ).publish()
         }
     }
 
@@ -319,7 +319,7 @@ object QuickAccess
                 hashMapOf(
                     "uniqueId" to punishment.target.toString()
                 )
-            ).publish(AwareThreadContext.SYNC)
+            ).publish()
         }
     }
 
@@ -340,7 +340,7 @@ object QuickAccess
                     hashMapOf(
                         "uniqueId" to punishment.target.toString()
                     )
-                ).publish(AwareThreadContext.SYNC)
+                ).publish()
             }
 
             false
@@ -350,56 +350,59 @@ object QuickAccess
     @JvmStatic
     fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            RedisHandler.buildMessage(
-                "global-message",
-                "message" to message,
-                "permission" to (permission ?: "")
-            ).publish(AwareThreadContext.SYNC)
-        }
+        RedisHandler.buildMessage(
+            "global-message",
+            "message" to message,
+            "permission" to (permission ?: "")
+        ).publish()
+
+        return CompletableFuture
+            .completedFuture(null)
     }
 
     @JvmStatic
-    fun sendGlobalFancyBroadcast(fancyMessage: FancyMessage, permission: String?): CompletableFuture<Void>
+    fun sendGlobalFancyBroadcast(
+        fancyMessage: FancyMessage, permission: String?
+    ): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            RedisHandler.buildMessage(
-                "global-fancy-message",
-                "message" to gson.toJson(fancyMessage),
-                "permission" to (permission ?: "")
-            ).publish(AwareThreadContext.SYNC)
-        }.exceptionally {
-            it.printStackTrace()
-            return@exceptionally null
-        }
+        RedisHandler.buildMessage(
+            "global-fancy-message",
+            "message" to gson.toJson(fancyMessage),
+            "permission" to (permission ?: "")
+        ).publish()
+
+        return CompletableFuture
+            .completedFuture(null)
     }
 
     @JvmStatic
     fun sendGlobalPlayerMessage(message: String, uuid: UUID): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            RedisHandler.buildMessage(
-                "player-message",
-                hashMapOf(
-                    "message" to message,
-                    "target" to uuid.toString()
-                )
-            ).publish(AwareThreadContext.SYNC)
-        }
+        RedisHandler.buildMessage(
+            "player-message",
+            hashMapOf(
+                "message" to message,
+                "target" to uuid.toString()
+            )
+        ).publish()
+
+        return CompletableFuture
+            .completedFuture(null)
     }
 
     @JvmStatic
     fun sendGlobalPlayerFancyMessage(fancyMessage: FancyMessage, uuid: UUID): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            RedisHandler.buildMessage(
-                "player-fancy-message",
-                hashMapOf(
-                    "message" to gson.toJson(fancyMessage),
-                    "target" to uuid.toString()
-                )
-            ).publish(AwareThreadContext.SYNC)
-        }
+        RedisHandler.buildMessage(
+            "player-fancy-message",
+            hashMapOf(
+                "message" to gson.toJson(fancyMessage),
+                "target" to uuid.toString()
+            )
+        ).publish()
+
+        return CompletableFuture
+            .completedFuture(null)
     }
 
     @JvmStatic

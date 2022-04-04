@@ -456,14 +456,12 @@ class Lemon : ExtendedScalaPlugin()
 
         serverLayer = DataStoreObjectControllerCache.create()
 
-        invokeTrackedTask("server instance") {
-            localInstance = serverLayer
-                .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
-                    this.loadWithFilterSync { it.serverId == settings.id } ?: ServerInstance(
-                        settings.id, settings.group
-                    )
-                }
-        }
+        localInstance = serverLayer
+            .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
+                this.loadWithFilterSync { it.serverId == settings.id } ?: ServerInstance(
+                    settings.id, settings.group
+                )
+            }
 
         aware.listen(RedisHandler)
         aware.connect()
