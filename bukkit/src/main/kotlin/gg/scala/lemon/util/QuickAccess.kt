@@ -321,7 +321,7 @@ object QuickAccess
                 hashMapOf(
                     "uniqueId" to punishment.target.toString()
                 )
-            ).publish(AwareThreadContext.SYNC)
+            ).publish()
         }
     }
 
@@ -342,7 +342,7 @@ object QuickAccess
                     hashMapOf(
                         "uniqueId" to punishment.target.toString()
                     )
-                ).publish(AwareThreadContext.SYNC)
+                ).publish()
             }
 
             false
@@ -350,7 +350,10 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun sendGlobalBroadcast(message: String, permission: String? = null): CompletableFuture<Void>
+    fun sendGlobalBroadcast(
+        message: String,
+        permission: String? = null
+    ): CompletableFuture<Void>
     {
         RedisHandler.buildMessage(
             "global-message",
