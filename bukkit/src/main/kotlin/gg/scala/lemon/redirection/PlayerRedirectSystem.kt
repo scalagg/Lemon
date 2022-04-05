@@ -50,7 +50,7 @@ open class PlayerRedirectSystem<T>(
 
                 val message = FancyMessage()
                     .apply {
-                        withMessage("${prefix}We were unable to connect you to ${CC.B_RED}${it.server}${CC.RED}.")
+                        withMessage("$prefix${CC.RED}We were unable to connect you to ${CC.B_RED}${it.server}${CC.RED}.")
                     }
 
                 this.assistant

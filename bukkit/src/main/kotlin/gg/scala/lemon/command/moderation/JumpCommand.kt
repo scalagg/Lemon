@@ -28,7 +28,7 @@ class JumpCommand : BaseCommand()
     @CommandPermission("lemon.command.jump")
     fun onJump(player: Player, target: UUID): CompletableFuture<Void>
     {
-        player.sendMessage("${CC.GREEN}Locating player ${CC.YELLOW}${target.username()}...")
+        player.sendMessage("${CC.GREEN}Locating player ${CC.YELLOW}${target.username()}${CC.GREEN}...")
 
         return server(target)
             .thenAcceptAsync {
@@ -43,10 +43,6 @@ class JumpCommand : BaseCommand()
                     player,
                     "${coloredName(player)} ${CC.D_AQUA}jumped to ${CC.AQUA}${coloredName}${CC.D_AQUA}.",
                     false, QuickAccess.MessageType.NOTIFICATION
-                )
-
-                player.sendMessage(
-                    "${CC.SEC}Attempting redirection to ${CC.GREEN}${it.id}${CC.SEC}..."
                 )
 
                 VelocityRedirectSystem

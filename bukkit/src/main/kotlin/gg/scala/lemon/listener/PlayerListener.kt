@@ -276,14 +276,12 @@ object PlayerListener : Listener
         {
             RedisHandler.buildMessage(
                 "channel-message",
-                hashMapOf(
-                    "channel" to channelMatch!!.getId(),
-                    "message" to event.message,
-                    "sender" to lemonPlayer.name,
-                    "rank" to lemonPlayer.activeGrant!!
-                        .getRank().uuid.toString(),
-                    "server" to plugin.settings.id
-                )
+                "channel" to channelMatch!!.getId(),
+                "message" to event.message,
+                "sender" to lemonPlayer.name,
+                "rank" to lemonPlayer.activeGrant!!
+                    .getRank().uuid.toString(),
+                "server" to plugin.settings.id
             ).publish()
         } else
         {

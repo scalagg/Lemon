@@ -235,19 +235,20 @@ object QuickAccess
         messageType: MessageType
     ): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            RedisHandler.buildMessage(
-                "staff-message",
-                hashMapOf(
-                    "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
-                    "message" to message,
-                    "permission" to "lemon.staff",
-                    "message-type" to messageType.name,
-                    "server" to Lemon.instance.settings.id,
-                    "with-server" to addServer.toString(),
-                )
-            ).publish()
-        }
+        RedisHandler.buildMessage(
+            "staff-message",
+            hashMapOf(
+                "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
+                "message" to message,
+                "permission" to "lemon.staff",
+                "message-type" to messageType.name,
+                "server" to Lemon.instance.settings.id,
+                "with-server" to addServer.toString(),
+            )
+        ).publish()
+
+        return CompletableFuture
+            .completedFuture(null)
     }
 
     @JvmStatic
@@ -259,20 +260,21 @@ object QuickAccess
         flag: String
     ): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            RedisHandler.buildMessage(
-                "staff-message",
-                hashMapOf(
-                    "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
-                    "message" to message,
-                    "permission" to "lemon.staff",
-                    "flag" to flag,
-                    "message-type" to messageType.name,
-                    "server" to Lemon.instance.settings.id,
-                    "with-server" to addServer.toString(),
-                )
-            ).publish()
-        }
+        RedisHandler.buildMessage(
+            "staff-message",
+            hashMapOf(
+                "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
+                "message" to message,
+                "permission" to "lemon.staff",
+                "flag" to flag,
+                "message-type" to messageType.name,
+                "server" to Lemon.instance.settings.id,
+                "with-server" to addServer.toString(),
+            )
+        ).publish()
+
+        return CompletableFuture
+            .completedFuture(null)
     }
 
     @JvmStatic
@@ -319,7 +321,7 @@ object QuickAccess
                 hashMapOf(
                     "uniqueId" to punishment.target.toString()
                 )
-            ).publish()
+            ).publish(AwareThreadContext.SYNC)
         }
     }
 
@@ -340,7 +342,7 @@ object QuickAccess
                     hashMapOf(
                         "uniqueId" to punishment.target.toString()
                     )
-                ).publish()
+                ).publish(AwareThreadContext.SYNC)
             }
 
             false
