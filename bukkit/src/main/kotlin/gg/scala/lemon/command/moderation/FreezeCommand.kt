@@ -33,8 +33,7 @@ class FreezeCommand : BaseCommand() {
 
         if (alreadyFrozen) {
             sendStaffMessage(
-                null, "${CC.AQUA}${nameOrConsole(sender)}${CC.D_AQUA} has unfrozen ${coloredName(target.bukkitPlayer!!)}${CC.D_AQUA}.",
-                true, QuickAccess.MessageType.NOTIFICATION
+                "${CC.AQUA}${nameOrConsole(sender)}${CC.D_AQUA} has unfrozen ${coloredName(target.bukkitPlayer!!)}${CC.D_AQUA}.", true
             )
 
             sender.sendMessage("${CC.GREEN}You've unfrozen ${coloredName(target.bukkitPlayer!!)}${CC.GREEN}.")
@@ -43,8 +42,7 @@ class FreezeCommand : BaseCommand() {
             FrozenPlayerHandler.expirables.remove(target.bukkitPlayer!!.uniqueId)
         } else {
             sendStaffMessage(
-                null, "${CC.AQUA}${nameOrConsole(sender)}${CC.D_AQUA} has frozen ${coloredName(target.bukkitPlayer!!)}${CC.D_AQUA}.",
-                true, QuickAccess.MessageType.NOTIFICATION
+                "${CC.AQUA}${nameOrConsole(sender)}${CC.D_AQUA} has frozen ${coloredName(target.bukkitPlayer!!)}${CC.D_AQUA}.", true
             )
 
             sender.sendMessage("${CC.GREEN}You've frozen ${coloredName(target.bukkitPlayer!!)}${CC.GREEN}.")

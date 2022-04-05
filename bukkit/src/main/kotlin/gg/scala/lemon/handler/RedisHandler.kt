@@ -39,7 +39,10 @@ object RedisHandler
             if (channel.hasPermission(it))
             {
                 it.sendMessage(
-                    String.format(channel.getFormatted(newMessage, sender, rank, it), message.retrieve("server"))
+                    String.format(
+                        channel.getFormatted(newMessage, sender, rank, it),
+                        message.retrieve("server")
+                    )
                 )
             }
         }
@@ -74,11 +77,13 @@ object RedisHandler
 
             return@sendMessage if (lemonPlayer != null)
             {
-                val base = lemonPlayer.hasPermission(permission) && !lemonPlayer.getSetting("staff-messages-disabled")
+                val base = lemonPlayer.hasPermission(permission) &&
+                        !lemonPlayer.getSetting("staff-messages-disabled")
 
                 if (potentialFlag != null)
                 {
-                    lemonPlayer.hasPermission(permission) && !lemonPlayer.getSetting(potentialFlag)
+                    lemonPlayer.hasPermission(permission) &&
+                            !lemonPlayer.getSetting(potentialFlag)
                 } else base
             } else false
         }
@@ -156,7 +161,7 @@ object RedisHandler
             .retrieveNullable<String>("permission")
 
         Bukkit.getOnlinePlayers()
-            .filter { permission!!.isBlank() || it.hasPermission(permission) }
+            .filter { permission == null || it.hasPermission(permission) }
             .forEach { newMessage.sendToPlayer(it) }
     }
 
@@ -283,7 +288,7 @@ object RedisHandler
 
     fun buildMessage(
         packet: String,
-        vararg pairs: Pair<String, String>
+        vararg pairs: Pair<String, Any?>
     ): AwareMessage
     {
         return AwareMessage.of(

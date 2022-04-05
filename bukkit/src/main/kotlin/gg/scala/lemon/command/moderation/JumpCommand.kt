@@ -40,9 +40,7 @@ class JumpCommand : BaseCommand()
                 val coloredName = fetchColoredName(target)
 
                 sendStaffMessage(
-                    player,
-                    "${coloredName(player)} ${CC.D_AQUA}jumped to ${CC.AQUA}${coloredName}${CC.D_AQUA}.",
-                    false, QuickAccess.MessageType.NOTIFICATION
+                    "${coloredName(player)} ${CC.D_AQUA}jumped to ${CC.AQUA}${coloredName}${CC.D_AQUA}.", false
                 )
 
                 VelocityRedirectSystem

@@ -25,6 +25,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.realRank
+import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -274,15 +275,13 @@ object PlayerListener : Listener
 
         if (channelMatch?.isGlobal() == true)
         {
-            RedisHandler.buildMessage(
-                "channel-message",
-                "channel" to channelMatch!!.getId(),
-                "message" to event.message,
-                "sender" to lemonPlayer.name,
-                "rank" to lemonPlayer.activeGrant!!
-                    .getRank().uuid.toString(),
-                "server" to plugin.settings.id
-            ).publish()
+            val match = channelMatch!!
+
+            sendChannelMessage(
+                match.getId(),
+                match.dePrefixed(event.message),
+                lemonPlayer
+            )
         } else
         {
             for (target in Bukkit.getOnlinePlayers())
@@ -555,10 +554,7 @@ object PlayerListener : Listener
             if (isFrozen)
             {
                 QuickAccess.sendStaffMessage(
-                    null,
-                    "${CC.AQUA}${coloredName(player)}${CC.D_AQUA} logged out while frozen.",
-                    true,
-                    QuickAccess.MessageType.NOTIFICATION
+                    "${CC.AQUA}${coloredName(player)}${CC.D_AQUA} logged out while frozen.", true
                 )
 
                 FrozenPlayerHandler.expirables.remove(player.uniqueId)

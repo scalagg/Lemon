@@ -59,8 +59,7 @@ object FrozenPlayerHandler : Runnable
                 if (expirable.hasExpired)
                 {
                     sendStaffMessage(
-                        null, "${CC.AQUA}${coloredName(uuid)}${CC.D_AQUA} has been frozen for 5 minutes.",
-                        true, QuickAccess.MessageType.NOTIFICATION
+                        "${CC.AQUA}${coloredName(uuid)}${CC.D_AQUA} has been frozen for 5 minutes.", true
                     )
 
                     expirables.remove(uuid)

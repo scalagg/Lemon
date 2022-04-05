@@ -39,11 +39,8 @@ class ReportMenu(
                     .setLore(finalDescription)
                     .toButton { _, _ ->
                         sendStaffMessageWithFlag(
-                            player,
                             "${CC.YELLOW}${coloredName(target)}${CC.RED} was reported by ${CC.YELLOW}${coloredName(player)}${CC.RED} for: ${CC.WHITE}${it.fancyName}${CC.RED}.",
-                            true,
-                            QuickAccess.MessageType.NOTIFICATION,
-                            "reports-disabled"
+                            true, "reports-disabled"
                         ).whenComplete { _, throwable ->
                             if (throwable != null) {
                                 player.sendMessage("${CC.RED}Something went wrong while processing your report, try again later.")

@@ -175,9 +175,7 @@ object PunishmentHandler
             )
 
             QuickAccess.sendStaffMessage(
-                issuer,
-                "$issuerName${CC.D_AQUA} warned $targetName${CC.D_AQUA} for ${CC.AQUA}$reason${CC.D_AQUA}.",
-                true, QuickAccess.MessageType.NOTIFICATION
+                "$issuerName${CC.D_AQUA} warned $targetName${CC.D_AQUA} for ${CC.AQUA}$reason${CC.D_AQUA}.", true
             )
         }
     }
@@ -335,7 +333,7 @@ object PunishmentHandler
         val issuerName = fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
-        val broadcastPermission = if (silent) "lemon.staff" else ""
+        val broadcastPermission = if (silent) "lemon.staff" else null
         val broadcastPermanent = if (punishment.isPermanent) "permanently " else ""
         val broadcastSuffix = if (!punishment.isPermanent) " for ${punishment.durationString}${CC.GREEN}." else "."
 
@@ -348,7 +346,7 @@ object PunishmentHandler
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
 
-            if (broadcastPermission.isNotBlank())
+            if (broadcastPermission != null)
             {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
@@ -392,7 +390,7 @@ object PunishmentHandler
         val issuerName = fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
-        val broadcastPermission = if (silent) "lemon.staff" else ""
+        val broadcastPermission = if (silent) "lemon.staff" else null
         val broadcastSuffix = if (silent) " for ${CC.WHITE}${punishment.removedReason}${CC.GREEN}." else "."
 
         val broadcastBody =
@@ -406,7 +404,7 @@ object PunishmentHandler
 
             val coloredNameOfAddedBy = fetchColoredName(punishment.addedBy)
 
-            if (broadcastPermission.isNotBlank())
+            if (broadcastPermission != null)
             {
                 fancyMessage.andHoverOf(
                     "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",

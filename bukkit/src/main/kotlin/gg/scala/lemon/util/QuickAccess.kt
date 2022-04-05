@@ -1,9 +1,11 @@
 package gg.scala.lemon.util
 
-import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.handler.*
+import gg.scala.lemon.handler.GrantHandler
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
@@ -96,6 +98,25 @@ object QuickAccess
         lemonPlayer?.let {
             return it.getColoredName()
         } ?: return null
+    }
+
+    @JvmStatic
+    fun sendChannelMessage(
+        channelId: String,
+        message: String,
+        sender: LemonPlayer
+    )
+    {
+        RedisHandler.buildMessage(
+            "channel-message",
+            "channel" to channelId,
+            "message" to message,
+            "sender" to sender.name,
+            "rank" to sender.activeGrant!!
+                .getRank().uuid.toString(),
+            "server" to Lemon.instance
+                .settings.id
+        ).publish()
     }
 
     @JvmStatic
@@ -229,22 +250,16 @@ object QuickAccess
 
     @JvmStatic
     fun sendStaffMessage(
-        sender: CommandSender?,
         message: String,
-        addServer: Boolean,
-        messageType: MessageType
+        addServer: Boolean
     ): CompletableFuture<Void>
     {
         RedisHandler.buildMessage(
             "staff-message",
-            hashMapOf(
-                "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
-                "message" to message,
-                "permission" to "lemon.staff",
-                "message-type" to messageType.name,
-                "server" to Lemon.instance.settings.id,
-                "with-server" to addServer.toString(),
-            )
+            "message" to message,
+            "permission" to "lemon.staff",
+            "server" to Lemon.instance.settings.id,
+            "with-server" to addServer
         ).publish()
 
         return CompletableFuture
@@ -253,24 +268,18 @@ object QuickAccess
 
     @JvmStatic
     fun sendStaffMessageWithFlag(
-        sender: CommandSender?,
         message: String,
         addServer: Boolean,
-        messageType: MessageType,
         flag: String
     ): CompletableFuture<Void>
     {
         RedisHandler.buildMessage(
             "staff-message",
-            hashMapOf(
-                "sender-fancy" to (sender?.let { nameOrConsole(sender) } ?: ""),
-                "message" to message,
-                "permission" to "lemon.staff",
-                "flag" to flag,
-                "message-type" to messageType.name,
-                "server" to Lemon.instance.settings.id,
-                "with-server" to addServer.toString(),
-            )
+            "message" to message,
+            "permission" to "lemon.staff",
+            "flag" to flag,
+            "server" to Lemon.instance.settings.id,
+            "with-server" to addServer
         ).publish()
 
         return CompletableFuture
@@ -318,9 +327,7 @@ object QuickAccess
         punishment.save().thenAccept {
             RedisHandler.buildMessage(
                 "recalculate-punishments",
-                hashMapOf(
-                    "uniqueId" to punishment.target.toString()
-                )
+                "uniqueId" to punishment.target.toString()
             ).publish()
         }
     }
@@ -339,9 +346,7 @@ object QuickAccess
             punishment.save().thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
-                    hashMapOf(
-                        "uniqueId" to punishment.target.toString()
-                    )
+                    "uniqueId" to punishment.target.toString()
                 ).publish()
             }
 
@@ -358,7 +363,7 @@ object QuickAccess
         RedisHandler.buildMessage(
             "global-message",
             "message" to message,
-            "permission" to (permission ?: "")
+            "permission" to permission
         ).publish()
 
         return CompletableFuture
@@ -373,7 +378,7 @@ object QuickAccess
         RedisHandler.buildMessage(
             "global-fancy-message",
             "message" to gson.toJson(fancyMessage),
-            "permission" to (permission ?: "")
+            "permission" to permission
         ).publish()
 
         return CompletableFuture
@@ -385,10 +390,8 @@ object QuickAccess
     {
         RedisHandler.buildMessage(
             "player-message",
-            hashMapOf(
-                "message" to message,
-                "target" to uuid.toString()
-            )
+            "message" to message,
+            "target" to uuid.toString()
         ).publish()
 
         return CompletableFuture
@@ -400,10 +403,8 @@ object QuickAccess
     {
         RedisHandler.buildMessage(
             "player-fancy-message",
-            hashMapOf(
-                "message" to gson.toJson(fancyMessage),
-                "target" to uuid.toString()
-            )
+            "message" to gson.toJson(fancyMessage),
+            "target" to uuid.toString()
         ).publish()
 
         return CompletableFuture

@@ -39,9 +39,7 @@ class ChatCommand : BaseCommand() {
         Bukkit.broadcastMessage("${CC.GREEN}The chat has been enabled by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
-            sender,
-            "$coloredName${CC.D_AQUA} has ${"${CC.GREEN}enabled"}${CC.D_AQUA} chat.",
-            true, QuickAccess.MessageType.NOTIFICATION
+            "$coloredName${CC.D_AQUA} has ${"${CC.GREEN}enabled"}${CC.D_AQUA} chat.", true
         )
     }
 
@@ -62,9 +60,8 @@ class ChatCommand : BaseCommand() {
         Bukkit.broadcastMessage("${CC.RED}The chat has been disabled by ${if (hidden) "staff" else coloredName}${CC.RED}.")
 
         sendStaffMessage(
-            sender,
             "$coloredName${CC.D_AQUA} has ${"${CC.RED}disabled"}${CC.D_AQUA} chat.",
-            true, QuickAccess.MessageType.NOTIFICATION
+            true
         )
     }
 
@@ -86,9 +83,7 @@ class ChatCommand : BaseCommand() {
         Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}The chat has been slowed to $seconds seconds by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
-            sender,
-            "$coloredName${CC.D_AQUA} has slowed the chat to $seconds seconds.",
-            true, QuickAccess.MessageType.NOTIFICATION
+         "$coloredName${CC.D_AQUA} has slowed the chat to $seconds seconds.", true
         )
     }
 
@@ -114,9 +109,7 @@ class ChatCommand : BaseCommand() {
         Bukkit.broadcastMessage("${CC.GREEN}The chat has been cleared by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
-            sender,
-            "$coloredName${CC.D_AQUA} has cleared chat.",
-            true, QuickAccess.MessageType.NOTIFICATION
+            "$coloredName${CC.D_AQUA} has cleared chat.", true
         )
     }
 }
