@@ -64,4 +64,28 @@ open class ChatChannel(
             overridePriority = priority
         }
     }
+
+    fun prefixed(
+        message: String
+    ): Boolean
+    {
+        return this.prefix && message.startsWith(
+            "${this.prefixCharacter} "
+        )
+    }
+
+    fun preFormat(
+        message: String
+    ): String
+    {
+        return if (this.prefix)
+        {
+            message.removePrefix(
+                "${this.prefixCharacter} "
+            )
+        } else
+        {
+            message
+        }
+    }
 }
