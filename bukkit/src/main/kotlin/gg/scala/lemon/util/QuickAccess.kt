@@ -111,7 +111,7 @@ object QuickAccess
             "channel-message",
             "channel" to channelId,
             "message" to message,
-            "sender" to sender.name,
+            "sender" to sender.uniqueId,
             "rank" to sender.activeGrant!!
                 .getRank().uuid.toString(),
             "server" to Lemon.instance
