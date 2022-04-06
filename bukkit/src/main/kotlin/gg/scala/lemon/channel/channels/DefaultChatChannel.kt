@@ -7,7 +7,6 @@ import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.util.QuickAccess.realRank
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
@@ -15,6 +14,7 @@ import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -89,31 +89,32 @@ object DefaultChatChannel : ChatChannelComposite
             "${CC.YELLOW}${receiver.name}${CC.RESET}"
         )
 
-        val prefix = if (rank.prefix.isNotBlank())
+        val strippedPrefix = ChatColor
+            .stripColor(rank.prefix)
+
+        val strippedSuffix = ChatColor
+            .stripColor(rank.suffix)
+
+        val prefix = if (strippedPrefix.isNotEmpty())
             "${rank.prefix} " else ""
 
-        val suffix = if (rank.suffix.isNotBlank())
-            " ${rank.prefix}" else ""
+        val suffix = if (strippedSuffix.isNotEmpty())
+            " ${rank.suffix}" else ""
 
         val composed = "$prefix${
             lemonPlayer.getColoredName()
         }$suffix"
 
-        val composedComponent =
-            additionalPrefixProvider
-                .invoke(bukkitPlayer)
-                .append(
-                    serializer.deserialize(composed)
-                )
-
-        val coloredComponent =
-            serializer.deserialize(colored)
-
-        composedComponent.append(chatTag)
-        composedComponent.append(colonComponent)
-        composedComponent.append(coloredComponent)
-
-        return composedComponent
+        return additionalPrefixProvider
+            .invoke(bukkitPlayer)
+            .append(
+                serializer.deserialize(composed)
+            )
+            .append(chatTag)
+            .append(colonComponent)
+            .append(
+                serializer.deserialize(colored)
+            )
     }
 
     private fun applyColors(
