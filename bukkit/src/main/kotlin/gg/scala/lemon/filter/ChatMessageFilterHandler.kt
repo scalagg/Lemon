@@ -2,7 +2,6 @@ package gg.scala.lemon.filter
 
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
@@ -28,12 +27,12 @@ object ChatMessageFilterHandler
     fun configure()
     {
         phraseFilters.add(RegexPhraseFilter)
-        messageFilters.add(RepetitiveMessageFilter)
+//        messageFilters.add(RepetitiveMessageFilter)
 
-        continuedInitialLoad()
+        continuedConfigure()
     }
 
-    private fun continuedInitialLoad()
+    private fun continuedConfigure()
     {
         phraseFilters.forEach {
             it.loadResources()
