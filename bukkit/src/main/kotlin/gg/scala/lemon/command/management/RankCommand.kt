@@ -1,9 +1,7 @@
 package gg.scala.lemon.command.management
 
-import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.result.RankPaginatedResult
 import gg.scala.lemon.util.QuickAccess.replaceEmpty

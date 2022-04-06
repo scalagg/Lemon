@@ -260,7 +260,7 @@ object PlayerListener : Listener
             for (target in Bukkit.getOnlinePlayers())
             {
                 if (
-                    channelMatch
+                    !channelMatch
                         .permissionLambda
                         .invoke(target)
                 )
