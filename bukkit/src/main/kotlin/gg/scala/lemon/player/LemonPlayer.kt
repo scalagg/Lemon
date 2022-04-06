@@ -5,6 +5,7 @@ import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
+import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.*
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
@@ -808,14 +809,17 @@ class LemonPlayer(
     private fun checkChannelPermission(player: Player)
     {
         metadata["channel"]?.let { metadata ->
-            val channel = ChatHandler.findChannel(metadata.asString())
+            val channel = ChatChannelService
+                .find(metadata.asString())
+                ?: return@let
 
-            if (channel != null)
+            if (
+                !channel
+                    .permissionLambda
+                    .invoke(player)
+            )
             {
-                if (!channel.hasPermission(player))
-                {
-                    this remove "channel"
-                }
+                this remove "channel"
             }
         }
     }
