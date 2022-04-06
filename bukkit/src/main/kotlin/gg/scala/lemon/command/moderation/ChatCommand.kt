@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom
  * @author GrowlyX
  * @since 9/10/2021
  */
-class ChatCommand : BaseCommand() {
+object ChatCommand : BaseCommand() {
 
     @Syntax("[-h]")
     @CommandAlias("unmutechat|unsilencechat")

@@ -23,7 +23,7 @@ import java.util.concurrent.ForkJoinPool
  * @author GrowlyX
  * @since 9/26/2021
  */
-class PlaytimeCommand : BaseCommand() {
+object PlaytimeCommand : BaseCommand() {
 
     @Syntax("<player>")
     @CommandAlias("playtime|pt")

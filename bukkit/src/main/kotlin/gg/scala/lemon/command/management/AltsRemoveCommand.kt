@@ -18,7 +18,7 @@ import java.util.*
  * @author GrowlyX
  * @since 10/30/2021
  */
-class AltsRemoveCommand : BaseCommand()
+object AltsRemoveCommand : BaseCommand()
 {
     @CommandAlias("removealts")
     @CommandPermission("lemon.command.removealts")

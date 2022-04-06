@@ -86,6 +86,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
+import java.util.logging.Level
 import kotlin.properties.Delegates
 
 @Plugin(
@@ -249,7 +250,7 @@ class Lemon : ExtendedScalaPlugin()
 
         if (settings.playerColorsEnabled)
         {
-            commandManager.registerCommand(ColorCommand())
+            commandManager.registerCommand(ColorCommand)
         }
 
         commandManager.registerCommand(NetworkOnlineStaffCommand)
@@ -476,29 +477,22 @@ class Lemon : ExtendedScalaPlugin()
         ClassUtils.getClassesInPackage(
             commandManager.plugin, commandPackage
         ).forEach { clazz ->
-            if (clazz.isAnnotationPresent(DoNotRegister::class.java))
-                return@forEach
+            if (
+                clazz.isAnnotationPresent(DoNotRegister::class.java)
+            ) return@forEach
 
             try
             {
+                val instance = clazz.kotlin
+                    .objectInstance
+                    ?: clazz.newInstance()
+
                 commandManager.registerCommand(
-                    clazz.newInstance() as BaseCommand
+                    instance as BaseCommand
                 )
-            } catch (e: Exception)
+            } catch (exception: Exception)
             {
-                e.printStackTrace()
-
-                if (e.message?.contains("can not access a member of") == true)
-                {
-                    return
-                }
-
-                if (e.message?.contains("$") == true)
-                {
-                    return
-                }
-
-                commandManager.plugin.logger.severe("Could not register ${clazz.simpleName}: ${e.message}")
+                logger.log(Level.WARNING, "command registration failure!", exception)
             }
         }
     }

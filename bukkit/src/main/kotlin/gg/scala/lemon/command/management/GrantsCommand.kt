@@ -25,7 +25,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/9/2021
  */
-class GrantsCommand : BaseCommand()
+object GrantsCommand : BaseCommand()
 {
 
     @Syntax("<player>")

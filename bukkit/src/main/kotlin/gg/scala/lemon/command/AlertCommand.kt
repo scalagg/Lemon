@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 11/12/2021
  */
-class AlertCommand : BaseCommand()
+object AlertCommand : BaseCommand()
 {
     @CommandAlias("alert")
     @CommandPermission("op")

@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
  * @since 11/12/2021
  */
 @DoNotRegister
-class ColorCommand : BaseCommand()
+object ColorCommand : BaseCommand()
 {
     @CommandAlias("color|colors|colours|colour")
     @CommandPermission("lemon.command.color")

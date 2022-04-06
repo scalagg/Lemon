@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/13/2021
  */
-class BanCommand : BaseCommand()
+object BanCommand : BaseCommand()
 {
 
     @CommandAlias("ban|tban|tempban|b")

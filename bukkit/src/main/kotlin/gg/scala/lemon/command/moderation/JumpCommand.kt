@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 1/27/2022
  */
-class JumpCommand : BaseCommand()
+object JumpCommand : BaseCommand()
 {
     @CommandAlias("jump")
     @CommandCompletion("@players")

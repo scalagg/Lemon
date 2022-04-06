@@ -18,7 +18,7 @@ import org.bukkit.metadata.FixedMetadataValue
  * @author GrowlyX
  * @since 9/27/2021
  */
-class AuthenticationCommand : BaseCommand()
+object AuthenticationCommand : BaseCommand()
 {
     @CommandPermission("lemon.2fa.forced")
     @CommandAlias("auth|2fa|authenticate")

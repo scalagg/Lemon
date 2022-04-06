@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/7/2021
  */
-class AltsCommand : BaseCommand()
+object AltsCommand : BaseCommand()
 {
     @CommandAlias("alts|ipreport")
     @CommandCompletion("@all-players")

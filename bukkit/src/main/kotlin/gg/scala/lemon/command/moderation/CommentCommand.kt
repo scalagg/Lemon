@@ -19,7 +19,7 @@ import java.util.*
  */
 @CommandPermission("lemon.command.comment")
 @CommandAlias("comment|note|comments|notes")
-class CommentCommand : BaseCommand()
+object CommentCommand : BaseCommand()
 {
 
     @Default

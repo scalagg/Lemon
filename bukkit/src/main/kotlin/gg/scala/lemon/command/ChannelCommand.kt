@@ -19,7 +19,7 @@ import java.util.*
  * @since 9/9/2021
  */
 @CommandAlias("channel")
-class ChannelCommand : BaseCommand()
+object ChannelCommand : BaseCommand()
 {
     @Private
     @CommandPermission("lemon.command.channel")
