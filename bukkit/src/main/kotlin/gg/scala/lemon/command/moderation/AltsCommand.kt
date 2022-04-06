@@ -2,6 +2,7 @@ package gg.scala.lemon.command.moderation
 
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -10,8 +11,10 @@ import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.time.TimeUtil
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -22,7 +25,20 @@ class AltsCommand : BaseCommand()
     @CommandAlias("alts|ipreport")
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.alts")
-    fun onAlts(sender: Player, target: LemonPlayer)
+    fun onAlts(
+        sender: Player,
+        target: AsyncLemonPlayer
+    ): CompletableFuture<Void>
+    {
+        return target.validatePlayers(sender) {
+            handleAltsCommand(sender, it)
+        }
+    }
+
+    private fun handleAltsCommand(
+        sender: Player,
+        target: LemonPlayer
+    )
     {
         PlayerHandler.fetchAlternateAccountsFor(target.uniqueId).thenAcceptAsync {
             if (it.isEmpty())

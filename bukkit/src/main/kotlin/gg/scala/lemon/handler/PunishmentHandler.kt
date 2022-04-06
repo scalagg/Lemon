@@ -159,9 +159,9 @@ object PunishmentHandler
      *
      * @author GrowlyX
      */
-    fun handleWarning(issuer: CommandSender, uuid: UUID, reason: String)
+    fun handleWarning(issuer: CommandSender, uuid: UUID, reason: String): CompletableFuture<Void>
     {
-        Tasks.async {
+        return CompletableFuture.runAsync {
             val issuerName = nameOrConsole(issuer)
             val targetName = fetchColoredName(uuid)
 
@@ -186,32 +186,30 @@ object PunishmentHandler
         category: PunishmentCategory, silent: Boolean = false
     )
     {
-        Tasks.async {
-            val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
+        val activePunishments = fetchPunishmentsForTargetOfCategoryAndActive(uuid, category)
 
-            val targetName = fetchColoredName(uuid)
-            val issuerUuid = QuickAccess.uuidOf(issuer)
+        val targetName = fetchColoredName(uuid)
+        val issuerUuid = QuickAccess.uuidOf(issuer)
 
-            activePunishments.thenAccept {
-                if (it.isNullOrEmpty())
-                {
-                    issuer.sendMessage(
-                        "${CC.RED}$targetName${CC.RED} does not have an active punishment within this category."
-                    )
-                    return@thenAccept
-                }
-
-                attemptRemoval(
-                    punishment = it[0],
-                    reason = reason,
-                    remover = issuerUuid
+        activePunishments.thenAccept {
+            if (it.isNullOrEmpty())
+            {
+                issuer.sendMessage(
+                    "${CC.RED}$targetName${CC.RED} does not have an active punishment within this category."
                 )
-
-                handlePostUnPunishmentCheck(
-                    it[0], silent, uuid,
-                    issuer, issuerUuid, targetName
-                )
+                return@thenAccept
             }
+
+            attemptRemoval(
+                punishment = it[0],
+                reason = reason,
+                remover = issuerUuid
+            )
+
+            handlePostUnPunishmentCheck(
+                it[0], silent, uuid,
+                issuer, issuerUuid, targetName
+            )
         }
     }
 

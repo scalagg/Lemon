@@ -44,7 +44,7 @@ data class AsyncLemonPlayer(
                 {
                     val fancyMessage = FancyMessage()
                         .withMessage(
-                            "${CC.B_RED}Multiple players with that name were found!",
+                            "${CC.B_RED}Multiple accounts with that name were found!",
                             "${CC.RED}Click one of the following messages to copy their unique id."
                         )
 
