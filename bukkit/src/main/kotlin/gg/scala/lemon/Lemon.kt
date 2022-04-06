@@ -518,8 +518,10 @@ class Lemon : ExtendedScalaPlugin()
 
         commandManager.commandContexts
             .registerContext(AsyncLemonPlayer::class.java) {
+                val parsed = parseUniqueIdFromContext(it)
+
                 return@registerContext AsyncLemonPlayer.of(
-                    parseUniqueIdFromContext(it)
+                    parsed.first, parsed.second
                 )
             }
 
@@ -572,23 +574,32 @@ class Lemon : ExtendedScalaPlugin()
         }
     }
 
-    private fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): UUID
+    private fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): Pair<UUID, Boolean>
     {
         val firstArg = context.popFirstArg()
 
         if (firstArg.length == 32)
         {
-            return UUIDUtil.formatUUID(firstArg)
-                ?: throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")
+            val uniqueId = UUIDUtil.formatUUID(firstArg)
+                ?: throw ConditionFailedException(
+                    "${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid."
+                )
+
+            return Pair(uniqueId, true)
         } else if (firstArg.length <= 16)
         {
-            return ScalaStoreUuidCache.uniqueId(firstArg)
-                ?: throw ConditionFailedException("No player with the username ${CC.YELLOW}${firstArg}${CC.RED} exists.")
+            val uniqueId = ScalaStoreUuidCache
+                .uniqueId(firstArg)
+                ?: throw ConditionFailedException(
+                    "No player with the username ${CC.YELLOW}${firstArg}${CC.RED} exists."
+                )
+
+            return Pair(uniqueId, false)
         }
 
         return try
         {
-            UUID.fromString(firstArg)
+            Pair(UUID.fromString(firstArg)!!, true)
         } catch (ignored: Exception)
         {
             throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")

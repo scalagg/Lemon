@@ -1,10 +1,20 @@
 package gg.scala.lemon.player.wrapper
 
+import com.mongodb.client.model.Filters
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.acf.ConditionFailedException
+import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.bukkit.Tasks
+import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -13,36 +23,114 @@ import java.util.concurrent.CompletableFuture
  * @since 12/29/2021
  */
 data class AsyncLemonPlayer(
-    val future: CompletableFuture<LemonPlayer?>
+    val uniqueId: UUID,
+    val future: CompletableFuture<List<LemonPlayer>>
 )
 {
-    fun futureUsage(
-        lambda: CompletableFuture<LemonPlayer?>.() -> Unit
-    )
+    fun validatePlayers(
+        sender: CommandSender,
+        lambda: (LemonPlayer) -> Unit
+    ): CompletableFuture<Void>
     {
-        lambda.invoke(future)
+        return future.thenAccept {
+            if (it.isEmpty())
+            {
+                throw ConditionFailedException("No player with this username has joined the server.")
+            }
+
+            if (it.size > 1)
+            {
+                if (sender is Player)
+                {
+                    val fancyMessage = FancyMessage()
+                        .withMessage(
+                            "${CC.B_RED}Multiple players with that name were found!",
+                            "${CC.RED}Click one of the following messages to copy their unique id."
+                        )
+
+                    for (lemonPlayer in it)
+                    {
+                        fancyMessage
+                            .withMessage(
+                                "${CC.WHITE}  - ${lemonPlayer.uniqueId}"
+                            )
+                            .andHoverOf(
+                                "${CC.YELLOW}Click to copy their unique id."
+                            )
+                            .andCommandOf(
+                                ClickEvent.Action.SUGGEST_COMMAND,
+                                lemonPlayer.uniqueId.toString()
+                            )
+                    }
+                } else
+                {
+                    sender.sendMessage(arrayOf(
+                        "${CC.B_RED}Multiple players with that name were found!"
+                    ))
+
+                    for (lemonPlayer in it)
+                    {
+                        sender.sendMessage("${CC.WHITE}  - ${lemonPlayer.uniqueId}")
+                    }
+                }
+
+                return@thenAccept
+            }
+
+            lambda.invoke(it[0])
+        }
     }
 
     companion object
     {
         @JvmStatic
-        fun of(uniqueId: UUID): AsyncLemonPlayer
+        fun of(uniqueId: UUID, forcefullySpecified: Boolean): AsyncLemonPlayer
         {
             val online = Bukkit.getPlayer(uniqueId)
 
             return if (online != null)
             {
+                val player = PlayerHandler
+                    .findPlayer(uniqueId)
+                    .orElse(null)
+                    ?: return AsyncLemonPlayer(
+                        uniqueId,
+                        CompletableFuture
+                            .completedFuture(listOf())
+                    )
+
                 AsyncLemonPlayer(
+                    uniqueId,
                     CompletableFuture.completedFuture(
-                        PlayerHandler.findPlayer(uniqueId)
-                            .orElse(null)
+                        listOf(player)
                     )
                 )
             } else
             {
                 AsyncLemonPlayer(
+                    uniqueId,
                     DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
-                        .load(uniqueId, DataStoreStorageType.MONGO)
+                        .useLayerWithReturn<MongoDataStoreStorageLayer<LemonPlayer>, CompletableFuture<List<LemonPlayer>>>(
+                            DataStoreStorageType.MONGO
+                        ) {
+                            if (forcefullySpecified)
+                            {
+                                return@useLayerWithReturn this.load(uniqueId)
+                                    .thenApply {
+                                        if (it == null)
+                                            return@thenApply listOf()
+
+                                        listOf(it)
+                                    }
+                            }
+
+                            this.loadAllWithFilter(
+                                // praying this never throws an exception.
+                                Filters.eq("name", CubedCacheUtil.fetchName(uniqueId))
+                            ).thenApply {
+                                it.values.toList()
+                            }
+                        }
                 )
             }
         }

@@ -16,6 +16,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
 
 /**
@@ -30,7 +31,7 @@ class PlaytimeCommand : BaseCommand() {
     @CommandPermission("lemon.command.playtime")
     fun onPlayTime(
         player: Player, @Optional target: AsyncLemonPlayer?
-    ) {
+    ): CompletableFuture<Void> {
         if (target != null && !player.hasPermission("lemon.command.playtime.other")) {
             throw ConditionFailedException("You do not have permission to view playtime of other players!")
         }
@@ -39,24 +40,19 @@ class PlaytimeCommand : BaseCommand() {
         {
             player.sendMessage("${CC.GREEN}Fetching playtime...")
 
-            target.future.thenAcceptAsync {
-                if (it == null)
-                {
-                    player.sendMessage("${CC.RED}This player has never logged on!")
-                } else
-                {
-                    handlePlaytimeComputation(player, it)
-                }
+            return target.validatePlayers(player) {
+                handlePlaytimeComputation(player, it)
             }
         } else
         {
-            ForkJoinPool.commonPool().execute {
-                handlePlaytimeComputation(
-                    player,
-                    PlayerHandler.findPlayer(player)
-                        .orElse(null)!!
-                )
-            }
+            return CompletableFuture
+                .runAsync {
+                    handlePlaytimeComputation(
+                        player,
+                        PlayerHandler.findPlayer(player)
+                            .orElse(null)!!
+                    )
+                }
         }
     }
 
