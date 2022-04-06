@@ -5,6 +5,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
 import gg.scala.lemon.cooldown.impl.CommandCooldown
@@ -13,18 +14,14 @@ import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.FrozenPlayerHandler
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.menu.frozen.PlayerFrozenMenu
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.event.impl.PostFreezeEvent
 import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
-import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -33,6 +30,7 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.ExperienceOrb
@@ -106,6 +104,9 @@ object PlayerListener : Listener
         PlayerFrozenMenu().openMenu(event.player)
     }
 
+    private val serializer =
+        LegacyComponentSerializer.legacySection()
+
     @EventHandler(
         priority = EventPriority.MONITOR,
         ignoreCancelled = true
@@ -145,43 +146,12 @@ object PlayerListener : Listener
             return
         }
 
-        var channelMatch: Channel? = null
+        val channelMatch = ChatChannelService
+            .findAppropriateChannel(player, event.message)
 
-        lemonPlayer.getMetadata("channel")?.let {
-            val possibleChannel = ChatHandler.channels[it.asString()]
+        val composite = channelMatch.composite()
 
-            if (possibleChannel != null)
-            {
-                channelMatch = possibleChannel
-            }
-        }
-
-        val channelOverride = ChatHandler.findChannelOverride(player)
-
-        channelOverride.ifPresent {
-            channelMatch = it
-        }
-
-        ChatHandler.channels.forEach { (_, channel) ->
-            if (channel.isPrefixed(event.message))
-            {
-                channelMatch = channel
-                return@forEach
-            }
-        }
-
-        if (channelMatch == null)
-        {
-            channelMatch = ChatHandler.channels["default"]
-        }
-
-        if (channelMatch == null)
-        {
-            cancel(event, "${CC.RED}We were unable to process your chat message.")
-            return
-        }
-
-        if (channelMatch!!.getId() == "default")
+        if (composite.identifier() == "default")
         {
             if (lemonPlayer.getSetting("global-chat-disabled"))
             {
@@ -240,7 +210,9 @@ object PlayerListener : Listener
         if (event.isCancelled)
             return
 
-        if (channelMatch?.getId() == "default")
+        val preFormatted = channelMatch.preFormat(event.message)
+
+        if (channelMatch.monitored)
         {
             val result = ChatMessageFilterHandler
                 .handleMessageFilter(
@@ -255,11 +227,15 @@ object PlayerListener : Listener
                     player.sendMessage("${CC.RED}That message would've been filtered!")
                 } else
                 {
-                    player.sendMessage(
-                        channelMatch?.getFormatted(
-                            event.message, player.name,
-                            lemonPlayer.activeGrant!!.getRank(), player
+                    val formatted = channelMatch
+                        .composite().format(
+                            player.uniqueId, player, preFormatted,
+                            Lemon.instance.settings.id,
+                            lemonPlayer.activeGrant!!.getRank()
                         )
+
+                    channelMatch.sendToPlayer(
+                        player, formatted
                     )
 
                     event.isCancelled = true
@@ -273,61 +249,61 @@ object PlayerListener : Listener
 
         event.isCancelled = true
 
-        if (channelMatch?.isGlobal() == true)
+        if (channelMatch.distributed)
         {
-            val match = channelMatch!!
-
             sendChannelMessage(
-                match.getId(),
-                match.dePrefixed(event.message),
-                lemonPlayer
+                channelMatch.composite().identifier(),
+                preFormatted, lemonPlayer
             )
         } else
         {
             for (target in Bukkit.getOnlinePlayers())
             {
-                if (!channelMatch!!.hasPermission(target))
+                if (
+                    channelMatch
+                        .permissionLambda
+                        .invoke(target)
+                )
                     continue
 
-                val lemonTarget = PlayerHandler.findPlayer(target).orElse(null)
+                val lemonTarget = PlayerHandler
+                    .find(target.uniqueId)
 
                 if (lemonTarget != null)
                 {
-                    if (channelMatch!!.getId() == "default" && !player.hasPermission("lemon.staff"))
+                    if (
+                        channelMatch.composite().identifier() == "default" &&
+                        !player.hasPermission("lemon.staff")
+                    )
                     {
                         if (lemonTarget.getSetting("global-chat-disabled"))
                         {
                             continue
                         }
                     }
-
-                    if (lemonTarget.getSetting(channelMatch?.getId() + "-disabled"))
-                    {
-                        continue
-                    }
                 }
 
-                target.sendMessage(
-                    channelMatch?.getFormatted(
-                        event.message,
-                        player.name,
-                        realRank(player),
-                        target
-                    )
+                channelMatch.sendToPlayer(
+                    target, channelMatch
+                        .composite().format(
+                            player.uniqueId, target, preFormatted,
+                            Lemon.instance.settings.id,
+                            lemonPlayer.activeGrant!!.getRank()
+                        )
                 )
             }
 
-            val selfMessage = channelMatch?.getFormatted(
-                event.message, player.name,
-                lemonPlayer.activeGrant!!.getRank(), player
-            )!!
-
             if (plugin.settings.consoleChat)
             {
-                Bukkit.getConsoleSender().sendMessage(selfMessage)
+                ChatChannelService.audiences.console().sendMessage(
+                    channelMatch
+                        .composite().format(
+                            player.uniqueId, player, preFormatted,
+                            Lemon.instance.settings.id,
+                            lemonPlayer.activeGrant!!.getRank()
+                        )
+                )
             }
-
-            ChatAsyncFileLogger.queueForUpdates(selfMessage)
         }
     }
 

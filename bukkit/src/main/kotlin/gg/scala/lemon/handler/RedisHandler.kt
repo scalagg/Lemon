@@ -3,6 +3,7 @@ package gg.scala.lemon.handler
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.message.AwareMessage
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
@@ -19,32 +20,41 @@ import java.util.*
 object RedisHandler
 {
     @Subscribe("channel-message")
-    fun onChannelMessage(message: AwareMessage)
+    fun onChannelMessage(
+        message: AwareMessage
+    )
     {
-        val newMessage = message
+        val content = message
             .retrieve<String>("message")
 
         val sender = message
-            .retrieve<String>("sender")
+            .retrieve<UUID>("sender")
 
         val rank = RankHandler.findRank(
             message.retrieve<UUID>("rank")
         ) ?: RankHandler.getDefaultRank()
 
-        val channel = ChatHandler.findChannel(
-            message.retrieve("channel")
-        ) ?: return
+        val server = message
+            .retrieve<String>("server")
 
-        Bukkit.getOnlinePlayers().forEach {
-            if (channel.hasPermission(it))
-            {
-                it.sendMessage(
-                    String.format(
-                        channel.getFormatted(newMessage, sender, rank, it),
-                        message.retrieve("server")
+        val channel = ChatChannelService
+            .find(
+                message.retrieve("channel")
+            )
+            ?: return
+
+        for (other in Bukkit.getOnlinePlayers())
+        {
+            if (!channel.permissionLambda.invoke(other))
+                continue
+
+            channel.sendToPlayer(
+                other, channel.composite()
+                    .format(
+                        sender, other, content,
+                        server, rank
                     )
-                )
-            }
+            )
         }
     }
 

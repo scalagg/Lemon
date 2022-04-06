@@ -1,5 +1,6 @@
 package gg.scala.lemon.channel
 
+import net.kyori.adventure.text.TextComponent
 import org.bukkit.entity.Player
 
 /**
@@ -7,7 +8,7 @@ import org.bukkit.entity.Player
  * @since 4/6/2022
  */
 open class ChatChannel(
-    val composite: ChatChannelComposite
+    private val composite: ChatChannelComposite
 )
 {
     var distributed = false
@@ -16,12 +17,31 @@ open class ChatChannel(
     var prefix = false
     var prefixCharacter = ' '
 
-    var permission = false
     var permissionLambda = { _: Player -> true }
 
     var override = false
     var overrideLambda = { _: Player -> true }
     var overridePriority = 0
+
+    fun sendToPlayer(
+        player: Player,
+        textComponent: TextComponent
+    )
+    {
+        val audience = ChatChannelService
+            .audiences.player(player)
+
+        audience.sendMessage(textComponent)
+    }
+
+    fun useComposite(
+        lambda: ChatChannelComposite.() -> Unit
+    )
+    {
+        this.composite.lambda()
+    }
+
+    fun composite() = composite
 
     fun monitor(): ChatChannel
     {
@@ -38,7 +58,6 @@ open class ChatChannel(
     ): ChatChannel
     {
         return apply {
-            permission = true
             permissionLambda = lambda
         }
     }

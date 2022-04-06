@@ -1,8 +1,9 @@
 package gg.scala.lemon.command
 
+import gg.scala.lemon.channel.ChatChannel
+import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.data
 import net.evilblock.cubed.acf.BaseCommand
@@ -17,12 +18,12 @@ import java.util.*
  * @author GrowlyX
  * @since 9/9/2021
  */
+@CommandAlias("channel")
 class ChannelCommand : BaseCommand()
 {
     @Private
-    @CommandAlias("channel")
     @CommandPermission("lemon.command.channel")
-    fun onDefault(player: Player, @Optional channel: Channel?)
+    fun onDefault(player: Player, @Optional channel: ChatChannel?)
     {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
@@ -35,31 +36,33 @@ class ChannelCommand : BaseCommand()
             return
         }
 
-        if (channel.getId() == "default")
+        if (channel.composite().identifier() == "default")
         {
             throw ConditionFailedException("Use ${CC.YELLOW}/channel reset${CC.RED} to jump back to the regular channel.")
         }
 
-        if (!channel.hasPermission(player))
+        if (!channel.permissionLambda.invoke(player))
         {
-            throw ConditionFailedException("You do not have permission to chat in ${CC.YELLOW}${channel.getId()}${CC.RED}.")
+            throw ConditionFailedException("You do not have permission to chat in ${CC.YELLOW}${channel.composite().identifier()}${CC.RED}.")
         }
 
         lemonPlayer.updateOrAddMetadata(
             "channel",
-            Metadata(channel.getId())
+            Metadata(
+                channel.composite().identifier()
+            )
         )
 
-        player.sendMessage("${CC.GREEN}You're now chatting in ${CC.YELLOW}${channel.getId()
-            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${CC.GREEN}.")
+        player.sendMessage("${CC.GREEN}You're now chatting in ${CC.YELLOW}${
+            channel.composite().identifier().capitalize()
+        }${CC.GREEN}.")
     }
 
     @Subcommand("list|showall")
     fun onShowAll(player: Player)
     {
-        val viewable = ChatHandler.channels.values
-            .filter { it.hasPermission(player) && it.getId() != "default" }
-            .map { it.getId().capitalize() }
+        val viewable = ChatChannelService
+            .accessibleChannels(player)
 
         if (viewable.isEmpty()) {
             throw ConditionFailedException("You do not have permission to chat in any other channel!")

@@ -16,6 +16,8 @@ import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
 import gg.scala.lemon.annotation.DoNotRegister
+import gg.scala.lemon.channel.ChatChannel
+import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.command.ColorCommand
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
@@ -29,7 +31,6 @@ import gg.scala.lemon.network.SyncLemonInstanceData
 import gg.scala.lemon.network.SyncLemonNetwork
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
-import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.entity.superboat.EntitySuperBoatCommand
 import gg.scala.lemon.player.extension.PlayerCachingExtension
@@ -82,11 +83,9 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 @Plugin(
@@ -524,10 +523,10 @@ class Lemon : ExtendedScalaPlugin()
                 )
             }
 
-        commandManager.commandContexts.registerContext(Channel::class.java) {
+        commandManager.commandContexts.registerContext(ChatChannel::class.java) {
             val firstArgument = it.popFirstArg()
 
-            return@registerContext ChatHandler.findChannel(firstArgument)
+            return@registerContext ChatChannelService.find(firstArgument)
                 ?: throw ConditionFailedException("No channel matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
         }
 
