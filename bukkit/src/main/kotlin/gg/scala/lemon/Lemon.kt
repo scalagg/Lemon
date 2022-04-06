@@ -492,7 +492,19 @@ class Lemon : ExtendedScalaPlugin()
                 )
             } catch (exception: Exception)
             {
-                logger.log(Level.WARNING, "command registration failure!", exception)
+                val message = exception.message
+                    ?: return@forEach
+
+                if (message.contains("synthetic"))
+                {
+                    return@forEach
+                }
+
+                logger.log(
+                    Level.WARNING,
+                    "command registration failure!",
+                    exception
+                )
             }
         }
     }
