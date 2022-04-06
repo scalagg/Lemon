@@ -40,104 +40,114 @@ class AltsCommand : BaseCommand()
         target: LemonPlayer
     )
     {
-        PlayerHandler.fetchAlternateAccountsFor(target.uniqueId).thenAcceptAsync {
-            if (it.isEmpty())
-            {
-                sender.sendMessage("${CC.RED}${target.getOriginalColoredName()}${CC.RED} does not have any alts.")
-                return@thenAcceptAsync
+        PlayerHandler.fetchAlternateAccountsFor(target.uniqueId)
+            .thenAcceptAsync {
+                postHandleAltsCommand(sender, target, it)
             }
+    }
 
-            val finalMessage = FancyMessage()
+    private fun postHandleAltsCommand(
+        sender: Player,
+        target: LemonPlayer,
+        alts: List<LemonPlayer>
+    )
+    {
+        if (alts.isEmpty())
+        {
+            sender.sendMessage("${CC.RED}${target.getOriginalColoredName()}${CC.RED} does not have any alts.")
+            return
+        }
 
-            it.forEach { lemonPlayer ->
-                val newName = getNewName(lemonPlayer)
-                val colored = lemonPlayer.getColoredName()
-                val hoverList = mutableListOf<String>()
+        val finalMessage = FancyMessage()
 
-                val lastIpAddress = lemonPlayer.getMetadata("last-ip-address")?.asString() ?: ""
-                val targetLastIpAddress = target.getMetadata("last-ip-address")?.asString() ?: ""
+        alts.forEach { lemonPlayer ->
+            val newName = getNewName(lemonPlayer)
+            val colored = lemonPlayer.getColoredName()
+            val hoverList = mutableListOf<String>()
 
-                val matchingIpInfo = lastIpAddress == targetLastIpAddress
-                val previouslyMatched = lemonPlayer.pastIpAddresses.contains(targetLastIpAddress)
+            val lastIpAddress = lemonPlayer.getMetadata("last-ip-address")?.asString() ?: ""
+            val targetLastIpAddress = target.getMetadata("last-ip-address")?.asString() ?: ""
 
-                hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
-                hoverList.add(
-                    "${CC.SEC}Last Seen: ${CC.PRI}${
-                        TimeUtil.formatIntoFullCalendarString(
-                            Date(
-                                lemonPlayer.getMetadata("last-connection")?.asString()
-                                    ?.toLong() ?: System.currentTimeMillis()
-                            )
+            val matchingIpInfo = lastIpAddress == targetLastIpAddress
+            val previouslyMatched = lemonPlayer.pastIpAddresses.contains(targetLastIpAddress)
+
+            hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
+            hoverList.add(
+                "${CC.SEC}Last Seen: ${CC.PRI}${
+                    TimeUtil.formatIntoFullCalendarString(
+                        Date(
+                            lemonPlayer.getMetadata("last-connection")?.asString()
+                                ?.toLong() ?: System.currentTimeMillis()
                         )
-                    }"
-                )
-                hoverList.add("${CC.SEC}Active Rank: ${lemonPlayer.activeGrant!!.getRank().getColoredName()}")
-                hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
+                    )
+                }"
+            )
+            hoverList.add("${CC.SEC}Active Rank: ${lemonPlayer.activeGrant!!.getRank().getColoredName()}")
+            hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
 
-                val playerName = lemonPlayer.getColoredName()
+            val playerName = lemonPlayer.getColoredName()
 
-                hoverList.add(
-                    if (matchingIpInfo)
-                    {
-                        "${CC.GREEN}IP matching $playerName${CC.GREEN}."
-                    } else if (previouslyMatched)
-                    {
-                        "${CC.GOLD}Previously matched $playerName${CC.GOLD}."
-                    } else
-                    {
-                        "${CC.B_GOLD}*${CC.GOLD}Previously matched $playerName${CC.GOLD}."
-                    }
-                )
+            hoverList.add(
+                if (matchingIpInfo)
+                {
+                    "${CC.GREEN}IP matching $playerName${CC.GREEN}."
+                } else if (previouslyMatched)
+                {
+                    "${CC.GOLD}Previously matched $playerName${CC.GOLD}."
+                } else
+                {
+                    "${CC.B_GOLD}*${CC.GOLD}Previously matched $playerName${CC.GOLD}."
+                }
+            )
 
-                lemonPlayer.sortedPunishments()
-                    .forEach { entry ->
-                        if (entry.value != null)
+            lemonPlayer.sortedPunishments()
+                .forEach { entry ->
+                    if (entry.value != null)
+                    {
+                        val ipAddress = entry.value!!.targetCurrentIp
+
+                        if (ipAddress != null)
                         {
-                            val ipAddress = entry.value!!.targetCurrentIp
-
-                            if (ipAddress != null)
+                            if (ipAddress != targetLastIpAddress)
                             {
-                                if (ipAddress != targetLastIpAddress)
-                                {
-                                    hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.RED} is not matching ${CC.WHITE}$playerName${CC.RED}.")
-                                } else
-                                {
-                                    hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.GREEN} is matching ${CC.WHITE}$playerName${CC.GREEN}.")
-                                }
+                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.RED} is not matching ${CC.WHITE}$playerName${CC.RED}.")
+                            } else
+                            {
+                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.GREEN} is matching ${CC.WHITE}$playerName${CC.GREEN}.")
                             }
                         }
                     }
-
-                hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
-                hoverList.add("${target.getOriginalColoredName()}'s ${CC.SEC}Current IP Info:")
-
-                addIpInfoToList(target, hoverList)
-
-                if (matchingIpInfo)
-                {
-                    hoverList.add("")
-                    hoverList.add("$colored's ${CC.SEC}Matching IP Info:")
-
-                    addIpInfoToList(lemonPlayer, hoverList)
                 }
 
-                hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
+            hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
+            hoverList.add("${target.getOriginalColoredName()}'s ${CC.SEC}Current IP Info:")
 
-                finalMessage
-                    .withMessage("$newName${CC.WHITE}, ")
-                    .andHoverOf(*hoverList.toTypedArray())
+            addIpInfoToList(target, hoverList)
+
+            if (matchingIpInfo)
+            {
+                hoverList.add("")
+                hoverList.add("$colored's ${CC.SEC}Matching IP Info:")
+
+                addIpInfoToList(lemonPlayer, hoverList)
             }
 
-            sender.sendMessage("${coloredName(target.bukkitPlayer!!)}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
+            hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
 
-            val lastComponent = finalMessage.components[finalMessage.components.size - 1]
-
-            lastComponent.let { comp ->
-                comp.value = comp.value.substring(0, comp.value.length - 2)
-            }
-
-            finalMessage.sendToPlayer(sender)
+            finalMessage
+                .withMessage("$newName${CC.WHITE}, ")
+                .andHoverOf(*hoverList.toTypedArray())
         }
+
+        sender.sendMessage("${coloredName(target.bukkitPlayer!!)}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${alts.size}):")
+
+        val lastComponent = finalMessage.components[finalMessage.components.size - 1]
+
+        lastComponent.let { comp ->
+            comp.value = comp.value.substring(0, comp.value.length - 2)
+        }
+
+        finalMessage.sendToPlayer(sender)
     }
 
     private fun addIpInfoToList(lemonPlayer: LemonPlayer, hoverList: MutableList<String>)
