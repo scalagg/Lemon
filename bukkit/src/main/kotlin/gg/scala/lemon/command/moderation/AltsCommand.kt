@@ -1,5 +1,6 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.lemon.annotation.DoNotRegister
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
@@ -11,7 +12,6 @@ import net.evilblock.cubed.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.time.TimeUtil
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -20,7 +20,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/7/2021
  */
-class AltsCommand : BaseCommand()
+@DoNotRegister
+class AltsCommand/* : BaseCommand()*/
 {
     @CommandAlias("alts|ipreport")
     @CommandCompletion("@all-players")
@@ -100,24 +101,24 @@ class AltsCommand : BaseCommand()
                 }
             )
 
-            lemonPlayer.sortedPunishments()
-                .forEach { entry ->
-                    if (entry.value != null)
-                    {
-                        val ipAddress = entry.value!!.targetCurrentIp
+            for (entry in lemonPlayer.sortedPunishments())
+            {
+                if (entry.value != null)
+                {
+                    val ipAddress = entry.value!!.targetCurrentIp
 
-                        if (ipAddress != null)
+                    if (ipAddress != null)
+                    {
+                        if (ipAddress != targetLastIpAddress)
                         {
-                            if (ipAddress != targetLastIpAddress)
-                            {
-                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.RED} is not matching ${CC.WHITE}$playerName${CC.RED}.")
-                            } else
-                            {
-                                hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.GREEN} is matching ${CC.WHITE}$playerName${CC.GREEN}.")
-                            }
+                            hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.RED} is not matching ${CC.WHITE}$playerName${CC.RED}.")
+                        } else
+                        {
+                            hoverList.add("${entry.key.color}${entry.key.fancyVersion}${CC.GREEN} is matching ${CC.WHITE}$playerName${CC.GREEN}.")
                         }
                     }
                 }
+            }
 
             hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
             hoverList.add("${target.getOriginalColoredName()}'s ${CC.SEC}Current IP Info:")
