@@ -29,12 +29,24 @@ data class AsyncLemonPlayer(
 {
     fun validatePlayers(
         sender: CommandSender,
+        ignoreEmpty: Boolean,
         lambda: (LemonPlayer) -> Unit
     ): CompletableFuture<Void>
     {
         return future.thenAccept {
             if (it.isEmpty())
             {
+                if (ignoreEmpty)
+                {
+                    lambda.invoke(LemonPlayer(
+                        this.uniqueId,
+                        CubedCacheUtil.fetchName(this.uniqueId)!!,
+                        null
+                    ))
+
+                    return@thenAccept
+                }
+
                 throw ConditionFailedException("No player with this username has joined the server.")
             }
 

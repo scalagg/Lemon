@@ -5,6 +5,7 @@ import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.punishment.PunishmentViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.punishment.Punishment
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.acf.BaseCommand
@@ -16,6 +17,7 @@ import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -23,32 +25,32 @@ import java.util.*
  */
 object HistoryCommand : BaseCommand()
 {
-
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandAlias("history|c|check|hist")
     @CommandPermission("lemon.command.history.punishments")
-    fun onHistory(player: Player, uuid: UUID)
+    fun onHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        val name =
-            CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
+        return uuid.validatePlayers(player, false) {
+            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
 
-        if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.punishments.other"))
-        {
-            player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
-            return
-        }
-
-        val colored = QuickAccess.coloredNameOrNull(name)
-
-        if (colored == null)
-        {
-            QuickAccess.computeColoredName(uuid, name).thenAccept {
-                handleHistoryMenu(player, uuid, it, name, HistoryViewType.TARGET_HIST)
+            if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.punishments.other"))
+            {
+                player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
+                return@validatePlayers
             }
-        } else
-        {
-            handleHistoryMenu(player, uuid, colored, name, HistoryViewType.TARGET_HIST)
+
+            val colored = QuickAccess.coloredNameOrNull(name)
+
+            if (colored == null)
+            {
+                QuickAccess.computeColoredName(it.uniqueId, name).thenAccept { newColored ->
+                    handleHistoryMenu(player, it.uniqueId, newColored, name, HistoryViewType.TARGET_HIST)
+                }
+            } else
+            {
+                handleHistoryMenu(player, it.uniqueId, colored, name, HistoryViewType.TARGET_HIST)
+            }
         }
     }
 
@@ -56,27 +58,28 @@ object HistoryCommand : BaseCommand()
     @CommandCompletion("@players")
     @CommandAlias("staffhistory|staffhist|csp|cp")
     @CommandPermission("lemon.command.staffhistory.punishments")
-    fun onStaffHistory(player: Player, uuid: UUID)
+    fun onStaffHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        val name = CubedCacheUtil.fetchName(uuid)
-            ?: throw ConditionFailedException("Could not find a player by that uuid.")
+        return uuid.validatePlayers(player, true) {
+            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
 
-        if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.punishments.other"))
-        {
-            player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
-            return
-        }
-
-        val colored = QuickAccess.coloredNameOrNull(name)
-
-        if (colored == null)
-        {
-            QuickAccess.computeColoredName(uuid, name).thenAccept {
-                handleHistoryMenu(player, uuid, it, name, HistoryViewType.STAFF_HIST)
+            if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.punishments.other"))
+            {
+                player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
+                return@validatePlayers
             }
-        } else
-        {
-            handleHistoryMenu(player, uuid, colored, name, HistoryViewType.STAFF_HIST)
+
+            val colored = QuickAccess.coloredNameOrNull(name)
+
+            if (colored == null)
+            {
+                QuickAccess.computeColoredName(it.uniqueId, name).thenAccept { coloredName ->
+                    handleHistoryMenu(player, it.uniqueId, coloredName, name, HistoryViewType.STAFF_HIST)
+                }
+            } else
+            {
+                handleHistoryMenu(player, it.uniqueId, colored, name, HistoryViewType.STAFF_HIST)
+            }
         }
     }
 

@@ -33,7 +33,7 @@ object MuteCommand : BaseCommand()
     {
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, true) {
             handlePunishmentForTargetPlayerGlobally(
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.MUTE,
@@ -55,7 +55,7 @@ object MuteCommand : BaseCommand()
     {
         val durationFinal = duration?.get() ?: Long.MAX_VALUE
 
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, true) {
             handlePunishmentForTargetPlayerGlobally(
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.MUTE,
@@ -76,7 +76,7 @@ object MuteCommand : BaseCommand()
         @Optional reason: String?
     ): CompletableFuture<Void>
     {
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, true) {
             handleUnPunishmentForTargetPlayerGlobally(
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.MUTE,

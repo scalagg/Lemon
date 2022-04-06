@@ -29,7 +29,7 @@ object BlacklistCommand : BaseCommand()
         uuid: AsyncLemonPlayer, @Optional reason: String?
     ): CompletableFuture<Void>
     {
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, true) {
             handlePunishmentForTargetPlayerGlobally(
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BLACKLIST,
@@ -49,7 +49,7 @@ object BlacklistCommand : BaseCommand()
         uuid: AsyncLemonPlayer, @Optional reason: String?
     ): CompletableFuture<Void>
     {
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, true) {
             handlePunishmentForTargetPlayerGlobally(
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BLACKLIST,
@@ -71,7 +71,7 @@ object BlacklistCommand : BaseCommand()
         @Optional reason: String?
     ): CompletableFuture<Void>
     {
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, true) {
             handleUnPunishmentForTargetPlayerGlobally(
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BLACKLIST,

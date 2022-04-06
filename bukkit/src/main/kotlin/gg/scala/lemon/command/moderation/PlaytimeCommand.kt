@@ -40,7 +40,7 @@ object PlaytimeCommand : BaseCommand() {
         {
             player.sendMessage("${CC.GREEN}Fetching playtime...")
 
-            return target.validatePlayers(player) {
+            return target.validatePlayers(player, false) {
                 handlePlaytimeComputation(player, it)
             }
         } else

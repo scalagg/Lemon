@@ -6,6 +6,7 @@ import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.grant.GrantViewMenu
 import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.grant.Grant
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.coloredNameOrNull
@@ -20,6 +21,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -27,35 +29,40 @@ import java.util.*
  */
 object GrantsCommand : BaseCommand()
 {
-
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandAlias("grants")
     @CommandPermission("lemon.command.history.grants")
-    fun onHistory(player: Player, uuid: UUID)
+    fun onHistory(
+        player: Player,
+        uuid: AsyncLemonPlayer
+    ): CompletableFuture<Void>
     {
-        val name =
-            CubedCacheUtil.fetchName(uuid) ?: throw ConditionFailedException("Could not find a player by that uuid.")
+        return uuid.validatePlayers(player, true) {
+            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
 
-        if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.grants.other"))
-        {
-            player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
-            return
-        }
+            if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.grants.other"))
+            {
+                player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
+                return@validatePlayers
+            }
 
-        val colored = coloredNameOrNull(name)
+            val colored = coloredNameOrNull(name)
 
-        if (colored == null)
-        {
-            computeColoredName(uuid, name).thenAccept {
+            if (colored == null)
+            {
+                computeColoredName(it.uniqueId, name)
+                    .thenAccept { newUsername ->
+                        handleGrantMenu(
+                            player, it.uniqueId, newUsername
+                        )
+                    }
+            } else
+            {
                 handleGrantMenu(
-                    player, uuid, it
+                    player, it.uniqueId, colored
                 )
             }
-        } else {
-            handleGrantMenu(
-                player, uuid, colored
-            )
         }
     }
 
@@ -64,15 +71,17 @@ object GrantsCommand : BaseCommand()
         type: HistoryViewType = HistoryViewType.TARGET_HIST
     )
     {
-        player.sendMessage("${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC} ${
-            if (type == HistoryViewType.STAFF_HIST)
-            {
-                "issued grants"
-            } else
-            {
-                "grants"
-            }
-        }...")
+        player.sendMessage(
+            "${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC} ${
+                if (type == HistoryViewType.STAFF_HIST)
+                {
+                    "issued grants"
+                } else
+                {
+                    "grants"
+                }
+            }..."
+        )
 
         val completableFuture = if (type == HistoryViewType.TARGET_HIST)
         {
@@ -125,7 +134,8 @@ object GrantsCommand : BaseCommand()
                     player, uuid, it, HistoryViewType.STAFF_HIST
                 )
             }
-        } else {
+        } else
+        {
             handleGrantMenu(
                 player, uuid, colored, HistoryViewType.STAFF_HIST
             )

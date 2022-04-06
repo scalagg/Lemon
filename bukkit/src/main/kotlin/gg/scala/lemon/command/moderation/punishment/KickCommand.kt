@@ -27,7 +27,7 @@ object KickCommand : BaseCommand()
         @Optional reason: String?
     ): CompletableFuture<Void>
     {
-        return uuid.validatePlayers(sender) {
+        return uuid.validatePlayers(sender, false) {
             val online = online(it.uniqueId).join()
 
             if (!online)

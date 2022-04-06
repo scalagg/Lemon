@@ -25,7 +25,7 @@ object WarnCommand : BaseCommand()
         reason: String
     ): CompletableFuture<Void>
     {
-        return target.validatePlayers(sender) {
+        return target.validatePlayers(sender, true) {
             PunishmentHandler
                 .handleWarning(
                     sender, it.uniqueId, reason
