@@ -1,7 +1,5 @@
 package gg.scala.lemon.player.wrapper
 
-import gg.scala.lemon.disguise.information.DisguiseInfo
-import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -32,18 +30,17 @@ data class AsyncLemonPlayer(
         {
             val online = Bukkit.getPlayer(uniqueId)
 
-            if (online != null)
+            return if (online != null)
             {
-                val future = CompletableFuture<LemonPlayer?>()
-                future.complete(
-                    PlayerHandler.findPlayer(uniqueId)
-                        .orElse(null)
+                AsyncLemonPlayer(
+                    CompletableFuture.completedFuture(
+                        PlayerHandler.findPlayer(uniqueId)
+                            .orElse(null)
+                    )
                 )
-
-                return AsyncLemonPlayer(future)
             } else
             {
-                return AsyncLemonPlayer(
+                AsyncLemonPlayer(
                     DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
                         .load(uniqueId, DataStoreStorageType.MONGO)
                 )
