@@ -95,7 +95,7 @@ class NetworkOnlineStaffMenu : PaginatedMenu()
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView)
         {
-            player.chat("/join ${cached.currentServer}")
+            player.chat("/jump ${cached.username}")
             player.closeInventory()
         }
     }
