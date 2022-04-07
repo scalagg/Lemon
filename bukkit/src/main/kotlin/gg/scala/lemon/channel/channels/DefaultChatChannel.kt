@@ -11,6 +11,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
@@ -44,6 +45,7 @@ object DefaultChatChannel : ChatChannelComposite
 
     private var chatTagProvider = { _: Player -> Component.text("") }
     private var additionalPrefixProvider = { _: Player -> Component.text("") }
+    private var hoverEventProvider: (Player, Player) -> HoverEvent<Component>? = { _, _ -> null }
 
     fun provideChatTag(
         lambda: (Player) -> TextComponent
