@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.SplitUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -56,15 +57,32 @@ data class AsyncLemonPlayer(
                 {
                     val fancyMessage = FancyMessage()
                         .withMessage(
-                            "${CC.B_RED}Multiple accounts with that name were found!",
+                            "",
+                            "${CC.D_RED}Multiple accounts with that name were found.",
                             "${CC.RED}Click one of the following messages to copy their unique id."
                         )
+
+                    val sortedByLastLogin = it
+                        .sortedByDescending { lemonPlayer ->
+                            lemonPlayer
+                                .getMetadata("last-connection")
+                                ?.asString()?.toLong() ?: 0L
+                        }
+
+                    val bestChoice = sortedByLastLogin.first()
 
                     for (lemonPlayer in it)
                     {
                         fancyMessage
                             .withMessage(
-                                "${CC.WHITE}  - ${lemonPlayer.uniqueId}"
+                                "\n${CC.GRAY}  - ${
+                                    SplitUtil.splitUuid(lemonPlayer.uniqueId)
+                                }${
+                                    if (bestChoice.uniqueId == lemonPlayer.uniqueId)
+                                    {
+                                        " ${CC.I_WHITE}(best choice)"
+                                    } else ""
+                                }"
                             )
                             .andHoverOf(
                                 "${CC.YELLOW}Click to copy their unique id."
@@ -74,6 +92,9 @@ data class AsyncLemonPlayer(
                                 lemonPlayer.uniqueId.toString()
                             )
                     }
+
+                    fancyMessage.withMessage("\n")
+                    fancyMessage.sendToPlayer(sender)
                 } else
                 {
                     sender.sendMessage(arrayOf(
@@ -136,9 +157,12 @@ data class AsyncLemonPlayer(
                                     }
                             }
 
-                            this.loadAllWithFilter(
+                            val username = CubedCacheUtil
+                                .fetchName(uniqueId)
+
+                            return@useLayerWithReturn this.loadAllWithFilter(
                                 // praying this never throws an exception.
-                                Filters.eq("name", CubedCacheUtil.fetchName(uniqueId))
+                                Filters.eq("name", username)
                             ).thenApply {
                                 it.values.toList()
                             }
