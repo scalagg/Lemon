@@ -53,6 +53,15 @@ data class AsyncLemonPlayer(
 
             if (it.size > 1)
             {
+                val sortedByLastLogin = it
+                    .sortedByDescending { lemonPlayer ->
+                        lemonPlayer
+                            .getMetadata("last-connection")
+                            ?.asString()?.toLong() ?: 0L
+                    }
+
+                val bestChoice = sortedByLastLogin.first()
+
                 if (sender is Player)
                 {
                     val fancyMessage = FancyMessage()
@@ -61,15 +70,6 @@ data class AsyncLemonPlayer(
                             "${CC.D_RED}Multiple accounts with that name were found.",
                             "${CC.RED}Click one of the following messages to copy their unique id."
                         )
-
-                    val sortedByLastLogin = it
-                        .sortedByDescending { lemonPlayer ->
-                            lemonPlayer
-                                .getMetadata("last-connection")
-                                ?.asString()?.toLong() ?: 0L
-                        }
-
-                    val bestChoice = sortedByLastLogin.first()
 
                     for (lemonPlayer in it)
                     {
@@ -98,12 +98,19 @@ data class AsyncLemonPlayer(
                 } else
                 {
                     sender.sendMessage(arrayOf(
-                        "${CC.B_RED}Multiple players with that name were found!"
+                        "${CC.D_RED}Multiple accounts with that name were found."
                     ))
 
                     for (lemonPlayer in it)
                     {
-                        sender.sendMessage("${CC.WHITE}  - ${lemonPlayer.uniqueId}")
+                        sender.sendMessage("${CC.GRAY}  - ${
+                            SplitUtil.splitUuid(lemonPlayer.uniqueId)
+                        }${
+                            if (bestChoice.uniqueId == lemonPlayer.uniqueId)
+                            {
+                                " ${CC.I_WHITE}(best choice)"
+                            } else ""
+                        }")
                     }
                 }
 
