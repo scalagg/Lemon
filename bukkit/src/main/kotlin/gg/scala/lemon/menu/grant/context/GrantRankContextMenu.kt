@@ -47,8 +47,8 @@ class GrantRankContextMenu(
             return rank.getColoredName()
         }
 
-        override fun getMaterial(player: Player): Material {
-            return XMaterial.WHITE_WOOL.parseMaterial()!!
+        override fun getMaterial(player: Player): XMaterial {
+            return XMaterial.WHITE_WOOL
         }
 
         override fun getDamageValue(player: Player): Byte {

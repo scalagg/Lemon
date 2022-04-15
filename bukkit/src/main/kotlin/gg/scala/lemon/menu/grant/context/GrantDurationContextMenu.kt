@@ -115,8 +115,8 @@ class GrantDurationContextMenu(
             return "${CC.PRI}$formatted"
         }
 
-        override fun getMaterial(player: Player): Material {
-            return XMaterial.OAK_SIGN.parseMaterial()!!
+        override fun getMaterial(player: Player): XMaterial {
+            return XMaterial.OAK_SIGN
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {

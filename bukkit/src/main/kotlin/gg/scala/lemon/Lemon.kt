@@ -205,11 +205,18 @@ class Lemon : ExtendedScalaPlugin()
                 .registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
         }
 
-        initialLoadConfigurations()
+        languageConfig = configFactory.fromFile(
+            "language", LanguageConfigProcessor::class.java
+        )
 
-        flavor.inject(DataStoreOrchestrator)
+        this.configureHelperCommunications()
 
-        loadListeners()
+        this.flavor.inject(DataStoreOrchestrator)
+
+        this.flavor.bind<Lemon>() to this
+        this.flavor.inject(PlayerListener)
+
+
         loadHandlers()
 
         CommandManagerCustomizers
@@ -225,12 +232,6 @@ class Lemon : ExtendedScalaPlugin()
                 System.currentTimeMillis() - this.initialization
             }ms"
         )
-    }
-
-    private fun loadListeners()
-    {
-        flavor.bind<Lemon>() to this
-        flavor.inject(PlayerListener)
     }
 
     @ManualRegister
@@ -392,15 +393,6 @@ class Lemon : ExtendedScalaPlugin()
     private fun toCCColorFormat(string: String): String
     {
         return ChatColor.valueOf(string).toString()
-    }
-
-    private fun initialLoadConfigurations()
-    {
-        languageConfig = configFactory.fromFile(
-            "language", LanguageConfigProcessor::class.java
-        )
-
-        configureHelperCommunications()
     }
 
     private fun configureHelperCommunications()
