@@ -6,6 +6,10 @@ import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.commands.ManualRegister
+import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizers
+import gg.scala.commons.annotations.container.ContainerDisable
+import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
 import gg.scala.lemon.adapter.LemonPlayerAdapter
@@ -15,15 +19,18 @@ import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.SparkServerStatisticProvider
-import gg.scala.lemon.annotation.DoNotRegister
-import gg.scala.lemon.channel.ChatChannel
-import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.command.ColorCommand
+import gg.scala.lemon.customizer.LemonCommandCustomizer
 import gg.scala.lemon.disguise.DisguiseProvider
+import gg.scala.lemon.disguise.command.DisguiseAdminCommand
+import gg.scala.lemon.disguise.command.DisguiseCheckCommand
+import gg.scala.lemon.disguise.command.DisguiseCommand
+import gg.scala.lemon.disguise.command.DisguiseManualCommand
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.extension.AdditionalFlavorCommands
 import gg.scala.lemon.handler.*
+import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -40,15 +47,11 @@ import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
 import gg.scala.lemon.player.nametag.command.NametagCommand
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
-import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
-import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.lemon.server.ServerInstance
-import gg.scala.lemon.task.BukkitInstanceUpdateRunnable
-import gg.scala.lemon.task.ResourceUpdateRunnable
 import gg.scala.lemon.testing.TestingCommand
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -67,7 +70,6 @@ import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 import me.lucko.helper.redis.RedisCredentials
 import me.lucko.helper.redis.plugin.HelperRedis
-import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.BukkitCommandExecutionContext
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
@@ -79,14 +81,12 @@ import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import net.evilblock.cubed.visibility.VisibilityHandler
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
-import java.util.logging.Level
 import kotlin.properties.Delegates
 
 @Plugin(
@@ -149,12 +149,23 @@ class Lemon : ExtendedScalaPlugin()
         )
     }
 
-    override fun enable()
+    @ContainerEnable
+    fun containerEnable()
     {
         instance = this
-        logger.info("Fetching server information using provided password...")
 
-        loadBaseConfigurations()
+        logger.info("Initializing config factory...")
+
+        configFactory = ConfigFactory
+            .newFactory(this)
+
+        settings = configFactory
+            .fromFile(
+                "settings",
+                SettingsConfigProcessor::class.java
+            )
+
+        logger.info("Attempting to load Lemon using provider password...")
 
         validatePlatformInformation()
         runAfterDataValidation()
@@ -201,28 +212,18 @@ class Lemon : ExtendedScalaPlugin()
         loadListeners()
         loadHandlers()
 
+        CommandManagerCustomizers
+            .default<LemonCommandCustomizer>()
+
         initialLoadPlayerQol()
-        initialLoadScheduledTasks()
-        initialLoadCommands()
 
-        localInstance.metaData = mutableMapOf()
-        localInstance.metaData["init"] = initialization.toString()
+        this.localInstance.metaData = mutableMapOf()
+        this.localInstance.metaData["init"] = this.initialization.toString()
 
-        logger.info("Finished Lemon resource initialization in ${
-            System.currentTimeMillis() - initialization
-        }ms")
-    }
-
-    private fun initialLoadScheduledTasks()
-    {
-        Schedulers.async().runRepeating(
-            ResourceUpdateRunnable,
-            0L, 20L
-        )
-
-        Schedulers.async().runRepeating(
-            BukkitInstanceUpdateRunnable,
-            0L, 20L
+        this.logger.info(
+            "Finished Lemon resource initialization in ${
+                System.currentTimeMillis() - this.initialization
+            }ms"
         )
     }
 
@@ -232,20 +233,17 @@ class Lemon : ExtendedScalaPlugin()
         flavor.inject(PlayerListener)
     }
 
-    private fun initialLoadCommands()
+    @ManualRegister
+    private fun manualRegister(
+        commandManager: CubedCommandManager
+    )
     {
-        val commandManager = CubedCommandManager(
-            plugin = this,
-            primary = ChatColor.valueOf(lemonWebData.primary),
-            secondary = ChatColor.valueOf(lemonWebData.secondary)
-        )
-
-        registerCompletionsAndContexts(commandManager)
-        registerCommandsInPackage(commandManager, "gg.scala.lemon.command")
-
         if (settings.disguiseEnabled)
         {
-            registerCommandsInPackage(commandManager, "gg.scala.lemon.disguise.command")
+            commandManager.registerCommand(DisguiseAdminCommand)
+            commandManager.registerCommand(DisguiseCheckCommand)
+            commandManager.registerCommand(DisguiseCommand)
+            commandManager.registerCommand(DisguiseManualCommand)
         }
 
         if (settings.playerColorsEnabled)
@@ -301,9 +299,6 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Started log queue for chat & commands.")
         }
 
-        Schedulers.async().runRepeating(FrozenPlayerHandler, 0L, 100L)
-        Schedulers.async().runRepeating(FrozenPlayerHandler.FrozenPlayerTick(), 0L, 20L)
-
         Events.subscribe(PlayerInteractAtEntityEvent::class.java)
             .filter { it.rightClicked is Player && it.rightClicked.hasMetadata("frozen") }
             .handler {
@@ -324,8 +319,7 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Loaded default player colors for /colors.")
         }
 
-        try
-        {
+        kotlin.runCatching {
             Class.forName("ScalaSpigot")
 
             if (settings.tablistSortingEnabled)
@@ -333,7 +327,7 @@ class Lemon : ExtendedScalaPlugin()
                 flavor.inject(ScalaSpigotSorterExtension)
                 logger.info("Enabled ScalaSpigot Sorter implementation.")
             }
-        } catch (ignored: Exception) { }
+        }
 
         // filter through the different client implementations
         // & register the ones which have the plugins enabled
@@ -371,9 +365,11 @@ class Lemon : ExtendedScalaPlugin()
 
         flavor.startup()
 
-        logger.info("Finished player qol initialization in ${
-            System.currentTimeMillis() - initialization
-        }ms.")
+        logger.info(
+            "Finished player QOL initialization in ${
+                System.currentTimeMillis() - initialization
+            }ms."
+        )
     }
 
     private fun findClassesWithinPackageWithPluginEnabled(`package`: String): List<Class<*>>
@@ -396,13 +392,6 @@ class Lemon : ExtendedScalaPlugin()
     private fun toCCColorFormat(string: String): String
     {
         return ChatColor.valueOf(string).toString()
-    }
-
-    private fun loadBaseConfigurations()
-    {
-        configFactory = ConfigFactory.newFactory(this)
-
-        settings = configFactory.fromFile("settings", SettingsConfigProcessor::class.java)
     }
 
     private fun initialLoadConfigurations()
@@ -454,133 +443,28 @@ class Lemon : ExtendedScalaPlugin()
     {
         flavor.inject(RankHandler)
 
-        serverLayer = DataStoreObjectControllerCache.create()
+        serverLayer =
+            DataStoreObjectControllerCache.create()
+
+        aware.listen(RedisHandler)
+
+        aware.connect()
+            .toCompletableFuture()
+            .join()
 
         localInstance = serverLayer
             .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
-                this.loadWithFilterSync { it.serverId == settings.id } ?: ServerInstance(
+                this.loadWithFilterSync {
+                    it.serverId.equals(settings.id, true)
+                } ?: ServerInstance(
                     settings.id, settings.group
                 )
             }
 
-        aware.listen(RedisHandler)
-        aware.connect()
-
         logger.info("Setup data storage & distribution controllers.")
     }
 
-    fun registerCommandsInPackage(
-        commandManager: CubedCommandManager,
-        commandPackage: String
-    )
-    {
-        ClassUtils.getClassesInPackage(
-            commandManager.plugin, commandPackage
-        ).forEach { clazz ->
-            if (
-                clazz.isAnnotationPresent(DoNotRegister::class.java)
-            ) return@forEach
-
-            try
-            {
-                val instance = clazz.kotlin
-                    .objectInstance
-                    ?: clazz.newInstance()
-
-                commandManager.registerCommand(
-                    instance as BaseCommand
-                )
-            } catch (exception: Exception)
-            {
-                val message = exception.message
-                    ?: return@forEach
-
-                if (message.contains("synthetic"))
-                {
-                    return@forEach
-                }
-
-                logger.log(
-                    Level.WARNING,
-                    "command registration failure!",
-                    exception
-                )
-            }
-        }
-    }
-
-    fun registerCompletionsAndContexts(commandManager: CubedCommandManager)
-    {
-        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
-            return@registerAsyncCompletion RankHandler.ranks.map { it.value.name }
-        }
-
-        commandManager.commandContexts.registerContext(Rank::class.java) {
-            val firstArgument = it.popFirstArg()
-
-            return@registerContext RankHandler.findRank(firstArgument)
-                ?: throw ConditionFailedException("No rank matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-        }
-
-        commandManager.commandContexts
-            .registerContext(AsyncLemonPlayer::class.java) {
-                val parsed = parseUniqueIdFromContext(it)
-
-                return@registerContext AsyncLemonPlayer.of(
-                    parsed.first, parsed.second
-                )
-            }
-
-        commandManager.commandContexts.registerContext(ChatChannel::class.java) {
-            val firstArgument = it.popFirstArg()
-
-            return@registerContext ChatChannelService.find(firstArgument)
-                ?: throw ConditionFailedException("No channel matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-        }
-
-        commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
-            val firstArgument = it.popFirstArg()
-            val lemonPlayerOptional = PlayerHandler.findPlayer(firstArgument)
-
-            if (!lemonPlayerOptional.isPresent)
-            {
-                throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-            }
-
-            val lemonPlayer = lemonPlayerOptional.orElse(null)
-                ?: throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-
-            if (it.player != null)
-            {
-                if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player))
-                {
-                    throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-                }
-            }
-
-            return@registerContext lemonPlayer
-        }
-
-        commandManager.commandCompletions.registerAsyncCompletion("all-players") {
-            return@registerAsyncCompletion mutableListOf<String>().also {
-                Bukkit.getOnlinePlayers()
-                    .filter { !it.hasMetadata("vanished") }
-                    .forEach { player ->
-                        it.add(player.name)
-                    }
-            }
-        }
-
-        commandManager.commandCompletions.registerAsyncCompletion("players") {
-            return@registerAsyncCompletion mutableListOf<String>().also {
-                Bukkit.getOnlinePlayers()
-                    .filter { !it.hasMetadata("vanished") }
-                    .forEach { player -> it.add(player.name) }
-            }
-        }
-    }
-
-    private fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): Pair<UUID, Boolean>
+    fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): Pair<UUID, Boolean>
     {
         val firstArg = context.popFirstArg()
 
@@ -612,7 +496,8 @@ class Lemon : ExtendedScalaPlugin()
         }
     }
 
-    override fun disable()
+    @ContainerDisable
+    fun containerDisable()
     {
         aware.shutdown()
 

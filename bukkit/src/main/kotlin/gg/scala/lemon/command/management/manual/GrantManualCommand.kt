@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management.manual
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.player.grant.Grant
@@ -16,8 +18,9 @@ import java.util.*
  * @author GrowlyX
  * @since 9/10/2021
  */
-object GrantManualCommand : BaseCommand() {
-
+@AutoRegister
+object GrantManualCommand : ScalaCommand()
+{
     @CommandAlias("grantmanual")
     @CommandPermission("lemon.command.grantmanual")
     @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent")
@@ -27,7 +30,8 @@ object GrantManualCommand : BaseCommand() {
         rank: Rank,
         @Single duration: Duration,
         @Optional reason: String?
-    ) {
+    )
+    {
         val grant = Grant(
             UUID.randomUUID(),
             target,
@@ -52,7 +56,8 @@ object GrantManualCommand : BaseCommand() {
         @Single duration: Duration,
         @Single scopes: String,
         @Optional reason: String?
-    ) {
+    )
+    {
         val splitScopes = scopes.split(",")
         val grant = Grant(
             UUID.randomUUID(),
@@ -68,7 +73,8 @@ object GrantManualCommand : BaseCommand() {
         grant.scopes.clear()
 
         splitScopes.forEach {
-            if (!grant.scopes.contains(it)) {
+            if (!grant.scopes.contains(it))
+            {
                 grant.scopes.add(it)
             }
         }

@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.CommentHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.result.CommentPaginatedResult
@@ -17,11 +19,11 @@ import java.util.*
  * @author GrowlyX
  * @since 10/8/2021
  */
+@AutoRegister
 @CommandPermission("lemon.command.comment")
 @CommandAlias("comment|note|comments|notes")
-object CommentCommand : BaseCommand()
+object CommentCommand : ScalaCommand()
 {
-
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)

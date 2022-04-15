@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management.invalidation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
@@ -17,8 +19,9 @@ import org.bukkit.command.ConsoleCommandSender
  * @author GrowlyX
  * @since 9/11/2021
  */
-object InvalidatePunishmentRangeCommand : BaseCommand() {
-
+@AutoRegister
+object InvalidatePunishmentRangeCommand : ScalaCommand()
+{
     @Syntax("<minimum> <maximum> [category]")
     @CommandAlias("ipr|invalidatepunishmentsrange")
     @CommandPermission("op")
@@ -26,7 +29,8 @@ object InvalidatePunishmentRangeCommand : BaseCommand() {
         sender: ConsoleCommandSender,
         min: Long, max: Long,
         @Optional category: PunishmentCategory?
-    ) {
+    )
+    {
         sender.sendMessage("${CC.GOLD}Now fetching punishments...")
 
         DataStoreObjectControllerCache.findNotNull<Punishment>()
@@ -36,9 +40,11 @@ object InvalidatePunishmentRangeCommand : BaseCommand() {
 
                 punishments
                     .filter {
-                        if (category == null) {
+                        if (category == null)
+                        {
                             true
-                        } else {
+                        } else
+                        {
                             it.value.category == category
                         }
                     }

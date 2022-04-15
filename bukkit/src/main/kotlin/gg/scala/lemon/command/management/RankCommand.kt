@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.rank.Rank
@@ -24,9 +26,10 @@ import java.util.*
  * @author GrowlyX
  * @since 9/11/2021
  */
+@AutoRegister
 @CommandAlias("rank")
 @CommandPermission("lemon.command.rank")
-object RankCommand : BaseCommand()
+object RankCommand : ScalaCommand()
 {
     @Default
     @HelpCommand

@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PunishmentHandler
@@ -27,7 +29,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/9/2021
  */
-object GrantsCommand : BaseCommand()
+@AutoRegister
+object GrantsCommand : ScalaCommand()
 {
     @Syntax("<player>")
     @CommandCompletion("@players")
@@ -78,9 +81,9 @@ object GrantsCommand : BaseCommand()
                     "issued grants"
                 } else
                 {
-                    "grants"
+                    "grant"
                 }
-            }..."
+            } history..."
         )
 
         val completableFuture = if (type == HistoryViewType.TARGET_HIST)

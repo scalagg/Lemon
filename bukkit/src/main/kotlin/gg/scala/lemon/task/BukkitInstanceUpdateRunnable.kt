@@ -1,9 +1,12 @@
 package gg.scala.lemon.task
 
+import gg.scala.commons.annotations.runnables.Repeating
 import gg.scala.lemon.Lemon
 import gg.scala.store.storage.type.DataStoreStorageType
+import me.lucko.helper.promise.ThreadContext
 import org.bukkit.Bukkit
 
+@Repeating(20L, context = ThreadContext.ASYNC)
 object BukkitInstanceUpdateRunnable : Runnable
 {
     override fun run()

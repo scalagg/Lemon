@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management.invalidation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.player.enums.InvalidationType
 import net.evilblock.cubed.acf.BaseCommand
@@ -14,15 +16,19 @@ import java.util.*
  * @author GrowlyX
  * @since 9/11/2021
  */
-object InvalidateGrantCommand : BaseCommand() {
-
+@AutoRegister
+object InvalidateGrantCommand : ScalaCommand()
+{
     @Syntax("<type> [player]")
     @CommandAlias("invalidategrants")
     @CommandPermission("lemon.command.invalidategrants")
-    fun onInvalidate(sender: CommandSender, invalidationType: InvalidationType, uuid: UUID) {
-        val completableFuture = if (invalidationType == InvalidationType.ISSUED) {
+    fun onInvalidate(sender: CommandSender, invalidationType: InvalidationType, uuid: UUID)
+    {
+        val completableFuture = if (invalidationType == InvalidationType.ISSUED)
+        {
             GrantHandler.invalidateAllGrantsBy(uuid, sender)
-        } else {
+        } else
+        {
             GrantHandler.invalidateAllGrantsFor(uuid, sender)
         }
 

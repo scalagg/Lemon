@@ -1,5 +1,6 @@
 package gg.scala.lemon.disguise.command
 
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.util.CubedCacheUtil
@@ -18,9 +19,8 @@ import java.util.*
  * @author GrowlyX
  * @since 9/30/2021
  */
-class DisguiseManualCommand : BaseCommand()
+object DisguiseManualCommand : ScalaCommand()
 {
-
     @CommandAlias("dgm|disguisemanual")
     @CommandCompletion("@all-players @all-players")
     @CommandPermission("lemon.command.disguise.manual")

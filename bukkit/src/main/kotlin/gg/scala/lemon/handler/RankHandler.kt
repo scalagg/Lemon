@@ -43,7 +43,6 @@ object RankHandler
             return ranks.values.sortedByDescending { -it.weight }
         }
 
-
     fun findRank(uuid: UUID): Rank?
     {
         return ranks.values.firstOrNull {

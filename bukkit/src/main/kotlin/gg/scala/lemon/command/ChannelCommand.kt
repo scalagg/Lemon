@@ -1,5 +1,7 @@
 package gg.scala.lemon.command
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.channel.ChatChannel
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.ChatHandler
@@ -18,8 +20,9 @@ import java.util.*
  * @author GrowlyX
  * @since 9/9/2021
  */
+@AutoRegister
 @CommandAlias("channel")
-object ChannelCommand : BaseCommand()
+object ChannelCommand : ScalaCommand()
 {
     @Private
     @CommandPermission("lemon.command.channel")

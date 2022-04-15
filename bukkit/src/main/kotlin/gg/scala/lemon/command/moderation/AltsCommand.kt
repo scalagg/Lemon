@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
@@ -20,7 +22,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/7/2021
  */
-object AltsCommand : BaseCommand()
+@AutoRegister
+object AltsCommand : ScalaCommand()
 {
     @CommandAlias("alts|ipreport")
     @CommandCompletion("@all-players")

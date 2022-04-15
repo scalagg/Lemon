@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation.punishment
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
@@ -14,7 +16,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/13/2021
  */
-object WarnCommand : BaseCommand()
+@AutoRegister
+object WarnCommand : ScalaCommand()
 {
     @CommandAlias("warn")
     @CommandCompletion("@all-players")

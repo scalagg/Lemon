@@ -1,5 +1,7 @@
 package gg.scala.lemon.command
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.util.QuickAccess.sendGlobalBroadcast
 import net.evilblock.cubed.acf.BaseCommand
@@ -14,7 +16,8 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 11/12/2021
  */
-object AlertCommand : BaseCommand()
+@AutoRegister
+object AlertCommand : ScalaCommand()
 {
     @CommandAlias("alert")
     @CommandPermission("op")

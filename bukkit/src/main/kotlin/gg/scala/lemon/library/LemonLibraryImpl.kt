@@ -1,5 +1,6 @@
 package gg.scala.lemon.library
 
+import gg.scala.commons.annotations.LibraryLoader
 import gg.scala.commons.library.model.Library
 
 /**
@@ -12,4 +13,5 @@ import gg.scala.commons.library.model.Library
     version = "ac23157173",
     repository = "https://jitpack.io/"
 )
+@LibraryLoader
 object LemonLibraryImpl

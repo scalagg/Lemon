@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation.punishment
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
@@ -15,7 +17,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/13/2021
  */
-object KickCommand : BaseCommand()
+@AutoRegister
+object KickCommand : ScalaCommand()
 {
     @CommandAlias("kick|k")
     @Syntax("<player> [-s] [reason] [-s]")

@@ -1,5 +1,6 @@
 package gg.scala.lemon.testing
 
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.testing.criteria.TestCriteriaMenu
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player
  */
 @CommandAlias("testing")
 @CommandPermission("op")
-object TestingCommand : BaseCommand()
+object TestingCommand : ScalaCommand()
 {
     @Default
     @HelpCommand

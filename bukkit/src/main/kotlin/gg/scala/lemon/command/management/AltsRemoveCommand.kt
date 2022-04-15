@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -18,7 +20,8 @@ import java.util.*
  * @author GrowlyX
  * @since 10/30/2021
  */
-object AltsRemoveCommand : BaseCommand()
+@AutoRegister
+object AltsRemoveCommand : ScalaCommand()
 {
     @CommandAlias("removealts")
     @CommandPermission("lemon.command.removealts")

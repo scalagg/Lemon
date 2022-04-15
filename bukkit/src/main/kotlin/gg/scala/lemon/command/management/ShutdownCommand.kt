@@ -1,5 +1,6 @@
 package gg.scala.lemon.command.management
 
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.ServerHandler
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
@@ -16,24 +17,29 @@ import org.bukkit.entity.Player
  */
 @CommandAlias("shutdown|reboot")
 @CommandPermission("lemon.command.shutdown")
-object ShutdownCommand : BaseCommand() {
-
+object ShutdownCommand : ScalaCommand()
+{
     @Default
     @HelpCommand
-    fun onHelp(help: CommandHelp) {
+    fun onHelp(help: CommandHelp)
+    {
         help.showHelp()
     }
 
     @Subcommand("initiate|start")
     @Description("Initiate a server shutdown.")
-    fun onInitiate(player: Player, @Name("time") time: Duration) {
-        if (time.isPermanent()) {
+    fun onInitiate(player: Player, @Name("time") time: Duration)
+    {
+        if (time.isPermanent())
+        {
             throw ConditionFailedException("That duration is too long.")
         }
 
-        val seconds = try {
+        val seconds = try
+        {
             (time.get() / 1000).toInt()
-        } catch (e: Exception) {
+        } catch (e: Exception)
+        {
             throw ConditionFailedException("You must .")
         }
 
@@ -44,10 +50,12 @@ object ShutdownCommand : BaseCommand() {
 
     @Subcommand("status")
     @Description("View the status of the current shutdown.")
-    fun onStatus(player: Player) {
+    fun onStatus(player: Player)
+    {
         val shutdown = ServerHandler.shutdownRunnable
 
-        if (shutdown != null) {
+        if (shutdown != null)
+        {
             player.sendMessage(
                 "${CC.RED}The server is scheduled to shutdown in ${CC.YELLOW}${
                     TimeUtil.formatIntoDetailedString(
@@ -55,14 +63,16 @@ object ShutdownCommand : BaseCommand() {
                     )
                 }${CC.RED}."
             )
-        } else {
+        } else
+        {
             player.sendMessage("${CC.RED}There is currently no scheduled shutdown.")
         }
     }
 
     @Subcommand("cancel|stop")
     @Description("Cancel the current shutdown.")
-    fun onCancel(player: Player) {
+    fun onCancel(player: Player)
+    {
         ServerHandler.cancelShutdown()
     }
 

@@ -1,5 +1,6 @@
 package gg.scala.lemon.disguise.command
 
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
@@ -19,9 +20,8 @@ import java.util.*
  */
 @CommandAlias("dga|disguiseadmin")
 @CommandPermission("lemon.command.disguise.admin")
-class DisguiseAdminCommand : BaseCommand()
+object DisguiseAdminCommand : ScalaCommand()
 {
-
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)

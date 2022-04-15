@@ -170,9 +170,30 @@ object RedisHandler
         val permission = message
             .retrieveNullable<String>("permission")
 
+        val metaPermission = message
+            .retrieveNullable<String>("meta-permission")
+
         Bukkit.getOnlinePlayers()
             .filter { permission == null || it.hasPermission(permission) }
-            .forEach { newMessage.sendToPlayer(it) }
+            .forEach {
+                val specificMessage = FancyMessage()
+                    .apply {
+                        this.components.addAll(
+                            newMessage.components
+                        )
+                    }
+
+                if (metaPermission != null && !it.hasPermission(metaPermission))
+                {
+                    for (component in specificMessage.components)
+                    {
+                        component.clickEvent = null
+                        component.hoverMessage = null
+                    }
+                }
+
+                specificMessage.sendToPlayer(it)
+            }
     }
 
     @Subscribe("player-fancy-message")

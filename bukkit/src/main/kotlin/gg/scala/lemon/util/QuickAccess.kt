@@ -372,13 +372,16 @@ object QuickAccess
 
     @JvmStatic
     fun sendGlobalFancyBroadcast(
-        fancyMessage: FancyMessage, permission: String?
+        fancyMessage: FancyMessage,
+        permission: String?,
+        metaPermission: String? = null
     ): CompletableFuture<Void>
     {
         RedisHandler.buildMessage(
             "global-fancy-message",
             "message" to gson.toJson(fancyMessage),
-            "permission" to permission
+            "permission" to permission,
+            "meta-permission" to metaPermission,
         ).publish()
 
         return CompletableFuture

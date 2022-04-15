@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation.punishment
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlayerGlobally
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -20,7 +22,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 9/13/2021
  */
-object MuteCommand : BaseCommand()
+@AutoRegister
+object MuteCommand : ScalaCommand()
 {
     @CommandAlias("mute|tmute|tempmute")
     @CommandPermission("lemon.command.mute")

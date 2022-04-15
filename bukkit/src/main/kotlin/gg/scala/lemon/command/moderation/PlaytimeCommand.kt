@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
@@ -23,16 +25,19 @@ import java.util.concurrent.ForkJoinPool
  * @author GrowlyX
  * @since 9/26/2021
  */
-object PlaytimeCommand : BaseCommand() {
-
+@AutoRegister
+object PlaytimeCommand : ScalaCommand()
+{
     @Syntax("<player>")
     @CommandAlias("playtime|pt")
     @CommandCompletion("@all-players")
     @CommandPermission("lemon.command.playtime")
     fun onPlayTime(
         player: Player, @Optional target: AsyncLemonPlayer?
-    ): CompletableFuture<Void> {
-        if (target != null && !player.hasPermission("lemon.command.playtime.other")) {
+    ): CompletableFuture<Void>
+    {
+        if (target != null && !player.hasPermission("lemon.command.playtime.other"))
+        {
             throw ConditionFailedException("You do not have permission to view playtime of other players!")
         }
 
@@ -93,16 +98,20 @@ object PlaytimeCommand : BaseCommand() {
 
         player.sendMessage("")
         player.sendMessage(" ${CC.B_SEC}Playtime of $coloredName${CC.B_SEC}...")
-        player.sendMessage("  ${CC.SEC}This week ${CC.GRAY}(${currentWeekPlaytimeSessions} sessions)${CC.SEC}: ${CC.PRI}${
-            DurationFormatUtils.formatDurationWords(
-                currentWeekPlaytime, true, true
-            )
-        }")
-        player.sendMessage("  ${CC.SEC}All-time total ${CC.GRAY}(${completePlaytimeSessions} sessions)${CC.SEC}: ${CC.PRI}${
-            DurationFormatUtils.formatDurationWords(
-                completePlaytime, true, true
-            )
-        }")
+        player.sendMessage(
+            "  ${CC.SEC}This week ${CC.GRAY}(${currentWeekPlaytimeSessions} sessions)${CC.SEC}: ${CC.PRI}${
+                DurationFormatUtils.formatDurationWords(
+                    currentWeekPlaytime, true, true
+                )
+            }"
+        )
+        player.sendMessage(
+            "  ${CC.SEC}All-time total ${CC.GRAY}(${completePlaytimeSessions} sessions)${CC.SEC}: ${CC.PRI}${
+                DurationFormatUtils.formatDurationWords(
+                    completePlaytime, true, true
+                )
+            }"
+        )
         player.sendMessage("")
     }
 }

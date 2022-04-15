@@ -1,5 +1,7 @@
 package gg.scala.lemon.command
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler.getCorrectedPlayerList
 import gg.scala.lemon.handler.RankHandler.getSortedRankString
 import net.evilblock.cubed.acf.BaseCommand
@@ -12,7 +14,8 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 9/11/2021
  */
-object ListCommand : BaseCommand()
+@AutoRegister
+object ListCommand : ScalaCommand()
 {
     @CommandAlias("list|who|online")
     fun onList(sender: CommandSender)
@@ -22,8 +25,9 @@ object ListCommand : BaseCommand()
         val isMoreThan350 = correctedPlayerList.size > 350
 
         val sortedPlayers = correctedPlayerList
-            .map { it.getColoredName() }
-            .joinToString(separator = "${CC.WHITE}, ")
+            .joinToString(separator = "${CC.WHITE}, ") {
+                it.getColoredName()
+            }
 
         sender.sendMessage(
             arrayOf(

@@ -1,5 +1,6 @@
 package gg.scala.lemon.extension
 
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.service.Service
 import net.evilblock.cubed.acf.BaseCommand
@@ -15,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class AdditionalFlavorCommands(
     private val flavor: Flavor,
     private val plugin: JavaPlugin
-) : BaseCommand()
+) : ScalaCommand()
 {
     @CommandAlias("lemon-services")
     @CommandPermission("flavor.commands")

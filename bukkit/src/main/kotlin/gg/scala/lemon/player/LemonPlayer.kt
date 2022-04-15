@@ -277,7 +277,9 @@ class LemonPlayer(
 
             run {
                 val oldGrant = this.activeGrant
-                this.activeGrant = GrantRecalculationUtil.getProminentGrant(grants)
+
+                this.activeGrant = GrantRecalculationUtil
+                    .getProminentGrant(grants)
 
                 // This should never happen, so we will
                 // revert the grant back to the old grant.

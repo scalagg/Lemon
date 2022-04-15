@@ -5,6 +5,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
@@ -12,7 +13,7 @@ import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.cooldown.impl.SlowChatCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.ChatHandler
-import gg.scala.lemon.handler.FrozenPlayerHandler
+import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.menu.frozen.PlayerFrozenMenu
@@ -47,6 +48,10 @@ import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
 
+/**
+ * We're not marking this with [Listeners]
+ * as injection functionality isn't complete.
+ */
 @Service
 @IgnoreAutoScan
 object PlayerListener : Listener
@@ -74,8 +79,12 @@ object PlayerListener : Listener
     {
         var created = false
 
+        val start = System.nanoTime()
+        val startMilli = System.currentTimeMillis()
+
         val lemonPlayer = playerController.loadAndCache(event.uniqueId, {
             created = true
+
             return@loadAndCache LemonPlayer(
                 event.uniqueId, event.name,
                 event.address.hostAddress ?: ""
@@ -95,6 +104,17 @@ object PlayerListener : Listener
             }
 
             lemonPlayer.handlePostLoad()
+        }
+
+        if (LemonConstants.DEBUG)
+        {
+            plugin.logger.info("It took ${
+                System.nanoTime() - start
+            }ns, ${
+                System.currentTimeMillis() - startMilli
+            }ms to load resources for ${
+                lemonPlayer.name
+            }")
         }
     }
 

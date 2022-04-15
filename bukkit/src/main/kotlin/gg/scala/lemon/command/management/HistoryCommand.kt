@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.menu.punishment.PunishmentViewMenu
@@ -23,7 +25,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 8/27/2021
  */
-object HistoryCommand : BaseCommand()
+@AutoRegister
+object HistoryCommand : ScalaCommand()
 {
     @Syntax("<player>")
     @CommandCompletion("@players")
@@ -94,7 +97,7 @@ object HistoryCommand : BaseCommand()
                 {
                     ""
                 }
-            } history..."
+            } punishment history..."
         )
 
         val completableFuture = if (type == HistoryViewType.TARGET_HIST)

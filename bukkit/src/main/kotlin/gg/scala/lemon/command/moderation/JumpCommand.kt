@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
@@ -21,7 +23,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 1/27/2022
  */
-object JumpCommand : BaseCommand()
+@AutoRegister
+object JumpCommand : ScalaCommand()
 {
     @CommandAlias("jump")
     @CommandCompletion("@players")

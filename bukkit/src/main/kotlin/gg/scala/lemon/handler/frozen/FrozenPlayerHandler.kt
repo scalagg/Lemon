@@ -1,11 +1,9 @@
-package gg.scala.lemon.handler
+package gg.scala.lemon.handler.frozen
 
+import gg.scala.commons.annotations.runnables.Repeating
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.QuickAccess.coloredName
-import gg.scala.lemon.util.QuickAccess.sendStaffMessage
 import gg.scala.lemon.util.other.Expirable
-import net.evilblock.cubed.util.CC
+import me.lucko.helper.promise.ThreadContext
 import org.bukkit.Bukkit
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -14,6 +12,7 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 9/23/2021
  */
+@Repeating(100L, context = ThreadContext.ASYNC)
 object FrozenPlayerHandler : Runnable
 {
     val expirables = mutableMapOf<UUID, FrozenExpirable>()
@@ -44,27 +43,4 @@ object FrozenPlayerHandler : Runnable
         System.currentTimeMillis(),
         TimeUnit.MINUTES.toMillis(5)
     )
-
-    class FrozenPlayerTick : Runnable
-    {
-        override fun run()
-        {
-            val finalMap = hashMapOf<UUID, FrozenExpirable>().also {
-                expirables.forEach { entry ->
-                    it[entry.key] = entry.value
-                }
-            }
-
-            finalMap.forEach { (uuid, expirable) ->
-                if (expirable.hasExpired)
-                {
-                    sendStaffMessage(
-                        "${CC.AQUA}${coloredName(uuid)}${CC.D_AQUA} has been frozen for 5 minutes.", true
-                    )
-
-                    expirables.remove(uuid)
-                }
-            }
-        }
-    }
 }

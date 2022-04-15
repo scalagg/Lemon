@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
@@ -20,12 +22,14 @@ import java.util.concurrent.ThreadLocalRandom
  * @author GrowlyX
  * @since 9/10/2021
  */
-object ChatCommand : BaseCommand() {
-
+@AutoRegister
+object ChatCommand : ScalaCommand()
+{
     @Syntax("[-h]")
     @CommandAlias("unmutechat|unsilencechat")
     @CommandPermission("lemon.command.mutechat")
-    fun onUnMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
+    fun onUnMuteChat(sender: CommandSender, @Optional hiddenString: String?)
+    {
         if (!ChatHandler.chatMuted)
         {
             throw ConditionFailedException("The chat is not silenced. Use ${CC.BOLD}/mutechat${CC.RED} to mute the chat!")
@@ -46,7 +50,8 @@ object ChatCommand : BaseCommand() {
     @Syntax("[-h]")
     @CommandAlias("mutechat|silencechat")
     @CommandPermission("lemon.command.mutechat")
-    fun onMuteChat(sender: CommandSender, @Optional hiddenString: String?) {
+    fun onMuteChat(sender: CommandSender, @Optional hiddenString: String?)
+    {
         if (ChatHandler.chatMuted)
         {
             throw ConditionFailedException("The chat is silenced. Use ${CC.BOLD}/unmutechat${CC.RED} to unmute the chat!")
@@ -68,7 +73,8 @@ object ChatCommand : BaseCommand() {
     @Syntax("<seconds> [-h]")
     @CommandAlias("slowchat")
     @CommandPermission("lemon.command.slowchat")
-    fun onSlowChat(sender: CommandSender, seconds: Int, @Optional hiddenString: String?) {
+    fun onSlowChat(sender: CommandSender, seconds: Int, @Optional hiddenString: String?)
+    {
         if (seconds < 0)
         {
             throw ConditionFailedException("You cannot use a negative number.")
@@ -83,21 +89,23 @@ object ChatCommand : BaseCommand() {
         Bukkit.broadcastMessage("${if (toggledTo) CC.RED else CC.GREEN}The chat has been slowed to $seconds seconds by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
-         "$coloredName${CC.D_AQUA} has slowed the chat to $seconds seconds.", true
+            "$coloredName${CC.D_AQUA} has slowed the chat to $seconds seconds.", true
         )
     }
 
     @Syntax("[-h]")
     @CommandAlias("clearchat|cc")
     @CommandPermission("lemon.command.clearchat")
-    fun onClearChat(sender: CommandSender, @Optional hiddenString: String?) {
+    fun onClearChat(sender: CommandSender, @Optional hiddenString: String?)
+    {
         val coloredName = nameOrConsole(sender)
         val hidden = hiddenString != null && hiddenString == "-h"
 
         Bukkit.getOnlinePlayers()
             .filter { !it.hasPermission("lemon.staff") }
             .forEach {
-                for (int in 0..250) {
+                for (int in 0..250)
+                {
                     it.sendMessage(
                         " ".repeat(
                             ThreadLocalRandom.current().nextInt(1, 50)

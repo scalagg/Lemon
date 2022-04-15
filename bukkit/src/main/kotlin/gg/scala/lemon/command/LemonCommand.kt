@@ -1,6 +1,7 @@
 package gg.scala.lemon.command
 
-import gg.scala.lemon.Lemon
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.software.SoftwareDump
@@ -13,7 +14,6 @@ import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.concurrent.ForkJoinPool
 
@@ -21,9 +21,10 @@ import java.util.concurrent.ForkJoinPool
  * @author GrowlyX
  * @since 10/7/2021
  */
+@AutoRegister
 @CommandAlias("lemon")
 @CommandPermission("op")
-object LemonCommand : BaseCommand()
+object LemonCommand : ScalaCommand()
 {
     @Default
     @HelpCommand

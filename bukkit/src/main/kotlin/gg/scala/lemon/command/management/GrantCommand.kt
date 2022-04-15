@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.management
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.menu.grant.context.GrantRankContextMenu
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
@@ -17,13 +19,15 @@ import java.util.*
  * @author GrowlyX
  * @since 9/23/2021
  */
-object GrantCommand : BaseCommand() {
-
+@AutoRegister
+object GrantCommand : ScalaCommand()
+{
     @Syntax("<player>")
     @CommandCompletion("@players")
     @CommandAlias("grant|g|grantscope")
     @CommandPermission("lemon.command.grant")
-    fun onGrant(player: Player, uuid: UUID) {
+    fun onGrant(player: Player, uuid: UUID)
+    {
         val name = CubedCacheUtil.fetchName(uuid)!!
 
         QuickAccess.computeColoredName(uuid, name).thenAccept {

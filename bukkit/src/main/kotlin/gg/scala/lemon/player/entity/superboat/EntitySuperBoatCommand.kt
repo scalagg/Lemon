@@ -1,5 +1,7 @@
 package gg.scala.lemon.player.entity.superboat
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -12,9 +14,10 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 11/25/2021
  */
+@AutoRegister
 @CommandAlias("superboat")
 @CommandPermission("lemon.command.superboat")
-object EntitySuperBoatCommand : BaseCommand()
+object EntitySuperBoatCommand : ScalaCommand()
 {
     @Default
     @HelpCommand

@@ -1,5 +1,7 @@
 package gg.scala.lemon.player.nametag.command
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagHandler
 import net.evilblock.cubed.acf.BaseCommand
@@ -15,9 +17,10 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 11/25/2021
  */
+@AutoRegister
 @CommandAlias("nametag")
 @CommandPermission("lemon.command.nametag")
-object NametagCommand : BaseCommand()
+object NametagCommand : ScalaCommand()
 {
     @Subcommand("rainbow")
     @CommandPermission("lemon.command.nametag.rainbow")

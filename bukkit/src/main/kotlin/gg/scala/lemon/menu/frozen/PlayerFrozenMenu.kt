@@ -1,7 +1,7 @@
 package gg.scala.lemon.menu.frozen
 
 import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.handler.FrozenPlayerHandler
+import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC

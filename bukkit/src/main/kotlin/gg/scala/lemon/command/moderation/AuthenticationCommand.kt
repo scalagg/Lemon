@@ -1,5 +1,7 @@
 package gg.scala.lemon.command.moderation
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.PlayerHandler
@@ -18,7 +20,8 @@ import org.bukkit.metadata.FixedMetadataValue
  * @author GrowlyX
  * @since 9/27/2021
  */
-object AuthenticationCommand : BaseCommand()
+@AutoRegister
+object AuthenticationCommand : ScalaCommand()
 {
     @CommandPermission("lemon.2fa.forced")
     @CommandAlias("auth|2fa|authenticate")

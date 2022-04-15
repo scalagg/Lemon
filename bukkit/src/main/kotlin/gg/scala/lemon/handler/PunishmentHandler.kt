@@ -18,6 +18,7 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.md_5.bungee.api.chat.ClickEvent
 import org.bson.conversions.Bson
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -31,8 +32,9 @@ import java.util.concurrent.ForkJoinPool
  */
 object PunishmentHandler
 {
-
-    private fun fetchPunishments(filter: Bson, test: (Punishment) -> Boolean): CompletableFuture<List<Punishment>>
+    private fun fetchPunishments(
+        filter: Bson, test: (Punishment) -> Boolean
+    ): CompletableFuture<List<Punishment>>
     {
         val controller = DataStoreObjectControllerCache.findNotNull<Punishment>()
 
@@ -344,19 +346,22 @@ object PunishmentHandler
             val fancyMessage = FancyMessage()
                 .withMessage(broadcastBody)
 
-            if (broadcastPermission != null)
-            {
-                fancyMessage.andHoverOf(
-                    "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
-                    "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",
-                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
-                    "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
-                )
-            }
+            fancyMessage.andHoverOf(
+                "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
+                "${CC.SEC}Issued By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.addedOn})",
+                "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
+                "${CC.SEC}${CC.STRIKE_THROUGH}-----------------------",
+            )
+
+            fancyMessage.andCommandOf(
+                ClickEvent.Action.RUN_COMMAND,
+                "history ${punishment.target}"
+            )
 
             sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
-                permission = broadcastPermission
+                permission = broadcastPermission,
+                metaPermission = "lemon.staff"
             ).thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
@@ -402,21 +407,24 @@ object PunishmentHandler
 
             val coloredNameOfAddedBy = fetchColoredName(punishment.addedBy)
 
-            if (broadcastPermission != null)
-            {
-                fancyMessage.andHoverOf(
-                    "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
-                    "${CC.SEC}Issued By: ${CC.PRI}$coloredNameOfAddedBy ${CC.GRAY}(${punishment.addedOn})",
-                    "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
-                    "${CC.SEC}Removed By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.removedOn})",
-                    "${CC.SEC}Removed Reason: ${CC.WHITE}${punishment.removedReason}",
-                    "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
-                )
-            }
+            fancyMessage.andHoverOf(
+                "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
+                "${CC.SEC}Issued By: ${CC.PRI}$coloredNameOfAddedBy ${CC.GRAY}(${punishment.addedOn})",
+                "${CC.SEC}Issued Reason: ${CC.WHITE}${punishment.addedReason}",
+                "${CC.SEC}Removed By: ${CC.PRI}$issuerName ${CC.GRAY}(${punishment.removedOn})",
+                "${CC.SEC}Removed Reason: ${CC.WHITE}${punishment.removedReason}",
+                "${CC.SEC}${CC.STRIKE_THROUGH}--------------------",
+            )
+
+            fancyMessage.andCommandOf(
+                ClickEvent.Action.RUN_COMMAND,
+                "history ${punishment.target}"
+            )
 
             sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
-                permission = broadcastPermission
+                permission = broadcastPermission,
+                metaPermission = "lemon.staff"
             ).thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
