@@ -2,8 +2,8 @@ package gg.scala.lemon.processor
 
 import xyz.mkotb.configapi.comment.Comment
 
-class SettingsConfigProcessor {
-
+class SettingsConfigProcessor
+{
     @Comment("What should the server id for this instance be?")
     val id: String = "server-1"
 
@@ -38,5 +38,4 @@ class SettingsConfigProcessor {
         "(n|i){1,32}((g{2,32}|q){1,32}|[gq]{2,32})[e3ra]{1,32}",
         "\\\$\\{*\\}"
     )
-
 }

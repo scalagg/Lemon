@@ -1,5 +1,6 @@
 package gg.scala.lemon.redirection.impl
 
+import gg.scala.commons.annotations.inject.AutoBind
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player
  * @since 3/13/2022
  */
 @Service
+@AutoBind
 object VelocityRedirectSystem : PlayerRedirectSystem<Player>(
     VelocityRedirectContext, VelocityRedirectContext
 )

@@ -1,5 +1,6 @@
 package gg.scala.lemon.processor
 
+import gg.scala.commons.annotations.inject.AutoBind
 import gg.scala.lemon.LemonConstants
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.Coloured
@@ -8,8 +9,8 @@ import xyz.mkotb.configapi.Coloured
  * @author GrowlyX
  * @since 8/28/2021
  */
-class LanguageConfigProcessor {
-
+class LanguageConfigProcessor
+{
     @Coloured
     val tempBanMessage =
         "${CC.RED}You are banned from ${LemonConstants.SERVER_NAME} for %s.\n" +
@@ -69,7 +70,8 @@ class LanguageConfigProcessor {
     """.trimIndent()
 
     @Coloured
-    var playerDataLoad = "${CC.RED}Your account did not load properly.\n${CC.RED}Please reconnect to resolve this issue."
+    var playerDataLoad =
+        "${CC.RED}Your account did not load properly.\n${CC.RED}Please reconnect to resolve this issue."
 
     @Coloured
     val consoleName = "${CC.BD_RED}Console"

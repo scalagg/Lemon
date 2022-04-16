@@ -73,6 +73,8 @@ import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
+import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.serializers.Serializers.useGsonBuilderThenRebuild
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
@@ -142,12 +144,6 @@ class Lemon : ExtendedScalaPlugin()
             .build()
     }
 
-    val flavor by lazy {
-        Flavor.create<Lemon>(
-            FlavorOptions(logger)
-        )
-    }
-
     @ContainerEnable
     fun containerEnable()
     {
@@ -199,28 +195,27 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun runAfterDataValidation()
     {
-        useGsonBuilderThenRebuild {
-            it.setLongSerializationPolicy(LongSerializationPolicy.STRING)
-                .registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
+        create {
+            setLongSerializationPolicy(LongSerializationPolicy.STRING)
+            registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
         }
 
-        languageConfig = configFactory.fromFile(
+        this.languageConfig = configFactory.fromFile(
             "language", LanguageConfigProcessor::class.java
         )
 
         this.configureHelperCommunications()
 
-        this.flavor.inject(DataStoreOrchestrator)
+        this.flavor {
+            this.inject(DataStoreOrchestrator)
+        }
 
-        this.flavor.bind<Lemon>() to this
-        this.flavor.inject(PlayerListener)
-
-        configureHandlers()
+        this.configureHandlers()
 
         CommandManagerCustomizers
             .default<LemonCommandCustomizer>()
 
-        configureQol()
+        this.configureQol()
 
         this.localInstance.metaData = mutableMapOf()
         this.localInstance.metaData["init"] = this.initialization.toString()
@@ -257,7 +252,7 @@ class Lemon : ExtendedScalaPlugin()
         commandManager.registerCommand(EntitySuperBoatCommand)
 
         commandManager.registerCommand(
-            AdditionalFlavorCommands(flavor, this)
+            AdditionalFlavorCommands(flavor(), this)
         )
     }
 
@@ -282,10 +277,13 @@ class Lemon : ExtendedScalaPlugin()
 
         if (settings.disguiseEnabled)
         {
-            flavor.inject(DisguiseInfoProvider)
-            flavor.inject(DisguiseProvider)
+            flavor {
+                inject(DisguiseInfoProvider)
+                inject(DisguiseProvider)
+            }
 
-            server.pluginManager.registerEvents(DisguiseListener, this)
+            server.pluginManager
+                .registerEvents(DisguiseListener, this)
 
             logger.info("Loaded disguise resources.")
         }
@@ -308,13 +306,19 @@ class Lemon : ExtendedScalaPlugin()
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
 
-        flavor.inject(PlayerCachingExtension)
+        flavor {
+            inject(PlayerCachingExtension)
+        }
+
         logger.info("Memorizing fundamental player data to your redis server.")
 
         // Loading all default player colors
         if (settings.playerColorsEnabled)
         {
-            flavor.inject(PlayerColorHandler)
+            flavor {
+                inject(PlayerColorHandler)
+            }
+
             logger.info("Loaded default player colors for /colors.")
         }
 
@@ -323,7 +327,10 @@ class Lemon : ExtendedScalaPlugin()
 
             if (settings.tablistSortingEnabled)
             {
-                flavor.inject(ScalaSpigotSorterExtension)
+                flavor {
+                    inject(ScalaSpigotSorterExtension)
+                }
+
                 logger.info("Enabled ScalaSpigot Sorter implementation.")
             }
         }
@@ -349,7 +356,10 @@ class Lemon : ExtendedScalaPlugin()
 
         if (server.pluginManager.getPlugin("ProtocolLib") != null)
         {
-            flavor.inject(ProtocolLibHook)
+            flavor {
+                inject(ProtocolLibHook)
+            }
+
             logger.info("Now handling tab-completion through ProtocolLib.")
         }
 
@@ -361,8 +371,6 @@ class Lemon : ExtendedScalaPlugin()
 
             logger.info("Now utilizing spark for server statistics.")
         }
-
-        flavor.startup()
 
         logger.info(
             "Finished player QOL initialization in ${
@@ -431,7 +439,9 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun configureHandlers()
     {
-        flavor.inject(RankHandler)
+        flavor {
+            inject(RankHandler)
+        }
 
         serverLayer =
             DataStoreObjectControllerCache.create()

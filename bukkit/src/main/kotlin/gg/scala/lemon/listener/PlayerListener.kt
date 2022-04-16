@@ -1,5 +1,6 @@
 package gg.scala.lemon.listener
 
+import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -48,12 +49,7 @@ import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.server.ServerCommandEvent
 
-/**
- * We're not marking this with [Listeners]
- * as injection functionality isn't complete.
- */
-@Service
-@IgnoreAutoScan
+@Listeners
 object PlayerListener : Listener
 {
     @Inject
@@ -62,13 +58,6 @@ object PlayerListener : Listener
     private val playerController by lazy {
         DataStoreObjectControllerCache
             .findNotNull<LemonPlayer>()
-    }
-
-    @Configure
-    fun configure()
-    {
-        plugin.server.pluginManager
-            .registerEvents(this, plugin)
     }
 
     @EventHandler(
