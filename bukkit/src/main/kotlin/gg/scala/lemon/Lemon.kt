@@ -233,7 +233,7 @@ class Lemon : ExtendedScalaPlugin()
     }
 
     @ManualRegister
-    private fun manualRegister(
+    fun manualRegister(
         commandManager: CubedCommandManager
     )
     {
