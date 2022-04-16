@@ -30,7 +30,6 @@ import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.extension.AdditionalFlavorCommands
 import gg.scala.lemon.handler.*
-import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -61,7 +60,6 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
-import me.lucko.helper.Schedulers
 import me.lucko.helper.messaging.Messenger
 import me.lucko.helper.network.AbstractNetwork
 import me.lucko.helper.network.modules.FindCommandModule
@@ -92,6 +90,7 @@ import kotlin.properties.Delegates
 @Plugin(
     name = Lemon.NAME,
     description = Lemon.DESCRIPTION,
+    apiVersion = "1.18",
     depends = [
         PluginDependency("Cubed"),
         PluginDependency("helper"),
@@ -216,13 +215,12 @@ class Lemon : ExtendedScalaPlugin()
         this.flavor.bind<Lemon>() to this
         this.flavor.inject(PlayerListener)
 
-
-        loadHandlers()
+        configureHandlers()
 
         CommandManagerCustomizers
             .default<LemonCommandCustomizer>()
 
-        initialLoadPlayerQol()
+        configureQol()
 
         this.localInstance.metaData = mutableMapOf()
         this.localInstance.metaData["init"] = this.initialization.toString()
@@ -263,7 +261,7 @@ class Lemon : ExtendedScalaPlugin()
         )
     }
 
-    private fun initialLoadPlayerQol()
+    private fun configureQol()
     {
         val initialization = System.currentTimeMillis()
 
@@ -431,7 +429,7 @@ class Lemon : ExtendedScalaPlugin()
         }
     }
 
-    private fun loadHandlers()
+    private fun configureHandlers()
     {
         flavor.inject(RankHandler)
 

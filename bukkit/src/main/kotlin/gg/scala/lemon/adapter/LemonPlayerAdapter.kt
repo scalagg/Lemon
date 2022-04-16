@@ -13,7 +13,6 @@ import java.util.*
  */
 object LemonPlayerAdapter : JsonDeserializer<LemonPlayer>, JsonSerializer<LemonPlayer>
 {
-
     @Throws(JsonParseException::class)
     override fun deserialize(src: JsonElement?, type: Type, context: JsonDeserializationContext): LemonPlayer?
     {
