@@ -10,8 +10,6 @@ import gg.scala.commons.annotations.commands.ManualRegister
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizers
 import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
-import gg.scala.flavor.Flavor
-import gg.scala.flavor.FlavorOptions
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
@@ -29,8 +27,9 @@ import gg.scala.lemon.disguise.command.DisguiseManualCommand
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.extension.AdditionalFlavorCommands
-import gg.scala.lemon.handler.*
-import gg.scala.lemon.listener.PlayerListener
+import gg.scala.lemon.handler.DataStoreOrchestrator
+import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.network.SyncLemonInstanceData
@@ -73,9 +72,7 @@ import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.create
-import net.evilblock.cubed.serializers.Serializers.useGsonBuilderThenRebuild
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.ClassUtils
 import net.evilblock.cubed.util.bukkit.EventUtils
@@ -214,6 +211,17 @@ class Lemon : ExtendedScalaPlugin()
 
         CommandManagerCustomizers
             .default<LemonCommandCustomizer>()
+
+        this.localInstance = this.serverLayer
+            .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(
+                DataStoreStorageType.REDIS
+            ) {
+                this.loadWithFilterSync {
+                    it.serverId.equals(settings.id, true)
+                } ?: ServerInstance(
+                    settings.id, settings.group
+                )
+            }
 
         this.configureQol()
 
@@ -451,15 +459,6 @@ class Lemon : ExtendedScalaPlugin()
         aware.connect()
             .toCompletableFuture()
             .join()
-
-        localInstance = serverLayer
-            .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(DataStoreStorageType.REDIS) {
-                this.loadWithFilterSync {
-                    it.serverId.equals(settings.id, true)
-                } ?: ServerInstance(
-                    settings.id, settings.group
-                )
-            }
 
         logger.info("Setup data storage & distribution controllers.")
     }
