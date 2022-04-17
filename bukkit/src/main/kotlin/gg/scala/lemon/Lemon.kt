@@ -205,7 +205,8 @@ class Lemon : ExtendedScalaPlugin()
         this.configureHandlers()
 
         CommandManagerCustomizers
-            .default<LemonCommandCustomizer>()
+            .default<LemonCommandC
+        ustomizer>()
 
         this.localInstance = this.serverLayer
             .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(
