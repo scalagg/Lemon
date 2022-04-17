@@ -10,6 +10,7 @@ import gg.scala.commons.annotations.commands.ManualRegister
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizers
 import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
+import gg.scala.commons.config.annotations.ContainerConfig
 import gg.scala.lemon.adapter.LemonPlayerAdapter
 import gg.scala.lemon.adapter.ProtocolLibHook
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
@@ -82,7 +83,6 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
-import xyz.mkotb.configapi.ConfigFactory
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -105,6 +105,14 @@ import kotlin.properties.Delegates
         )
     ]
 )
+@ContainerConfig(
+    value = "settings",
+    model = SettingsConfigProcessor::class
+)
+@ContainerConfig(
+    value = "language",
+    model = LanguageConfigProcessor::class
+)
 class Lemon : ExtendedScalaPlugin()
 {
     companion object
@@ -116,10 +124,13 @@ class Lemon : ExtendedScalaPlugin()
         const val DESCRIPTION = "An extensive punishment, moderation, security and rank suite."
     }
 
-    lateinit var settings: SettingsConfigProcessor
-    lateinit var languageConfig: LanguageConfigProcessor
+    val settings by lazy {
+        config<SettingsConfigProcessor>()
+    }
 
-    lateinit var configFactory: ConfigFactory
+    val languageConfig by lazy {
+        config<LanguageConfigProcessor>()
+    }
 
     lateinit var serverLayer: DataStoreObjectController<ServerInstance>
     lateinit var localInstance: ServerInstance
@@ -145,18 +156,6 @@ class Lemon : ExtendedScalaPlugin()
     fun containerEnable()
     {
         instance = this
-
-        logger.info("Initializing config factory...")
-
-        configFactory = ConfigFactory
-            .newFactory(this)
-
-        settings = configFactory
-            .fromFile(
-                "settings",
-                SettingsConfigProcessor::class.java
-            )
-
         logger.info("Attempting to load Lemon using provider password...")
 
         validatePlatformInformation()
@@ -196,10 +195,6 @@ class Lemon : ExtendedScalaPlugin()
             setLongSerializationPolicy(LongSerializationPolicy.STRING)
             registerTypeAdapter(LemonPlayer::class.java, LemonPlayerAdapter)
         }
-
-        this.languageConfig = configFactory.fromFile(
-            "language", LanguageConfigProcessor::class.java
-        )
 
         this.configureHelperCommunications()
 
