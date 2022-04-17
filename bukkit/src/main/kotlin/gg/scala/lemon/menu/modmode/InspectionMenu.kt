@@ -1,5 +1,6 @@
 package gg.scala.lemon.menu.modmode
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
@@ -58,7 +59,7 @@ class InspectionMenu(val target: Player) : Menu() {
 
     inner class EffectsButton(private val effects: Collection<PotionEffect>) : Button() {
         override fun getButtonItem(player: Player): ItemStack {
-            return ItemBuilder(Material.POTION)
+            return ItemBuilder(XMaterial.POTION)
                 .name("${CC.PRI}Potion Effects")
                 .apply {
                     if (effects.isEmpty()) {
@@ -75,7 +76,7 @@ class InspectionMenu(val target: Player) : Menu() {
 
     inner class ExperienceButton(private val exp: Float, private val totalExp: Int, private val level: Int) : Button() {
         override fun getButtonItem(player: Player): ItemStack {
-            return ItemBuilder(Material.EXP_BOTTLE)
+            return ItemBuilder(XMaterial.EXPERIENCE_BOTTLE)
                 .name("${CC.PRI}Experience")
                 .addToLore(
                     "${CC.GRAY}Level: ${CC.WHITE + level}",
@@ -87,7 +88,7 @@ class InspectionMenu(val target: Player) : Menu() {
 
     inner class HealthButton(private val health: Double, private val maxHealth: Double) : Button() {
         override fun getButtonItem(player: Player): ItemStack {
-            return ItemBuilder(Material.INK_SACK)
+            return ItemBuilder(XMaterial.RED_DYE)
                 .data(1)
                 .name("${CC.PRI}Health")
                 .addToLore(
@@ -98,7 +99,7 @@ class InspectionMenu(val target: Player) : Menu() {
 
     inner class LocationButton(private val location: Location) : Button() {
         override fun getButtonItem(player: Player): ItemStack {
-            return ItemBuilder(Material.PAPER)
+            return ItemBuilder(XMaterial.PAPER)
                 .name("${CC.PRI}Location")
                 .addToLore(
                     "${CC.GRAY}World: ${CC.WHITE + location.world.name}",

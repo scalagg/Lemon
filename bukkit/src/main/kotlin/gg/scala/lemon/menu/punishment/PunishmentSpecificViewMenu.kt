@@ -37,7 +37,7 @@ class PunishmentSpecificViewMenu(
         return hashMapOf<Int, Button>().also {
             val username = CubedCacheUtil.fetchName(punishment.target)
 
-            it[2] = ItemBuilder(Material.SKULL_ITEM)
+            it[2] = ItemBuilder(XMaterial.SKELETON_SKULL)
                 .name("${CC.GREEN}$username's Accounts")
                 .addToLore(
                     "${CC.GRAY}View all accounts in",

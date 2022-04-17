@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.extension.network
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.menu.staff.StaffListMenu
 import gg.scala.lemon.player.FundamentalLemonPlayer
@@ -85,7 +86,7 @@ class NetworkOnlineStaffMenu : PaginatedMenu()
             description.add("")
             description.add("${CC.YELLOW}Click to jump.")
 
-            return ItemBuilder(Material.SKULL_ITEM)
+            return ItemBuilder(XMaterial.SKELETON_SKULL)
                 .data(3)
                 .name(cached.currentDisplayName)
                 .owner(cached.username)

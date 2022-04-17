@@ -1,5 +1,6 @@
 package gg.scala.lemon.menu.frozen
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import net.evilblock.cubed.menu.Button
@@ -43,12 +44,12 @@ class PlayerFrozenMenu : Menu("You're frozen!")
                 description.add("${CC.WHITE}${LemonConstants.DISCORD_LINK}")
             }
 
-            it[4] = ItemBuilder(Material.INK_SACK)
+            it[4] = ItemBuilder(XMaterial.RED_DYE)
                 .name("${CC.D_RED}You're frozen!")
                 .setLore(description)
                 .data(1).toButton()
 
-            it[8] = ItemBuilder(Material.NETHER_STAR)
+            it[8] = ItemBuilder(XMaterial.NETHER_STAR)
                 .name("${CC.D_RED}Disconnect")
                 .addToLore(
                     "${CC.GRAY}You may get banned by",
