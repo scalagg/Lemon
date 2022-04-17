@@ -335,9 +335,7 @@ class Lemon : ExtendedScalaPlugin()
 
             if (settings.tablistSortingEnabled)
             {
-                flavor {
-                    inject(ScalaSpigotSorterExtension)
-                }
+                ScalaSpigotSorterExtension.configure()
 
                 logger.info("Enabled ScalaSpigot Sorter implementation.")
             }

@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerJoinEvent
  * @author GrowlyX
  * @since 11/19/2021
  */
-@Service(name = "ssp-sorter")
 object ScalaSpigotSorterExtension
 {
     private val comparator: Comparator<EntityPlayer> =
@@ -23,7 +22,6 @@ object ScalaSpigotSorterExtension
             QuickAccess.realRank(Bukkit.getPlayer(it.uniqueID)).weight
         }
 
-    @Configure
     fun configure()
     {
         listOf(
