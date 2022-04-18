@@ -1,6 +1,5 @@
 package gg.scala.lemon.processor
 
-import gg.scala.commons.annotations.inject.AutoBind
 import gg.scala.lemon.LemonConstants
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.Coloured
@@ -13,43 +12,43 @@ class LanguageConfigProcessor
 {
     @Coloured
     val tempBanMessage =
-        "${CC.RED}You are banned from ${LemonConstants.SERVER_NAME} for %s.\n" +
+        "${CC.RED}You are banned from Scala for %s.\n" +
                 "${CC.RED}You were banned for: ${CC.GRAY}%s (#%s)\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban at ${LemonConstants.STORE_LINK}${CC.GOLD}."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
+                "${CC.GOLD}You may also purchase an unban at store.scala.gg${CC.GOLD}."
 
     @Coloured
     val permBanMessage =
-        "${CC.RED}You are permanently banned from ${LemonConstants.SERVER_NAME}\n" +
+        "${CC.RED}You are permanently banned from Scala\n" +
                 "${CC.RED}You were banned for: ${CC.GRAY}%s (#%s)\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban at ${LemonConstants.STORE_LINK}${CC.GOLD}."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
+                "${CC.GOLD}You may also purchase an unban at store.scala.gg${CC.GOLD}."
 
     @Coloured
     val blacklistMessage =
-        "${CC.RED}You are blacklisted from ${LemonConstants.SERVER_NAME}\n" +
+        "${CC.RED}You are blacklisted from Scala\n" +
                 "${CC.GRAY}You may not appeal this type of punishment.\n" +
                 "${CC.GOLD}You may also not purchase an unban for this type of ban."
 
     @Coloured
     val banRelationTemporaryMessage =
-        "${CC.RED}Your IP is temporarily banned from ${LemonConstants.SERVER_NAME}\n" +
+        "${CC.RED}Your IP is temporarily banned from Scala\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban for %s${CC.GOLD} at ${LemonConstants.STORE_LINK}."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
+                "${CC.GOLD}You may also purchase an unban for %s${CC.GOLD} at store.scala.gg."
 
     @Coloured
     val banRelationPermanentMessage =
-        "${CC.RED}Your IP is permanently banned from ${LemonConstants.SERVER_NAME}\n" +
+        "${CC.RED}Your IP is permanently banned from Scala\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}.\n" +
-                "${CC.GOLD}You may also purchase an unban for %s${CC.GOLD} at ${LemonConstants.STORE_LINK}."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
+                "${CC.GOLD}You may also purchase an unban for %s${CC.GOLD} at store.scala.gg."
 
     @Coloured
     val blacklistRelationMessage =
-        "${CC.RED}Your IP is permanently blacklisted from ${LemonConstants.SERVER_NAME}\n" +
+        "${CC.RED}Your IP is permanently blacklisted from Scala\n" +
                 "${CC.RED}Your blacklist is in relation to the account: ${CC.GRAY}%s\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at ${LemonConstants.DISCORD_LINK}."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg."
 
     @Coloured
     var frozenPlayerHasTimeMessage = """
