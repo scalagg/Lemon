@@ -534,20 +534,27 @@ class LemonPlayer(
         }
     }
 
-    private fun handlePermissionApplication(grants: List<Grant>, instant: Boolean = false)
+    private fun handlePermissionApplication(
+        grants: List<Grant>, instant: Boolean = false
+    )
     {
         val handleAddPermission: (String, Player) -> Unit = { it, player ->
             if (!it.startsWith("%"))
             {
-                attachment!!.setPermission(it, !it.startsWith("*"))
+                this.attachment!!
+                    .setPermission(
+                        it, !it.startsWith("*")
+                    )
 
                 VaultUtil.usePermissions { permission ->
                     permission.playerAdd(player, it)
                 }
             }
         }
+
         val handlePlayerSetup: (Player) -> Unit = {
-            val permissionOnlyGrants = GrantRecalculationUtil.getPermissionGrants(grants)
+            val permissionOnlyGrants = GrantRecalculationUtil
+                .getPermissionGrants(grants)
 
             setupPermissionAttachment(it)
 
@@ -557,26 +564,26 @@ class LemonPlayer(
                 }
             }
 
-            permissions.forEach { permission ->
+            this.permissions.forEach { permission ->
                 handleAddPermission.invoke(permission, it)
             }
 
             it.recalculatePermissions()
 
             QuickAccess.reloadPlayer(
-                uniqueId, recalculateGrants = false
+                this.uniqueId, recalculateGrants = false
             )
         }
 
         if (instant)
         {
-            if (bukkitPlayer != null)
+            if (this.bukkitPlayer != null)
             {
-                handlePlayerSetup.invoke(bukkitPlayer!!)
+                handlePlayerSetup.invoke(this.bukkitPlayer!!)
             }
         } else
         {
-            handleOnConnection.add {
+            this.handleOnConnection.add {
                 handlePlayerSetup.invoke(it)
             }
         }

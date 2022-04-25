@@ -35,7 +35,9 @@ class Grant(
     var removedOn: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
-    var isRemoved = false
+
+    val isRemoved: Boolean
+        get() = removedAt != -1L
 
     val isActive: Boolean
         get() = !isRemoved && !hasExpired

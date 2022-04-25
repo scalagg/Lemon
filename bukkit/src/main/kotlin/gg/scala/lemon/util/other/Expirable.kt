@@ -13,8 +13,8 @@ open class Expirable(
     val addedAt: Long,
     val duration: Long
 ) {
-
-    var expireDate: Date = Date(addedAt + duration)
+    @Transient
+    var expireDate = Date(addedAt + duration)
 
     val isPermanent: Boolean
         get() = duration == Long.MAX_VALUE

@@ -27,17 +27,16 @@ object ScalaValidateUtil
     {
         return try
         {
-            Scanner(
-                URL(
-                    "${
-                        if (https) "https" else "http"
-                    }://${
-                        supplier
-                    }:21/routing/minecraft/$id"
-                ).openStream()
-            ).useDelimiter("\\A").use { scanner ->
+            URL(
+                "${
+                    if (https) "https" else "http"
+                }://${
+                    supplier
+                }:21/routing/minecraft/$id"
+            ).openStream().reader().readLines().first().let {
                 GSON.fromJson(
-                    scanner.next(), ScalaValidateData::class.java
+                    it,
+                    ScalaValidateData::class.java
                 )
             }
         } catch (exception: Exception)

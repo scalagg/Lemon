@@ -156,7 +156,7 @@ class Lemon : ExtendedScalaPlugin()
     fun containerEnable()
     {
         instance = this
-        logger.info("Attempting to load Lemon using provider password...")
+        logger.info("Attempting to load Lemon using provided password...")
 
         validatePlatformInformation()
         runAfterDataValidation()
