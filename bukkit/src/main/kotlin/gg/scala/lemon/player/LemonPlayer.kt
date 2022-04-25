@@ -242,8 +242,6 @@ class LemonPlayer(
         connecting: Boolean = false
     ): CompletableFuture<Void>
     {
-        val current = System.currentTimeMillis()
-
         return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
             if (grants == null || grants.isEmpty())
             {
@@ -316,11 +314,6 @@ class LemonPlayer(
 
             if (shouldRecalculatePermissions)
                 handlePermissionApplication(grants, shouldCalculateNow)
-
-            if (connecting && LemonConstants.DEBUG)
-            {
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate grants. ($name)")
-            }
         }
     }
 

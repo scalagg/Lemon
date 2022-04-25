@@ -3,10 +3,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.6.20"
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.21'
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.20"
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.6.21'
 
     implementation project(":common")
 

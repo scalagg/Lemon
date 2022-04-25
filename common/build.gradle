@@ -1,4 +1,4 @@
 dependencies {
-    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.20'
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.21'
     compileOnly 'com.google.code.gson:gson:2.9.0'
 }
