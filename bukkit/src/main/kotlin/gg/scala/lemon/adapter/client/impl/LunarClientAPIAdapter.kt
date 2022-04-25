@@ -3,6 +3,12 @@ package gg.scala.lemon.adapter.client.impl
 import com.lunarclient.bukkitapi.LunarClientAPI
 import com.lunarclient.bukkitapi.nethandler.client.obj.ServerRule
 import com.lunarclient.bukkitapi.serverrule.LunarClientAPIServerRule
+import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.plugin.SoftDependency
+import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import me.lucko.helper.Events
@@ -14,15 +20,20 @@ import org.bukkit.event.player.PlayerJoinEvent
  * @author GrowlyX
  * @since 9/27/2021
  */
-@RequiredPlugin("LunarClient-API")
+@Service
+@SoftDependency("LunarClient-API")
 class LunarClientAPIAdapter : PlayerClientAdapter
 {
+    @Inject
+    lateinit var plugin: Lemon
+
     override fun getClientName() = "Lunar Client"
 
     /**
      * Automatically enable legacy combat & competitive mode.
      */
-    init
+    @Configure
+    fun configure()
     {
         LunarClientAPIServerRule.setRule(
             ServerRule.LEGACY_COMBAT, true
@@ -37,6 +48,8 @@ class LunarClientAPIAdapter : PlayerClientAdapter
                 LunarClientAPIServerRule
                     .sendServerRule(event.player)
             }
+
+        this.plugin.clientAdapters.add(this)
     }
 
     override fun shouldHandle(player: Player): Boolean

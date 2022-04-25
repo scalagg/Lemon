@@ -14,8 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin
  * @since 1/4/2022
  */
 class AdditionalFlavorCommands(
-    private val flavor: Flavor,
-    private val plugin: JavaPlugin
+    private val flavor: Flavor
 ) : ScalaCommand()
 {
     @CommandAlias("lemon-services")

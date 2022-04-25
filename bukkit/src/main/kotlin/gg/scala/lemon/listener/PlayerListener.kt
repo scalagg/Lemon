@@ -59,7 +59,9 @@ object PlayerListener : Listener
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true
     )
-    fun onPlayerPreLoginHigh(event: AsyncPlayerPreLoginEvent)
+    fun onPlayerPreLoginHigh(
+        event: AsyncPlayerPreLoginEvent
+    )
     {
         val lemonPlayer = this.playerController
             .loadOptimalCopy(event.uniqueId) {

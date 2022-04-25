@@ -255,7 +255,7 @@ class Lemon : ExtendedScalaPlugin()
         commandManager.registerCommand(EntitySuperBoatCommand)
 
         commandManager.registerCommand(
-            AdditionalFlavorCommands(flavor(), this)
+            AdditionalFlavorCommands(flavor())
         )
     }
 
@@ -336,42 +336,8 @@ class Lemon : ExtendedScalaPlugin()
             }
         }
 
-        // filter through the different client implementations
-        // & register the ones which have the plugins enabled
-        findClassesWithinPackageWithPluginEnabled(
-            "gg.scala.lemon.adapter.client.impl"
-        ).forEach {
-            try
-            {
-                val clientAdapter = it.newInstance() as PlayerClientAdapter
-                clientAdapters.add(clientAdapter)
-
-                logger.info(
-                    "${clientAdapter.getClientName()} implementation has been enabled."
-                )
-            } catch (ignored: Exception)
-            {
-                logger.info("Failed to instantiate PlayerClientAdapter: ${it.simpleName}.kt")
-            }
-        }
-
-        if (server.pluginManager.getPlugin("ProtocolLib") != null)
-        {
-            flavor {
-                inject(ProtocolLibHook)
-            }
-
-            logger.info("Now handling tab-completion through ProtocolLib.")
-        }
-
-        serverStatisticProvider = DefaultServerStatisticProvider
-
-        if (server.pluginManager.getPlugin("spark") != null)
-        {
-            serverStatisticProvider = SparkServerStatisticProvider()
-
-            logger.info("Now utilizing spark for server statistics.")
-        }
+        this.serverStatisticProvider =
+            DefaultServerStatisticProvider
 
         logger.info(
             "Finished player QOL initialization in ${

@@ -675,10 +675,10 @@ class LemonPlayer(
             {
                 "in relation to a ${
                     punishment.category.inf
-                }"
+                }."
             } else
             {
-                punishment.category.inf
+                "${punishment.category.inf}."
             }
 
             lambda.invoke(extension)
