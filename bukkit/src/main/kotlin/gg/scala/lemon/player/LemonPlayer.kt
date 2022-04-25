@@ -26,6 +26,7 @@ import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.lemon.util.VaultUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.controller.annotations.Timestamp
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Schedulers
@@ -51,6 +52,10 @@ class LemonPlayer(
     var ipAddress: String?
 ) : Savable, IDataStoreObject
 {
+    @JvmField
+    @Timestamp
+    var timestamp = 0L
+
     override val identifier: UUID
         get() = uniqueId
 

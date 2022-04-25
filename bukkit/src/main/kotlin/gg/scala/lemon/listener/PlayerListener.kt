@@ -2,9 +2,6 @@ package gg.scala.lemon.listener
 
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
-import gg.scala.flavor.service.Configure
-import gg.scala.flavor.service.Service
-import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.channel.ChatChannelService
@@ -14,8 +11,8 @@ import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.cooldown.impl.SlowChatCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.ChatHandler
-import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.menu.frozen.PlayerFrozenMenu
 import gg.scala.lemon.player.LemonPlayer
@@ -27,12 +24,10 @@ import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.store.controller.DataStoreObjectControllerCache
-import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.ExperienceOrb
@@ -66,45 +61,30 @@ object PlayerListener : Listener
     )
     fun onPlayerPreLoginHigh(event: AsyncPlayerPreLoginEvent)
     {
-        var created = false
+        val lemonPlayer = this.playerController
+            .loadOptimalCopy(event.uniqueId) {
+                LemonPlayer(
+                    uniqueId = event.uniqueId,
+                    name = event.name,
+                    ipAddress = event.address.hostAddress ?: ""
+                )
+            }.join()
 
-        val start = System.nanoTime()
-        val startMilli = System.currentTimeMillis()
-
-        val lemonPlayer = playerController.loadAndCache(event.uniqueId, {
-            created = true
-
-            return@loadAndCache LemonPlayer(
-                event.uniqueId, event.name,
-                event.address.hostAddress ?: ""
-            )
-        }, DataStoreStorageType.MONGO).join()
-
-        if (created)
+        // We're assuming the data object has
+        // never been saved as the timestamp is 0L.
+        if (lemonPlayer.timestamp == 0L)
         {
             lemonPlayer.handleIfFirstCreated()
-        } else
-        {
-            lemonPlayer.name = event.name
-
-            if (!lemonPlayer.savePreviousIpAddressAsCurrent)
-            {
-                lemonPlayer.ipAddress = event.address.hostAddress ?: ""
-            }
-
-            lemonPlayer.handlePostLoad()
+            return
         }
 
-        if (LemonConstants.DEBUG)
-        {
-            plugin.logger.info("It took ${
-                System.nanoTime() - start
-            }ns, ${
-                System.currentTimeMillis() - startMilli
-            }ms to load resources for ${
-                lemonPlayer.name
-            }")
-        }
+        lemonPlayer.name = event.name
+
+        if (!lemonPlayer.savePreviousIpAddressAsCurrent)
+            lemonPlayer.ipAddress =
+                event.address.hostAddress ?: ""
+
+        lemonPlayer.handlePostLoad()
     }
 
     @EventHandler
@@ -112,9 +92,6 @@ object PlayerListener : Listener
     {
         PlayerFrozenMenu().openMenu(event.player)
     }
-
-    private val serializer =
-        LegacyComponentSerializer.legacySection()
 
     @EventHandler(
         priority = EventPriority.MONITOR,
