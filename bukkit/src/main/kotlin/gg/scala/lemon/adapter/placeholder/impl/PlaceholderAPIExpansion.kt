@@ -31,7 +31,9 @@ class PlaceholderAPIExpansion : PlaceholderExpansion(), PlaceholderAdapter
     override fun getVersion(): String =
         Lemon.instance.description.version
 
-    override fun onPlaceholderRequest(player: Player, params: String): String?
+    override fun onPlaceholderRequest(
+        player: Player, params: String
+    ): String?
     {
         val lemonPlayer = PlayerHandler.findPlayer(player)
             .orElse(null) ?: return null

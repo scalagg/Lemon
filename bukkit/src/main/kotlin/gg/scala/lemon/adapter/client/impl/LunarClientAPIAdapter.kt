@@ -3,13 +3,11 @@ package gg.scala.lemon.adapter.client.impl
 import com.lunarclient.bukkitapi.LunarClientAPI
 import com.lunarclient.bukkitapi.nethandler.client.obj.ServerRule
 import com.lunarclient.bukkitapi.serverrule.LunarClientAPIServerRule
-import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.adapter.annotation.RequiredPlugin
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import me.lucko.helper.Events
 import org.bukkit.Bukkit

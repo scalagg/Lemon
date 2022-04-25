@@ -346,23 +346,6 @@ class Lemon : ExtendedScalaPlugin()
         )
     }
 
-    private fun findClassesWithinPackageWithPluginEnabled(`package`: String): List<Class<*>>
-    {
-        return try
-        {
-            ClassUtils.getClassesInPackage(
-                this, `package`
-            ).filter {
-                server.pluginManager.getPlugin(
-                    it.getAnnotation(RequiredPlugin::class.java).value
-                ) != null
-            }
-        } catch (ignored: Exception)
-        {
-            emptyList()
-        }
-    }
-
     private fun toCCColorFormat(string: String): String
     {
         return ChatColor.valueOf(string).toString()

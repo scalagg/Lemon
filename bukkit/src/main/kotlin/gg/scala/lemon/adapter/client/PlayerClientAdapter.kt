@@ -6,8 +6,8 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 9/27/2021
  */
-interface PlayerClientAdapter {
-
+interface PlayerClientAdapter
+{
     fun getClientName(): String
 
     fun shouldHandle(player: Player): Boolean
@@ -19,5 +19,4 @@ interface PlayerClientAdapter {
     fun resetNametag(player: Player)
 
     fun sendTitle(player: Player, title: String, subtitle: String)
-
 }
