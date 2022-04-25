@@ -29,7 +29,9 @@ class Punishment(
     var removedOn: String? = null
     var removedBy: UUID? = null
     var removedAt: Long = -1
-    var isRemoved: Boolean = false
+
+    val isRemoved: Boolean
+        get() = removedAt != -1L
 
     val isActive: Boolean
         get() = !isRemoved && !hasExpired

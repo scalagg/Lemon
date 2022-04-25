@@ -12,7 +12,8 @@ import java.util.*
 open class Expirable(
     val addedAt: Long,
     val duration: Long
-) {
+)
+{
     @Transient
     var expireDate = Date(addedAt + duration)
 
@@ -20,25 +21,31 @@ open class Expirable(
         get() = duration == Long.MAX_VALUE
 
     val expirationString: String
-        get() = if (isPermanent) {
+        get() = if (isPermanent)
+        {
             "Never"
-        } else {
+        } else
+        {
             TimeUtil.formatIntoCalendarString(expireDate)
         }
 
     val durationString: String
-        get() = if (isPermanent) {
+        get() = if (isPermanent)
+        {
             "Permanent"
-        } else {
+        } else
+        {
             DurationFormatUtils.formatDurationWords(
                 duration, true, true
             )
         }
 
     val fancyDurationString: String
-        get() = if (isPermanent) {
+        get() = if (isPermanent)
+        {
             "${CC.RED}not${CC.SEC} expire"
-        } else {
+        } else
+        {
             "expire in ${CC.PRI}${
                 DurationFormatUtils.formatDurationWords(
                     duration, true, true
@@ -47,9 +54,11 @@ open class Expirable(
         }
 
     val fancyDurationStringRaw: String
-        get() = if (isPermanent) {
+        get() = if (isPermanent)
+        {
             "not expire"
-        } else {
+        } else
+        {
             "expire in ${
                 DurationFormatUtils.formatDurationWords(
                     duration, true, true
@@ -58,9 +67,11 @@ open class Expirable(
         }
 
     val fancyDurationFromNowStringRaw: String
-        get() = if (isPermanent) {
+        get() = if (isPermanent)
+        {
             "not expire"
-        } else {
+        } else
+        {
             "expire in ${
                 DurationFormatUtils.formatDurationWords(
                     expireDate.time - System.currentTimeMillis(), true, true
@@ -69,9 +80,11 @@ open class Expirable(
         }
 
     val durationFromNowStringRaw: String
-        get() = if (isPermanent) {
+        get() = if (isPermanent)
+        {
             "not expire"
-        } else {
+        } else
+        {
             DurationFormatUtils.formatDurationWords(
                 expireDate.time - System.currentTimeMillis(), true, true
             )
