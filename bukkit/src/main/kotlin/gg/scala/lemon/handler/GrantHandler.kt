@@ -87,7 +87,6 @@ object GrantHandler
             grants.forEach {
                 if (!it.isRemoved)
                 {
-                    it.isRemoved = true
                     it.removedBy = senderUuid(sender)
                     it.removedAt = System.currentTimeMillis()
                     it.removedOn = Lemon.instance.settings.id

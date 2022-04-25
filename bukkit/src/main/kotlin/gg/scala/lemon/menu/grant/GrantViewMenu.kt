@@ -214,7 +214,6 @@ class GrantViewMenu(
                         ), true
                     ) {
                         if (it) {
-                            grant.isRemoved = true
                             grant.removedBy = player.uniqueId
                             grant.removedAt = System.currentTimeMillis()
                             grant.removedOn = Lemon.instance.settings.id

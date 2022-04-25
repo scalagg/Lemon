@@ -318,7 +318,6 @@ object QuickAccess
         remover: UUID? = null
     )
     {
-        punishment.isRemoved = true
         punishment.removedAt = System.currentTimeMillis()
         punishment.removedOn = Lemon.instance.settings.id
         punishment.removedBy = remover
@@ -337,7 +336,6 @@ object QuickAccess
     {
         return if (!punishment.isRemoved && punishment.hasExpired && !punishment.category.instant)
         {
-            punishment.isRemoved = true
             punishment.removedAt = System.currentTimeMillis()
             punishment.removedOn = Lemon.instance.settings.id
             punishment.removedBy = remover
