@@ -41,13 +41,16 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             JsonPrimitive(player.timestamp.toString())
         )
 
-        jsonObject.add(
-            "ipAddress",
-            JsonPrimitive(
-                if (player.persistIpAddress)
-                    player.previousIpAddress else player.ipAddress
+        val ipAddress = if (player.persistIpAddress)
+            player.previousIpAddress else player.ipAddress
+
+        if (ipAddress != null)
+        {
+            jsonObject.add(
+                "ipAddress",
+                JsonPrimitive(ipAddress)
             )
-        )
+        }
 
         jsonObject.add(
             "ignoring",
@@ -91,11 +94,18 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             )
 
             player.timestamp =
-                jsonObject.get("timestamp")
+                jsonObject
+                    .get("timestamp")
                     .asString.toLong()
 
-            player.previousIpAddress =
-                jsonObject.get("ipAddress").asString
+            val previous = jsonObject
+                .get("ipAddress")
+                ?.asString
+
+            if (previous != null)
+            {
+                player.previousIpAddress = previous
+            }
 
             player.ignoring =
                 Serializers.gson.fromJson(
@@ -106,7 +116,7 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             player.metadata =
                 Serializers.gson.fromJson(
                     jsonObject.get("metadata"),
-                    LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
+                    LemonConstants.STRING_METADATA_MAP_TYPE
                 )
 
             player.pastIpAddresses = Serializers.gson

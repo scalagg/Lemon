@@ -54,6 +54,7 @@ class LemonPlayer(
     var ipAddress: String? = null
 ) : Savable, IDataStoreObject
 {
+    @JvmField
     @Timestamp
     var timestamp = 0L
 
