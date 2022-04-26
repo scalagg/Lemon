@@ -36,7 +36,6 @@ object RainbowNametagHandler : Runnable
         ChatColor.LIGHT_PURPLE
     )
 
-    @JvmStatic
     var currentColor = options.first()
 
     override fun run() {

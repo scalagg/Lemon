@@ -1,5 +1,6 @@
 package gg.scala.lemon.player
 
+import com.google.gson.annotations.Expose
 import com.google.zxing.WriterException
 import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
@@ -43,14 +44,17 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LemonPlayer(
+    @Expose
     var uniqueId: UUID,
+    @Expose
     var name: String,
 
+    @Expose
     @JvmField
-    @Transient
     var ipAddress: String?
 ) : Savable, IDataStoreObject
 {
+    @Expose
     @JvmField
     @Timestamp
     var timestamp = 0L
@@ -58,14 +62,22 @@ class LemonPlayer(
     override val identifier: UUID
         get() = uniqueId
 
+    @Expose
     var previousIpAddress: String? = null
 
+    @Expose
     var pastIpAddresses = mutableMapOf<String, Long>()
+
+    @Expose
     var pastLogins = mutableMapOf<String, Long>()
 
-    val activePunishments = mutableMapOf<PunishmentCategory, Punishment?>()
-    var permissions = listOf<String>()
+    val activePunishments =
+        mutableMapOf<PunishmentCategory, Punishment?>()
 
+    @Expose
+    var assignedPermissions = listOf<String>()
+
+    @Expose
     var ignoring = mutableListOf<UUID>()
 
     val handleOnConnection = arrayListOf<(Player) -> Any>()
@@ -75,12 +87,14 @@ class LemonPlayer(
 
     private var attachment: PermissionAttachment? = null
 
+    @Expose
     var metadata = mutableMapOf<String, Metadata>()
 
     val bukkitPlayer: Player?
         get() = Bukkit.getPlayer(uniqueId)
 
-    var savePreviousIpAddressAsCurrent = false
+    @Expose
+    var persistIpAddress = false
 
     private val classInit = System.currentTimeMillis()
 
@@ -361,7 +375,7 @@ class LemonPlayer(
                 authenticateInternal()
             } else
             {
-                savePreviousIpAddressAsCurrent = true; save()
+                persistIpAddress = true; save()
 
                 Schedulers.sync().callLater({
                     bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate using ${CC.WHITE}/auth <code>${CC.SEC}.")
@@ -561,7 +575,7 @@ class LemonPlayer(
                 }
             }
 
-            this.permissions.forEach { permission ->
+            this.assignedPermissions.forEach { permission ->
                 handleAddPermission.invoke(permission, it)
             }
 
@@ -849,6 +863,11 @@ class LemonPlayer(
         updateOrAddMetadata(
             "first-connection",
             Metadata(System.currentTimeMillis())
+        )
+
+        updateOrAddMetadata(
+            "first-connection-server",
+            Metadata(Lemon.instance.settings.id)
         )
 
         finalizeMetaData()

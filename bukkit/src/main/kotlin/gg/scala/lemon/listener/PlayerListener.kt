@@ -3,7 +3,6 @@ package gg.scala.lemon.listener
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.ChatCooldown
@@ -82,7 +81,7 @@ object PlayerListener : Listener
 
         lemonPlayer.name = event.name
 
-        if (!lemonPlayer.savePreviousIpAddressAsCurrent)
+        if (!lemonPlayer.persistIpAddress)
             lemonPlayer.ipAddress =
                 event.address.hostAddress ?: ""
 

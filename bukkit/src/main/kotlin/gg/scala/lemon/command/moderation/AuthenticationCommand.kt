@@ -7,7 +7,6 @@ import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.metadata.Metadata
-import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.util.CC
@@ -58,7 +57,7 @@ object AuthenticationCommand : ScalaCommand()
             FixedMetadataValue(Lemon.instance, true)
         )
 
-        lemonPlayer.savePreviousIpAddressAsCurrent = false
+        lemonPlayer.persistIpAddress = false
 
         lemonPlayer.removeMap()
         lemonPlayer.authenticateInternal()
