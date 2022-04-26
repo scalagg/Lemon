@@ -102,8 +102,9 @@ class LemonPlayer(
     @Expose
     var persistIpAddress = false
 
-    @delegate:Transient
-    private var classInit by Delegates.notNull<Long>()
+    @Transient
+    private val classInit = System
+        .currentTimeMillis()
 
     init
     {
@@ -805,8 +806,6 @@ class LemonPlayer(
 
     fun handlePostLoad()
     {
-        classInit = System.currentTimeMillis()
-
         recalculateGrants(
             connecting = true,
             forceRecalculatePermissions = true
