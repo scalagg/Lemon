@@ -36,7 +36,7 @@ object AltsCommand : ScalaCommand()
         return PlayerHandler.fetchAlternateAccountsFor(target.uniqueId).thenAcceptAsync {
             if (it.isEmpty())
             {
-                throw ConditionFailedException("${target.getOriginalColoredName()}${CC.RED} does not have any alts.")
+                throw ConditionFailedException("No alts were found for ${target.getOriginalColoredName()}${CC.RED}.")
             }
 
             val finalMessage = FancyMessage()
