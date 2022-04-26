@@ -1,18 +1,11 @@
-package gg.scala.lemon.adapter
+package gg.scala.lemon.adapter.feature
 
 import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.events.ListenerPriority
-import com.comphenix.protocol.events.PacketAdapter
-import com.comphenix.protocol.events.PacketEvent
 import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.listener.PlayerListener
 import me.lucko.helper.protocol.Protocol
-import net.evilblock.cubed.util.CC
 
 /**
  * @author GrowlyX
@@ -20,7 +13,7 @@ import net.evilblock.cubed.util.CC
  */
 @Service
 @SoftDependency("ProtocolLib")
-object ProtocolLibHook
+class ProtocolLibFeature
 {
     @Configure
     fun configure()

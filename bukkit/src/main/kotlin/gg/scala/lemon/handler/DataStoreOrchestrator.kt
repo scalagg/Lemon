@@ -38,32 +38,6 @@ object DataStoreOrchestrator
             DataStoreObjectControllerCache
                 .create(it)
         }
-
-        val expose = GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
-            .setLongSerializationPolicy(
-                LongSerializationPolicy.STRING
-            )
-            .registerTypeAdapter(
-                UUID::class.java,
-                UUIDAdapter
-            )
-            .create()
-
-        DataStoreObjectControllerCache
-            .findNotNull<LemonPlayer>()
-            .useSerializer(
-                object : DataStoreSerializer
-                {
-                    override fun <T : Any> deserialize(
-                        `class`: KClass<T>, input: String
-                    ) = expose.fromJson(input, `class`.java)
-
-                    override fun serialize(
-                        `object`: Any
-                    ) = expose.toJson(`object`)
-                }
-            )
     }
 
     @Close

@@ -1,6 +1,5 @@
 package gg.scala.lemon.player
 
-import com.google.gson.annotations.Expose
 import com.google.zxing.WriterException
 import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
@@ -45,71 +44,51 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.logging.Level
 
 class LemonPlayer(
-    @Expose
     var uniqueId: UUID,
-    @Expose
     var name: String,
 
-    @Expose
     @JvmField
-    var ipAddress: String?
+    var ipAddress: String? = null
 ) : Savable, IDataStoreObject
 {
-    @Expose
-    @JvmField
     @Timestamp
     var timestamp = 0L
 
     override val identifier: UUID
         get() = uniqueId
 
-    @Expose
     var previousIpAddress: String? = null
 
-    @Expose
     var pastIpAddresses = mutableMapOf<String, Long>()
-
-    @Expose
     var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments =
         mutableMapOf<PunishmentCategory, Punishment?>()
 
-    @Expose
     var assignedPermissions = listOf<String>()
-
-    @Expose
     var ignoring = mutableListOf<UUID>()
 
-    @Transient
     private val handleOnConnection =
         mutableListOf<(Player) -> Unit>()
 
-    @Transient
     private val lazyHandleOnConnection =
         mutableListOf<(Player) -> Unit>()
 
-    @JvmField
-    @Transient
     var activeGrant: Grant? = null
-
-    @Transient
     private var attachment: PermissionAttachment? = null
 
-    @Expose
     var metadata = mutableMapOf<String, Metadata>()
+
+    var persistIpAddress = false
+
+    private val classInit = System
+        .currentTimeMillis()
 
     val bukkitPlayer: Player?
         get() = Bukkit.getPlayer(uniqueId)
-
-    @Expose
-    var persistIpAddress = false
-
-    @Transient
-    private val classInit = System
-        .currentTimeMillis()
 
     init
     {
@@ -360,7 +339,9 @@ class LemonPlayer(
             if (shouldRecalculatePermissions)
                 handlePermissionApplication(grants, shouldCalculateNow)
         }.exceptionally {
-            it.printStackTrace()
+            Lemon.instance.logger.log(
+                Level.WARNING, "Grant update", it
+            )
             return@exceptionally null
         }
     }
@@ -644,7 +625,10 @@ class LemonPlayer(
     private fun setupAutomaticGrant(grants: List<Grant>?)
     {
         if (
-            grants != null && grants.firstOrNull { it.addedReason == "Automatic (Lemon)" } != null
+            grants != null &&
+            grants.any {
+                it.addedReason == "Automatic (Lemon)"
+            }
         )
         {
             return

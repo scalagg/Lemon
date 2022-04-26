@@ -1,5 +1,6 @@
 package gg.scala.lemon
 
+import com.google.gson.LongSerializationPolicy
 import gg.scala.aware.AwareBuilder
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
@@ -10,6 +11,7 @@ import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.config.annotations.ContainerConfig
+import gg.scala.lemon.adapter.LemonPlayerTypeAdapter
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
@@ -30,6 +32,7 @@ import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.network.SyncLemonInstanceData
 import gg.scala.lemon.network.SyncLemonNetwork
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.entity.superboat.EntitySuperBoatCommand
@@ -67,6 +70,7 @@ import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
+import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.EventUtils
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
@@ -183,12 +187,13 @@ class Lemon : ExtendedScalaPlugin()
 
     private fun runAfterDataValidation()
     {
-//        create {
-//            registerTypeAdapter(
-//                LemonPlayer::class.java,
-//                LemonPlayerAdapter
-//            )
-//        }
+        create {
+            setLongSerializationPolicy(LongSerializationPolicy.STRING)
+            registerTypeAdapter(
+                LemonPlayer::class.java,
+                LemonPlayerTypeAdapter
+            )
+        }
 
         this.configureHelperCommunications()
 
