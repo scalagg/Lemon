@@ -43,7 +43,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LemonPlayer(
-    @Transient
     var uniqueId: UUID,
     var name: String,
 
