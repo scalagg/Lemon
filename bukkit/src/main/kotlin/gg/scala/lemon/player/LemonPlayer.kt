@@ -42,6 +42,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.properties.Delegates
 
 class LemonPlayer(
     @Expose
@@ -80,11 +81,16 @@ class LemonPlayer(
     @Expose
     var ignoring = mutableListOf<UUID>()
 
-    val handleOnConnection = arrayListOf<(Player) -> Any>()
-    val lateHandleOnConnection = arrayListOf<(Player) -> Any>()
+    @Transient
+    val handleOnConnection = mutableListOf<(Player) -> Any>()
 
+    @Transient
+    val lateHandleOnConnection = mutableListOf<(Player) -> Any>()
+
+    @Transient
     var activeGrant: Grant? = null
 
+    @Transient
     private var attachment: PermissionAttachment? = null
 
     @Expose
@@ -96,7 +102,7 @@ class LemonPlayer(
     @Expose
     var persistIpAddress = false
 
-    private val classInit = System.currentTimeMillis()
+    private var classInit by Delegates.notNull<Long>()
 
     init
     {
@@ -798,6 +804,8 @@ class LemonPlayer(
 
     fun handlePostLoad()
     {
+        classInit = System.currentTimeMillis()
+
         recalculateGrants(
             connecting = true,
             forceRecalculatePermissions = true
