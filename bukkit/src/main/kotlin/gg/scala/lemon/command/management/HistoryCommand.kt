@@ -125,15 +125,18 @@ object HistoryCommand : ScalaCommand()
                 return@thenAccept
             }
 
-            handleStaffHistory(uuid, it, type, player)
+            handleStaffHistory(uuid, it, type, player, colored)
         }
     }
 
-    private fun handleStaffHistory(uuid: UUID, it: List<Punishment>, type: HistoryViewType, player: Player)
+    private fun handleStaffHistory(
+        uuid: UUID, it: List<Punishment>,
+        type: HistoryViewType, player: Player, colored: String
+    )
     {
         PunishmentHandler.fetchPunishmentsRemovedBy(uuid).thenAccept { removed ->
             PunishmentViewMenu(
-                uuid, type, it, removed
+                uuid, type, it, removed, colored
             ).openMenu(player)
         }
     }

@@ -35,7 +35,8 @@ import java.util.*
 class GrantViewMenu(
     private val uuid: UUID,
     private val viewType: HistoryViewType,
-    private val grants: List<Grant>
+    private val grants: List<Grant>,
+    private val colored: String
 ) : PaginatedMenu() {
 
     private val viewingFor = CubedCacheUtil.fetchName(uuid)
@@ -51,7 +52,7 @@ class GrantViewMenu(
     override fun size(buttons: Map<Int, Button>) = 36
 
     override fun getPrePaginatedTitle(player: Player): String {
-        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} $viewingFor"
+        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} $colored"
 
         return when (viewType) {
             HistoryViewType.STAFF_HIST -> "Staff $base"

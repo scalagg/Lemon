@@ -104,7 +104,7 @@ object GrantsCommand : ScalaCommand()
                 }
 
                 GrantViewMenu(
-                    uuid, type, grants
+                    uuid, type, grants, colored
                 ).openMenu(player)
             } catch (e: Exception)
             {

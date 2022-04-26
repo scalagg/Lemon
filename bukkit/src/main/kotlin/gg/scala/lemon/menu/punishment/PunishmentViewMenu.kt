@@ -25,10 +25,10 @@ class PunishmentViewMenu(
     private val uuid: UUID,
     private val viewType: HistoryViewType,
     private val punishments: List<Punishment>,
-    private val removed: List<Punishment>
+    private val removed: List<Punishment>,
+    private val colored: String
 ) : Menu()
 {
-
     init
     {
         placeholder = true
@@ -38,7 +38,7 @@ class PunishmentViewMenu(
 
     override fun getTitle(player: Player): String
     {
-        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} ${coloredName(name)}"
+        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} $colored"
 
         return when (viewType)
         {
