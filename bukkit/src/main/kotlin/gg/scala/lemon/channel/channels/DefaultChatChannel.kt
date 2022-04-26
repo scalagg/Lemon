@@ -6,6 +6,7 @@ import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color

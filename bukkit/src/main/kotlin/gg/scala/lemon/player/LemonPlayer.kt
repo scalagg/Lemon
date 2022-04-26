@@ -102,6 +102,7 @@ class LemonPlayer(
     @Expose
     var persistIpAddress = false
 
+    @delegate:Transient
     private var classInit by Delegates.notNull<Long>()
 
     init
