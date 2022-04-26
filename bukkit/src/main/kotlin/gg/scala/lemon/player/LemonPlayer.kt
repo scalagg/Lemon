@@ -7,7 +7,10 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.channel.ChatChannelService
-import gg.scala.lemon.handler.*
+import gg.scala.lemon.handler.GrantHandler
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.PunishmentHandler
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
@@ -42,7 +45,6 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.properties.Delegates
 
 class LemonPlayer(
     @Expose
@@ -82,11 +84,14 @@ class LemonPlayer(
     var ignoring = mutableListOf<UUID>()
 
     @Transient
-    val handleOnConnection = mutableListOf<(Player) -> Any>()
+    private val handleOnConnection =
+        mutableListOf<(Player) -> Unit>()
 
     @Transient
-    val lateHandleOnConnection = mutableListOf<(Player) -> Any>()
+    private val lazyHandleOnConnection =
+        mutableListOf<(Player) -> Unit>()
 
+    @JvmField
     @Transient
     var activeGrant: Grant? = null
 
@@ -112,6 +117,20 @@ class LemonPlayer(
         {
             activePunishments[value] = null
         }
+    }
+
+    fun handleOnConnection(
+        lambda: (Player) -> Unit
+    )
+    {
+        this.handleOnConnection.add(lambda)
+    }
+
+    fun handleOnConnectionLazily(
+        lambda: (Player) -> Unit
+    )
+    {
+        this.lazyHandleOnConnection.add(lambda)
     }
 
     fun sortedPunishments() = activePunishments.entries
@@ -180,7 +199,7 @@ class LemonPlayer(
                         {
                             val message = getPunishmentMessage(punishmentInCategory)
 
-                            lateHandleOnConnection
+                            lazyHandleOnConnection
                                 .add { it.sendMessage(message) }
 
                             return@thenAccept
@@ -340,6 +359,9 @@ class LemonPlayer(
 
             if (shouldRecalculatePermissions)
                 handlePermissionApplication(grants, shouldCalculateNow)
+        }.exceptionally {
+            it.printStackTrace()
+            return@exceptionally null
         }
     }
 
@@ -499,7 +521,7 @@ class LemonPlayer(
 
             if (ipRelPunishment != null)
             {
-                lateHandleOnConnection.add {
+                lazyHandleOnConnection.add {
                     CompletableFuture.supplyAsync {
                         QuickAccess.fetchColoredName(ipRelPunishment.target)
                     }.thenAccept { coloredName ->
@@ -917,6 +939,20 @@ class LemonPlayer(
             {
                 bukkitPlayer?.inventory?.setItem(index, ItemStack(Material.AIR))
             }
+        }
+    }
+
+    fun performConnectionTasks()
+    {
+        handleOnConnection
+            .forEach { it.invoke(bukkitPlayer!!) }
+
+        Tasks.delayed(10L) {
+            val player = bukkitPlayer
+                ?: return@delayed
+
+            lazyHandleOnConnection
+                .forEach { it.invoke(player) }
         }
     }
 }

@@ -15,7 +15,6 @@ class Rank
 
 @JvmOverloads
 constructor(
-    @Transient
     val uuid: UUID = UUID.randomUUID(),
     var name: String
 ) : Savable, IDataStoreObject

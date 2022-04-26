@@ -311,13 +311,7 @@ object PlayerListener : Listener
         updatePlayerRecord()
 
         lemonPlayer.ifPresent { player ->
-            player.handleOnConnection
-                .forEach { it.invoke(event.player) }
-
-            Tasks.delayed(10L) {
-                player.lateHandleOnConnection
-                    .forEach { it.invoke(event.player) }
-            }
+            player.performConnectionTasks()
 
             VisibilityHandler.updateToAll(event.player)
             NametagHandler.reloadPlayer(event.player)
