@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType
 import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import me.lucko.helper.protocol.Protocol
 
@@ -12,6 +13,7 @@ import me.lucko.helper.protocol.Protocol
  * @since 10/27/2021
  */
 @Service
+@IgnoreAutoScan
 @SoftDependency("ProtocolLib")
 class ProtocolLibFeature
 {

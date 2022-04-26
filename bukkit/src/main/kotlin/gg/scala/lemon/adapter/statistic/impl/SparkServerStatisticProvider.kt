@@ -4,6 +4,7 @@ import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import me.lucko.spark.api.SparkProvider
@@ -15,6 +16,7 @@ import java.lang.management.ManagementFactory
  * @since 10/8/2021
  */
 @Service
+@IgnoreAutoScan
 @SoftDependency("spark")
 class SparkServerStatisticProvider : ServerStatisticProvider
 {
