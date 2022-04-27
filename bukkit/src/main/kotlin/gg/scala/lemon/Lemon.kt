@@ -87,7 +87,7 @@ import kotlin.properties.Delegates
     description = Lemon.DESCRIPTION,
     apiVersion = "1.18",
     depends = [
-        PluginDependency("Cubed"),
+        PluginDependency("scala-commons"),
         PluginDependency("helper"),
         PluginDependency("store-spigot"),
         PluginDependency(
