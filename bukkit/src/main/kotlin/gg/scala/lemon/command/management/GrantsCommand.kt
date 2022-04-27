@@ -41,15 +41,13 @@ object GrantsCommand : ScalaCommand()
         uuid: AsyncLemonPlayer
     ): CompletableFuture<Void>
     {
+        if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.grants.other"))
+        {
+            throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
+        }
+
         return uuid.validatePlayers(player, true) {
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
-
-            if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.grants.other"))
-            {
-                player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
-                return@validatePlayers
-            }
-
             val colored = coloredNameOrNull(name)
 
             if (colored == null)
@@ -117,31 +115,31 @@ object GrantsCommand : ScalaCommand()
     @CommandCompletion("@players")
     @CommandAlias("grantstaffhistory|grantstaffhist|gsh|gstaffhist")
     @CommandPermission("lemon.command.staffhistory.grants")
-    fun onStaffHistory(player: Player, uuid: UUID)
+    fun onStaffHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        val name = CubedCacheUtil.fetchName(uuid)
-            ?: throw ConditionFailedException("Could not find a player by that uuid.")
-
         if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.grants.other"))
         {
-            player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
-            return
+            throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
         }
 
-        val colored = coloredNameOrNull(name)
+        return uuid.validatePlayers(player, true) {
+            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
+            val colored = coloredNameOrNull(name)
 
-        if (colored == null)
-        {
-            computeColoredName(uuid, name).thenAccept {
+            if (colored == null)
+            {
+                computeColoredName(it.uniqueId, name)
+                    .thenAccept { newUsername ->
+                        handleGrantMenu(
+                            player, it.uniqueId, newUsername, HistoryViewType.STAFF_HIST
+                        )
+                    }
+            } else
+            {
                 handleGrantMenu(
-                    player, uuid, it, HistoryViewType.STAFF_HIST
+                    player, it.uniqueId, colored, HistoryViewType.STAFF_HIST
                 )
             }
-        } else
-        {
-            handleGrantMenu(
-                player, uuid, colored, HistoryViewType.STAFF_HIST
-            )
         }
     }
 
