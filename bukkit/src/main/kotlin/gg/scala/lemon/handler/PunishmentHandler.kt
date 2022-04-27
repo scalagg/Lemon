@@ -355,7 +355,7 @@ object PunishmentHandler
 
             fancyMessage.andCommandOf(
                 ClickEvent.Action.RUN_COMMAND,
-                "history ${punishment.target}"
+                "/history ${punishment.target}"
             )
 
             sendGlobalFancyBroadcast(
@@ -418,7 +418,7 @@ object PunishmentHandler
 
             fancyMessage.andCommandOf(
                 ClickEvent.Action.RUN_COMMAND,
-                "history ${punishment.target}"
+                "/history ${punishment.target}"
             )
 
             sendGlobalFancyBroadcast(
