@@ -88,7 +88,6 @@ import kotlin.properties.Delegates
     apiVersion = "1.18",
     depends = [
         PluginDependency("scala-commons"),
-        PluginDependency("helper"),
         PluginDependency("store-spigot"),
         PluginDependency(
             "spark", soft = true
