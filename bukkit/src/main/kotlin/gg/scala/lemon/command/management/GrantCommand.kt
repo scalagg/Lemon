@@ -3,6 +3,7 @@ package gg.scala.lemon.command.management
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.menu.grant.context.GrantRankContextMenu
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.acf.BaseCommand
@@ -14,6 +15,7 @@ import net.evilblock.cubed.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -26,14 +28,17 @@ object GrantCommand : ScalaCommand()
     @CommandCompletion("@players")
     @CommandAlias("grant|g|grantscope")
     @CommandPermission("lemon.command.grant")
-    fun onGrant(player: Player, uuid: UUID)
+    fun onGrant(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        val name = CubedCacheUtil.fetchName(uuid)!!
+        return uuid.validatePlayers(player, ignoreEmpty = true) {
+            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
 
-        QuickAccess.computeColoredName(uuid, name).thenAccept {
-            player.sendMessage("${CC.SEC}Granting for ${CC.PRI}$it${CC.SEC}...")
+            QuickAccess.computeColoredName(it.uniqueId, name)
+                .thenAccept { colored ->
+                    player.sendMessage("${CC.SEC}Granting for ${CC.PRI}$colored${CC.SEC}...")
 
-            GrantRankContextMenu(uuid, name).openMenu(player)
+                    GrantRankContextMenu(it.uniqueId, name).openMenu(player)
+                }
         }
     }
 }

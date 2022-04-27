@@ -37,18 +37,21 @@ data class AsyncLemonPlayer(
         return future.thenAccept {
             if (it.isEmpty())
             {
+                val username = CubedCacheUtil
+                    .fetchName(this.uniqueId)!!
+
                 if (ignoreEmpty)
                 {
                     lambda.invoke(LemonPlayer(
                         this.uniqueId,
-                        CubedCacheUtil.fetchName(this.uniqueId)!!,
+                        username,
                         null
                     ))
 
                     return@thenAccept
                 }
 
-                throw ConditionFailedException("No player with this username has joined the server.")
+                throw ConditionFailedException("No user entry matching the username ${CC.YELLOW}$username${CC.RED} was found.")
             }
 
             if (it.size > 1)

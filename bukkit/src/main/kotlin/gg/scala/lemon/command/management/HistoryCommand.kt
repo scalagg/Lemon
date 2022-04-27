@@ -34,7 +34,7 @@ object HistoryCommand : ScalaCommand()
     @CommandPermission("lemon.command.history.punishments")
     fun onHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        return uuid.validatePlayers(player, false) {
+        return uuid.validatePlayers(player, true) {
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
 
             if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.punishments.other"))
