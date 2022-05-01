@@ -30,7 +30,7 @@ object ScalaValidateUtil
             URL(
                 "${
                     if (https) "https" else "http"
-                }://${supplier}:8080/api/v1/minecraft/$id"
+                }://${supplier}/v1/minecraft/$id"
             ).openStream().reader().readLines().first().let {
                 GSON.fromJson(
                     it,
