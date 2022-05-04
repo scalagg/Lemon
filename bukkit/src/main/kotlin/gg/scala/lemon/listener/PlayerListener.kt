@@ -113,7 +113,7 @@ object PlayerListener : Listener
         }
 
         lemonPlayer.declinePunishedAction {
-            cancel(event, "${CC.RED}You cannot chat while being $it.")
+            cancel(event, "${CC.RED}You cannot chat while you are $it")
         }
 
         if (event.isCancelled)
