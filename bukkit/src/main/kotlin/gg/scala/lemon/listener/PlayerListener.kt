@@ -278,6 +278,14 @@ object PlayerListener : Listener
                             continue
                         }
                     }
+
+                    if (
+                        lemonTarget.ignoring.contains(player.uniqueId) &&
+                        !player.hasPermission("lemon.staff")
+                    )
+                    {
+                        continue
+                    }
                 }
 
                 channelMatch.sendToPlayer(
