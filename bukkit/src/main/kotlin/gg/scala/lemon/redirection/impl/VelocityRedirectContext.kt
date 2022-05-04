@@ -62,7 +62,7 @@ object VelocityRedirectContext : PlayerRedirect<Player>, PlayerRedirectHandler
 
             PlayerRedirectionResponse(
                 ticksPerSecond >= 18.50,
-                if (ticksPerSecond >= 18.50)
+                if (ticksPerSecond <= 18.50)
                 {
                     "the server being temporarily paused"
                 } else ""

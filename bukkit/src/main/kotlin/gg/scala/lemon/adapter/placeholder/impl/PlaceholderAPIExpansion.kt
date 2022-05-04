@@ -39,7 +39,9 @@ class PlaceholderAPIExpansion : PlaceholderExpansion(), PlaceholderAdapter
     {
         val lemonPlayer = PlayerHandler.findPlayer(player)
             .orElse(null) ?: return null
-        val currentRank = lemonPlayer.activeGrant?.getRank() ?: return null
+
+        val currentRank = lemonPlayer.activeGrant
+            ?.getRank() ?: return null
 
         return when (params.lowercase())
         {
