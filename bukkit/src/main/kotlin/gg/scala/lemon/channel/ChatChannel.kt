@@ -23,6 +23,14 @@ open class ChatChannel(
     var overrideLambda = { _: Player -> true }
     var overridePriority = 0
 
+    var usesRealRank = false
+
+    fun forceRealRank(): ChatChannel
+    {
+        this.usesRealRank = true
+        return this
+    }
+
     fun sendToPlayer(
         player: Player,
         textComponent: TextComponent

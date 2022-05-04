@@ -160,9 +160,10 @@ class LemonPlayer(
                                         player.kickPlayer(message)
                                     }
                                 }
-                                PunishmentCategoryIntensity.LIGHT -> bukkitPlayer?.ifPresent { player ->
-                                    player.sendMessage(message)
-                                }
+                                PunishmentCategoryIntensity.LIGHT -> bukkitPlayer
+                                    ?.ifPresent { player ->
+                                        player.sendMessage(message)
+                                    }
                             }
                         }
                     }
@@ -697,7 +698,7 @@ class LemonPlayer(
         {
             val punishment =
                 findApplicablePunishment(category)
-                ?: continue
+                    ?: continue
 
             val extension = if (category == IP_RELATIVE)
             {

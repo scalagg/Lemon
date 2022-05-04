@@ -29,6 +29,7 @@ import net.evilblock.cubed.util.Reflection
 import net.evilblock.cubed.util.bukkit.Tasks.sync
 import net.evilblock.cubed.util.nms.MinecraftProtocol
 import net.evilblock.cubed.util.nms.MinecraftReflection
+import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
@@ -46,12 +47,8 @@ import java.util.*
 @IgnoreAutoScan
 object DisguiseProvider
 {
-
-    internal val originalGameProfiles = mutableMapOf<UUID, Any>()
-    internal val uuidToDisguiseInfo = mutableMapOf<UUID, DisguiseInfo>()
-
-    private val serverVersion = Bukkit.getServer().javaClass.getPackage()
-        .name.replace(".", ",").split(",").toTypedArray()[3]
+    private val originalGameProfiles = mutableMapOf<UUID, Any>()
+    private val uuidToDisguiseInfo = mutableMapOf<UUID, DisguiseInfo>()
 
     private lateinit var entityGameProfileField: Field
 
@@ -69,24 +66,23 @@ object DisguiseProvider
     private val PLAYER_INFO_DATA_CLASS: Class<*> =
         PACKET_PLAY_OUT_PLAYER_INFO_CLASS.declaredClasses.find { it.simpleName == "PlayerInfoData" }!!
 
-    private val PLAYER_INFO_DATA_CONSTRUCTOR: Constructor<*> = Reflection.getDeclaredConstructor(
-        PLAYER_INFO_DATA_CLASS,
-
-        PACKET_PLAY_OUT_PLAYER_INFO_CLASS,
-        MinecraftReflection.getGameProfileClass(),
-        Int::class.java,
-        ENUM_GAME_MODE_CLASS,
-        I_CHAT_BASE_COMPONENT_CLASS
-    )!!
+    private val PLAYER_INFO_DATA_CONSTRUCTOR = Reflection
+        .getDeclaredConstructor(
+            PLAYER_INFO_DATA_CLASS,
+            PACKET_PLAY_OUT_PLAYER_INFO_CLASS,
+            MinecraftReflection.getGameProfileClass(),
+            Int::class.java,
+            ENUM_GAME_MODE_CLASS,
+            I_CHAT_BASE_COMPONENT_CLASS
+        )!!
 
     private var initialized = false
 
     @Configure
     fun configure()
     {
-        val clazz = Class.forName(
-            "net.minecraft.server.$serverVersion.EntityHuman"
-        )
+        val clazz = MinecraftReflection
+            .getNMSClass("EntityHuman")!!
 
         val version = Bukkit.getServer().javaClass.getPackage().name
             .replace(".", ",").split(",").toTypedArray()[3]
@@ -150,7 +146,12 @@ object DisguiseProvider
         }
     }
 
-    fun handleUnDisguise(player: Player, callInternal: Boolean = true, sendNotification: Boolean = true, suppressUnDisguiseEvent: Boolean = false)
+    fun handleUnDisguise(
+        player: Player,
+        callInternal: Boolean = true,
+        sendNotification: Boolean = true,
+        suppressUnDisguiseEvent: Boolean = false
+    )
     {
         val disguiseInfo = uuidToDisguiseInfo[player.uniqueId]
             ?: throw ConditionFailedException("You're not currently disguised.")
@@ -178,7 +179,7 @@ object DisguiseProvider
             player.sendMessage("${CC.GREEN}You've undisguised yourself.")
     }
 
-    internal fun handleUnDisguiseInternal(
+    private fun handleUnDisguiseInternal(
         player: Player, disguiseInfo: DisguiseInfo,
         disconnecting: Boolean = false
     )
@@ -305,15 +306,21 @@ object DisguiseProvider
             )
         )
 
-        val playerInfoRespawnPacket = MinecraftProtocol.newPacket("PacketPlayOutRespawn")
-        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "a", player.world.environment.id)
+        val playerInfoRespawnPacket = MinecraftProtocol
+            .newPacket("PacketPlayOutRespawn")
+
+        Reflection.setDeclaredFieldValue(
+            playerInfoRespawnPacket, "a", player.world.environment.id
+        )
         Reflection.setDeclaredFieldValue(
             playerInfoRespawnPacket, "b", Reflection.getEnum(
                 enumDifficulty, player.world.difficulty.name
             )!!
         )
 
-        Reflection.setDeclaredFieldValue(playerInfoRespawnPacket, "c", gameMode!!)
+        Reflection.setDeclaredFieldValue(
+            playerInfoRespawnPacket, "c", gameMode!!
+        )
         Reflection.setDeclaredFieldValue(
             playerInfoRespawnPacket,
             "d",
@@ -323,6 +330,9 @@ object DisguiseProvider
         MinecraftProtocol.send(player, playerInfoRemovePacket)
         MinecraftProtocol.send(player, playerInfoAddPacket)
         MinecraftProtocol.send(player, playerInfoRespawnPacket)
+
+        player.updateInventory()
+        player.gameMode = player.gameMode
 
         player.inventory.armorContents = player.inventory.armorContents
         player.inventory.contents = player.inventory.contents
@@ -336,11 +346,9 @@ object DisguiseProvider
         player.saturation = player.saturation
         player.allowFlight = player.allowFlight
         player.flySpeed = player.flySpeed
-        player.gameMode = player.gameMode
 
         player.inventory.itemInHand = player.itemInHand
 
-        player.updateInventory()
         player.teleport(previousLocation)
 
         BukkitUtil.updatePlayerList {

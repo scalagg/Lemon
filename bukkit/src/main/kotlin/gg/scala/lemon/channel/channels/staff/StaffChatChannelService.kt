@@ -34,6 +34,7 @@ object StaffChatChannelService
             .newBuilder()
             .import(composite)
             .compose()
+            .forceRealRank()
             .distribute()
             .triggerPrefixed(
                 channelType.prefix

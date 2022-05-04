@@ -11,6 +11,7 @@ import gg.scala.lemon.cooldown.impl.SlowChatCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.menu.frozen.PlayerFrozenMenu
@@ -218,7 +219,16 @@ object PlayerListener : Listener
                         .composite().format(
                             player.uniqueId, player, preFormatted,
                             Lemon.instance.settings.id,
-                            lemonPlayer.activeGrant!!.getRank()
+                            if (
+                                !channelMatch.usesRealRank &&
+                                player.hasMetadata("disguised")
+                            )
+                            {
+                                RankHandler.getDefaultRank()
+                            } else
+                            {
+                                lemonPlayer.activeGrant!!.getRank()
+                            }
                         )
 
                     channelMatch.sendToPlayer(
@@ -275,7 +285,16 @@ object PlayerListener : Listener
                         .composite().format(
                             player.uniqueId, target, preFormatted,
                             Lemon.instance.settings.id,
-                            lemonPlayer.activeGrant!!.getRank()
+                            if (
+                                !channelMatch.usesRealRank &&
+                                player.hasMetadata("disguised")
+                            )
+                            {
+                                RankHandler.getDefaultRank()
+                            } else
+                            {
+                                lemonPlayer.activeGrant!!.getRank()
+                            }
                         )
                 )
             }
@@ -287,7 +306,16 @@ object PlayerListener : Listener
                         .composite().format(
                             player.uniqueId, player, preFormatted,
                             Lemon.instance.settings.id,
-                            lemonPlayer.activeGrant!!.getRank()
+                            if (
+                                !channelMatch.usesRealRank &&
+                                player.hasMetadata("disguised")
+                            )
+                            {
+                                RankHandler.getDefaultRank()
+                            } else
+                            {
+                                lemonPlayer.activeGrant!!.getRank()
+                            }
                         )
                 )
             }

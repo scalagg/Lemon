@@ -41,9 +41,10 @@ object DisguiseAdminCommand : ScalaCommand()
                     return@thenAccept
                 }
 
-                val disguiseInfo = DisguiseProvider.fetchDisguiseInfo(
-                    CubedCacheUtil.fetchName(uuid)!!, uuid
-                )!!
+                val disguiseInfo = DisguiseProvider
+                    .fetchDisguiseInfo(
+                        CubedCacheUtil.fetchName(uuid)!!, uuid
+                    )!!
 
                 DataStoreObjectControllerCache.findNotNull<DisguiseInfo>()
                     .save(disguiseInfo, DataStoreStorageType.MONGO)

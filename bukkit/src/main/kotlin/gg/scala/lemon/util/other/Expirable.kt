@@ -14,7 +14,6 @@ open class Expirable(
     val duration: Long
 )
 {
-    @Transient
     var expireDate = Date(addedAt + duration)
 
     val isPermanent: Boolean
