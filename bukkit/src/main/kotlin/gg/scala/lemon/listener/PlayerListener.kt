@@ -124,7 +124,7 @@ object PlayerListener : Listener
 
         if (mutePunishment != null)
         {
-            cancel(event, lemonPlayer.getPunishmentMessage(mutePunishment, true))
+            cancel(event, lemonPlayer.getPunishmentMessage(mutePunishment, false))
             return
         }
 

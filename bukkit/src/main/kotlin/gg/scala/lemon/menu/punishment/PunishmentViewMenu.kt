@@ -90,11 +90,7 @@ class PunishmentViewMenu(
                             if (list.isEmpty())
                             {
                                 player.sendMessage(
-                                    "${CC.YELLOW}$name${CC.RED} has no recorded ${CC.YELLOW}${
-                                        it.fancyVersion.lowercase(
-                                            Locale.getDefault()
-                                        )
-                                    }s${CC.RED}."
+                                    "${CC.RED}No entries were found within this punishment category."
                                 )
                                 return@whenComplete
                             }
