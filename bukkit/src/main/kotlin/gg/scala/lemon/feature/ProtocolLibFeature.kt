@@ -1,4 +1,4 @@
-package gg.scala.lemon.adapter.feature
+package gg.scala.lemon.feature
 
 import com.comphenix.protocol.PacketType
 import gg.scala.commons.annotations.plugin.SoftDependency
@@ -15,7 +15,7 @@ import me.lucko.helper.protocol.Protocol
 @Service
 @IgnoreAutoScan
 @SoftDependency("ProtocolLib")
-class ProtocolLibFeature
+object ProtocolLibFeature
 {
     @Configure
     fun configure()

@@ -9,10 +9,10 @@ import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandCompletion
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
+import gg.scala.commons.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import java.util.*

@@ -4,9 +4,9 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.entity.Player

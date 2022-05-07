@@ -9,9 +9,9 @@ import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.isSilent
 import gg.scala.lemon.util.QuickAccess.parseReason
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.*
-import net.evilblock.cubed.acf.annotation.Optional
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.annotation.Optional
 import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture

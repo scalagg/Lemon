@@ -2,10 +2,10 @@ package gg.scala.lemon.command.management
 
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.ServerHandler
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.CommandHelp
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.*
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.Duration
 import net.evilblock.cubed.util.time.TimeUtil

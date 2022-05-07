@@ -2,8 +2,8 @@ package gg.scala.lemon.command
 
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.color.PlayerColorMenu
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
 import org.bukkit.entity.Player
 
 /**

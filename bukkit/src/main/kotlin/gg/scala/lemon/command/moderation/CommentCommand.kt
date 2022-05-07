@@ -6,10 +6,10 @@ import gg.scala.lemon.handler.CommentHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.result.CommentPaginatedResult
 import gg.scala.lemon.util.CubedCacheUtil
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.CommandHelp
-import net.evilblock.cubed.acf.annotation.*
-import net.evilblock.cubed.acf.annotation.Optional
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player

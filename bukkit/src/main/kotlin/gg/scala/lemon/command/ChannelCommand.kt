@@ -8,10 +8,10 @@ import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.data
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.*
-import net.evilblock.cubed.acf.annotation.Optional
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*

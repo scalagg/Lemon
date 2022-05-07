@@ -2,9 +2,9 @@ package gg.scala.lemon.disguise.command
 
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.disguise.DisguiseProvider
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
 import org.bukkit.entity.Player
 
 /**

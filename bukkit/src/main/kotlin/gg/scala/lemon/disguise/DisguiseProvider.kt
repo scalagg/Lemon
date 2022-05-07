@@ -21,7 +21,7 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
-import net.evilblock.cubed.acf.ConditionFailedException
+import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.entity.npc.protocol.NpcProtocol
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC

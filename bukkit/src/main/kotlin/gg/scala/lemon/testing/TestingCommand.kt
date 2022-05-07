@@ -4,9 +4,9 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.testing.criteria.TestCriteriaMenu
 import gg.scala.store.storage.type.DataStoreStorageType
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.CommandHelp
-import net.evilblock.cubed.acf.annotation.*
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.annotation.*
 import org.bukkit.entity.Player
 
 /**

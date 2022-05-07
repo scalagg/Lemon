@@ -9,10 +9,10 @@ import gg.scala.lemon.player.event.impl.PostFreezeEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendStaffMessage
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandCompletion
-import net.evilblock.cubed.acf.annotation.CommandPermission
-import net.evilblock.cubed.acf.annotation.Syntax
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
+import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.metadata.FixedMetadataValue

@@ -4,8 +4,8 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler.getCorrectedPlayerList
 import gg.scala.lemon.handler.RankHandler.getSortedRankString
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.CommandAlias
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.CommandAlias
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender

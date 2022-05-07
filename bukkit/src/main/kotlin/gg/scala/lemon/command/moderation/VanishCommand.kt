@@ -6,10 +6,10 @@ import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.QuickAccess.coloredName
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.*
-import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 

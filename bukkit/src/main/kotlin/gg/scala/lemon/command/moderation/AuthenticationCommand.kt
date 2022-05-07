@@ -7,8 +7,8 @@ import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.metadata.Metadata
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.*
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.totp.TimeBasedOneTimePasswordUtil
 import org.bukkit.command.CommandSender

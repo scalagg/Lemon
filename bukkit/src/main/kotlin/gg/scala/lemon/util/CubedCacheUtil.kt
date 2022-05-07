@@ -1,7 +1,6 @@
 package gg.scala.lemon.util
 
 import gg.scala.cache.uuid.ScalaStoreUuidCache
-import net.evilblock.cubed.Cubed
 import java.util.*
 
 /**

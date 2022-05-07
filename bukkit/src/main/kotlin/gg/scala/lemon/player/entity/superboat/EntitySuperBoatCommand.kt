@@ -2,11 +2,11 @@ package gg.scala.lemon.player.entity.superboat
 
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.CommandHelp
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.*
-import net.evilblock.cubed.acf.bukkit.contexts.OnlinePlayer
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 

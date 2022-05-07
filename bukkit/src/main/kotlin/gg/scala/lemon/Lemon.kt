@@ -65,9 +65,9 @@ import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 import me.lucko.helper.redis.RedisCredentials
 import me.lucko.helper.redis.plugin.HelperRedis
-import net.evilblock.cubed.acf.BukkitCommandExecutionContext
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.command.manager.CubedCommandManager
+import gg.scala.commons.acf.BukkitCommandExecutionContext
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.command.ScalaCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers.create
@@ -97,6 +97,9 @@ import kotlin.properties.Delegates
         ),
         PluginDependency(
             "PlaceholderAPI", soft = true
+        ),
+        PluginDependency(
+            "cloudsync", soft = true
         )
     ]
 )
@@ -230,7 +233,7 @@ class Lemon : ExtendedScalaPlugin()
 
     @ManualRegister
     fun manualRegister(
-        commandManager: CubedCommandManager
+        commandManager: ScalaCommandManager
     )
     {
         if (settings.disguiseEnabled)

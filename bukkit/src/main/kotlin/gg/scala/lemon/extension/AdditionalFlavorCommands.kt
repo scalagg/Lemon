@@ -3,8 +3,8 @@ package gg.scala.lemon.extension
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.service.Service
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.*
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin

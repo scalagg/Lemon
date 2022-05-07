@@ -7,9 +7,9 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.online
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.*
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.*
 import org.bukkit.command.CommandSender
 import java.util.concurrent.CompletableFuture
 

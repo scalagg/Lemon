@@ -3,7 +3,7 @@ package gg.scala.lemon.disguise.update
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfo
 import gg.scala.lemon.handler.PlayerHandler
-import net.evilblock.cubed.acf.ConditionFailedException
+import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks

@@ -9,8 +9,8 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.command.manager.CubedCommandManager
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.command.ScalaCommandManager
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
@@ -23,7 +23,7 @@ object LemonCommandCustomizer
 {
     @CommandManagerCustomizer
     fun customize(
-        commandManager: CubedCommandManager
+        commandManager: ScalaCommandManager
     )
     {
         commandManager.commandCompletions.registerAsyncCompletion("ranks") {

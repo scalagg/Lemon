@@ -7,9 +7,9 @@ import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.QuickAccess.senderUuid
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.*
-import net.evilblock.cubed.acf.annotation.Optional
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.annotation.Optional
 import net.evilblock.cubed.util.time.Duration
 import org.bukkit.command.CommandSender
 import java.util.*

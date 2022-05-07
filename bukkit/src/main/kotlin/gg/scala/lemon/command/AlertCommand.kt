@@ -4,10 +4,10 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.util.QuickAccess.sendGlobalBroadcast
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
-import net.evilblock.cubed.acf.annotation.Syntax
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color.translate
 import org.bukkit.command.CommandSender
