@@ -14,6 +14,7 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandCompletion
 import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*
@@ -29,25 +30,26 @@ object JumpCommand : ScalaCommand()
     @CommandAlias("jump")
     @CommandCompletion("@players")
     @CommandPermission("lemon.command.jump")
-    fun onJump(player: Player, target: UUID): CompletableFuture<Void>
+    fun onJump(player: Player, target: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        player.sendMessage("${CC.GREEN}Locating player ${CC.YELLOW}${target.username()}${CC.GREEN}...")
+        return target.validatePlayers(player, false) { lemonPlayer ->
+            server(lemonPlayer.uniqueId)
+                .thenAcceptAsync {
+                    if (it == null)
+                        throw ConditionFailedException(
+                            "${CC.YELLOW}${lemonPlayer.name}${CC.RED} is not online."
+                        )
 
-        return server(target)
-            .thenAcceptAsync {
-                if (it == null)
-                    throw ConditionFailedException(
-                        "${CC.YELLOW}${target.username()}${CC.RED} is not online."
+                    val coloredName = fetchColoredName(lemonPlayer.uniqueId)
+
+                    sendStaffMessage(
+                        "${coloredName(player)} ${CC.D_AQUA}jumped to ${CC.AQUA}${coloredName}${CC.D_AQUA}.", false
                     )
 
-                val coloredName = fetchColoredName(target)
-
-                sendStaffMessage(
-                    "${coloredName(player)} ${CC.D_AQUA}jumped to ${CC.AQUA}${coloredName}${CC.D_AQUA}.", false
-                )
-
-                VelocityRedirectSystem
-                    .redirect(player, it.id)
-            }
+                    VelocityRedirectSystem
+                        .redirect(player, it.id)
+                }
+                .join()
+        }
     }
 }

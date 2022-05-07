@@ -10,9 +10,11 @@ import gg.scala.lemon.util.QuickAccess.senderUuid
 import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
+import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import net.evilblock.cubed.util.time.Duration
 import org.bukkit.command.CommandSender
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -26,24 +28,26 @@ object GrantManualCommand : ScalaCommand()
     @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent")
     fun onGrantManual(
         sender: CommandSender,
-        target: UUID,
+        target: AsyncLemonPlayer,
         rank: Rank,
         @Single duration: Duration,
         @Optional reason: String?
-    )
+    ): CompletableFuture<Void>
     {
-        val grant = Grant(
-            UUID.randomUUID(),
-            target,
-            rank.uuid,
-            senderUuid(sender),
-            System.currentTimeMillis(),
-            Lemon.instance.settings.id,
-            reason ?: "No reason provided",
-            duration.get()
-        )
+        return target.validatePlayers(sender, true) {
+            val grant = Grant(
+                UUID.randomUUID(),
+                it.uniqueId,
+                rank.uuid,
+                senderUuid(sender),
+                System.currentTimeMillis(),
+                Lemon.instance.settings.id,
+                reason ?: "No reason provided",
+                duration.get()
+            )
 
-        GrantHandler.handleGrant(sender, grant)
+            GrantHandler.handleGrant(sender, grant)
+        }
     }
 
     @CommandAlias("grantmanualscope")
@@ -51,34 +55,38 @@ object GrantManualCommand : ScalaCommand()
     @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent global")
     fun onGrantManualScope(
         sender: CommandSender,
-        target: UUID,
+        target: AsyncLemonPlayer,
         rank: Rank,
         @Single duration: Duration,
         @Single scopes: String,
         @Optional reason: String?
-    )
+    ): CompletableFuture<Void>
     {
-        val splitScopes = scopes.split(",")
-        val grant = Grant(
-            UUID.randomUUID(),
-            target,
-            rank.uuid,
-            senderUuid(sender),
-            System.currentTimeMillis(),
-            Lemon.instance.settings.id,
-            reason ?: "No reason provided",
-            duration.get()
-        )
+        return target.validatePlayers(sender, true) {
+            val splitScopes = scopes
+                .split(",")
 
-        grant.scopes.clear()
+            val grant = Grant(
+                UUID.randomUUID(),
+                it.uniqueId,
+                rank.uuid,
+                senderUuid(sender),
+                System.currentTimeMillis(),
+                Lemon.instance.settings.id,
+                reason ?: "No reason provided",
+                duration.get()
+            )
 
-        splitScopes.forEach {
-            if (!grant.scopes.contains(it))
-            {
-                grant.scopes.add(it)
+            grant.scopes.clear()
+
+            splitScopes.forEach {
+                if (!grant.scopes.contains(it))
+                {
+                    grant.scopes.add(it)
+                }
             }
-        }
 
-        GrantHandler.handleGrant(sender, grant)
+            GrantHandler.handleGrant(sender, grant)
+        }
     }
 }

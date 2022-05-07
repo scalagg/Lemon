@@ -38,9 +38,9 @@ data class AsyncLemonPlayer(
             if (it.isEmpty())
             {
                 val username = CubedCacheUtil
-                    .fetchName(this.uniqueId)!!
+                    .fetchName(this.uniqueId)
 
-                if (ignoreEmpty)
+                if (ignoreEmpty && username != null)
                 {
                     lambda.invoke(LemonPlayer(
                         this.uniqueId,
