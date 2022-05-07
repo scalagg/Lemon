@@ -334,7 +334,7 @@ object PunishmentHandler
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
         val broadcastPermission = if (silent) "lemon.staff" else null
-        val broadcastPermanent = if (punishment.isPermanent) "permanently " else "temporarily"
+        val broadcastPermanent = if (punishment.isPermanent) "permanently " else "temporarily "
         val broadcastSuffix = if (!punishment.isPermanent) " for ${punishment.durationString}${CC.GREEN}." else "."
 
         val broadcastBody =
