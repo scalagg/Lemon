@@ -17,7 +17,7 @@ import org.bukkit.command.CommandSender
 @AutoRegister
 object ListCommand : ScalaCommand()
 {
-    @CommandAlias("list|who|online")
+    @CommandAlias("list|who")
     fun onList(sender: CommandSender)
     {
         val sortedRanks = getSortedRankString()

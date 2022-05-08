@@ -9,6 +9,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.data
 import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
@@ -22,10 +23,17 @@ import java.util.*
  */
 @AutoRegister
 @CommandAlias("channel")
+@CommandPermission("lemon.command.channel")
 object ChannelCommand : ScalaCommand()
 {
-    @Private
-    @CommandPermission("lemon.command.channel")
+    @Default
+    @HelpCommand
+    fun onHelp(help: CommandHelp)
+    {
+        help.showHelp()
+    }
+
+    @Subcommand("meta")
     fun onDefault(player: Player, @Optional channel: ChatChannel?)
     {
         val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
