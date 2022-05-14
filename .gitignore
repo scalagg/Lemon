@@ -3,7 +3,6 @@
 *.iml
 *.iws
 
-gradle.properties
 
 # Mac
 .DS_Store
