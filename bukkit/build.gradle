@@ -10,8 +10,8 @@ dependencies {
 
     implementation project(":common")
 
-    compileOnly "me.lucko:helper:5.6.10.1"
-    kapt "me.lucko:helper:5.6.10.1"
+    compileOnly "me.lucko:helper:5.6.10.2"
+    kapt "me.lucko:helper:5.6.10.2"
 
     implementation "me.lucko:helper-redis:1.2.1"
 
