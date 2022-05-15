@@ -246,7 +246,7 @@ class GrantViewMenu(
 
                             grant.save().thenAccept {
                                 Tasks.sync {
-                                    player.performCommand("grant${if (viewType == HistoryViewType.STAFF_HIST) "history" else "s"} $viewingFor")
+                                    player.performCommand("grant${if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "s"} $viewingFor")
                                 }
                             }
                         } else
