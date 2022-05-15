@@ -37,7 +37,7 @@ object GrantCommand : ScalaCommand()
                 .thenAccept { colored ->
                     player.sendMessage("${CC.SEC}Granting for ${CC.PRI}$colored${CC.SEC}...")
 
-                    GrantRankContextMenu(it.uniqueId, name).openMenu(player)
+                    GrantRankContextMenu(it.uniqueId, name, colored).openMenu(player)
                 }
         }
     }
