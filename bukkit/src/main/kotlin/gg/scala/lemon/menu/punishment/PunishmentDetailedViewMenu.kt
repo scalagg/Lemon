@@ -34,7 +34,8 @@ class PunishmentDetailedViewMenu(
     private val uuid: UUID,
     private val category: PunishmentCategory,
     private val viewType: HistoryViewType,
-    private val punishments: List<Punishment>
+    private val punishments: List<Punishment>,
+    private val colored: String
 ) : PaginatedMenu()
 {
 
@@ -61,7 +62,7 @@ class PunishmentDetailedViewMenu(
 
     override fun getPrePaginatedTitle(player: Player): String
     {
-        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} ${category.fancyVersion + "s"}"
+        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} $colored ${Constants.DOUBLE_ARROW_RIGHT} ${category.fancyVersion + "s"}"
 
         return when (viewType)
         {
@@ -74,7 +75,7 @@ class PunishmentDetailedViewMenu(
     {
         return HashMap<Int, Button>().also {
             punishments.sortedByDescending { it.addedAt }.forEach { punishment ->
-                it[it.size] = PunishmentButton(punishment, viewType, viewingFor)
+                it[it.size] = PunishmentButton(punishment, viewType, viewingFor, colored)
             }
         }
     }
@@ -100,7 +101,8 @@ class PunishmentDetailedViewMenu(
     open class PunishmentButton(
         private val punishment: Punishment,
         private val viewType: HistoryViewType,
-        private val viewingFor: String
+        private val viewingFor: String,
+        private val colored: String
     ) : Button()
     {
 
@@ -240,14 +242,13 @@ class PunishmentDetailedViewMenu(
                         context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
 
                         val splitUuid = SplitUtil.splitUuid(punishment.uuid)
-                        val grantTarget = CubedCacheUtil.fetchName(punishment.target)
 
                         ConfirmMenu(
                             "Punishment Expiration ${Constants.DOUBLE_ARROW_RIGHT} $splitUuid",
                             listOf(
                                 "${CC.GRAY}Would you like to expire",
                                 "${CC.GRAY}punishment ${CC.WHITE}#$splitUuid${CC.GRAY} from",
-                                "${CC.GRAY}player ${grantTarget}?"
+                                "${CC.GRAY}player $colored${CC.GRAY}?"
                             ), true
                         ) {
                             if (it)
@@ -258,7 +259,7 @@ class PunishmentDetailedViewMenu(
                                     remover = player.uniqueId
                                 )
 
-                                player.sendMessage("${CC.SEC}You've removed punishment ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.PRI}$grantTarget${CC.SEC}.")
+                                player.sendMessage("${CC.SEC}You've removed 1 punishment from ${CC.PRI}$colored${CC.SEC}.")
 
                                 Tasks.sync {
                                     player.performCommand("${if (viewType == HistoryViewType.STAFF_HIST) "staffhistory" else "history"} $viewingFor")

@@ -25,7 +25,8 @@ class GrantReasonContextMenu(
     private val uuid: UUID,
     private val name: String,
     private val rank: Rank,
-    private val duration: Duration
+    private val duration: Duration,
+    private val colored: String
 ) : PaginatedMenu() {
 
     companion object {
@@ -37,7 +38,7 @@ class GrantReasonContextMenu(
     }
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $name ${Constants.DOUBLE_ARROW_RIGHT} Reason"
+        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored ${Constants.DOUBLE_ARROW_RIGHT} Reason"
     }
 
     override fun getGlobalButtons(player: Player): Map<Int, Button> {
@@ -81,7 +82,7 @@ class GrantReasonContextMenu(
         return hashMapOf<Int, Button>().also {
             reasons.forEach { reason ->
                 it[it.size] = ItemBuilder(XMaterial.PAPER)
-                    .name("${CC.PRI}$reason")
+                    .name(reason)
                     .toButton { _, _ ->
                         finalizeGrant(player, reason)
 
@@ -123,7 +124,7 @@ class GrantReasonContextMenu(
     override fun onClose(player: Player, manualClose: Boolean) {
         if (manualClose) {
             Schedulers.sync().runLater({
-                GrantDurationContextMenu(uuid, name, rank).openMenu(player)
+                GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
             }, 1L)
         }
     }

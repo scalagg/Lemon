@@ -24,20 +24,26 @@ import java.util.*
 class GrantDurationContextMenu(
     private val uuid: UUID,
     private val name: String,
-    private val rank: Rank
+    private val rank: Rank,
+    private val colored: String
 ) : PaginatedMenu() {
 
     companion object {
         @JvmStatic
-        val durations = listOf(
-            Duration.parse("5m"), Duration.parse("1d"),
-            Duration.parse("7d"), Duration.parse("1mo"), Duration.parse("3mo"),
-            Duration.parse("6mo"), Duration.parse("1y"), Duration.parse("3y"),
+        val durations = mutableMapOf(
+            Duration.parse("5m") to "5 minutes",
+            Duration.parse("1d") to "1 day",
+            Duration.parse("7d") to "1 week",
+            Duration.parse("1mo") to "1 month",
+            Duration.parse("3mo") to "3 months",
+            Duration.parse("6mo") to "6 months",
+            Duration.parse("1y") to "1 year",
+            Duration.parse("3y") to "3 years"
         )
     }
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $name ${Constants.DOUBLE_ARROW_RIGHT} Time"
+        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored ${Constants.DOUBLE_ARROW_RIGHT} Time"
     }
 
     override fun getGlobalButtons(player: Player): Map<Int, Button> {
@@ -65,9 +71,9 @@ class GrantDurationContextMenu(
                             if (duration == null) {
                                 context.sendMessage("Invalid duration parsed. Returning to menu. (Example: 1h30m)")
 
-                                GrantDurationContextMenu(uuid, name, rank).openMenu(player)
+                                GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
                             } else {
-                                GrantReasonContextMenu(uuid, name, rank, duration).openMenu(player)
+                                GrantReasonContextMenu(uuid, name, rank, duration, colored).openMenu(player)
 
                                 context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
                             }
@@ -82,7 +88,7 @@ class GrantDurationContextMenu(
                     "${CC.YELLOW}Click to continue."
                 )
                 .toButton { _, _ ->
-                    GrantReasonContextMenu(uuid, name, rank, Duration.parse("perm")).openMenu(player)
+                    GrantReasonContextMenu(uuid, name, rank, Duration.parse("perm"), colored).openMenu(player)
 
                     player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}Permanent${CC.SEC}.")
                 }
@@ -92,7 +98,7 @@ class GrantDurationContextMenu(
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also {
             durations.forEach { duration ->
-                it[it.size] = DurationButton(duration)
+                it[it.size] = DurationButton(duration.key, duration.value)
             }
         }
     }
@@ -100,19 +106,20 @@ class GrantDurationContextMenu(
     override fun onClose(player: Player, manualClose: Boolean) {
         if (manualClose) {
             Schedulers.sync().runLater({
-                GrantRankContextMenu(uuid, name).openMenu(player)
+                GrantRankContextMenu(uuid, name, colored).openMenu(player)
             }, 1L)
         }
     }
 
     private inner class DurationButton(
-        private val duration: Duration
+        private val duration: Duration,
+        private val identifier: String
     ) : Button() {
 
         private val formatted = DurationFormatUtils.formatDurationWords(duration.get(), true, true)
 
         override fun getName(player: Player): String {
-            return "${CC.PRI}$formatted"
+            return "${CC.WHITE}$identifier"
         }
 
         override fun getMaterial(player: Player): XMaterial {
@@ -120,7 +127,7 @@ class GrantDurationContextMenu(
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            GrantReasonContextMenu(uuid, name, rank, duration).openMenu(player)
+            GrantReasonContextMenu(uuid, name, rank, duration, colored).openMenu(player)
 
             player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$formatted${CC.SEC}.")
         }

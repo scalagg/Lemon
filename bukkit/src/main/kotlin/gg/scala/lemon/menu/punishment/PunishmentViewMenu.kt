@@ -97,7 +97,7 @@ class PunishmentViewMenu(
 
                             Tasks.sync {
                                 PunishmentDetailedViewMenu(
-                                    uuid, it, viewType, list
+                                    uuid, it, viewType, list, colored
                                 ).openMenu(player)
                             }
                         }
@@ -147,7 +147,7 @@ class PunishmentViewMenu(
                                 }
 
                                 PunishmentDetailedViewMenu(
-                                    uuid, it, viewType, list
+                                    uuid, it, viewType, list, colored
                                 ).openMenu(player)
                             }
                         }

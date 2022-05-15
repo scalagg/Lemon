@@ -24,11 +24,12 @@ import java.util.*
  */
 class GrantRankContextMenu(
     private val uuid: UUID,
-    private val name: String
+    private val name: String,
+    private val colored: String
 ) : PaginatedMenu() {
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $name ${Constants.DOUBLE_ARROW_RIGHT} Rank"
+        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored ${Constants.DOUBLE_ARROW_RIGHT} Rank"
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
@@ -68,7 +69,8 @@ class GrantRankContextMenu(
                 it.add("")
 
                 if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
-                    it.add("${CC.YELLOW}Click to grant this rank.")
+                    it.add("${CC.GREEN}Left-Click to grant this rank.")
+                    it.add("${CC.GREEN}Right-Click to grant scoped.")
                 } else {
                     it.addAll(
                         TextSplitter.split(
@@ -84,7 +86,7 @@ class GrantRankContextMenu(
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
-                GrantDurationContextMenu(uuid, name, rank).openMenu(player)
+                GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
             } else {
                 player.sendMessage("${CC.RED}You're not allowed to grant this rank.")
             }

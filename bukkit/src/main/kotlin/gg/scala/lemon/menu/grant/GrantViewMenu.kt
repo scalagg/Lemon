@@ -36,8 +36,9 @@ class GrantViewMenu(
     private val uuid: UUID,
     private val viewType: HistoryViewType,
     private val grants: List<Grant>,
-    private val colored: String
-) : PaginatedMenu() {
+    val colored: String
+) : PaginatedMenu()
+{
 
     private val viewingFor = CubedCacheUtil.fetchName(uuid)
 
@@ -51,26 +52,31 @@ class GrantViewMenu(
 
     override fun size(buttons: Map<Int, Button>) = 36
 
-    override fun getPrePaginatedTitle(player: Player): String {
+    override fun getPrePaginatedTitle(player: Player): String
+    {
         val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} $colored"
 
-        return when (viewType) {
+        return when (viewType)
+        {
             HistoryViewType.STAFF_HIST -> "Staff $base"
             HistoryViewType.TARGET_HIST -> base
         }
     }
 
-    override fun getAllPagesButtons(player: Player): Map<Int, Button> {
+    override fun getAllPagesButtons(player: Player): Map<Int, Button>
+    {
         return HashMap<Int, Button>().also {
             grants.sortedByDescending { it.addedAt }.forEach { grant ->
-                it[it.size] = GrantButton(grant, viewType, viewingFor!!)
+                it[it.size] = GrantButton(grant, viewType, viewingFor!!, colored)
             }
         }
     }
 
-    override fun getGlobalButtons(player: Player): Map<Int, Button> {
+    override fun getGlobalButtons(player: Player): Map<Int, Button>
+    {
         return HashMap<Int, Button>().also {
-            if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid) {
+            if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid)
+            {
                 it[4] = ItemBuilder(XMaterial.STICKY_PISTON)
                     .name("${CC.RED}Invalidate Grants")
                     .addToLore(
@@ -85,8 +91,10 @@ class GrantViewMenu(
                         "${CC.RED}Shift Click to start invalidation."
                     )
                     .toButton { clicker, type ->
-                        if (clicker != null && type != null) {
-                            if (!clicker.hasPermission("lemon.grants.wipe") && type.name.contains("SHIFT")) {
+                        if (clicker != null && type != null)
+                        {
+                            if (!clicker.hasPermission("lemon.grants.wipe") && type.name.contains("SHIFT"))
+                            {
                                 clicker.sendMessage("${CC.RED}You do not have permission to perform this action!")
                                 return@toButton
                             }
@@ -109,12 +117,19 @@ class GrantViewMenu(
         }
     }
 
-    class GrantButton(private val grant: Grant, private val viewType: HistoryViewType, private val viewingFor: String) : Button() {
-
-        override fun getButtonItem(player: Player): ItemStack {
+    internal class GrantButton(
+        private val grant: Grant,
+        private val viewType: HistoryViewType,
+        private val viewingFor: String,
+        private val colored: String
+    ) : Button()
+    {
+        override fun getButtonItem(player: Player): ItemStack
+        {
             val lines = arrayListOf<String>()
 
-            val statusLore = if (grant.hasExpired) "${CC.YELLOW}(Expired)" else if (!grant.isRemoved) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
+            val statusLore =
+                if (grant.hasExpired) "${CC.YELLOW}(Expired)" else if (!grant.isRemoved) "${CC.GREEN}(Active)" else "${CC.RED}(Removed)"
             val addedBy = grant.addedBy?.let {
                 CubedCacheUtil.fetchName(it)
             } ?: let {
@@ -123,9 +138,11 @@ class GrantViewMenu(
 
             lines.add(CC.GREEN + "+ " + TimeUtil.formatIntoCalendarString(Date(grant.addedAt)))
 
-            if (grant.hasExpired) {
+            if (grant.hasExpired)
+            {
                 lines.add(CC.GRAY + "* " + TimeUtil.formatIntoCalendarString(grant.expireDate))
-            } else if (grant.isRemoved) {
+            } else if (grant.isRemoved)
+            {
                 lines.add(CC.RED + "- " + TimeUtil.formatIntoCalendarString(Date(grant.removedAt)))
             }
 
@@ -134,7 +151,8 @@ class GrantViewMenu(
             lines.add("${CC.GRAY}Rank: ${CC.WHITE}${grant.getRank().getColoredName()}")
             lines.add("${CC.GRAY}Duration: ${CC.WHITE + grant.durationString}")
 
-            if (grant.isActive) {
+            if (grant.isActive)
+            {
                 lines.add("${CC.GRAY}Expire Date: ${CC.WHITE + grant.expirationString}")
             }
 
@@ -156,7 +174,8 @@ class GrantViewMenu(
                 )
             )
 
-            if (grant.isRemoved) {
+            if (grant.isRemoved)
+            {
                 val removedBy = grant.removedBy?.let {
                     CubedCacheUtil.fetchName(it)
                 } ?: let {
@@ -177,7 +196,8 @@ class GrantViewMenu(
 
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-            if (grant.isActive) {
+            if (grant.isActive)
+            {
                 lines.add("")
                 lines.add(if (grant.canRemove(lemonPlayer)) "${CC.YELLOW}Click to remove this grant!" else "${CC.RED}You can't remove this grant.")
             }
@@ -188,7 +208,8 @@ class GrantViewMenu(
                 .addToLore(lines).build()
         }
 
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
+        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView)
+        {
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null) ?: return
 
             if (!grant.canRemove(lemonPlayer)) return
@@ -196,7 +217,8 @@ class GrantViewMenu(
             InputPrompt()
                 .withText("${CC.SEC}Please enter the ${CC.WHITE}Removal Reason${CC.SEC}. ${CC.GRAY}(Type \"cancel\" to exit)")
                 .acceptInput { context, input ->
-                    if (input.equals("stop", true) || input.equals("cancel", true)) {
+                    if (input.equals("stop", true) || input.equals("cancel", true))
+                    {
                         context.sendMessage("${CC.RED}You've cancelled the removal operation.")
                         return@acceptInput
                     }
@@ -204,30 +226,31 @@ class GrantViewMenu(
                     context.sendMessage("${CC.SEC}You've set the ${CC.WHITE}Removal Reason${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
 
                     val splitUuid = SplitUtil.splitUuid(grant.uuid)
-                    val grantTarget = CubedCacheUtil.fetchName(grant.target)
 
                     ConfirmMenu(
                         "Grant Removal ${Constants.DOUBLE_ARROW_RIGHT} $splitUuid",
                         listOf(
                             "${CC.GRAY}Would you like to remove",
                             "${CC.GRAY}grant ${CC.WHITE}#$splitUuid${CC.GRAY} from",
-                            "${CC.GRAY}player ${grantTarget}?"
+                            "${CC.GRAY}player $colored${CC.GRAY}?"
                         ), true
                     ) {
-                        if (it) {
+                        if (it)
+                        {
                             grant.removedBy = player.uniqueId
                             grant.removedAt = System.currentTimeMillis()
                             grant.removedOn = Lemon.instance.settings.id
                             grant.removedReason = input
 
-                            player.sendMessage("${CC.SEC}You've removed grant ${CC.WHITE}#$splitUuid${CC.SEC} from ${CC.WHITE}$grantTarget${CC.SEC}.")
+                            player.sendMessage("${CC.SEC}You've removed 1 grant from ${CC.WHITE}$colored${CC.SEC}.")
 
                             grant.save().thenAccept {
                                 Tasks.sync {
-                                    player.performCommand("grant${ if (viewType == HistoryViewType.STAFF_HIST) "history" else "s" } $viewingFor")
+                                    player.performCommand("grant${if (viewType == HistoryViewType.STAFF_HIST) "history" else "s"} $viewingFor")
                                 }
                             }
-                        } else {
+                        } else
+                        {
                             player.sendMessage("${CC.RED}You've cancelled the removal operation.")
                         }
                     }.openMenu(player)

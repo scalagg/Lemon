@@ -934,7 +934,8 @@ class LemonPlayer(
             .forEach { it.invoke(bukkitPlayer!!) }
 
         Tasks.delayed(10L) {
-            val player = bukkitPlayer
+            val player = Bukkit
+                .getPlayer(this.uniqueId)
                 ?: return@delayed
 
             lazyHandleOnConnection
