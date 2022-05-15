@@ -208,9 +208,16 @@ object QuickAccess
     @JvmStatic
     fun replaceEmpty(string: String): String
     {
-        return ChatColor.stripColor(string).ifBlank {
-            "${CC.RED}None"
+        val empty = ChatColor
+            .stripColor(string)
+            .isBlank()
+
+        if (empty)
+        {
+            return "${CC.RED}None"
         }
+
+        return string
     }
 
     @JvmStatic

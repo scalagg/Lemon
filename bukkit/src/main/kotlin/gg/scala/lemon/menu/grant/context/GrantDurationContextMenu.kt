@@ -43,7 +43,7 @@ class GrantDurationContextMenu(
     }
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored ${Constants.DOUBLE_ARROW_RIGHT} Time"
+        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Time"
     }
 
     override fun getGlobalButtons(player: Player): Map<Int, Button> {

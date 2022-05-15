@@ -62,7 +62,7 @@ class PunishmentDetailedViewMenu(
 
     override fun getPrePaginatedTitle(player: Player): String
     {
-        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} $colored ${Constants.DOUBLE_ARROW_RIGHT} ${category.fancyVersion + "s"}"
+        val base = "History ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} ${category.fancyVersion + "s"}"
 
         return when (viewType)
         {
