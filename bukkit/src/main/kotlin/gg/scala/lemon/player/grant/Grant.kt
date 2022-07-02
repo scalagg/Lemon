@@ -29,7 +29,7 @@ class Grant(
     override val identifier: UUID
         get() = uuid
 
-    var scopes: MutableList<String> = mutableListOf("global")
+    var scopes = mutableListOf("global")
 
     var removedReason: String? = null
     var removedOn: String? = null

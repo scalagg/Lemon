@@ -106,7 +106,10 @@ object PlayerListener : Listener
         val lemonPlayer = PlayerHandler
             .findPlayer(player).orElse(null)
 
-        if (lemonPlayer.hasPermission("lemon.2fa.forced") && !lemonPlayer.isAuthExempt() && !player.hasMetadata("authenticated"))
+        if (
+            lemonPlayer.hasPermission("lemon.2fa.forced") &&
+            !lemonPlayer.isAuthExempt() && !player.hasMetadata("authenticated")
+        )
         {
             cancel(event, "You must authenticate before chatting.")
             return
