@@ -122,13 +122,11 @@ class Lemon : ExtendedScalaPlugin()
         const val DESCRIPTION = "An extensive punishment, moderation, security and rank suite."
     }
 
-    val settings by lazy {
-        config<SettingsConfigProcessor>()
-    }
+    val settings: SettingsConfigProcessor
+        get() = config()
 
-    val languageConfig by lazy {
-        config<LanguageConfigProcessor>()
-    }
+    val languageConfig: LanguageConfigProcessor
+        get() = config()
 
     lateinit var serverLayer: DataStoreObjectController<ServerInstance>
     lateinit var localInstance: ServerInstance
