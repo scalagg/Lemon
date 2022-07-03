@@ -16,17 +16,37 @@ import gg.scala.commons.library.model.Library
 @Library(
     groupId = "com.orbitz.consul",
     artifactId = "consul-client",
-    "1.5.3"
+    version = "1.5.3"
 )
 @Library(
     groupId = "com.squareup.retrofit2",
     artifactId = "converter-jackson",
-    "2.9.0"
+    version = "2.9.0"
 )
 @Library(
     groupId = "com.fasterxml.jackson.core",
     artifactId = "jackson-databind",
-    "2.13.3"
+    version = "2.13.3"
+)
+@Library(
+    groupId = "com.fasterxml.jackson.datatype",
+    artifactId = "jackson-datatype-jdk8",
+    version = "2.11.1"
+)
+@Library(
+    groupId = "com.fasterxml.jackson.datatype",
+    artifactId = "jackson-datatype-guava",
+    version = "2.13.3"
+)
+@Library(
+    groupId = "com.fasterxml.jackson.core",
+    artifactId = "jackson-annotations",
+    version = "2.13.3"
+)
+@Library(
+    groupId = "com.fasterxml.jackson.core",
+    artifactId = "jackson-core",
+    version = "2.13.3"
 )
 @LibraryLoader
 object LemonLibraryImpl
