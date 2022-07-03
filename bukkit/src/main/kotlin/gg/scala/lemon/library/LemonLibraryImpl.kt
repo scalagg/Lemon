@@ -23,5 +23,10 @@ import gg.scala.commons.library.model.Library
     artifactId = "converter-jackson",
     "2.9.0"
 )
+@Library(
+    groupId = "com.fasterxml.jackson.core",
+    artifactId = "jackson-databind",
+    "2.13.3"
+)
 @LibraryLoader
 object LemonLibraryImpl
