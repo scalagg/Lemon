@@ -13,5 +13,10 @@ import gg.scala.commons.library.model.Library
     version = "ac23157173",
     repository = "https://jitpack.io/"
 )
+@Library(
+    groupId = "com.orbitz.consul",
+    artifactId = "consul-client",
+    "1.5.3"
+)
 @LibraryLoader
 object LemonLibraryImpl
