@@ -5,24 +5,31 @@ import xyz.mkotb.configapi.comment.Comment
 class SettingsConfigProcessor
 {
     @Comment("What should the server id for this instance be?")
-    val id: String = "server-1"
+    val id = "server-1"
 
     @Comment("What should the server group for this instance be?")
-    val group: String = "hub"
+    val group = "hub"
+
+    @Comment("What datacenter is this server running on?")
+    val datacenter = "na-east-1"
+
+    @Comment("What are the consul connection details?")
+    val consulAddress = "127.0.0.1"
+    val consulPort = 8500
 
     @Comment("What's the password to your network details?")
-    val serverPassword: String = "server_password"
-    val serverPasswordSupplier: String = "127.0.0.1"
-    val serverPasswordHttps: Boolean = false
+    val serverPassword = "server_password"
+    val serverPasswordSupplier = "127.0.0.1"
+    val serverPasswordHttps = false
 
     @Comment("Shall console be able to view chat messages?")
-    val consoleChat: Boolean = false
+    val consoleChat = false
 
     @Comment("Should we log important data to files?")
-    val logDataToFile: Boolean = true
+    val logDataToFile = false
 
     @Comment("Should we enable our disguise system on this server?")
-    val disguiseEnabled: Boolean = false
+    val disguiseEnabled = false
 
     @Comment("Should we enable the /color command?")
     val playerColorsEnabled = true
@@ -31,7 +38,7 @@ class SettingsConfigProcessor
     val tablistSortingEnabled = true
 
     val blacklistedCommands = listOf(
-        "/ver", "/icanhasbukkit"
+        "ver", "icanhasbukkit"
     )
 
     val blacklistedPhraseRegex = listOf(

@@ -3,10 +3,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.7.0'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.0"
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.0'
+    compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.7.0"
+
+    implementation "com.google.guava:guava:31.1-jre"
     implementation project(":common")
 
     compileOnly "me.lucko:helper:5.6.10.2"
@@ -24,6 +26,7 @@ dependencies {
     compileOnly "gg.scala.commons:bukkit:2.0.0"
     compileOnly "gg.scala.cloudsync:spigot:1.0.1"
 
+    compileOnly "com.orbitz.consul:consul-client:1.5.3"
     compileOnly "com.github.LunarClient:BukkitAPI:v1.0.1"
 }
 
