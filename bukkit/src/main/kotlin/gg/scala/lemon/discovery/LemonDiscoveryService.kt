@@ -12,8 +12,7 @@ import me.lucko.helper.promise.ThreadContext
  * @since 7/2/2022
  */
 @Service
-@Repeating(20L, context = ThreadContext.ASYNC)
-object LemonDiscoveryService : Runnable
+object LemonDiscoveryService
 {
     @Configure
     fun configure()
@@ -30,12 +29,5 @@ object LemonDiscoveryService : Runnable
         LemonDiscoveryClient.discovery()
             .agentClient()
             .deregister(Lemon.instance.settings.id)
-    }
-
-    override fun run()
-    {
-        LemonDiscoveryClient.discovery()
-            .agentClient()
-            .pass(Lemon.instance.settings.id)
     }
 }

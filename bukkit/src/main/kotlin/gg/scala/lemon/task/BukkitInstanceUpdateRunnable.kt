@@ -2,6 +2,7 @@ package gg.scala.lemon.task
 
 import gg.scala.commons.annotations.runnables.Repeating
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.discovery.LemonDiscoveryClient
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.promise.ThreadContext
 import org.bukkit.Bukkit
@@ -24,5 +25,9 @@ object BukkitInstanceUpdateRunnable : Runnable
 
         Lemon.instance.serverLayer
             .save(instance, DataStoreStorageType.REDIS)
+
+        LemonDiscoveryClient.discovery()
+            .agentClient()
+            .pass(Lemon.instance.settings.id)
     }
 }
