@@ -18,5 +18,10 @@ import gg.scala.commons.library.model.Library
     artifactId = "consul-client",
     "1.5.3"
 )
+@Library(
+    groupId = "com.squareup.retrofit2",
+    artifactId = "converter-jackson",
+    "2.9.0"
+)
 @LibraryLoader
 object LemonLibraryImpl
