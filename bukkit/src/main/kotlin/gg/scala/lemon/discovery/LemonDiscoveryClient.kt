@@ -6,6 +6,7 @@ import com.orbitz.consul.model.agent.ImmutableRegistration
 import com.orbitz.consul.model.agent.Registration
 import gg.scala.lemon.Lemon
 import org.bukkit.Bukkit
+import java.net.URL
 
 /**
  * @author GrowlyX
@@ -15,12 +16,12 @@ object LemonDiscoveryClient
 {
     private val consul = Consul
         .builder()
-        .withHostAndPort(
-            HostAndPort.fromParts(
-                Lemon.instance.settings.consulAddress,
-                Lemon.instance.settings.consulPort
-            )
-        )
+        .withUrl(URL(
+            "http",
+            Lemon.instance.settings.consulAddress,
+            Lemon.instance.settings.consulPort,
+            ""
+        ))
         .withReadTimeoutMillis(1000L)
         .build()!!
 
