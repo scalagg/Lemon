@@ -26,8 +26,11 @@ object BukkitInstanceUpdateRunnable : Runnable
         Lemon.instance.serverLayer
             .save(instance, DataStoreStorageType.REDIS)
 
-        LemonDiscoveryClient.discovery()
-            .agentClient()
-            .pass(Lemon.instance.settings.id)
+        if (Lemon.instance.settings.consulEnabled)
+        {
+            LemonDiscoveryClient.discovery()
+                .agentClient()
+                .pass(Lemon.instance.settings.id)
+        }
     }
 }

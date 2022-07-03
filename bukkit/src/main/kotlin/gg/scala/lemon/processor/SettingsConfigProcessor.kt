@@ -13,6 +13,9 @@ class SettingsConfigProcessor
     @Comment("What datacenter is this server running on?")
     val datacenter = "na-east-1"
 
+    @Comment("Do we enable consul integration?")
+    val consulEnabled = true
+
     @Comment("What are the consul connection details?")
     val consulAddress = "127.0.0.1"
     val consulPort = 8500
