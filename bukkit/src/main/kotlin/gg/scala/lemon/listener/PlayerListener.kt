@@ -26,7 +26,6 @@ import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -338,23 +337,21 @@ object PlayerListener : Listener
     )
     fun onPlayerJoin(event: PlayerJoinEvent)
     {
-        val lemonPlayer = PlayerHandler.findPlayer(event.player)
+        val lemonPlayer = PlayerHandler
+            .find(event.player.uniqueId)
+            ?: return event.player.kickPlayer(
+                plugin.languageConfig.playerDataLoad
+            )
 
-        if (!lemonPlayer.isPresent)
-        {
-            event.player.kickPlayer(plugin.languageConfig.playerDataLoad)
-            return
-        }
-
+        event.player.removeMetadata("frozen", plugin)
         event.joinMessage = null
+
         updatePlayerRecord()
 
-        lemonPlayer.ifPresent { player ->
-            player.performConnectionTasks()
+        lemonPlayer.performConnectionTasks()
 
-            VisibilityHandler.updateToAll(event.player)
-            NametagHandler.reloadPlayer(event.player)
-        }
+        VisibilityHandler.updateToAll(event.player)
+        NametagHandler.reloadPlayer(event.player)
     }
 
     private fun updatePlayerRecord()
@@ -553,7 +550,18 @@ object PlayerListener : Listener
                     "${CC.AQUA}${coloredName(player)}${CC.D_AQUA} logged out while frozen.", true
                 )
 
+                player.removeMetadata("frozen", plugin)
+
                 FrozenPlayerHandler.expirables.remove(player.uniqueId)
+
+                if (Lemon.instance.settings.frozenAutoBan)
+                {
+                    Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        "ban ${player.name} perm Disconnected while frozen -s"
+                    )
+                    return@ifPresent
+                }
             }
 
             PlayerHandler.unModModePlayerSilent(player)

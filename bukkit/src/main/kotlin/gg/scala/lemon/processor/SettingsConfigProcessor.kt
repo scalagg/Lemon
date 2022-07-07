@@ -25,6 +25,9 @@ class SettingsConfigProcessor
     val serverPasswordSupplier = "127.0.0.1"
     val serverPasswordHttps = false
 
+    @Comment("Should we auto-ban players if they disconnect whilst frozen?")
+    val frozenAutoBan = false
+
     @Comment("Shall console be able to view chat messages?")
     val consoleChat = false
 
