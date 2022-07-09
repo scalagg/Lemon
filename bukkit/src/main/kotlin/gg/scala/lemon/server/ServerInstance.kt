@@ -21,4 +21,12 @@ data class ServerInstance(
     var version: String = "Unknown"
 
     var lastHeartbeat: Long = 0
+
+    fun toServerStatus() =
+        if (whitelisted) ServerStatus.WHITELISTED else ServerStatus.ONLINE
+
+    enum class ServerStatus
+    {
+        WHITELISTED, ONLINE, OFFLINE
+    }
 }
