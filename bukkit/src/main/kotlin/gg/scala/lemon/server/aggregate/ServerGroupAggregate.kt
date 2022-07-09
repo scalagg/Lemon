@@ -50,7 +50,7 @@ data class ServerGroupAggregate(
         executor = ServerGroupAggregates,
         dependencies = listOf(groupId)
     ) {
-        this.groupServers.map { it.onlinePlayers }
+        this.groupServers.sumOf { it.onlinePlayers }
     }
 
     val totalMaxPlayerCount by lease(
@@ -58,7 +58,7 @@ data class ServerGroupAggregate(
         executor = ServerGroupAggregates,
         dependencies = listOf(groupId)
     ) {
-        this.groupServers.map { it.maxPlayers }
+        this.groupServers.sumOf { it.maxPlayers }
     }
 
     val totalServerCount by lease(

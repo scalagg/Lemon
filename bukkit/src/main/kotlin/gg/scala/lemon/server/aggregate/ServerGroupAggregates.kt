@@ -8,5 +8,3 @@ import java.util.concurrent.ScheduledExecutorService
  * @since 7/9/2022
  */
 object ServerGroupAggregates : ScheduledExecutorService by Executors.newSingleThreadScheduledExecutor()
-{
-}
