@@ -34,7 +34,7 @@ data class AsyncLemonPlayer(
         lambda: (LemonPlayer) -> Unit
     ): CompletableFuture<Void>
     {
-        return future.thenAccept {
+        return future.thenAcceptAsync {
             if (it.isEmpty())
             {
                 val username = CubedCacheUtil
@@ -48,7 +48,7 @@ data class AsyncLemonPlayer(
                         null
                     ))
 
-                    return@thenAccept
+                    return@thenAcceptAsync
                 }
 
                 throw ConditionFailedException("No user entry matching the username ${CC.YELLOW}$username${CC.RED} was found.")
@@ -117,7 +117,7 @@ data class AsyncLemonPlayer(
                     }
                 }
 
-                return@thenAccept
+                return@thenAcceptAsync
             }
 
             lambda.invoke(it[0])
