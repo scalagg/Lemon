@@ -108,13 +108,13 @@ object RedisHandler
         val permission = message
             .retrieveNullable<String>("permission")
 
-        if (permission!!.isNotBlank())
+        if (!permission.isNullOrBlank())
         {
             broadcast(newMessage, permission)
-        } else
-        {
-            Bukkit.broadcastMessage(newMessage)
+            return
         }
+
+        Bukkit.broadcastMessage(newMessage)
     }
 
     @Subscribe("mass-whitelist")
