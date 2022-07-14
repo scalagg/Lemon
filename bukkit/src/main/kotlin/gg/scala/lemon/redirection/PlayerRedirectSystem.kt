@@ -3,16 +3,18 @@ package gg.scala.lemon.redirection
 import gg.scala.aware.conversation.ConversationContinuation
 import gg.scala.aware.conversation.ConversationFactoryBuilder
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.redirection.expectation.PlayerRedirectExpectationEvent
 import me.lucko.helper.Events
+import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
+import org.bukkit.Bukkit
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.KClass
 
 /**
  * A re-write of helper's
@@ -74,6 +76,16 @@ open class PlayerRedirectSystem<T>(
 
                 if (processed.allowed)
                 {
+                    Schedulers.sync()
+                        .call {
+                            val expectation =
+                                PlayerRedirectExpectationEvent(
+                                    message.uniqueId, message.server
+                                )
+
+                            Bukkit.getPluginManager().callEvent(expectation)
+                        }
+
                     expected[message.player] = processed
                 }
 
