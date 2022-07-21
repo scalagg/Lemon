@@ -40,7 +40,7 @@ object LemonDiscoveryClient
             .meta(mapOf(
                 "region" to Lemon.instance.settings.datacenter
             ))
-            .address(Bukkit.getIp())
+            .address(Bukkit.getServer().ip)
             .port(Bukkit.getPort())
             .build()
 

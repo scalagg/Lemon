@@ -1,20 +1,24 @@
 package gg.scala.lemon.player.entity.superboat
 
-import gg.scala.commons.annotations.commands.AutoRegister
-import gg.scala.commons.command.ScalaCommand
-import gg.scala.commons.acf.BaseCommand
+import com.comphenix.packetwrapper.WrapperPlayServerSpawnEntity
 import gg.scala.commons.acf.CommandHelp
-import gg.scala.commons.acf.ConditionFailedException
-import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
+import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.Default
+import gg.scala.commons.acf.annotation.HelpCommand
+import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.acf.bukkit.contexts.OnlinePlayer
+import gg.scala.commons.command.ScalaCommand
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
+import kotlin.random.Random
 
 /**
  * @author GrowlyX
  * @since 11/25/2021
  */
-@AutoRegister
 @CommandAlias("superboat")
 @CommandPermission("lemon.command.superboat")
 object EntitySuperBoatCommand : ScalaCommand()
@@ -26,35 +30,36 @@ object EntitySuperBoatCommand : ScalaCommand()
         help.showHelp()
     }
 
-    @Subcommand("forget")
-    @Description("Destroy the current superboat shown to a player.")
-    fun onDelete(player: Player, target: OnlinePlayer)
+    @Subcommand("spawn")
+    @CommandCompletion("@players")
+    fun onCreate(
+        player: Player,
+        target: OnlinePlayer,
+        size: Int
+    ): CompletableFuture<Void>
     {
-        if (!EntitySuperBoatHandler.hasSuperBoat(target.player))
-        {
-            throw ConditionFailedException("That player does not have a superboat.")
-        }
+        val start = Random.nextInt(12000, 19000)
 
-        EntitySuperBoatHandler.destroySuperBoatOf(target.player)
+        val entity = WrapperPlayServerSpawnEntity()
+        entity.handle.integers.write(0, target.player.x.toInt())
+        entity.handle.integers.write(1, target.player.y.toInt())
+        entity.handle.integers.write(2, target.player.z.toInt())
+        entity.type = WrapperPlayServerSpawnEntity.ObjectTypes.BOAT
 
-        player.sendMessage("${CC.GREEN}Successfully destroyed superboat.")
-    }
-
-    @Subcommand("create")
-    @Description("Create a new superboat (lagger) for a player.")
-    fun onCreate(player: Player, target: OnlinePlayer, size: Int)
-    {
-        if (EntitySuperBoatHandler.hasSuperBoat(target.player))
-        {
-            throw ConditionFailedException("That player already has a superboat.")
-        }
-
-        val superBoat = EntitySuperBoat(
-            target.player.location, size, target.player
-        )
-
-        EntitySuperBoatHandler.setupAndDisplaySuperBoat(target.player, superBoat)
-
-        player.sendMessage("${CC.GREEN}Successfully created superboat.")
+        return CompletableFuture
+            .runAsync {
+                for (i in start..start + size)
+                {
+                    entity.entityID = i
+                    entity.sendPacket(target.player)
+                }
+            }
+            .exceptionally {
+                it.printStackTrace()
+                return@exceptionally null
+            }
+            .thenRun {
+                player.sendMessage("${CC.GREEN}Spawned ${CC.YELLOW}$size${CC.GREEN} boats.")
+            }
     }
 }

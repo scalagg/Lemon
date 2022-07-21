@@ -16,6 +16,9 @@ class SettingsConfigProcessor
     @Comment("Do we enable consul integration?")
     val consulEnabled = true
 
+    @Comment("What is the server address?")
+    val serverAddress = "127.0.0.1"
+
     @Comment("What are the consul connection details?")
     val consulAddress = "127.0.0.1"
     val consulPort = 8500

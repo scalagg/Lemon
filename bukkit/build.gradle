@@ -8,6 +8,7 @@ dependencies {
 
     compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.7.0"
     implementation project(":common")
+    implementation fileTree("packet")
 
     compileOnly "me.lucko:helper:5.6.10.2"
     kapt "me.lucko:helper:5.6.10.2"
