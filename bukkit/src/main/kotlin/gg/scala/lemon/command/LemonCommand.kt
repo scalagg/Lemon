@@ -11,10 +11,15 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.annotation.*
+import kong.unirest.Unirest
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.visibility.VisibilityHandler
+import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
 
 /**
@@ -130,6 +135,55 @@ object LemonCommand : ScalaCommand()
 
                 softwareDump.formFancyMessage()
                     .sendToPlayer(player)
+            }
+    }
+
+    enum class ExportSpec
+    {
+        GRANT, PUNISHMENT
+    }
+
+    @Subcommand("export")
+    @Description("Export information.")
+    fun onExport(player: Player, spec: ExportSpec): CompletableFuture<Void>
+    {
+        val controller = when (spec)
+        {
+            ExportSpec.GRANT -> DataStoreObjectControllerCache.findNotNull<Grant>()
+            ExportSpec.PUNISHMENT -> DataStoreObjectControllerCache.findNotNull<Punishment>()
+        }
+
+        player.sendMessage("${CC.GREEN}Uploading content to pastes.dev...")
+
+        return controller
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAcceptAsync {
+                val mappings = Serializers
+                    .gson.toJson(it.values)
+
+                val response = Unirest
+                    .post("https://api.pastes.dev/post")
+                    .body(mappings)
+                    .contentType("text/json")
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
+                    .asJson()
+
+                val key = response
+                    .headers["Location"]
+                    .firstOrNull()
+
+                val fancy = FancyMessage()
+                    .withMessage("${CC.GREEN}The content is available at: ")
+                    .withMessage("${CC.WHITE}${"https://pastes.dev/$key/"}")
+                    .andCommandOf(
+                        ClickEvent.Action.OPEN_URL,
+                        "https://pastes.dev/$key/"
+                    )
+                    .andHoverOf(
+                        "${CC.YELLOW}Click to open the page!"
+                    )
+
+                fancy.sendToPlayer(player)
             }
     }
 
