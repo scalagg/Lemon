@@ -2,8 +2,10 @@ package gg.scala.lemon.player.rank
 
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.common.Savable
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.util.MinequestLogic
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -49,8 +51,25 @@ constructor(
         }
     }
 
-    fun getColoredName(): String
+    fun getColoredName(
+        ignoreMinequest: Boolean = false
+    ): String
     {
+        if (
+            Lemon.instance.lemonWebData.serverName == "Minequest" &&
+            !ignoreMinequest
+        )
+        {
+            val mapping = MinequestLogic
+                .byRank(this)
+                ?: return getColoredName(true)
+
+            return MinequestLogic
+                .getTranslatedName(
+                    displayName ?: name, mapping
+                )
+        }
+
         return color + (displayName ?: name)
     }
 
