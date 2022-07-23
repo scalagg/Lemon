@@ -1,10 +1,12 @@
 package gg.scala.lemon.util
 
+import gg.scala.lemon.player.rank.Rank
+
 /**
  * @author GrowlyX
  * @since 12/27/2021
  */
-object MinequestStuff
+object MinequestLogic
 {
     @JvmStatic
     val BLUE_CHARACTERS = listOf(
@@ -41,6 +43,22 @@ object MinequestStuff
         "blue" to BLUE_CHARACTERS,
         "red" to RED_CHARACTERS
     )
+
+    @JvmStatic
+    val RANK_MAPPINGS = mutableMapOf(
+        listOf("owner", "mod", "srmod", "admin") to "red",
+        listOf("platinum") to "blue"
+    )
+
+    @JvmStatic
+    fun byRank(rank: Rank): String?
+    {
+        return RANK_MAPPINGS.entries
+            .find {
+                it.key.contains(rank.name.lowercase())
+            }
+            ?.value
+    }
 
     @JvmStatic
     @JvmOverloads

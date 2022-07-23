@@ -23,6 +23,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
 import gg.scala.lemon.util.GrantRecalculationUtil
+import gg.scala.lemon.util.MinequestLogic
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.originalRank
 import gg.scala.lemon.util.QuickAccess.realRank
@@ -654,10 +655,29 @@ class LemonPlayer(
     @JvmOverloads
     fun getColoredName(
         rank: Rank = realRank(bukkitPlayer),
-        customColor: Boolean = true
+        customColor: Boolean = true,
+        ignoreMinequest: Boolean = false
     ): String
     {
         val bukkitPlayer = bukkitPlayer
+
+        if (
+            Lemon.instance.lemonWebData.serverName == "Minequest" &&
+            !ignoreMinequest
+        )
+        {
+            val mapping = MinequestLogic
+                .byRank(rank)
+                ?: return getColoredName(
+                    rank, customColor, true
+                )
+
+            return MinequestLogic
+                .getTranslatedName(
+                    if (bukkitPlayer != null) bukkitPlayer.name else name,
+                    mapping
+                )
+        }
 
         return rank.color + (if (customColor) customColor() else "") +
                 if (bukkitPlayer != null) bukkitPlayer.name else name
