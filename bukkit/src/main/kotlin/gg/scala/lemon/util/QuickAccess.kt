@@ -6,6 +6,7 @@ import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.minequest
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
@@ -181,7 +182,12 @@ object QuickAccess
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
                 it.displayName = lemonPlayer.getColoredName()
-                it.playerListName = lemonPlayer.getColoredName(customColor = false)
+
+                it.playerListName = lemonPlayer
+                    .getColoredName(
+                        customColor = false,
+                        prefixIncluded = minequest()
+                    )
 
                 NametagHandler.reloadPlayer(it)
                 VisibilityHandler.update(it)

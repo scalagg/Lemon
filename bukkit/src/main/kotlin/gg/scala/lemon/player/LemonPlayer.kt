@@ -10,6 +10,7 @@ import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.minequest
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
@@ -18,7 +19,11 @@ import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
-import gg.scala.lemon.player.punishment.category.PunishmentCategory.*
+import gg.scala.lemon.player.punishment.category.PunishmentCategory.BAN
+import gg.scala.lemon.player.punishment.category.PunishmentCategory.BLACKLIST
+import gg.scala.lemon.player.punishment.category.PunishmentCategory.IP_RELATIVE
+import gg.scala.lemon.player.punishment.category.PunishmentCategory.KICK
+import gg.scala.lemon.player.punishment.category.PunishmentCategory.MUTE
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
@@ -161,6 +166,7 @@ class LemonPlayer(
                                         player.kickPlayer(message)
                                     }
                                 }
+
                                 PunishmentCategoryIntensity.LIGHT -> bukkitPlayer
                                     ?.ifPresent { player ->
                                         player.sendMessage(message)
@@ -235,10 +241,12 @@ class LemonPlayer(
                 ${CC.RED}You've been kicked from ${Lemon.instance.settings.id}:
                 ${CC.WHITE}${punishment.addedReason}
             """.trimIndent()
+
             MUTE -> """
                 ${CC.RED}${if (current) "You've been" else "You're currently"} muted for: ${CC.WHITE}${punishment.addedReason}
                 ${CC.RED}This punishment will ${punishment.fancyDurationFromNowStringRaw}.
             """.trimIndent()
+
             BAN -> if (punishment.isPermanent)
             {
                 String.format(
@@ -255,6 +263,7 @@ class LemonPlayer(
                     SplitUtil.splitUuid(punishment.uuid)
                 )
             }
+
             BLACKLIST -> Lemon.instance.languageConfig.blacklistMessage
             // already pre-handled
             IP_RELATIVE -> ""
@@ -656,14 +665,14 @@ class LemonPlayer(
     fun getColoredName(
         rank: Rank = realRank(bukkitPlayer),
         customColor: Boolean = true,
-        ignoreMinequest: Boolean = false
+        ignoreMinequest: Boolean = false,
+        prefixIncluded: Boolean = false
     ): String
     {
         val bukkitPlayer = bukkitPlayer
 
         if (
-            Lemon.instance.lemonWebData.serverName == "Minequest" &&
-            !ignoreMinequest
+            minequest() && !ignoreMinequest
         )
         {
             val mapping = MinequestLogic
@@ -672,7 +681,13 @@ class LemonPlayer(
                     rank, customColor, true
                 )
 
-            return MinequestLogic
+            return if (prefixIncluded)
+            {
+                rank.prefix + " "
+            } else
+            {
+                ""
+            } + MinequestLogic
                 .getTranslatedName(
                     if (bukkitPlayer != null) bukkitPlayer.name else name,
                     mapping
@@ -751,12 +766,14 @@ class LemonPlayer(
         {
             PermissionCheck.COMPOUNDED -> hasPermission =
                 activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
+
             PermissionCheck.PLAYER -> bukkitPlayer?.ifPresent {
                 if (it.isOp || it.hasPermission(permission.lowercase(Locale.getDefault())))
                 {
                     hasPermission = true
                 }
             }
+
             PermissionCheck.BOTH ->
             {
                 hasPermission = activeGrant!!.getRank().getCompoundedPermissions().contains(permission)
