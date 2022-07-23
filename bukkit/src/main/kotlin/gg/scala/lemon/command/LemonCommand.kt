@@ -1,16 +1,21 @@
 package gg.scala.lemon.command
 
+import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.Default
+import gg.scala.commons.acf.annotation.Description
+import gg.scala.commons.acf.annotation.HelpCommand
+import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
+import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.software.SoftwareDump
 import gg.scala.lemon.software.SoftwareDumpCategory
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import gg.scala.commons.acf.BaseCommand
-import gg.scala.commons.acf.CommandHelp
-import gg.scala.commons.acf.annotation.*
 import kong.unirest.Unirest
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -140,7 +145,7 @@ object LemonCommand : ScalaCommand()
 
     enum class ExportSpec
     {
-        GRANT, PUNISHMENT
+        GRANT, PUNISHMENT, RANK
     }
 
     @Subcommand("export")
@@ -150,6 +155,7 @@ object LemonCommand : ScalaCommand()
         val controller = when (spec)
         {
             ExportSpec.GRANT -> DataStoreObjectControllerCache.findNotNull<Grant>()
+            ExportSpec.RANK -> DataStoreObjectControllerCache.findNotNull<Rank>()
             ExportSpec.PUNISHMENT -> DataStoreObjectControllerCache.findNotNull<Punishment>()
         }
 
