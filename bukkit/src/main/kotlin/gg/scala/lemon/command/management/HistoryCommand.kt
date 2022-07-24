@@ -43,7 +43,7 @@ object HistoryCommand : ScalaCommand()
                 return@validatePlayers
             }
 
-            val colored = QuickAccess.coloredNameOrNull(name)
+            val colored = QuickAccess.coloredNameOrNull(name, true)
 
             if (colored == null)
             {
@@ -72,7 +72,7 @@ object HistoryCommand : ScalaCommand()
                 return@validatePlayers
             }
 
-            val colored = QuickAccess.coloredNameOrNull(name)
+            val colored = QuickAccess.coloredNameOrNull(name, true)
 
             if (colored == null)
             {

@@ -48,7 +48,7 @@ object GrantsCommand : ScalaCommand()
 
         return uuid.validatePlayers(player, true) {
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
-            val colored = coloredNameOrNull(name)
+            val colored = coloredNameOrNull(name, true)
 
             if (colored == null)
             {
@@ -124,7 +124,7 @@ object GrantsCommand : ScalaCommand()
 
         return uuid.validatePlayers(player, true) {
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
-            val colored = coloredNameOrNull(name)
+            val colored = coloredNameOrNull(name, true)
 
             if (colored == null)
             {

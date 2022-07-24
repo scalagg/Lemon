@@ -85,19 +85,22 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun coloredNameOrNull(name: String): String?
+    fun coloredNameOrNull(name: String, ignoreMinequest: Boolean = false): String?
     {
         return PlayerHandler.findPlayer(name)
-            .orElse(null)?.getOriginalColoredName()
+            .orElse(null)
+            ?.getOriginalColoredName(
+                ignoreMinequest = ignoreMinequest
+            )
     }
 
     @JvmStatic
-    fun coloredName(uuid: UUID): String?
+    fun coloredName(uuid: UUID, ignoreMinequest: Boolean = false): String?
     {
         val lemonPlayer = PlayerHandler.findPlayer(uuid).orElse(null)
 
         lemonPlayer?.let {
-            return it.getColoredName()
+            return it.getColoredName(ignoreMinequest = ignoreMinequest)
         } ?: return null
     }
 
@@ -171,9 +174,9 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun coloredName(player: Player): String?
+    fun coloredName(player: Player, ignoreMinequest: Boolean = false): String?
     {
-        return coloredName(player.uniqueId)
+        return coloredName(player.uniqueId, ignoreMinequest = ignoreMinequest)
     }
 
     @JvmStatic
