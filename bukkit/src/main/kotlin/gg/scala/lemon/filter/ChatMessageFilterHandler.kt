@@ -2,9 +2,12 @@ package gg.scala.lemon.filter
 
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
+import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.minequest
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.util.CC
@@ -27,7 +30,12 @@ object ChatMessageFilterHandler
     fun configure()
     {
         phraseFilters.add(RegexPhraseFilter)
-//        messageFilters.add(RepetitiveMessageFilter)
+        messageFilters.add(RepetitiveMessageFilter)
+
+        if (minequest())
+        {
+            phraseFilters.add(MinequestInvalidCharFilter)
+        }
 
         continuedConfigure()
     }
