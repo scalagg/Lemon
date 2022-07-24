@@ -110,7 +110,7 @@ object ChatMessageFilterHandler
         if (!shouldAllowMessage)
         {
             val fancyMessage = FancyMessage()
-            fancyMessage.withMessage("${CC.RED}[Filter] ")
+            fancyMessage.withMessage("${CC.D_RED}[Filter] ")
 
             if (target != null)
             {

@@ -429,7 +429,7 @@ object PlayerListener : Listener
         if (!command.startsWith("/discord", true))
         {
             lemonPlayer.declinePunishedAction {
-                cancel(event, "${CC.RED}You cannot perform commands while being $it.")
+                cancel(event, "${CC.RED}You cannot perform commands while being $it")
             }
         }
 
