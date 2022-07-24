@@ -16,13 +16,14 @@ object MinequestInvalidCharFilter : MessagePhraseFilter
     {
         validCharacters += 'A'..'Z'
         validCharacters += 'a'..'z'
+        validCharacters += '1'..'9'
         validCharacters += listOf(
             '!', '@', '#', '$', '%',
             '^', '&', '*', '(', ')',
             '-', '+', '[', '{', '}',
             '}', '|', '\\', ';', ':',
             '"', '\'', ',', '<', '>',
-            '.', '/', '?'
+            '.', '/', '?', '~', '='
         )
     }
 
