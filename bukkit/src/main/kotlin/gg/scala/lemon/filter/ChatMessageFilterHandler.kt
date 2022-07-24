@@ -30,7 +30,7 @@ object ChatMessageFilterHandler
     fun configure()
     {
         phraseFilters.add(RegexPhraseFilter)
-        messageFilters.add(RepetitiveMessageFilter)
+//        messageFilters.add(RepetitiveMessageFilter)
 
         if (minequest())
         {
