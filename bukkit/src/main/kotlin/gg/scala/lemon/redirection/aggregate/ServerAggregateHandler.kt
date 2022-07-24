@@ -47,6 +47,7 @@ abstract class ServerAggregateHandler(
             .fetchOnlineServerInstancesByGroup(group())
             .join()
 
+        this.servers.clear()
         this.servers.addAll(instances.values)
     }
 }
