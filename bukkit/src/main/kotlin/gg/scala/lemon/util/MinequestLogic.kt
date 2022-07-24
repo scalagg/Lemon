@@ -1,6 +1,7 @@
 package gg.scala.lemon.util
 
 import gg.scala.lemon.player.rank.Rank
+import net.evilblock.cubed.util.CC
 
 /**
  * @author GrowlyX
@@ -80,7 +81,7 @@ object MinequestLogic
             ]
         }
 
-        return translated
+        return CC.WHITE + translated
             .ifEmpty { original }
     }
 }
