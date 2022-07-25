@@ -1,6 +1,8 @@
 package gg.scala.lemon.adapter.client.impl
 
 import com.lunarclient.bukkitapi.LunarClientAPI
+import com.lunarclient.bukkitapi.nethandler.client.LCPacketModSettings
+import com.lunarclient.bukkitapi.nethandler.client.obj.ModSettings
 import com.lunarclient.bukkitapi.nethandler.client.obj.ServerRule
 import com.lunarclient.bukkitapi.serverrule.LunarClientAPIServerRule
 import gg.scala.commons.annotations.plugin.SoftDependency
@@ -10,6 +12,8 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
+import gg.scala.lemon.config
+import gg.scala.lemon.minequest
 import me.lucko.helper.Events
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -43,8 +47,23 @@ class LunarClientAPIAdapter : PlayerClientAdapter
             ServerRule.COMPETITIVE_GAME, true
         )
 
+        val settings = LCPacketModSettings(
+            ModSettings().addModSetting(
+                "one_seven_visuals",
+                ModSettings.ModSetting(false, hashMapOf())
+            )
+        )
+
         Events.subscribe(PlayerJoinEvent::class.java)
             .handler { event ->
+                if (minequest() && config().group != "duels")
+                {
+                    LunarClientAPI.getInstance()
+                        .sendPacket(
+                            event.player, settings
+                        )
+                }
+
                 LunarClientAPIServerRule
                     .sendServerRule(event.player)
             }
