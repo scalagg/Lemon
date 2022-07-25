@@ -16,6 +16,9 @@ class SettingsConfigProcessor
     @Comment("Do we enable consul integration?")
     val consulEnabled = true
 
+    @Comment("Do we force-bypass all users for MFA?")
+    val mfaAutoBypass = false
+
     @Comment("What is the server address?")
     val serverAddress = "127.0.0.1"
 

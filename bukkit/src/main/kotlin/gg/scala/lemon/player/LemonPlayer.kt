@@ -6,6 +6,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.channel.ChatChannelService
+import gg.scala.lemon.config
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler
@@ -828,11 +829,27 @@ class LemonPlayer(
 
     fun hasMetadata(id: String): Boolean
     {
+        if (
+            config().mfaAutoBypass &&
+            id == "auth-exempt"
+        )
+        {
+            return true
+        }
+
         return metadata.containsKey(id)
     }
 
     fun getMetadata(id: String): Metadata?
     {
+        if (
+            config().mfaAutoBypass &&
+            id == "auth-exempt"
+        )
+        {
+            return Metadata(true)
+        }
+
         return metadata[id]
     }
 
