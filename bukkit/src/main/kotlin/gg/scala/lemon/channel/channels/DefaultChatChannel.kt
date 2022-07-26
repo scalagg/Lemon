@@ -8,6 +8,7 @@ import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.minequest.platinum.MinequestPlatinumColors
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
@@ -110,8 +111,7 @@ object DefaultChatChannel : ChatChannelComposite
         }$suffix"
 
         if (
-            minequest() &&
-            bukkitPlayer.hasPermission("rank.platinum")
+            minequest() && rank.name == "Platinum"
         )
         {
             val current = lemonPlayer
