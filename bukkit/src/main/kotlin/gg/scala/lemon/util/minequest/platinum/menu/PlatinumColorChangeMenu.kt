@@ -21,6 +21,7 @@ class PlatinumColorChangeMenu : Menu(
     init
     {
         placeholder = true
+        updateAfterClick = true
     }
 
     override fun getButtons(player: Player): Map<Int, Button>

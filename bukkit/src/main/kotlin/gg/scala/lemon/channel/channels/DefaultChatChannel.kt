@@ -6,8 +6,9 @@ import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.util.minequest.platinum.MinequestPlatinumColors
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
@@ -104,9 +105,24 @@ object DefaultChatChannel : ChatChannelComposite
         val suffix = if (strippedSuffix.isNotEmpty())
             " ${rank.suffix}" else ""
 
-        val composed = "$prefix${
+        var composed = "$prefix${
             lemonPlayer.getColoredName()
         }$suffix"
+
+        if (
+            minequest() &&
+            bukkitPlayer.hasPermission("rank.platinum")
+        )
+        {
+            val current = lemonPlayer
+                .getMetadata("platinum")
+                ?.asString() ?: "default"
+
+            val mapping = MinequestPlatinumColors[current]
+                ?: MinequestPlatinumColors.values.first()
+
+            composed = "${mapping.translated} ${mapping.chatColor}${lemonPlayer.name}$suffix"
+        }
 
         return additionalPrefixProvider
             .invoke(bukkitPlayer)

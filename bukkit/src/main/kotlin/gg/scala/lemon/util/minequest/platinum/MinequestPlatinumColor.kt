@@ -1,6 +1,7 @@
 package gg.scala.lemon.util.minequest.platinum
 
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.ChatColor
 
 /**
  * @author GrowlyX
@@ -11,5 +12,5 @@ data class MinequestPlatinumColor(
     val menuPosition: Int,
     val colorName: String,
     val translated: String,
-    val chatColor: NamedTextColor
+    val chatColor: ChatColor
 )
