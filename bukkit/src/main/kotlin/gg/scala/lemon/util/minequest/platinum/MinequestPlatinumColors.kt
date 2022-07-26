@@ -8,7 +8,7 @@ import org.bukkit.ChatColor
  */
 object MinequestPlatinumColors : Map<String, MinequestPlatinumColor> by mapOf(
     "default" to MinequestPlatinumColor(
-        paneColor = 7,
+        paneColor = 0,
         menuPosition = 10,
         "Default",
         "樀樁樂樃樄樅樆樇",

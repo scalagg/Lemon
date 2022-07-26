@@ -24,6 +24,8 @@ class PlatinumColorChangeMenu : Menu(
         updateAfterClick = true
     }
 
+    override fun size(buttons: Map<Int, Button>) = 27
+
     override fun getButtons(player: Player): Map<Int, Button>
     {
         val buttons = mutableMapOf<Int, Button>()
@@ -40,7 +42,7 @@ class PlatinumColorChangeMenu : Menu(
             buttons[it.value.menuPosition] = ItemBuilder
                 .of(Material.STAINED_GLASS_PANE)
                 .data(it.value.paneColor.toShort())
-                .name(it.value.translated)
+                .name("${CC.WHITE}${it.value.translated}")
                 .apply {
                     if (current == it.key)
                     {
