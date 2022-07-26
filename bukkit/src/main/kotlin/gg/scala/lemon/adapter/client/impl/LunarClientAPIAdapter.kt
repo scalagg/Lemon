@@ -56,7 +56,7 @@ class LunarClientAPIAdapter : PlayerClientAdapter
 
         Events.subscribe(PlayerJoinEvent::class.java)
             .handler { event ->
-                if (minequest() && config().group != "duels")
+                if (minequest() && config().group == "pack")
                 {
                     LunarClientAPI.getInstance()
                         .sendPacket(
