@@ -858,6 +858,11 @@ class LemonPlayer(
     {
         finalizeMetaData()
 
+        if (config().dummyServer)
+        {
+            return CompletableFuture.completedFuture(null)
+        }
+
         return DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
             .save(this, DataStoreStorageType.MONGO)
     }

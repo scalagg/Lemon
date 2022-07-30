@@ -62,6 +62,18 @@ object PlayerListener : Listener
         event: AsyncPlayerPreLoginEvent
     )
     {
+        if (plugin.settings.dummyServer)
+        {
+            this.playerController.localCache()[event.uniqueId] =
+                LemonPlayer(
+                    uniqueId = event.uniqueId,
+                    name = event.name,
+                    ipAddress = event.address.hostAddress ?: "",
+                    firstLogin = true
+                )
+            return
+        }
+
         val lemonPlayer = this.playerController
             .loadOptimalCopy(event.uniqueId) {
                 LemonPlayer(
