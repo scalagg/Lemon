@@ -58,7 +58,8 @@ class LemonPlayer(
     var name: String,
 
     @JvmField
-    var ipAddress: String? = null
+    var ipAddress: String? = null,
+    var firstLogin: Boolean = false
 ) : Savable, IDataStoreObject
 {
     @JvmField
@@ -968,8 +969,9 @@ class LemonPlayer(
 
         finalizeMetaData()
 
-        save().whenComplete { _, u ->
-            u?.printStackTrace()
+        save().exceptionally {
+            it.printStackTrace()
+            return@exceptionally null
         }
 
         handlePostLoad()

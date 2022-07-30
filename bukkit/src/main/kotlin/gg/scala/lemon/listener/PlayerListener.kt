@@ -67,7 +67,8 @@ object PlayerListener : Listener
                 LemonPlayer(
                     uniqueId = event.uniqueId,
                     name = event.name,
-                    ipAddress = event.address.hostAddress ?: ""
+                    ipAddress = event.address.hostAddress ?: "",
+                    firstLogin = true
                 )
             }.join()
 
