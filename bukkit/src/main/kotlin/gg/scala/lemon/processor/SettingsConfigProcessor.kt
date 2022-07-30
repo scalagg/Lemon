@@ -17,7 +17,7 @@ class SettingsConfigProcessor
     val consulEnabled = true
 
     @Comment("Dummy server?")
-    val dummyServer = true
+    val dummyServer = false
 
     @Comment("Do we force-bypass all users for MFA?")
     val mfaAutoBypass = false
