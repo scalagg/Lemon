@@ -16,7 +16,8 @@ import gg.scala.commons.library.model.Library
 @Library(
     groupId = "com.orbitz.consul",
     artifactId = "consul-client",
-    version = "1.5.3"
+    version = "1.5.3",
+    shadedClassifier = true
 )
 @Library(
     groupId = "com.squareup.retrofit2",

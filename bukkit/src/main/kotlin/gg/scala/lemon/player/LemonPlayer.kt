@@ -1,6 +1,5 @@
 package gg.scala.lemon.player
 
-import com.google.zxing.WriterException
 import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
@@ -446,7 +445,7 @@ class LemonPlayer(
             mapRenderer = ImageMapRenderer(
                 name, authSecret, LemonConstants.WEB_LINK
             )
-        } catch (e: WriterException)
+        } catch (e: Exception)
         {
             println("[Lemon] [2FA] An error occurred: ${e.message}")
 
