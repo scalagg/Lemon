@@ -56,10 +56,7 @@ class LunarClientAPIAdapter : PlayerClientAdapter
 
         Events.subscribe(PlayerJoinEvent::class.java)
             .handler { event ->
-                if (
-                    minequest() &&
-                    config().group == "resource-pack"
-                )
+                if (minequest())
                 {
                     LunarClientAPI.getInstance()
                         .sendPacket(
