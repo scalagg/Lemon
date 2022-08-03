@@ -68,6 +68,7 @@ import me.lucko.helper.redis.plugin.HelperRedis
 import gg.scala.commons.acf.BukkitCommandExecutionContext
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.command.ScalaCommandManager
+import gg.scala.lemon.util.minequest.commands.MinequestCommands
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers.create
@@ -245,6 +246,11 @@ class Lemon : ExtendedScalaPlugin()
         if (settings.playerColorsEnabled)
         {
             commandManager.registerCommand(ColorCommand)
+        }
+
+        if (minequest())
+        {
+            commandManager.registerCommand(MinequestCommands)
         }
 
         commandManager.registerCommand(NetworkOnlineStaffCommand)
