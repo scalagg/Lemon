@@ -170,9 +170,8 @@ object PunishmentHandler
             issuer.sendMessage("${CC.GREEN}You've warned $targetName${CC.GREEN} for ${CC.WHITE}$reason${CC.GREEN}.")
 
             QuickAccess.sendGlobalPlayerMessage(
-                """
-                    ${CC.RED}You've been warned for ${CC.YELLOW}$reason${CC.RED}!
-                """.trimIndent(),
+                Lemon.instance.languageConfig
+                    .warnMessage.format(reason),
                 uuid
             )
 

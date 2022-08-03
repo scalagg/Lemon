@@ -87,6 +87,12 @@ class LanguageConfigProcessor
     """.trimIndent()
 
     @Coloured
+    val warnMessage = """
+        ${CC.B_RED}You've been warned!
+        ${CC.RED}Reason: ${CC.WHITE}%s
+    """.trimIndent()
+
+    @Coloured
     var playerDataLoad =
         "${CC.RED}Your account did not load properly.\n${CC.RED}Please reconnect to resolve this issue."
 
