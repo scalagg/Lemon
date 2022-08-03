@@ -1,8 +1,10 @@
 package gg.scala.lemon.processor
 
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.Coloured
+import xyz.mkotb.configapi.comment.Comment
 
 /**
  * @author GrowlyX
@@ -66,6 +68,24 @@ class LanguageConfigProcessor
         ${CC.YELLOW}It has been 5 minutes! Please join as soon as possible.
         ${CC.GRAY}If you fail to comply with our staff team's orders, you will be banned.
         ${CC.RED}  
+    """.trimIndent()
+
+    @Coloured
+    @Comment(
+        "The replacements for this mute message are as follows:",
+        " - Tense: \"You've been/You're currently\"",
+        " - Reason",
+        " - Expiration: \"not expire/expire in <date>\"",
+    )
+    val muteMessage = """
+        ${CC.RED}%s muted for: ${CC.WHITE}%s
+        ${CC.RED}This punishment will %s.
+    """.trimIndent()
+
+    @Coloured
+    val kickMessage = """
+        ${CC.RED}You've been kicked from %s:
+        ${CC.WHITE}%s
     """.trimIndent()
 
     @Coloured

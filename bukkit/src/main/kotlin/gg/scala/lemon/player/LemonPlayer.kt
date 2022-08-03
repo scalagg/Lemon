@@ -238,15 +238,18 @@ class LemonPlayer(
     {
         return when (punishment.category)
         {
-            KICK -> """
-                ${CC.RED}You've been kicked from ${Lemon.instance.settings.id}:
-                ${CC.WHITE}${punishment.addedReason}
-            """.trimIndent()
+            KICK -> Lemon.instance.languageConfig.kickMessage
+                .format(
+                    Lemon.instance.settings.id,
+                    punishment.addedReason
+                )
 
-            MUTE -> """
-                ${CC.RED}${if (current) "You've been" else "You're currently"} muted for: ${CC.WHITE}${punishment.addedReason}
-                ${CC.RED}This punishment will ${punishment.fancyDurationFromNowStringRaw}.
-            """.trimIndent()
+            MUTE ->  Lemon.instance.languageConfig.muteMessage
+                .format(
+                    if (current) "You've been" else "You're currently",
+                    punishment.addedReason,
+                    punishment.fancyDurationFromNowStringRaw
+                )
 
             BAN -> if (punishment.isPermanent)
             {
