@@ -6,9 +6,11 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.lemon.util.minequest.MinequestChatImages
 import gg.scala.lemon.util.minequest.MinequestIcon
+import gg.scala.lemon.util.minequest.platinum.menu.PlatinumColorChangeMenu
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import java.util.*
 
 /**
@@ -17,6 +19,13 @@ import java.util.*
  */
 object MinequestCommands : ScalaCommand()
 {
+    @CommandAlias("platinum-color|platinum")
+    @CommandPermission("rank.platinum")
+    fun onPlatinum(player: Player)
+    {
+        PlatinumColorChangeMenu().openMenu(player)
+    }
+
     @CommandAlias("purchase")
     @CommandPermission("op")
     fun onPurchase(
