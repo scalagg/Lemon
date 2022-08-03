@@ -110,6 +110,8 @@ object DefaultChatChannel : ChatChannelComposite
             lemonPlayer.getColoredName()
         }$suffix"
 
+        var chatColor = rank.color
+
         if (
             minequest() && rank.name == "Platinum"
         )
@@ -121,6 +123,7 @@ object DefaultChatChannel : ChatChannelComposite
             val mapping = MinequestPlatinumColors[current]
                 ?: MinequestPlatinumColors.values.first()
 
+            chatColor = mapping.chatColor.toString()
             composed = "${mapping.translated} ${mapping.chatColor}${lemonPlayer.name}$suffix"
         }
 
@@ -130,7 +133,17 @@ object DefaultChatChannel : ChatChannelComposite
                 serializer.deserialize(composed)
             )
             .append(chatTag)
-            .append(colonComponent)
+            .let {
+                return@let if (!minequest())
+                {
+                    it.append(colonComponent)
+                } else
+                {
+                    it.append(
+                        serializer.deserialize("$chatColor: ")
+                    )
+                }
+            }
             .append(
                 serializer.deserialize(colored)
             )

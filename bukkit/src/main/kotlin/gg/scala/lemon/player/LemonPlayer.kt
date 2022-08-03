@@ -831,6 +831,7 @@ class LemonPlayer(
     {
         if (
             config().mfaAutoBypass &&
+            !minequest() &&
             id == "auth-exempt"
         )
         {
