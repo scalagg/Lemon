@@ -1,7 +1,5 @@
 package gg.scala.lemon.processor
 
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.LemonConstants
 import net.evilblock.cubed.util.CC
 import xyz.mkotb.configapi.Coloured
 import xyz.mkotb.configapi.comment.Comment

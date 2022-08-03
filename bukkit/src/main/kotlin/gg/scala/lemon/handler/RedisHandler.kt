@@ -258,12 +258,13 @@ object RedisHandler
             .retrieve<String>("reason")
 
         sync {
-            Bukkit.getPlayer(targetUuid)?.kickPlayer(
-                """
-                    ${CC.RED}You've been kicked from ${Lemon.instance.settings.id}:
-                    ${CC.WHITE}$reason
-                """.trimIndent()
-            )
+            Bukkit.getPlayer(targetUuid)
+                ?.kickPlayer(
+                    Lemon.instance.languageConfig.kickMessage
+                        .format(
+                            Lemon.instance.settings.id, reason
+                        )
+                )
         }
     }
 
