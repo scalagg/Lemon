@@ -69,10 +69,18 @@ object MinequestCommands : ScalaCommand()
             .expireAfter(10L, TimeUnit.SECONDS)
             .filter {
                 !coinCollection.contains(it.player.uniqueId) &&
-                it.message.lowercase().startsWith("gg")
+                        it.message.lowercase().startsWith("gg")
             }
             .handler {
-                MinequestCoinCollectionLogic.onCollection(it.player)
+                coinCollection.add(it.player.uniqueId)
+
+                kotlin
+                    .runCatching {
+                        MinequestCoinCollectionLogic.onCollection(it.player)
+                    }
+                    .onFailure { throwable ->
+                        throwable.printStackTrace()
+                    }
             }
     }
 }
