@@ -68,6 +68,7 @@ import me.lucko.helper.redis.plugin.HelperRedis
 import gg.scala.commons.acf.BukkitCommandExecutionContext
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.command.ScalaCommandManager
+import gg.scala.lemon.util.minequest.collection.MinequestPlaytimeCoinCollectionLogic
 import gg.scala.lemon.util.minequest.commands.MinequestCommands
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
@@ -282,6 +283,13 @@ class Lemon : ExtendedScalaPlugin()
         ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
 
         VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler)
+
+        if (minequest() && settings.id.contains("hub"))
+        {
+            flavor {
+                inject(MinequestPlaytimeCoinCollectionLogic)
+            }
+        }
 
         if (settings.disguiseEnabled)
         {

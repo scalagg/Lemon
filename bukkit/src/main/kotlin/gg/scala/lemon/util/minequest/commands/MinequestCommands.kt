@@ -5,7 +5,7 @@ import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.lemon.util.minequest.MinequestChatImages
-import gg.scala.lemon.util.minequest.MinequestCoinCollectionLogic
+import gg.scala.lemon.util.minequest.collection.MinequestCoinCollectionLogic
 import gg.scala.lemon.util.minequest.MinequestIcon
 import gg.scala.lemon.util.minequest.platinum.menu.PlatinumColorChangeMenu
 import me.lucko.helper.Events
