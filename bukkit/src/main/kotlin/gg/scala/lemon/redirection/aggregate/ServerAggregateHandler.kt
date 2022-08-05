@@ -21,6 +21,25 @@ abstract class ServerAggregateHandler(
     abstract fun group(): String
     abstract fun findBestChoice(player: Player): ServerInstance?
 
+    fun redirect(vararg player: Player)
+    {
+        val bestChoice = findBestChoice(player.first())
+            ?: return kotlin.run {
+                player.forEach {
+                    it.sendMessage(
+                        "${CC.RED}We could not find a server for you to join."
+                    )
+                }
+            }
+
+        for (other in player)
+        {
+            redirectSystem.redirect(
+                other, bestChoice.serverId
+            )
+        }
+    }
+
     fun redirect(player: Player)
     {
         val bestChoice = findBestChoice(player)

@@ -34,8 +34,15 @@ object MinequestPlaytimeCoinCollectionLogic
             .handler {
                 Schedulers.async()
                     .runRepeating(
-                        Runnable {
-                            MinequestCoinCollectionLogic.onHubCollection(it.player)
+                        { task ->
+                            if (!it.player.isOnline)
+                            {
+                                task.closeSilently()
+                                return@runRepeating
+                            }
+
+                            MinequestCoinCollectionLogic
+                                .onHubCollection.invoke(it.player)
                         },
                         10L, TimeUnit.MINUTES,
                         10L, TimeUnit.MINUTES
