@@ -121,7 +121,7 @@ object AltsCommand : ScalaCommand()
                             .andHoverOf(*hoverList.toTypedArray())
                     }
 
-                    sender.sendMessage("${coloredName(target.bukkitPlayer!!, true)}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
+                    sender.sendMessage("${target.getOriginalColoredName()}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
 
                     val lastComponent = finalMessage.components[finalMessage.components.size - 1]
 
