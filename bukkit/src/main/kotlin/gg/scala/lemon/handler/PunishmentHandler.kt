@@ -339,7 +339,9 @@ object PunishmentHandler
         val broadcastBody =
             "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has ${
                 if (punishment.category != PunishmentCategory.KICK) broadcastPermanent else ""
-            }${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
+            }${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}${
+                if (punishment.category != PunishmentCategory.KICK) broadcastSuffix else "."
+            }"
 
         punishment.save().thenRun {
             issuer.sendMessage("$broadcastPrefix${CC.GREEN}You've $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN} for ${CC.WHITE}${punishment.addedReason}${CC.GREEN}.")
