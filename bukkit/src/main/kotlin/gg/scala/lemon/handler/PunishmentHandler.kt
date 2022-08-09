@@ -337,7 +337,9 @@ object PunishmentHandler
         val broadcastSuffix = if (!punishment.isPermanent) " for ${punishment.durationString}${CC.GREEN}." else "."
 
         val broadcastBody =
-            "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
+            "$broadcastPrefix${CC.YELLOW}$issuerName${CC.GREEN} has ${
+                if (punishment.category != PunishmentCategory.KICK) broadcastPermanent else ""
+            }${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN}$broadcastSuffix"
 
         punishment.save().thenRun {
             issuer.sendMessage("$broadcastPrefix${CC.GREEN}You've $broadcastPermanent${punishment.category.inf} ${CC.YELLOW}$targetName${CC.GREEN} for ${CC.WHITE}${punishment.addedReason}${CC.GREEN}.")
