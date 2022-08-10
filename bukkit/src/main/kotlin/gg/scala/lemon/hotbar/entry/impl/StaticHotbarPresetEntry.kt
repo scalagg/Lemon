@@ -2,6 +2,7 @@ package gg.scala.lemon.hotbar.entry.impl
 
 import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -13,8 +14,15 @@ class StaticHotbarPresetEntry(
     itemBuilder: ItemBuilder
 ) : HotbarPresetEntry
 {
-    private val built = itemBuilder.build()
     private val uniqueId: UUID = UUID.randomUUID()
+    private val built = itemBuilder.build()
+        .apply {
+            ItemUtils.addToItemTag(
+                this,
+                "lemonHotbar",
+                uniqueId.toString()
+            )
+        }
 
     var onClick: (Player) -> Unit = {}
 

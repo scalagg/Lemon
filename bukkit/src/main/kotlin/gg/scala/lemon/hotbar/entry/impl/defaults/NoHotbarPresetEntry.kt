@@ -11,7 +11,7 @@ import java.util.*
 object NoHotbarPresetEntry : HotbarPresetEntry
 {
     @JvmStatic
-    val UNIQUE_ID = UUID.randomUUID()
+    val UNIQUE_ID: UUID = UUID.randomUUID()
 
     override fun uniqueId(): UUID = UNIQUE_ID
     override fun buildItemStack(player: Player) = null

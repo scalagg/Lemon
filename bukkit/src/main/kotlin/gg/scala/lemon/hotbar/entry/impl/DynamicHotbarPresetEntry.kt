@@ -2,6 +2,7 @@ package gg.scala.lemon.hotbar.entry.impl
 
 import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -18,14 +19,26 @@ class DynamicHotbarPresetEntry : HotbarPresetEntry
         @JvmStatic
         val DEFAULT_STACK = ItemStack(Material.AIR)
     }
-    
+
     private val uniqueId = UUID.randomUUID()
-    
+
     var onBuild: (Player) -> ItemStack = { DEFAULT_STACK }
     var onClick: (Player) -> Unit = {}
 
     override fun uniqueId(): UUID = uniqueId
-    override fun buildItemStack(player: Player) = onBuild.invoke(player)
+
+    override fun buildItemStack(player: Player): ItemStack
+    {
+        val build = onBuild.invoke(player)
+        ItemUtils.addToItemTag(
+            build,
+            "lemonHotbar",
+            this.uniqueId.toString()
+        )
+
+        return build
+
+    }
 
     override fun onRightClick(player: Player) {
         onClick.invoke(player)

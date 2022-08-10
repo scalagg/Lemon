@@ -491,12 +491,12 @@ object PlayerListener : Listener
         }
     }
 
-    @EventHandler
-    fun onInteract(event: PlayerInteractEvent)
-    {
-        if (shouldBlock(event.player))
-            event.isCancelled = true
-    }
+//    @EventHandler
+//    fun onInteract(event: PlayerInteractEvent)
+//    {
+//        if (shouldBlock(event.player))
+//            event.isCancelled = true
+//    }
 
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent)
