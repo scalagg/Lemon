@@ -7,7 +7,6 @@ import me.lucko.helper.Events
 import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
-import java.util.*
 
 /**
  * @author GrowlyX
@@ -35,10 +34,13 @@ object HotbarPresetHandler
             .filter { it.action.name.contains("RIGHT") }
             .filter { it.item != null }
             .handler { event ->
-                val itemKey = ItemUtils
-                    .readItemTagKey(
-                        event.item, "lemonHotbar"
-                    ) as String
+                val itemKey = kotlin
+                    .runCatching {
+                        ItemUtils
+                            .readItemTagKey(
+                                event.item, "lemonHotbar"
+                            ) as String
+                    }.getOrNull()
 
                 var matchingEntry: HotbarPresetEntry? = null
 
