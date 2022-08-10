@@ -18,6 +18,7 @@ open class ChatChannel(
     var prefixCharacter = ' '
 
     var permissionLambda = { _: Player -> true }
+    var displayToPlayer = { _: Player, _: Player -> true }
 
     var override = false
     var overrideLambda = { _: Player -> true }
@@ -67,6 +68,15 @@ open class ChatChannel(
     {
         return apply {
             permissionLambda = lambda
+        }
+    }
+
+    fun displayToPlayer(
+        lambda: (Player, Player) -> Boolean
+    ): ChatChannel
+    {
+        return apply {
+            displayToPlayer = lambda
         }
     }
 
