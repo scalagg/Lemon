@@ -56,7 +56,7 @@ class LunarClientAPIAdapter : PlayerClientAdapter
 
         Events.subscribe(PlayerJoinEvent::class.java)
             .handler { event ->
-                if (minequest())
+                if (minequest() && "duels" !in Lemon.instance.settings.id)
                 {
                     LunarClientAPI.getInstance()
                         .sendPacket(
