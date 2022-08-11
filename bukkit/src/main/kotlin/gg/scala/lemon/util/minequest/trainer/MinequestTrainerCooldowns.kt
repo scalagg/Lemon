@@ -7,6 +7,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import java.time.Duration
 import java.util.*
 
 /**
@@ -40,7 +41,8 @@ object MinequestTrainerCooldowns : ProfileOrchestrator<MinequestTrainerCooldown>
             ?: return
 
         cooldown.cooldowns[trainer] =
-            System.currentTimeMillis()
+            System.currentTimeMillis() + Duration
+                .ofDays(1L).toMillis()
 
         DataStoreObjectControllerCache
             .findNotNull<MinequestTrainerCooldown>()
