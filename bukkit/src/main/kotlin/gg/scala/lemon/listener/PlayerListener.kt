@@ -370,8 +370,15 @@ object PlayerListener : Listener
 
         lemonPlayer.performConnectionTasks()
 
-        VisibilityHandler.updateToAll(event.player)
-        NametagHandler.reloadPlayer(event.player)
+        if (lemonPlayer.hasMetadata("auto-vanish"))
+        {
+            PlayerHandler.vanishPlayer(event.player)
+            event.player.sendMessage("${CC.B_YELLOW}You've been vanished automatically due to your auto-vanish setting.")
+        } else
+        {
+            VisibilityHandler.updateToAll(event.player)
+            NametagHandler.reloadPlayer(event.player)
+        }
     }
 
     private fun updatePlayerRecord()
