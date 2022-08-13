@@ -373,7 +373,7 @@ object PlayerListener : Listener
 
         if (lemonPlayer.hasMetadata("auto-vanish"))
         {
-            Tasks.delayed(3L) {
+            Tasks.delayed(10L) {
                 PlayerHandler.vanishPlayer(event.player)
             }
 

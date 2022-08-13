@@ -8,18 +8,22 @@ import org.bukkit.entity.Player
 /**
  * @author puugz, GrowlyX
  */
-object StaffVisibilityHandler : VisibilityAdapter {
+object StaffVisibilityHandler : VisibilityAdapter
+{
+    override fun getAction(toRefresh: Player, refreshFor: Player): VisibilityAction
+    {
+        val lemonPlayer = PlayerHandler.findPlayer(refreshFor).orElse(null)
+        val lemonPlayerTarget = PlayerHandler.findPlayer(toRefresh).orElse(null)
 
-    override fun getAction(toRefresh: Player, refreshFor: Player): VisibilityAction {
-        val lemonPlayer = PlayerHandler.findPlayer(toRefresh).orElse(null)
-        val lemonPlayerTarget = PlayerHandler.findPlayer(refreshFor).orElse(null)
-
-        if (lemonPlayer != null && lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff")) {
+        if (lemonPlayer != null && lemonPlayer.getSetting("hiding-staff") && lemonPlayerTarget.hasPermission("lemon.staff"))
+        {
             return VisibilityAction.HIDE
         }
 
-        if (toRefresh.hasMetadata("vanished")) {
-            if (lemonPlayerTarget.activeGrant!!.getRank().weight < toRefresh.getMetadata("vanish-power")[0].asInt()) {
+        if (toRefresh.hasMetadata("vanished"))
+        {
+            if (lemonPlayer.activeGrant!!.getRank().weight < toRefresh.getMetadata("vanish-power")[0].asInt())
+            {
                 return VisibilityAction.HIDE
             }
         }
