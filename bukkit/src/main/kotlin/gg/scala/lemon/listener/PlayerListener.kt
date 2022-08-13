@@ -26,6 +26,7 @@ import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -372,7 +373,10 @@ object PlayerListener : Listener
 
         if (lemonPlayer.hasMetadata("auto-vanish"))
         {
-            PlayerHandler.vanishPlayer(event.player)
+            Tasks.delayed(3L) {
+                PlayerHandler.vanishPlayer(event.player)
+            }
+
             event.player.sendMessage("${CC.B_YELLOW}You've been vanished automatically due to your auto-vanish setting.")
         } else
         {

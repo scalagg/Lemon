@@ -47,7 +47,7 @@ object MinequestLogic
 
     @JvmStatic
     val RANK_MAPPINGS = mutableMapOf(
-        listOf("owner", "mod", "srmod", "admin") to "red",
+        listOf("owner", "mod", "srmod", "youtube", "admin") to "red",
         listOf("platinum") to "blue"
     )
 
