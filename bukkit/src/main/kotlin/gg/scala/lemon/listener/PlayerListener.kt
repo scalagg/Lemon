@@ -373,9 +373,10 @@ object PlayerListener : Listener
 
         if (lemonPlayer.hasMetadata("auto-vanish"))
         {
-            Tasks.delayed(10L) {
-                PlayerHandler.vanishPlayer(event.player)
-            }
+            PlayerHandler.vanishPlayer(
+                event.player,
+                power = lemonPlayer.activeGrant!!.getRank().weight
+            )
 
             event.player.sendMessage("${CC.B_YELLOW}You've been vanished automatically due to your auto-vanish setting.")
         } else
