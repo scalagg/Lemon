@@ -6,6 +6,7 @@ import gg.scala.lemon.server.ServerInstance
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
+import java.time.Duration
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -65,6 +66,10 @@ abstract class ServerAggregateHandler(
         val instances = ServerHandler
             .fetchOnlineServerInstancesByGroup(group())
             .join()
+            .filter {
+                it.value.lastHeartbeat + Duration.ofSeconds(5L)
+                    .toMillis() >= System.currentTimeMillis()
+            }
 
         this.servers.clear()
         this.servers.addAll(instances.values)
