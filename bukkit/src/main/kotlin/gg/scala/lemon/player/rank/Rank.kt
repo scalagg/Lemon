@@ -67,7 +67,7 @@ constructor(
             return MinequestLogic
                 .getTranslatedName(
                     displayName ?: name, mapping
-                )
+                ) ?: getColoredName(true)
         }
 
         return color + (displayName ?: name)

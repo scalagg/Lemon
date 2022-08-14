@@ -51,6 +51,8 @@ object MinequestLogic
         listOf("platinum", "dev") to "blue"
     )
 
+    val availableCustomColorRanks = listOf("owner", "mod", "srmod", "admin", "platinum", "dev")
+
     @JvmStatic
     fun byRank(rank: Rank): String?
     {
@@ -70,7 +72,7 @@ object MinequestLogic
     @JvmOverloads
     fun getTranslatedName(
         original: String, color: String = "blue"
-    ): String
+    ): String?
     {
         var translated = ""
 
@@ -84,6 +86,11 @@ object MinequestLogic
                         original[i].toString()
                     )
             ]
+        }
+
+        if (translated.isEmpty())
+        {
+            return null
         }
 
         return CC.WHITE + translated

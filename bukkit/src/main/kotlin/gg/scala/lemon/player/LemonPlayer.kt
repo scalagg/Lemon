@@ -245,7 +245,7 @@ class LemonPlayer(
                     punishment.addedReason
                 )
 
-            MUTE ->  Lemon.instance.languageConfig.muteMessage
+            MUTE -> Lemon.instance.languageConfig.muteMessage
                 .format(
                     if (current) "You've been" else "You're currently",
                     punishment.addedReason,
@@ -682,7 +682,7 @@ class LemonPlayer(
         {
             val mapping = MinequestLogic
                 .byRank(rank)
-                ?: if (rank.name == "youtube")
+                ?: if (rank.name.lowercase() == "youtube")
                 {
                     null
                 } else
@@ -695,7 +695,7 @@ class LemonPlayer(
             return if (prefixIncluded)
             {
                 if (ChatColor.stripColor(rank.prefix).isEmpty())
-                    "" else "${rank.prefix} "
+                    "" else "${rank.prefix} ${rank.color}"
             } else
             {
                 ""
@@ -704,11 +704,17 @@ class LemonPlayer(
                 "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
             } else
             {
-                MinequestLogic
-                    .getTranslatedName(
-                        if (bukkitPlayer != null) bukkitPlayer.name else name,
-                        mapping
-                    )
+                if (MinequestLogic.availableCustomColorRanks.contains(rank.name.lowercase()))
+                {
+                    MinequestLogic
+                        .getTranslatedName(
+                            if (bukkitPlayer != null) bukkitPlayer.name else name,
+                            mapping
+                        ) ?: "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
+                } else
+                {
+                    "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
+                }
             }
         }
 
@@ -740,11 +746,11 @@ class LemonPlayer(
             } else
             {
                 ""
-            } + MinequestLogic
+            } + (MinequestLogic
                 .getTranslatedName(
                     if (bukkitPlayer != null) bukkitPlayer.name else name,
                     mapping
-                )
+                ) ?: "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}")
         }
 
         return rank.color + customColor() +
