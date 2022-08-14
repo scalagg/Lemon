@@ -47,13 +47,18 @@ object MinequestLogic
 
     @JvmStatic
     val RANK_MAPPINGS = mutableMapOf(
-        listOf("owner", "mod", "srmod", "youtube", "admin") to "red",
-        listOf("platinum") to "blue"
+        listOf("owner", "mod", "srmod", "admin") to "red",
+        listOf("platinum", "dev") to "blue"
     )
 
     @JvmStatic
     fun byRank(rank: Rank): String?
     {
+        if (rank.name == "youtube")
+        {
+            return null
+        }
+
         return RANK_MAPPINGS.entries
             .find {
                 it.key.contains(rank.name.lowercase())

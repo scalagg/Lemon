@@ -9,5 +9,5 @@ import java.util.*
  */
 class MinequestPotionCooldown(
     override val identifier: UUID,
-    val cooldowns: MutableMap<MinequestPotionType, Long> = mutableMapOf()
+    val cooldowns: MutableMap<MinequestPotionType, Pair<Long, Double>> = mutableMapOf()
 ) : IDataStoreObject

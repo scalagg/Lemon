@@ -30,10 +30,18 @@ object MinequestPotionCooldowns : ProfileOrchestrator<MinequestPotionCooldown>()
     ): Long
     {
         return this.find(uniqueId)!!
-            .cooldowns[type] ?: 0L
+            .cooldowns[type]?.first ?: 0L
     }
 
-    fun isCooldownActive(
+    fun getMultiplier(
+        uniqueId: UUID, type: MinequestPotionType
+    ): Double
+    {
+        return this.find(uniqueId)!!
+            .cooldowns[type]?.second ?: 0.0
+    }
+
+    fun isActive(
         uniqueId: UUID, type: MinequestPotionType
     ): Boolean
     {
@@ -44,14 +52,17 @@ object MinequestPotionCooldowns : ProfileOrchestrator<MinequestPotionCooldown>()
     }
 
     fun setExpiration(
-        uniqueId: UUID, type: MinequestPotionType, duration: Duration
+        uniqueId: UUID, type: MinequestPotionType,
+        duration: Duration, multiplier: Double
     )
     {
         val cooldown = this.find(uniqueId)
             ?: return
 
-        cooldown.cooldowns[type] =
-            System.currentTimeMillis() + duration.toMillis()
+        cooldown.cooldowns[type] = Pair(
+            System.currentTimeMillis() + duration.toMillis(),
+            multiplier
+        )
 
         DataStoreObjectControllerCache
             .findNotNull<MinequestPotionCooldown>()

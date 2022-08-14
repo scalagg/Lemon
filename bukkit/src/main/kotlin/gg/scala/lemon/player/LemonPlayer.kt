@@ -681,9 +681,15 @@ class LemonPlayer(
         {
             val mapping = MinequestLogic
                 .byRank(rank)
-                ?: return getColoredName(
-                    rank, customColor, true, prefixIncluded
-                )
+                ?: if (rank.name == "youtube")
+                {
+                    null
+                } else
+                {
+                    getColoredName(
+                        rank, customColor, true, prefixIncluded
+                    )
+                }
 
             return if (prefixIncluded)
             {
@@ -691,11 +697,17 @@ class LemonPlayer(
             } else
             {
                 ""
-            } + MinequestLogic
-                .getTranslatedName(
-                    if (bukkitPlayer != null) bukkitPlayer.name else name,
-                    mapping
-                )
+            } + if (mapping == null)
+            {
+                "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
+            } else
+            {
+                MinequestLogic
+                    .getTranslatedName(
+                        if (bukkitPlayer != null) bukkitPlayer.name else name,
+                        mapping
+                    )
+            }
         }
 
         return rank.color + (if (customColor) customColor() else "") +

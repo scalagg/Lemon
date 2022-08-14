@@ -1,6 +1,5 @@
 package gg.scala.lemon.util.minequest.platinum
 
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.ChatColor
 
 /**

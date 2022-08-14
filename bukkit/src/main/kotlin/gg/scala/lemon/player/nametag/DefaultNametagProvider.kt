@@ -4,6 +4,7 @@ import gg.scala.lemon.minequest
 import gg.scala.lemon.util.QuickAccess.realRank
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 object DefaultNametagProvider : NametagProvider("default", 10)
@@ -12,7 +13,9 @@ object DefaultNametagProvider : NametagProvider("default", 10)
     {
         return createNametag(
             realRank(toRefresh).let {
-                if (minequest()) "${it.prefix} ${it.color}" else it.color
+                if (minequest()) "${
+                    if (ChatColor.stripColor(it.prefix).isEmpty()) "" else it.prefix
+                }${it.color}" else it.color
             }, ""
         )
     }
