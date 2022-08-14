@@ -43,6 +43,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.totp.ImageMapRenderer
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -693,7 +694,8 @@ class LemonPlayer(
 
             return if (prefixIncluded)
             {
-                rank.prefix + " "
+                if (ChatColor.stripColor(rank.prefix).isEmpty())
+                    "" else "${rank.prefix} "
             } else
             {
                 ""

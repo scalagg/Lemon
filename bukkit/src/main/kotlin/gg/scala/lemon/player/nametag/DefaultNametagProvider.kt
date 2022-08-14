@@ -14,7 +14,7 @@ object DefaultNametagProvider : NametagProvider("default", 10)
         return createNametag(
             realRank(toRefresh).let {
                 if (minequest()) "${
-                    if (ChatColor.stripColor(it.prefix).isEmpty()) "" else it.prefix
+                    if (ChatColor.stripColor(it.prefix).isEmpty()) "" else "${it.prefix} "
                 }${it.color}" else it.color
             }, ""
         )
