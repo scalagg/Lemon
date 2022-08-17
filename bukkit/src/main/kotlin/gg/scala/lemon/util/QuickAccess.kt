@@ -1,5 +1,7 @@
 package gg.scala.lemon.util
 
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.handler.GrantHandler
@@ -29,8 +31,13 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author GrowlyX, puugz
  */
+@Service(name = "LemonQuickAccess")
 object QuickAccess
 {
+    private val connection by lazy {
+        Lemon.instance.aware.internal().connect()
+    }
+
     @JvmStatic
     fun UUID.username(): String =
         CubedCacheUtil.fetchName(this)!!
@@ -38,6 +45,26 @@ object QuickAccess
     @JvmStatic
     fun String.uniqueId(): UUID =
         CubedCacheUtil.fetchUuid(this)!!
+
+    @Configure
+    fun configure()
+    {
+        this.connection
+    }
+
+    @JvmStatic
+    fun getLastOnline(player: UUID): CompletableFuture<Long?>
+    {
+        return CompletableFuture.supplyAsync {
+            this.connection.sync()
+                .hget(
+                    "player:$player",
+                    "lastOnline"
+                )
+                ?.toLong()
+                ?: return@supplyAsync null
+        }
+    }
 
     @JvmStatic
     fun broadcast(message: String, permission: String = "")
