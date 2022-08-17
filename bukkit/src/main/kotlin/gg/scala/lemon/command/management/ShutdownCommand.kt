@@ -6,6 +6,7 @@ import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.annotations.commands.AutoRegister
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.Duration
 import net.evilblock.cubed.util.time.TimeUtil
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player
  * @author puugz
  * @since 27/08/2021 20:02
  */
+@AutoRegister
 @CommandAlias("shutdown|reboot")
 @CommandPermission("lemon.command.shutdown")
 object ShutdownCommand : ScalaCommand()
