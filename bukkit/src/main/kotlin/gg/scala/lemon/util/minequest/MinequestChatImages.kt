@@ -14,7 +14,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "" // TODO
@@ -30,7 +30,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "" // TODO
@@ -46,7 +46,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "" // TODO
@@ -62,7 +62,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "" // TODO
@@ -78,7 +78,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "" // TODO
@@ -94,7 +94,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "䲰㼆䲱㼆䲲㼆䲳㼆䲴㼆䲵㼆䲶㼆䲷㼆䲸㼆䲹㼆䲺㼆䲺㼆䲺㼆䲺㼆䲺㼆䲺㼆䱠㼆䱡㼆䱢㼆䱣㼆䱤㼆䱥㼆䱦㼆䱧㼆䱨㼆䱩㼆䱪㼆䱫㼆䱬㼆䱭",
@@ -114,7 +114,7 @@ object MinequestChatImages
         val protocol = MinecraftProtocol
             .getPlayerVersion(player)
 
-        return if (protocol <= 393)
+        return if (protocol < 393)
         {
             listOf(
                 "趰㼆趱㼆趲㼆足㼆趴㼆趵㼆趶㼆趷㼆趸㼆趹㼆趺㼆趻㼆趼㼆趽㼆趾㼆趿㼆赠㼆赡㼆赢㼆赣㼆赤㼆赥㼆赦㼆赧㼆赨㼆赩㼆赪㼆赫㼆赬㼆赭",
