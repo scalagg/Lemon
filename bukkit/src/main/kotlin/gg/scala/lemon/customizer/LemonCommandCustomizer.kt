@@ -67,6 +67,11 @@ object LemonCommandCustomizer
 
             if (it.player != null)
             {
+                if (it.player.uniqueId == lemonPlayer.uniqueId)
+                {
+                    return@registerContext lemonPlayer
+                }
+
                 if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player))
                 {
                     throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
