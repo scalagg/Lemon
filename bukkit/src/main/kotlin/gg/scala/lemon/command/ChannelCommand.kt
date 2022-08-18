@@ -83,7 +83,9 @@ object ChannelCommand : ScalaCommand()
             "${CC.SEC}Channels: ${CC.PRI}${
                 viewable.joinToString(
                     separator = "${CC.SEC}, ${CC.PRI}"
-                )
+                ) {
+                    it.composite().identifier()
+                }
             }${CC.SEC}."
         )
     }
