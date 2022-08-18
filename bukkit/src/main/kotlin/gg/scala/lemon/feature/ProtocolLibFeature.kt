@@ -44,7 +44,7 @@ object ProtocolLibFeature
 
                     val command = split[0]
 
-                    if (command.contains(":") && command.endsWith(" "))
+                    if (command.contains(":"))
                     {
                         event.isCancelled = true
                         return@handler
