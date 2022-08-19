@@ -5,6 +5,7 @@ import gg.scala.lemon.minequest
 import gg.scala.lemon.util.QuickAccess.realRank
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
+import net.evilblock.cubed.util.CC
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
@@ -20,11 +21,15 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             },
             if (minequest())
             {
-                DefaultChatChannel.serializer.serialize(
-                    DefaultChatChannel
-                        .chatTagProvider
-                        .invoke(toRefresh)
-                )
+                "${CC.RESET}${
+                    DefaultChatChannel.serializer
+                        .serialize(
+                            DefaultChatChannel
+                                .chatTagProvider
+                                .invoke(toRefresh)
+                        )
+                        .removeSuffix(" ")
+                }"
             } else ""
         )
     }

@@ -100,9 +100,10 @@ object DefaultChatChannel : ChatChannelComposite
         val strippedSuffix = ChatColor
             .stripColor(rank.suffix)
 
-        val prefix = (if (strippedPrefix.isNotEmpty())
-            "${rank.prefix} " else "") + if (minequest())
-            serializer.serialize(chatTag) else ""
+        val prefix =
+            (if (strippedPrefix.isNotEmpty())
+                "${rank.prefix} " else "") + (if (minequest())
+                serializer.serialize(chatTag).removePrefix(" ") else "")
 
         val suffix = if (strippedSuffix.isNotEmpty())
             " ${rank.suffix}" else ""
