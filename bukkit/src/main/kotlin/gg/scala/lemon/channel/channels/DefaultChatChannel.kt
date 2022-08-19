@@ -45,7 +45,8 @@ object DefaultChatChannel : ChatChannelComposite
             .registerDefault(channel)
     }
 
-    private var chatTagProvider = { _: Player -> Component.text("") }
+    var chatTagProvider = { _: Player -> Component.text("") }
+
     private var additionalPrefixProvider = { _: Player -> Component.text("") }
     private var hoverEventProvider: (Player, Player) -> HoverEvent<Component>? = { _, _ -> null }
 
@@ -63,7 +64,7 @@ object DefaultChatChannel : ChatChannelComposite
         this.additionalPrefixProvider = lambda
     }
 
-    private val serializer =
+    val serializer =
         LegacyComponentSerializer.legacySection()
 
     override fun identifier() = "default"
