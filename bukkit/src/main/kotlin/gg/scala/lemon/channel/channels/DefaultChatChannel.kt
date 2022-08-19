@@ -8,7 +8,6 @@ import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.minequest.platinum.MinequestPlatinumColors
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
@@ -100,8 +99,9 @@ object DefaultChatChannel : ChatChannelComposite
         val strippedSuffix = ChatColor
             .stripColor(rank.suffix)
 
-        val prefix = if (strippedPrefix.isNotEmpty())
-            "${rank.prefix} " else ""
+        val prefix = (if (strippedPrefix.isNotEmpty())
+            "${rank.prefix} " else "") + if (minequest())
+            serializer.serialize(chatTag) else ""
 
         val suffix = if (strippedSuffix.isNotEmpty())
             " ${rank.suffix}" else ""
@@ -132,11 +132,12 @@ object DefaultChatChannel : ChatChannelComposite
             .append(
                 serializer.deserialize(composed)
             )
-            .append(chatTag)
             .let {
                 return@let if (!minequest())
                 {
-                    it.append(colonComponent)
+                    it
+                        .append(chatTag)
+                        .append(colonComponent)
                 } else
                 {
                     it.append(
