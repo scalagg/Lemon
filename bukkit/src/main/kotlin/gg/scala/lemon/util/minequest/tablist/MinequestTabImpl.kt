@@ -7,8 +7,10 @@ import gg.scala.lemon.util.MinequestLogic
 import gg.scala.lemon.util.QuickAccess
 import io.github.nosequel.tab.shared.entry.TabElement
 import io.github.nosequel.tab.shared.entry.TabEntry
+import io.github.nosequel.tab.shared.skin.SkinType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.nms.MinecraftReflection
+import org.apache.commons.lang3.RandomStringUtils
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
@@ -24,20 +26,13 @@ object MinequestTabImpl : TablistPopulator
             Lemon.instance.lemonWebData.serverName == "Minequest"
         )!!
 
-    private val mappings = mutableMapOf(
-        0..19 to 0,
-        20..39 to 1,
-        40..69 to 2,
-        70..79 to 3,
-    )
-
     override fun populate(player: Player, element: TabElement)
     {
         if (Lemon.instance.lemonWebData.serverName != "Minequest")
             return
 
         element.header = " \n${CC.B_AQUA}MINEQUEST\n "
-        element.footer = " \n${CC.D_GRAY}The first multi-version Minecraft social hub!\n${
+        element.footer = " \n${CC.D_GRAY}The first multi-version Minecraft social hub!\n\n${
             "${
                 MinequestLogic.getTranslatedName("discord", "blue")
             }${CC.AQUA}.${
@@ -58,20 +53,16 @@ object MinequestTabImpl : TablistPopulator
 
                 val textures = gameProfile.properties
                     .get("textures").firstOrNull()
-                    ?: return@forEachIndexed
 
-                val mappings = this.mappings.entries
-                    .firstOrNull {
-                        it.key.contains(index)
-                    }?.value ?: 0
+                val data = if (textures == null)
+                    SkinType.LIGHT_GRAY.skinData else arrayOf(
+                    textures.value, textures.signature
+                )
 
                 val entry = TabEntry(
-                    mappings, if (mappings == 0) index else index / mappings,
+                    index / 4, index % 4,
                     "${other.playerListName}${other.displayName}",
-                    MinecraftReflection.getPing(other),
-                    arrayOf(
-                        textures.value, textures.signature
-                    )
+                    MinecraftReflection.getPing(other), data
                 )
 
                 element.add(entry)
