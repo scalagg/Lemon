@@ -32,7 +32,7 @@ object MinequestTabImpl : TablistPopulator
             return
 
         element.header = " \n${CC.B_AQUA}MINEQUEST\n "
-        element.footer = " \n${CC.D_GRAY}The first multi-version Minecraft social hub!\n\n${
+        element.footer = " \n${CC.D_GRAY}The first multi-version Minecraft social hub!\n${
             "${
                 MinequestLogic.getTranslatedName("discord", "blue")
             }${CC.AQUA}.${
