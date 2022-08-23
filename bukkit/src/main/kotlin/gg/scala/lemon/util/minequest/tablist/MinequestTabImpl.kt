@@ -60,7 +60,7 @@ object MinequestTabImpl : TablistPopulator
                 )
 
                 val entry = TabEntry(
-                    index / 4, index % 4,
+                    index % 4, index / 4,
                     "${other.playerListName}${other.displayName}",
                     MinecraftReflection.getPing(other), data
                 )
