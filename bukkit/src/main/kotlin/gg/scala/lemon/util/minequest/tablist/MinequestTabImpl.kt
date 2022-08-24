@@ -3,8 +3,12 @@ package gg.scala.lemon.util.minequest.tablist
 import com.mojang.authlib.GameProfile
 import gg.scala.commons.tablist.TablistPopulator
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.channel.channels.DefaultChatChannel
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.minequest
 import gg.scala.lemon.util.MinequestLogic
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.minequest.platinum.MinequestPlatinumColors
 import io.github.nosequel.tab.shared.entry.TabElement
 import io.github.nosequel.tab.shared.entry.TabEntry
 import io.github.nosequel.tab.shared.skin.SkinType
@@ -12,6 +16,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.nms.MinecraftReflection
 import org.apache.commons.lang3.RandomStringUtils
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
@@ -59,9 +64,45 @@ object MinequestTabImpl : TablistPopulator
                     textures.value, textures.signature
                 )
 
+                val lemonPlayer = PlayerHandler
+                    .find(other.uniqueId)
+                    ?: return@forEachIndexed
+
+                val rank = QuickAccess.realRank(other)
+
+                val strippedPrefix = ChatColor
+                    .stripColor(rank.prefix)
+
+                val strippedSuffix = ChatColor
+                    .stripColor(rank.suffix)
+
+                val prefix =
+                    (if (strippedPrefix.isNotEmpty())
+                        "${rank.prefix} " else "")
+
+                val suffix = if (strippedSuffix.isNotEmpty())
+                    " ${rank.suffix}" else ""
+
+                var composed = "$prefix${rank.color}${
+                    lemonPlayer.getColoredName()
+                }$suffix"
+
+                if (
+                    minequest() && rank.name == "Platinum"
+                )
+                {
+                    val current = lemonPlayer
+                        .getMetadata("platinum")
+                        ?.asString() ?: "default"
+
+                    val mapping = MinequestPlatinumColors[current]
+                        ?: MinequestPlatinumColors.values.first()
+
+                    composed = "${mapping.translated} ${mapping.chatColor}${lemonPlayer.name}$suffix"
+                }
+
                 val entry = TabEntry(
-                    index / 20, index % 20,
-                    "${other.playerListName}${other.displayName}",
+                    index / 20, index % 20, composed,
                     MinecraftReflection.getPing(other), data
                 )
 
