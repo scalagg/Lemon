@@ -44,7 +44,7 @@ object MinequestTabImpl : TablistPopulator
                 MinequestLogic.getTranslatedName("minequest", "blue")
             }${CC.AQUA}.${
                 MinequestLogic.getTranslatedName("gg", "blue")
-            }" // ${CC.AQUA}www.minequest.gg/discord
+            }"
         }\n "
 
         Bukkit.getOnlinePlayers()
