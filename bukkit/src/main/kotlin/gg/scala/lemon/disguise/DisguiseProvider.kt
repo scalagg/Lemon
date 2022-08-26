@@ -356,12 +356,6 @@ object DisguiseProvider
             it.add(MinecraftReflection.getHandle(player))
         }
 
-        PlayerHandler.findPlayer(player).ifPresent {
-            // as they SHOULD already be authenticated
-            // if they are executing disguise commands.
-            it.authenticateInternal()
-        }
-
         QuickAccess.reloadPlayer(player.uniqueId, false)
     }
 
