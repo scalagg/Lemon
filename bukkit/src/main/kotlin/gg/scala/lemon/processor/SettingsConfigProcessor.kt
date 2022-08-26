@@ -19,9 +19,6 @@ class SettingsConfigProcessor
     @Comment("Dummy server?")
     val dummyServer = false
 
-    @Comment("Do we force-bypass all users for MFA?")
-    val mfaAutoBypass = false
-
     @Comment("What is the server address?")
     val serverAddress = "127.0.0.1"
 

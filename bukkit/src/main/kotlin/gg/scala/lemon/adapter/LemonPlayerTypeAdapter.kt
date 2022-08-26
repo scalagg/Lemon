@@ -41,14 +41,11 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             JsonPrimitive(player.timestamp.toString())
         )
 
-        val ipAddress = if (player.persistIpAddress)
-            player.previousIpAddress else player.ipAddress
-
-        if (ipAddress != null)
+        if (player.ipAddress != null)
         {
             jsonObject.add(
                 "ipAddress",
-                JsonPrimitive(ipAddress)
+                JsonPrimitive(player.ipAddress)
             )
         }
 

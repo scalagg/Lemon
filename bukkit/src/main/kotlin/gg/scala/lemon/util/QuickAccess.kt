@@ -479,18 +479,6 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun shouldBlock(player: Player): Boolean
-    {
-        val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
-        if (!lemonPlayer.hasPermission("lemon.2fa.forced")) return false
-        if (lemonPlayer.isAuthExempt()) return false
-        if (lemonPlayer.hasAuthenticatedThisSession()) return false
-
-        return true
-    }
-
-    @JvmStatic
     fun toNiceString(string: String): String
     {
         var output = string.lowercase(Locale.getDefault()).replace("_", " ").trim()
