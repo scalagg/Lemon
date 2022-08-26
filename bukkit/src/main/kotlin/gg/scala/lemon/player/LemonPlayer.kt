@@ -3,7 +3,6 @@ package gg.scala.lemon.player
 import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
-import gg.scala.lemon.LemonConstants.AUTH_PREFIX
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.config
 import gg.scala.lemon.handler.GrantHandler
@@ -38,16 +37,13 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.controller.annotations.Timestamp
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
-import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
-import net.evilblock.cubed.util.totp.ImageMapRenderer
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -361,131 +357,6 @@ class LemonPlayer(
             )
             return@exceptionally null
         }
-    }
-
-    fun isAuthExempt(): Boolean
-    {
-        return getSetting("auth-exempt")
-    }
-
-    fun hasAuthenticatedThisSession(): Boolean
-    {
-        return bukkitPlayer?.hasMetadata("authenticated") == true
-    }
-
-    fun hasSetupAuthentication(): Boolean
-    {
-        return getMetadata("auth-secret") != null
-    }
-
-    fun getAuthSecret(): String
-    {
-        return getMetadata("auth-secret")?.asString() ?: ""
-    }
-
-    private fun validatePlayerAuthentication()
-    {
-        if (!hasPermission("lemon.2fa.forced"))
-            return
-
-        if (isAuthExempt())
-        {
-            authenticateInternal()
-            return
-        }
-
-        val authSecret = getMetadata("auth-secret")
-
-        if (authSecret != null)
-        {
-            if (this.previousIpAddress != null && this.previousIpAddress == ipAddress)
-            {
-                authenticateInternal()
-            } else
-            {
-                persistIpAddress = true; save()
-
-                Schedulers.sync().callLater({
-                    bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please authenticate using ${CC.WHITE}/auth <code>${CC.SEC}.")
-                }, 1L)
-            }
-        } else
-        {
-            Schedulers.sync().callLater({
-                bukkitPlayer?.sendMessage("${AUTH_PREFIX}${CC.SEC}Please setup authentication using ${CC.WHITE}/setup2fa${CC.SEC}.")
-            }, 1L)
-        }
-    }
-
-    fun authenticateInternal()
-    {
-        bukkitPlayer?.setMetadata(
-            "authenticated",
-            FixedMetadataValue(Lemon.instance, true)
-        )
-
-        updateOrAddMetadata(
-            "last-auth",
-            Metadata(System.currentTimeMillis().toString())
-        )
-    }
-
-    fun authenticateInternalReversed()
-    {
-        bukkitPlayer?.removeMetadata(
-            "authenticated",
-            Lemon.instance
-        )
-
-        this remove "last-auth"
-    }
-
-    fun handleAuthMap(authSecret: String)
-    {
-        val mapRenderer: ImageMapRenderer
-
-        try
-        {
-            mapRenderer = ImageMapRenderer(
-                name, authSecret, LemonConstants.WEB_LINK
-            )
-        } catch (e: Exception)
-        {
-            println("[Lemon] [2FA] An error occurred: ${e.message}")
-
-            bukkitPlayer?.sendMessage(
-                arrayOf(
-                    "${CC.RED}While setting your 2FA, an error occurred.",
-                    "${CC.RED}This error has been reported, sorry for the inconvenience."
-                )
-            )
-            return
-        }
-
-        val notNullPlayer = bukkitPlayer!!
-
-        val stack = ItemStack(Material.MAP)
-        val view = Bukkit.createMap(notNullPlayer.world)
-
-        stack.durability = view.id
-        stack.amount = 0
-
-        notNullPlayer.inventory.heldItemSlot = 4
-        notNullPlayer.itemInHand = stack
-
-        val down = notNullPlayer.location
-        down.pitch = 90F
-
-        notNullPlayer.teleport(down)
-
-        view.renderers.forEach {
-            view.removeRenderer(it)
-        }
-
-        view.addRenderer(mapRenderer)
-
-        notNullPlayer.sendMap(view)
-        notNullPlayer.updateInventory()
     }
 
     private fun checkForIpRelative()
@@ -852,28 +723,11 @@ class LemonPlayer(
 
     fun hasMetadata(id: String): Boolean
     {
-        if (
-            config().mfaAutoBypass &&
-            !minequest() &&
-            id == "auth-exempt"
-        )
-        {
-            return true
-        }
-
         return metadata.containsKey(id)
     }
 
     fun getMetadata(id: String): Metadata?
     {
-        if (
-            config().mfaAutoBypass &&
-            id == "auth-exempt"
-        )
-        {
-            return Metadata(true)
-        }
-
         return metadata[id]
     }
 
@@ -938,7 +792,6 @@ class LemonPlayer(
         checkForIpRelative()
 
         handleOnConnection.add {
-            validatePlayerAuthentication()
             checkChannelPermission(it)
 
             Tasks.delayed(1L) {

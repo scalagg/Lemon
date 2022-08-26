@@ -22,11 +22,9 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
-import gg.scala.lemon.util.QuickAccess.shouldBlock
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
@@ -95,9 +93,8 @@ object PlayerListener : Listener
 
         lemonPlayer.name = event.name
 
-        if (!lemonPlayer.persistIpAddress)
-            lemonPlayer.ipAddress =
-                event.address.hostAddress ?: ""
+        lemonPlayer.ipAddress =
+            event.address.hostAddress ?: ""
 
         lemonPlayer.handlePostLoad()
     }
@@ -118,15 +115,6 @@ object PlayerListener : Listener
 
         val lemonPlayer = PlayerHandler
             .findPlayer(player).orElse(null)
-
-        if (
-            lemonPlayer.hasPermission("lemon.2fa.forced") &&
-            !lemonPlayer.isAuthExempt() && !player.hasMetadata("authenticated")
-        )
-        {
-            cancel(event, "You must authenticate before chatting.")
-            return
-        }
 
         lemonPlayer.declinePunishedAction {
             cancel(event, "${CC.RED}You cannot chat while you are $it")
@@ -447,17 +435,6 @@ object PlayerListener : Listener
             commandCoolDown.addOrOverride(player)
         }
 
-        if (
-            !command.startsWith("/auth", true) &&
-            !command.startsWith("/2fa", true) &&
-            !command.startsWith("/setup", true) &&
-            shouldBlock(event.player)
-        )
-        {
-            cancel(event, "${CC.RED}You must authenticate before performing commands.")
-            return
-        }
-
         if (!command.startsWith("/discord", true))
         {
             lemonPlayer.declinePunishedAction {
@@ -508,13 +485,6 @@ object PlayerListener : Listener
         {
             cancel(event, player, "${CC.RED}You cannot $action while vanished.")
         }
-    }
-
-    @EventHandler
-    fun onInteract(event: PlayerInteractEvent)
-    {
-        if (shouldBlock(event.player))
-            event.isCancelled = true
     }
 
     @EventHandler
