@@ -30,11 +30,6 @@ class DynamicHotbarPresetEntry : HotbarPresetEntry
     override fun buildItemStack(player: Player): ItemStack
     {
         val build = onBuild.invoke(player)
-        ItemUtils.addToItemTag(
-            build,
-            "lemonHotbar",
-            this.uniqueId.toString()
-        )
 
         return build
 

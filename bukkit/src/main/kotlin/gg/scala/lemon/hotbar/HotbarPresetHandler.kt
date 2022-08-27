@@ -34,20 +34,14 @@ object HotbarPresetHandler
             .filter { it.action.name.contains("RIGHT") }
             .filter { it.item != null }
             .handler { event ->
-                val itemKey = kotlin
-                    .runCatching {
-                        ItemUtils
-                            .readItemTagKey(
-                                event.item, "lemonHotbar"
-                            ) as String
-                    }.getOrNull()
-
                 var matchingEntry: HotbarPresetEntry? = null
 
                 trackedHotbars.forEach { tracked ->
                     val first = tracked.value.entries
                         .values.firstOrNull {
-                            itemKey == it.uniqueId().toString()
+                            val stack = it.buildItemStack(player = event.player) ?: return@firstOrNull false
+
+                            return@firstOrNull ItemUtils.isSimilar(event.item, stack)
                         }
                         ?: return@forEach
 
