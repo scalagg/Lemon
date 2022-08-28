@@ -21,7 +21,7 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             },
             if (minequest())
             {
-                "${CC.RESET}${
+                "${CC.WHITE}${
                     DefaultChatChannel.serializer
                         .serialize(
                             DefaultChatChannel

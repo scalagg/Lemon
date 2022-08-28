@@ -16,13 +16,6 @@ class StaticHotbarPresetEntry(
 {
     private val uniqueId: UUID = UUID.randomUUID()
     private val built = itemBuilder.build()
-        .apply {
-            ItemUtils.addToItemTag(
-                this,
-                "lemonHotbar",
-                uniqueId.toString()
-            )
-        }
 
     var onClick: (Player) -> Unit = {}
 

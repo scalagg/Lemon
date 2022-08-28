@@ -6,9 +6,9 @@ import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.util.minequest.platinum.MinequestPlatinumColors
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
@@ -122,11 +122,8 @@ object DefaultChatChannel : ChatChannelComposite
                 .getMetadata("platinum")
                 ?.asString() ?: "default"
 
-            val mapping = MinequestPlatinumColors[current]
-                ?: MinequestPlatinumColors.values.first()
-
-            chatColor = mapping.chatColor.toString()
-            composed = "${mapping.translated} ${mapping.chatColor}${lemonPlayer.name}$suffix"
+            chatColor = ExtHookIns.customColorMappingChatColor(current, lemonPlayer)
+            composed = ExtHookIns.customColorMappingFormatted(current, lemonPlayer)
         }
 
         return additionalPrefixProvider
