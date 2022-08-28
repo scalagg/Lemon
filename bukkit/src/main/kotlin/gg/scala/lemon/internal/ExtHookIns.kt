@@ -13,7 +13,7 @@ object ExtHookIns
     var customColorMappingFormatted: (String, LemonPlayer) -> String = { _, _ -> "" }
 
     var customRankColoredName: (Rank) -> String? = { null }
-    var customPlayerColoredName: (LemonPlayer, Rank, Boolean) -> String? = { _, _, _ -> null }
+    var customPlayerColoredName: (LemonPlayer, Rank, Boolean, Boolean) -> String? = { _, _, _, _ -> null }
 
     var customPlayerColoredNameOriginal: (LemonPlayer, Rank, Boolean) -> String? = { _, _, _ -> null }
 }

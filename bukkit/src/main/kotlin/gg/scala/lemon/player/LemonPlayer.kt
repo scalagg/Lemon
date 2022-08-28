@@ -551,7 +551,7 @@ class LemonPlayer(
             minequest() && !ignoreMinequest
         )
         {
-            return ExtHookIns.customPlayerColoredName(this, rank, prefixIncluded)
+            return ExtHookIns.customPlayerColoredName(this, rank, prefixIncluded, customColor)
                 ?: getColoredName(
                     rank, customColor, true, prefixIncluded
                 )
