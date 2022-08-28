@@ -5,7 +5,7 @@ import gg.scala.common.Savable
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.util.MinequestLogic
+import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -60,14 +60,9 @@ constructor(
             !ignoreMinequest
         )
         {
-            val mapping = MinequestLogic
-                .byRank(this)
-                ?: return getColoredName(true)
-
-            return MinequestLogic
-                .getTranslatedName(
-                    displayName ?: name, mapping
-                ) ?: getColoredName(true)
+            return ExtHookIns
+                .customRankColoredName.invoke(this)
+                ?: getColoredName(true)
         }
 
         return color + (displayName ?: name)

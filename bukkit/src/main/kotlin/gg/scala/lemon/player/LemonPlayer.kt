@@ -9,6 +9,7 @@ import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
@@ -27,7 +28,6 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.ClientUtil.handleApplicableClient
 import gg.scala.lemon.util.GrantRecalculationUtil
-import gg.scala.lemon.util.MinequestLogic
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.originalRank
 import gg.scala.lemon.util.QuickAccess.realRank
@@ -551,42 +551,10 @@ class LemonPlayer(
             minequest() && !ignoreMinequest
         )
         {
-            val mapping = MinequestLogic
-                .byRank(rank)
-                ?: if (rank.name.lowercase() == "youtube")
-                {
-                    null
-                } else
-                {
-                    getColoredName(
-                        rank, customColor, true, prefixIncluded
-                    )
-                }
-
-            return if (prefixIncluded)
-            {
-                if (ChatColor.stripColor(rank.prefix).isEmpty())
-                    "" else "${rank.prefix} ${rank.color}"
-            } else
-            {
-                ""
-            } + if (mapping == null)
-            {
-                "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
-            } else
-            {
-                if (MinequestLogic.availableCustomColorRanks.contains(rank.name.lowercase()))
-                {
-                    MinequestLogic
-                        .getTranslatedName(
-                            if (bukkitPlayer != null) bukkitPlayer.name else name,
-                            mapping
-                        ) ?: "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
-                } else
-                {
-                    "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}"
-                }
-            }
+            return ExtHookIns.customPlayerColoredName(this, rank, prefixIncluded)
+                ?: getColoredName(
+                    rank, customColor, true, prefixIncluded
+                )
         }
 
         return rank.color + (if (customColor) customColor() else "") +
@@ -605,23 +573,11 @@ class LemonPlayer(
             minequest() && !ignoreMinequest
         )
         {
-            val mapping = MinequestLogic
-                .byRank(rank)
-                ?: return getOriginalColoredName(
+            return ExtHookIns
+                .customPlayerColoredNameOriginal(this, rank, prefixIncluded)
+                ?: getOriginalColoredName(
                     true, prefixIncluded
                 )
-
-            return if (prefixIncluded)
-            {
-                rank.prefix + " "
-            } else
-            {
-                ""
-            } + (MinequestLogic
-                .getTranslatedName(
-                    if (bukkitPlayer != null) bukkitPlayer.name else name,
-                    mapping
-                ) ?: "${rank.color}${if (bukkitPlayer != null) bukkitPlayer.name else name}")
         }
 
         return rank.color + customColor() +
