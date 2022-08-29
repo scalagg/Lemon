@@ -123,7 +123,7 @@ object DefaultChatChannel : ChatChannelComposite
                 ?.asString() ?: "default"
 
             chatColor = ExtHookIns.customColorMappingChatColor(current, lemonPlayer)
-            composed = ExtHookIns.customColorMappingFormatted(current, lemonPlayer)
+            composed = ExtHookIns.customColorMappingFormatted(current, lemonPlayer, suffix)
         }
 
         return additionalPrefixProvider
