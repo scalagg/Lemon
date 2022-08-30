@@ -23,7 +23,7 @@ dependencies {
     compileOnly "gg.scala.spigot:server:1.1.0"
 
     compileOnly "gg.scala.store:spigot:0.1.3"
-    compileOnly "gg.scala.commons:bukkit:2.1.0"
+    compileOnly "gg.scala.commons:bukkit:2.1.3"
     compileOnly "gg.scala.cloudsync:spigot:1.0.1"
 
     compileOnly "com.orbitz.consul:consul-client:1.5.3"

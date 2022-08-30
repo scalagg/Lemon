@@ -129,17 +129,12 @@ class Lemon : ExtendedScalaPlugin()
         get() = config()
 
     lateinit var serverLayer: DataStoreObjectController<ServerInstance>
-    lateinit var localInstance: ServerInstance
 
     lateinit var lemonWebData: ScalaValidateData
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
-    var network by Delegates.notNull<AbstractNetwork>()
-
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
-
     var initialization = System.currentTimeMillis()
-    var messenger by Delegates.notNull<Messenger>()
 
     val aware by lazy {
         AwareBuilder.of<AwareMessage>("lemon")
@@ -195,8 +190,6 @@ class Lemon : ExtendedScalaPlugin()
             )
         }
 
-        this.configureHelperCommunications()
-
         this.flavor {
             this.inject(DataStoreOrchestrator)
         }
@@ -206,21 +199,7 @@ class Lemon : ExtendedScalaPlugin()
         CommandManagerCustomizers
             .default<LemonCommandCustomizer>()
 
-        this.localInstance = this.serverLayer
-            .useLayerWithReturn<RedisDataStoreStorageLayer<ServerInstance>, ServerInstance>(
-                DataStoreStorageType.REDIS
-            ) {
-                this.loadWithFilterSync {
-                    it.serverId.equals(settings.id, true)
-                } ?: ServerInstance(
-                    settings.id, settings.group
-                )
-            }
-
         this.configureQol()
-
-        this.localInstance.metaData = mutableMapOf()
-        this.localInstance.metaData["init"] = this.initialization.toString()
 
         this.logger.info(
             "Finished Lemon resource initialization in ${
@@ -350,42 +329,6 @@ class Lemon : ExtendedScalaPlugin()
         return ChatColor.valueOf(string).toString()
     }
 
-    private fun configureHelperCommunications()
-    {
-        val scalaStoreRedis = ScalaDataStoreSpigot.INSTANCE.redis
-
-        val helperCredentials = if (scalaStoreRedis.password == null)
-        {
-            RedisCredentials.of(
-                scalaStoreRedis.hostname, scalaStoreRedis.port
-            )
-        } else
-        {
-            RedisCredentials.of(
-                scalaStoreRedis.hostname, scalaStoreRedis.port, scalaStoreRedis.password
-            )
-        }
-
-        val instanceData = SyncLemonInstanceData
-        messenger = HelperRedis(helperCredentials)
-
-        network = SyncLemonNetwork(
-            messenger as HelperRedis,
-            instanceData
-        )
-        network.bindWith(this)
-
-        listOf(
-            FindCommandModule(network),
-            NetworkStatusModule(network)
-        ).forEach {
-            it.apply {
-                bindModuleWith(this@Lemon)
-                setup(this@Lemon)
-            }
-        }
-    }
-
     private fun configureHandlers()
     {
         flavor {
@@ -440,13 +383,5 @@ class Lemon : ExtendedScalaPlugin()
     fun containerDisable()
     {
         aware.shutdown()
-
-        val controller = DataStoreObjectControllerCache
-            .findNotNull<ServerInstance>()
-
-        controller.delete(
-            localInstance.identifier,
-            DataStoreStorageType.REDIS
-        ).join()
     }
 }
