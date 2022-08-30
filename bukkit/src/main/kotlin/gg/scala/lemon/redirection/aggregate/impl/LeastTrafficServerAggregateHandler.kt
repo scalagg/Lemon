@@ -1,9 +1,9 @@
 package gg.scala.lemon.redirection.aggregate.impl
 
+import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.lemon.redirection.PlayerRedirectSystem
 import gg.scala.lemon.redirection.aggregate.ServerAggregateHandler
 import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
-import gg.scala.lemon.server.ServerInstance
 import org.bukkit.entity.Player
 
 /**
@@ -17,11 +17,11 @@ class LeastTrafficServerAggregateHandler(
 {
     override fun group() = group
 
-    override fun findBestChoice(player: Player): ServerInstance?
+    override fun findBestChoice(player: Player): GameServer?
     {
         return servers
             .minByOrNull {
-                it.onlinePlayers
+                it.getPlayersCount() ?: Int.MAX_VALUE // we don't want to send the player to a broken server >-<
             }
     }
 }

@@ -1,12 +1,11 @@
 package gg.scala.lemon.redirection.aggregate
 
-import gg.scala.lemon.handler.ServerHandler
+import gg.scala.commons.agnostic.sync.server.ServerContainer
+import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.lemon.redirection.PlayerRedirectSystem
-import gg.scala.lemon.server.ServerInstance
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
-import java.time.Duration
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -17,10 +16,10 @@ abstract class ServerAggregateHandler(
     private val redirectSystem: PlayerRedirectSystem<Player>
 ) : Runnable
 {
-   val servers = CopyOnWriteArrayList<ServerInstance>()
+   val servers = CopyOnWriteArrayList<GameServer>()
 
     abstract fun group(): String
-    abstract fun findBestChoice(player: Player): ServerInstance?
+    abstract fun findBestChoice(player: Player): GameServer?
 
     fun redirect(vararg player: Player)
     {
@@ -36,7 +35,7 @@ abstract class ServerAggregateHandler(
         for (other in player)
         {
             redirectSystem.redirect(
-                other, bestChoice.serverId
+                other, bestChoice.id
             )
         }
     }
@@ -49,7 +48,7 @@ abstract class ServerAggregateHandler(
             )
 
         redirectSystem.redirect(
-            player, bestChoice.serverId
+            player, bestChoice.id
         )
     }
 
@@ -63,15 +62,11 @@ abstract class ServerAggregateHandler(
 
     override fun run()
     {
-        val instances = ServerHandler
-            .fetchOnlineServerInstancesByGroup(group())
-            .join()
-            .filter {
-                it.value.lastHeartbeat + Duration.ofSeconds(5L)
-                    .toMillis() >= System.currentTimeMillis()
-            }
+        val instances = ServerContainer
+            .getServersInGroup(this.group())
+            .filterIsInstance<GameServer>()
 
         this.servers.clear()
-        this.servers.addAll(instances.values)
+        this.servers.addAll(instances)
     }
 }

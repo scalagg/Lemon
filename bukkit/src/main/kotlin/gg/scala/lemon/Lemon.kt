@@ -6,10 +6,13 @@ import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.acf.BukkitCommandExecutionContext
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.annotations.commands.ManualRegister
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizers
 import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
+import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.config.annotations.ContainerConfig
 import gg.scala.lemon.adapter.LemonPlayerTypeAdapter
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
@@ -30,8 +33,6 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
-import gg.scala.lemon.network.SyncLemonInstanceData
-import gg.scala.lemon.network.SyncLemonNetwork
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.color.PlayerColorHandler
@@ -47,27 +48,11 @@ import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
-import gg.scala.lemon.server.ServerInstance
-import gg.scala.lemon.testing.TestingCommand
-import gg.scala.store.controller.DataStoreObjectController
-import gg.scala.store.controller.DataStoreObjectControllerCache
-import gg.scala.store.spigot.ScalaDataStoreSpigot
-import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
-import gg.scala.store.storage.type.DataStoreStorageType
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
-import me.lucko.helper.messaging.Messenger
-import me.lucko.helper.network.AbstractNetwork
-import me.lucko.helper.network.modules.FindCommandModule
-import me.lucko.helper.network.modules.NetworkStatusModule
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
-import me.lucko.helper.redis.RedisCredentials
-import me.lucko.helper.redis.plugin.HelperRedis
-import gg.scala.commons.acf.BukkitCommandExecutionContext
-import gg.scala.commons.acf.ConditionFailedException
-import gg.scala.commons.command.ScalaCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers.create
@@ -80,7 +65,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import java.util.*
-import kotlin.properties.Delegates
 
 @Plugin(
     name = Lemon.NAME,
@@ -127,8 +111,6 @@ class Lemon : ExtendedScalaPlugin()
 
     val languageConfig: LanguageConfigProcessor
         get() = config()
-
-    lateinit var serverLayer: DataStoreObjectController<ServerInstance>
 
     lateinit var lemonWebData: ScalaValidateData
     lateinit var serverStatisticProvider: ServerStatisticProvider
@@ -228,7 +210,6 @@ class Lemon : ExtendedScalaPlugin()
 
         commandManager.registerCommand(NetworkOnlineStaffCommand)
 
-        commandManager.registerCommand(TestingCommand)
         commandManager.registerCommand(NametagCommand)
         commandManager.registerCommand(EntitySuperBoatCommand)
 
@@ -334,9 +315,6 @@ class Lemon : ExtendedScalaPlugin()
         flavor {
             inject(RankHandler)
         }
-
-        serverLayer =
-            DataStoreObjectControllerCache.create()
 
         aware.listen(RedisHandler)
 

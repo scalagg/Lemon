@@ -1,10 +1,10 @@
-package gg.scala.lemon.server.aggregate
+package gg.scala.lemon.aggregate
 
-import gg.scala.lemon.handler.ServerHandler
+import gg.scala.commons.agnostic.sync.server.ServerContainer
+import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.lemon.lease.LeaseDependency
 import gg.scala.lemon.lease.LeaseStrategy
 import gg.scala.lemon.lease.lease
-import gg.scala.lemon.server.ServerInstance
 import java.util.concurrent.TimeUnit
 
 /**
@@ -15,7 +15,12 @@ data class ServerGroupAggregate(
     val groupId: String
 ) : Runnable
 {
-    private val groupServers = mutableListOf<ServerInstance>()
+    private val groupServers = mutableListOf<GameServer>()
+
+    enum class ServerStatus
+    {
+        OFFLINE, WHITELISTED, ONLINE
+    }
 
     val prominentServerStatus by lease(
         strategy = LeaseStrategy.ExpiredEager,
@@ -24,25 +29,25 @@ data class ServerGroupAggregate(
     ) {
         if (groupServers.size == 0)
         {
-            return@lease ServerInstance.ServerStatus.OFFLINE
+            return@lease ServerStatus.OFFLINE
         }
 
         val whitelisted = groupServers
             .count {
-                it.toServerStatus() == ServerInstance.ServerStatus.WHITELISTED
+                it.toServerStatus() == ServerStatus.WHITELISTED
             }
 
         val public = groupServers
             .count {
-                it.toServerStatus() == ServerInstance.ServerStatus.ONLINE
+                it.toServerStatus() == ServerStatus.ONLINE
             }
 
         listOf(
-            whitelisted to ServerInstance.ServerStatus.WHITELISTED,
-            public to ServerInstance.ServerStatus.ONLINE
+            whitelisted to ServerStatus.WHITELISTED,
+            public to ServerStatus.ONLINE
         ).maxByOrNull {
             it.first
-        }?.second ?: ServerInstance.ServerStatus.ONLINE
+        }?.second ?: ServerStatus.ONLINE
     }
 
     val totalPlayerCount by lease(
@@ -50,7 +55,7 @@ data class ServerGroupAggregate(
         executor = ServerGroupAggregates,
         dependencies = listOf(groupId)
     ) {
-        this.groupServers.sumOf { it.onlinePlayers }
+        this.groupServers.sumOf { it.getPlayersCount() ?: 0 }
     }
 
     val totalMaxPlayerCount by lease(
@@ -58,7 +63,7 @@ data class ServerGroupAggregate(
         executor = ServerGroupAggregates,
         dependencies = listOf(groupId)
     ) {
-        this.groupServers.sumOf { it.maxPlayers }
+        this.groupServers.sumOf { it.getMaxPlayers() ?: 0 }
     }
 
     val totalServerCount by lease(
@@ -72,19 +77,26 @@ data class ServerGroupAggregate(
     fun subscribeAggregateRefresh()
     {
         ServerGroupAggregates.scheduleAtFixedRate(
-            this, 0L, 1L, TimeUnit.SECONDS
+            this, 0L, 500L, TimeUnit.MILLISECONDS
         )
     }
 
     override fun run()
     {
-        val instances = ServerHandler
-            .fetchOnlineServerInstancesByGroup(groupId)
-            .join()
+        val instances = ServerContainer
+            .allServers<GameServer>()
+            .filter {
+                this.groupId in it.groups
+            }
 
         this.groupServers.clear()
-        this.groupServers += instances.values
+        this.groupServers += instances
 
         LeaseDependency.invalidate(groupId)
     }
+}
+
+private fun GameServer.toServerStatus(): ServerGroupAggregate.ServerStatus
+{
+    return if (getWhitelisted() == true) ServerGroupAggregate.ServerStatus.WHITELISTED else ServerGroupAggregate.ServerStatus.ONLINE
 }
