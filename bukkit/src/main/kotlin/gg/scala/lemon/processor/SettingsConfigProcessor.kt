@@ -1,17 +1,15 @@
 package gg.scala.lemon.processor
 
+import gg.scala.commons.agnostic.sync.ServerSync
 import xyz.mkotb.configapi.comment.Comment
 
 class SettingsConfigProcessor
 {
-    @Comment("What should the server id for this instance be?")
-    val id = "server-1"
+    val id: String
+        get() = ServerSync.getLocalGameServer().id
 
-    @Comment("What should the server group for this instance be?")
-    val group = "hub"
-
-    @Comment("What datacenter is this server running on?")
-    val datacenter = "na-east-1"
+    val group: String
+        get() = ServerSync.getLocalGameServer().groups.first()
 
     @Comment("Do we enable consul integration?")
     val consulEnabled = true

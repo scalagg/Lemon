@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.message.AwareMessage
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.player.rank.Rank
@@ -126,15 +127,15 @@ object RedisHandler
         val setting = message
             .retrieve<Boolean>("setting")
 
-        val ourGroup = Lemon.instance
-            .localInstance.serverGroup
+        val groups = ServerSync
+            .getLocalGameServer().groups
 
-        if (ourGroup.equals(group, true))
+        if (group.lowercase() in groups)
         {
             Bukkit.setWhitelist(setting)
 
             broadcast(
-                "${CC.RED}[A] ${CC.D_AQUA}Whitelist has been ${
+                "${CC.AQUA}[S] ${CC.D_AQUA}Whitelist has been ${
                     if (setting)
                     {
                         "${CC.GREEN}enabled"

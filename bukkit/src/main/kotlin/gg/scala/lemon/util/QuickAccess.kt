@@ -1,5 +1,7 @@
 package gg.scala.lemon.util
 
+import gg.scala.commons.agnostic.sync.server.ServerContainer
+import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
@@ -263,30 +265,23 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun server(uniqueId: UUID): CompletableFuture<Server?>
+    fun server(uniqueId: UUID): CompletableFuture<GameServer?>
     {
         return CompletableFuture.supplyAsync {
-            val network = Lemon.instance.network
-
-            return@supplyAsync network.servers.values
+            ServerContainer.allServers<GameServer>()
                 .firstOrNull {
-                    it.onlinePlayers
-                        .containsKey(uniqueId)
+                    it.getPlayers()?.contains(uniqueId) == false
                 }
         }
     }
-
 
     @JvmStatic
     fun online(uniqueId: UUID): CompletableFuture<Boolean>
     {
         return CompletableFuture.supplyAsync {
-            val network = Lemon.instance.network
-
-            return@supplyAsync network.servers
+            ServerContainer.allServers<GameServer>()
                 .any {
-                    it.value.onlinePlayers
-                        .containsKey(uniqueId)
+                    it.getPlayers()?.contains(uniqueId) == false
                 }
         }
     }

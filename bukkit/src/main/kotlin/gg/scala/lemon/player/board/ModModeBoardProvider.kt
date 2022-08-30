@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.board
 
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -23,10 +24,15 @@ object ModModeBoardProvider: ScoreboardOverride() {
             board.add("${CC.GRAY}${CC.S}-------------------")
             board.add(getVanishStatus(it))
             board.add("")
-            board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size} ${CC.GRAY}(${Lemon.instance.localInstance.metaData["highest-player-count"]})")
+            board.add("Players: ${CC.PRI}${Bukkit.getOnlinePlayers().size} ${CC.GRAY}(${
+                ServerSync.getLocalGameServer()
+                    .getMetadataValue(
+                        "lemon", "highest-player-count"
+                    ) ?: 1 // the player's on the server
+            })")
             board.add("Channel: ${CC.PRI}${it.getMetadata("channel")?.asString() ?: "${CC.PRI}Regular"}")
             board.add("Ping: ${CC.PRI}${MinecraftReflection.getPing(player)}ms")
-            board.add("TPS: ${CC.PRI}${String.format("%.2f", Lemon.instance.localInstance.ticksPerSecond)}")
+            board.add("TPS: ${CC.PRI}${String.format("%.2f", Lemon.instance.serverStatisticProvider.ticksPerSecond())}")
             board.add("${CC.GRAY}${CC.S}-------------------")
         }
     }

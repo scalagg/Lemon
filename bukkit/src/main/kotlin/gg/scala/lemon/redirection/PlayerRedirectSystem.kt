@@ -2,6 +2,7 @@ package gg.scala.lemon.redirection
 
 import gg.scala.aware.conversation.ConversationContinuation
 import gg.scala.aware.conversation.ConversationFactoryBuilder
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.redirection.expectation.PlayerRedirectExpectationEvent
 import me.lucko.helper.Events
@@ -59,8 +60,7 @@ open class PlayerRedirectSystem<T>(
                     .sendMessage(player, message)
             }
             .response { message ->
-                val serverId = Lemon.instance
-                    .localInstance.serverId
+                val serverId = ServerSync.getLocalGameServer().id
 
                 if (serverId != message.server)
                     return@response PlayerRedirectMessageResponse(

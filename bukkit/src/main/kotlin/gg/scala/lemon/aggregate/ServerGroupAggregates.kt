@@ -1,4 +1,4 @@
-package gg.scala.lemon.server.aggregate
+package gg.scala.lemon.aggregate
 
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService

@@ -1,5 +1,6 @@
 package gg.scala.lemon.listener
 
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.Lemon
@@ -26,6 +27,7 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
+import net.kyori.adventure.key.Key
 import org.bukkit.Bukkit
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.ExperienceOrb
@@ -376,12 +378,18 @@ object PlayerListener : Listener
 
     private fun updatePlayerRecord()
     {
-        val highestPlayerCount = plugin.localInstance.metaData["highest-player-count"]
+        val highestPlayerCount = ServerSync.getLocalGameServer()
+            .getMetadataValue<Int?>(
+                "lemon", "highest-player-count"
+            )
+
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
         if (highestPlayerCount == null || currentPlayerCount > highestPlayerCount.toInt())
         {
-            plugin.localInstance.metaData["highest-player-count"] = currentPlayerCount.toString()
+            ServerSync.getLocalGameServer().setMetadata(
+                Key.key("lemon", "highest-player-count"), currentPlayerCount
+            )
         }
     }
 

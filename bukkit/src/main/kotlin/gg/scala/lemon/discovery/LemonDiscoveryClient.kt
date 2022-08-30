@@ -4,6 +4,7 @@ import com.google.common.net.HostAndPort
 import com.orbitz.consul.Consul
 import com.orbitz.consul.model.agent.ImmutableRegistration
 import com.orbitz.consul.model.agent.Registration
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import org.bukkit.Bukkit
 import java.net.URL
@@ -38,7 +39,7 @@ object LemonDiscoveryClient
             .name(serviceName)
             .check(Registration.RegCheck.ttl(2L))
             .meta(mapOf(
-                "region" to Lemon.instance.settings.datacenter
+                "region" to ServerSync.getLocalGameServer().region.name
             ))
             .address("127.0.0.1")
             .port(Bukkit.getPort())
