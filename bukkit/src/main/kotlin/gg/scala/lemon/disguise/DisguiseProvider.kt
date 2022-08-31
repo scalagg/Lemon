@@ -15,7 +15,6 @@ import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.disguise.update.event.UnDisguiseEvent
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.metadata.Metadata
-import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.util.BukkitUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache

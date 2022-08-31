@@ -44,7 +44,6 @@ import gg.scala.lemon.player.nametag.ModModeNametagProvider
 import gg.scala.lemon.player.nametag.VanishNametagProvider
 import gg.scala.lemon.player.nametag.command.NametagCommand
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
-import gg.scala.lemon.player.sorter.ScalaSpigotSorterExtension
 import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
