@@ -284,17 +284,6 @@ class Lemon : ExtendedScalaPlugin()
             logger.info("Loaded default player colors for /colors.")
         }
 
-        kotlin.runCatching {
-            Class.forName("ScalaSpigot")
-
-            if (settings.tablistSortingEnabled)
-            {
-                ScalaSpigotSorterExtension.configure()
-
-                logger.info("Enabled ScalaSpigot Sorter implementation.")
-            }
-        }
-
         this.serverStatisticProvider =
             DefaultServerStatisticProvider
 
