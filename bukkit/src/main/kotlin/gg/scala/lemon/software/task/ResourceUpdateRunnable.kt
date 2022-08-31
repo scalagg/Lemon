@@ -1,4 +1,4 @@
-package gg.scala.lemon.task
+package gg.scala.lemon.software.task
 
 import gg.scala.commons.annotations.runnables.Repeating
 import gg.scala.lemon.handler.PlayerHandler

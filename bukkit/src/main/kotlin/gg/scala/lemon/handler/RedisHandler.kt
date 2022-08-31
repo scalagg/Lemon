@@ -6,7 +6,7 @@ import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.task.ResourceUpdateRunnable
+import gg.scala.lemon.software.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.broadcast
 import gg.scala.store.controller.DataStoreObjectControllerCache

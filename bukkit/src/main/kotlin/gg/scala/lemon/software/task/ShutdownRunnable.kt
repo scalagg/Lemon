@@ -1,4 +1,4 @@
-package gg.scala.lemon.task
+package gg.scala.lemon.software.task
 
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.task.DiminutionRunnable
