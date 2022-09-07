@@ -270,7 +270,7 @@ object QuickAccess
         return CompletableFuture.supplyAsync {
             ServerContainer.allServers<GameServer>()
                 .firstOrNull {
-                    it.getPlayers()?.contains(uniqueId) == false
+                    it.getPlayers()!!.contains(uniqueId)
                 }
         }
     }
@@ -279,10 +279,11 @@ object QuickAccess
     fun online(uniqueId: UUID): CompletableFuture<Boolean>
     {
         return CompletableFuture.supplyAsync {
-            ServerContainer.allServers<GameServer>()
-                .any {
-                    it.getPlayers()?.contains(uniqueId) == false
-                }
+            this.connection.sync()
+                .hexists(
+                    "player:$uniqueId",
+                    "instance"
+                )
         }
     }
 
