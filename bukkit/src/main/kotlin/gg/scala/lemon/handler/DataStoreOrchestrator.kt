@@ -30,10 +30,4 @@ object DataStoreOrchestrator
                 .create(it)
         }
     }
-
-    @Close
-    fun close()
-    {
-        DataStoreObjectControllerCache.closeAll()
-    }
 }

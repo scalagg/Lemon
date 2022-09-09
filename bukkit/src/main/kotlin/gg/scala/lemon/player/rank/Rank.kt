@@ -107,15 +107,12 @@ constructor(
     {
         crosscheck()
 
-        return this.save().thenApply {
-            RedisHandler.buildMessage(
-                "rank-update",
-                hashMapOf(
+        return this.save()
+            .thenRun {
+                RedisHandler.buildMessage(
+                    "rank-update",
                     "uniqueId" to uuid.toString()
-                )
-            ).publish(AwareThreadContext.SYNC)
-
-            return@thenApply null
-        }
+                ).publish(AwareThreadContext.SYNC)
+            }
     }
 }

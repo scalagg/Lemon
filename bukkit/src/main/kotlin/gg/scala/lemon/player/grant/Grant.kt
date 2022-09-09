@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.grant
 
+import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.common.Savable
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
@@ -95,16 +96,15 @@ class Grant(
 
     override fun save(): CompletableFuture<Void>
     {
-        Tasks.asyncDelayed(2L) {
-            RedisHandler.buildMessage(
-                "recalculate-grants",
-                mutableMapOf<String, String>().also {
-                    it["target"] = target.toString()
-                }
-            )
-        }
-
         return DataStoreObjectControllerCache.findNotNull<Grant>()
             .save(this, DataStoreStorageType.MONGO)
+            .thenRun {
+                RedisHandler.buildMessage(
+                    "recalculate-grants",
+                    "target" to target.toString()
+                ).publish(
+                    context = AwareThreadContext.SYNC
+                )
+            }
     }
 }
