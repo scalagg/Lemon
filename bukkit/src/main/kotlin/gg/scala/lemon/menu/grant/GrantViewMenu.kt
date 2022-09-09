@@ -78,17 +78,17 @@ class GrantViewMenu(
             if (viewType == HistoryViewType.STAFF_HIST && player.uniqueId != uuid)
             {
                 it[4] = ItemBuilder(XMaterial.STICKY_PISTON)
-                    .name("${CC.RED}Invalidate Grants")
+                    .name("${CC.B_GREEN}Invalidate Grants")
                     .addToLore(
-                        "${CC.GRAY}Click to invalidate all active",
-                        "${CC.GRAY}active grants executed",
-                        "${CC.GRAY}by ${CC.WHITE}$viewingFor${CC.GRAY}.",
+                        "${CC.WHITE}Click to invalidate all active",
+                        "${CC.WHITE}active grants executed",
+                        "${CC.WHITE}by ${CC.WHITE}$colored${CC.WHITE}.",
                         "",
-                        "${CC.GRAY}Grants will persist in",
-                        "${CC.GRAY}their history after the",
-                        "${CC.GRAY}invalidation.",
+                        "${CC.WHITE}Grants will persist in",
+                        "${CC.WHITE}their history after the",
+                        "${CC.WHITE}invalidation.",
                         "",
-                        "${CC.RED}Shift Click to start invalidation."
+                        "${CC.YELLOW}Shift-click to start invalidation."
                     )
                     .toButton { clicker, type ->
                         if (clicker != null && type != null && type.isShiftClick)
