@@ -1,6 +1,7 @@
 package gg.scala.lemon.menu.grant.context
 
 import com.cryptomorin.xseries.XMaterial
+import gg.scala.lemon.menu.grant.context.scope.ScopeSelectionMenu
 import gg.scala.lemon.player.rank.Rank
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.menu.Button
@@ -25,7 +26,8 @@ class GrantDurationContextMenu(
     private val uuid: UUID,
     private val name: String,
     private val rank: Rank,
-    private val colored: String
+    private val colored: String,
+    private val scopes: List<String> = listOf()
 ) : PaginatedMenu() {
 
     companion object {
@@ -51,8 +53,8 @@ class GrantDurationContextMenu(
             it[3] = ItemBuilder(XMaterial.MAP)
                 .name("${CC.B_GREEN}Custom Duration")
                 .addToLore(
-                    "${CC.GRAY}Input a custom duration",
-                    "${CC.GRAY}to use on this grant.",
+                    "${CC.WHITE}Input a custom duration",
+                    "${CC.WHITE}to use on this grant.",
                     "",
                     "${CC.YELLOW}Click to set duration."
                 )
@@ -83,7 +85,7 @@ class GrantDurationContextMenu(
             it[5] = ItemBuilder(XMaterial.COMPASS)
                 .name("${CC.B_RED}Permanent")
                 .addToLore(
-                    "${CC.GRAY}Apply this grant permanently.",
+                    "${CC.WHITE}Apply this grant permanently.",
                     "",
                     "${CC.YELLOW}Click to continue."
                 )
@@ -106,6 +108,12 @@ class GrantDurationContextMenu(
     override fun onClose(player: Player, manualClose: Boolean) {
         if (manualClose) {
             Schedulers.sync().runLater({
+                if (scopes.isNotEmpty())
+                {
+                    ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
+                    return@runLater
+                }
+
                 GrantRankContextMenu(uuid, name, colored).openMenu(player)
             }, 1L)
         }
@@ -116,20 +124,18 @@ class GrantDurationContextMenu(
         private val identifier: String
     ) : Button() {
 
-        private val formatted = DurationFormatUtils.formatDurationWords(duration.get(), true, true)
-
         override fun getName(player: Player): String {
             return "${CC.WHITE}$identifier"
         }
 
         override fun getMaterial(player: Player): XMaterial {
-            return XMaterial.OAK_SIGN
+            return XMaterial.PAPER
         }
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            GrantReasonContextMenu(uuid, name, rank, duration, colored).openMenu(player)
+            GrantReasonContextMenu(uuid, name, rank, duration, colored, scopes).openMenu(player)
 
-            player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$formatted${CC.SEC}.")
+            player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$identifier${CC.SEC}.")
         }
     }
 }

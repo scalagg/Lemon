@@ -62,15 +62,15 @@ class GrantRankContextMenu(
             return mutableListOf<String>().also {
                 val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-                it.add("${CC.GRAY}Priority: ${CC.WHITE}${rank.weight}")
-                it.add("${CC.GRAY}Prefix: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.prefix)}")
-                it.add("${CC.GRAY}Suffix: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.suffix)}")
-                it.add("${CC.GRAY}Visible: ${CC.WHITE}${rank.visible}")
+                it.add("${CC.WHITE}Priority: ${CC.YELLOW}${rank.weight}")
+                it.add("${CC.WHITE}Prefix: ${CC.YELLOW}${QuickAccess.replaceEmpty(rank.prefix)}")
+                it.add("${CC.WHITE}Suffix: ${CC.YELLOW}${QuickAccess.replaceEmpty(rank.suffix)}")
+                it.add("${CC.WHITE}Visible: ${CC.YELLOW}${rank.visible}")
                 it.add("")
 
                 if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
-                    it.add("${CC.GREEN}Left-Click to grant this rank.")
-                    it.add("${CC.GREEN}Right-Click to grant scoped.")
+                    it.add("${CC.GREEN}Left-click to grant the ${rank.getColoredName()}${CC.GREEN} rank.")
+                    it.add("${CC.GREEN}Right-click to grant with scope selection.")
                 } else {
                     it.addAll(
                         TextSplitter.split(
@@ -86,6 +86,12 @@ class GrantRankContextMenu(
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
             if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
+                if (clickType.isRightClick)
+                {
+
+                    return
+                }
+
                 GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
             } else {
                 player.sendMessage("${CC.RED}You're not allowed to grant this rank.")

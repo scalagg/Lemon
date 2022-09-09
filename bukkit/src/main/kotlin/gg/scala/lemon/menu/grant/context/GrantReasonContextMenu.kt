@@ -26,7 +26,8 @@ class GrantReasonContextMenu(
     private val name: String,
     private val rank: Rank,
     private val duration: Duration,
-    private val colored: String
+    private val colored: String,
+    private val scopes: List<String> = listOf()
 ) : PaginatedMenu() {
 
     companion object {
@@ -46,8 +47,8 @@ class GrantReasonContextMenu(
             it[3] = ItemBuilder(XMaterial.MAP)
                 .name("${CC.B_GREEN}Custom Reason")
                 .addToLore(
-                    "${CC.GRAY}Input a custom reason",
-                    "${CC.GRAY}to use on this grant.",
+                    "${CC.WHITE}Input a custom reason",
+                    "${CC.WHITE}to use on this grant.",
                     "",
                     "${CC.YELLOW}Click to set reason."
                 )
@@ -66,7 +67,7 @@ class GrantReasonContextMenu(
             it[5] = ItemBuilder(XMaterial.COMPASS)
                 .name("${CC.B_RED}Unspecified")
                 .addToLore(
-                    "${CC.GRAY}Apply this grant unspecified.",
+                    "${CC.WHITE}Apply this grant unspecified.",
                     "",
                     "${CC.YELLOW}Click to continue."
                 )
@@ -113,6 +114,8 @@ class GrantReasonContextMenu(
                     Lemon.instance.settings.id,
                     reason, duration.get()
                 )
+                grant.scopes.clear()
+                grant.scopes += this.scopes
 
                 GrantHandler.handleGrant(player, grant)
             } else {
