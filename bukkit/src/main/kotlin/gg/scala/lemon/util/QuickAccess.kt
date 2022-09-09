@@ -278,9 +278,12 @@ object QuickAccess
         return CompletableFuture.supplyAsync {
             ServerContainer.allServers<GameServer>()
                 .firstOrNull {
+                    // TODO: implement proper fix in commons
                     it.getMetadataValue<List<String>>(
                         "server", "online-list"
-                    )!!.contains(uniqueId.toString())
+                    )!!.contains(
+                        uniqueId.toString()
+                    )
                 }
         }
     }
