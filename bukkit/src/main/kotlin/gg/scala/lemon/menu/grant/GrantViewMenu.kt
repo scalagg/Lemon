@@ -91,9 +91,9 @@ class GrantViewMenu(
                         "${CC.RED}Shift Click to start invalidation."
                     )
                     .toButton { clicker, type ->
-                        if (clicker != null && type != null)
+                        if (clicker != null && type != null && type.isShiftClick)
                         {
-                            if (!clicker.hasPermission("lemon.grants.wipe") && type.name.contains("SHIFT"))
+                            if (!clicker.hasPermission("lemon.grants.wipe"))
                             {
                                 clicker.sendMessage("${CC.RED}You do not have permission to perform this action!")
                                 return@toButton
@@ -102,8 +102,7 @@ class GrantViewMenu(
                             clicker.sendMessage("${CC.GRAY}Starting grant wipe for ${CC.WHITE}$viewingFor${CC.GRAY}...")
 
                             GrantHandler.invalidateAllGrantsBy(
-                                uuid,
-                                clicker
+                                uuid, clicker
                             ).thenAccept {
                                 clicker.sendMessage("${CC.GRAY}Finished grant wipe, now updating menu...")
 
