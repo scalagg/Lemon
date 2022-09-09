@@ -505,7 +505,10 @@ class LemonPlayer(
     {
         if (this.attachment != null)
         {
-            this.attachment!!.permissions.clear()
+            player.removeAttachment(this.attachment!!)
+            player.recalculatePermissions()
+
+            this.attachment = player.addAttachment(Lemon.instance)
         } else
         {
             this.attachment = player.addAttachment(Lemon.instance)
