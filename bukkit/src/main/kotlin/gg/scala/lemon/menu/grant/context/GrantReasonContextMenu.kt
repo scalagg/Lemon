@@ -114,6 +114,7 @@ class GrantReasonContextMenu(
                     Lemon.instance.settings.id,
                     reason, duration.get()
                 )
+
                 grant.scopes.clear()
                 grant.scopes += this.scopes
 

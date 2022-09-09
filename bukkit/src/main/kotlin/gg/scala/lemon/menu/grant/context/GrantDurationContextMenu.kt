@@ -73,9 +73,9 @@ class GrantDurationContextMenu(
                             if (duration == null) {
                                 context.sendMessage("Invalid duration parsed. Returning to menu. (Example: 1h30m)")
 
-                                GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
+                                GrantDurationContextMenu(uuid, name, rank, colored, scopes).openMenu(player)
                             } else {
-                                GrantReasonContextMenu(uuid, name, rank, duration, colored).openMenu(player)
+                                GrantReasonContextMenu(uuid, name, rank, duration, colored, scopes).openMenu(player)
 
                                 context.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}$input${CC.SEC}.")
                             }
@@ -90,7 +90,7 @@ class GrantDurationContextMenu(
                     "${CC.YELLOW}Click to continue."
                 )
                 .toButton { _, _ ->
-                    GrantReasonContextMenu(uuid, name, rank, Duration.parse("perm"), colored).openMenu(player)
+                    GrantReasonContextMenu(uuid, name, rank, Duration.parse("perm"), colored, scopes).openMenu(player)
 
                     player.sendMessage("${CC.SEC}You've set the ${CC.PRI}Duration${CC.SEC} to ${CC.WHITE}Permanent${CC.SEC}.")
                 }
