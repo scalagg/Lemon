@@ -34,23 +34,27 @@ object NetworkOnlineStaffUpdates : Runnable
 
     override fun run()
     {
-        val pairs = ServerContainer
+        val servers = ServerContainer
             .allServers<GameServer>()
 
         val staffMembers = mutableListOf<StaffMember>()
 
-        for (server in pairs)
+        for (server in servers)
         {
-            for (player in server.getPlayers()!!)
+            for (player in server.getMetadataValue<List<String>>(
+                "server", "online-list"
+            )!!)
             {
+                val uniqueId = UUID.fromString(player)
+
                 val rank = QuickAccess
-                    .computeRank(player).join()
+                    .computeRank(uniqueId).join()
                     ?: continue
 
                 if (this.isStaffRank(rank))
                 {
                     staffMembers += StaffMember(
-                        player, rank.uuid, server.id
+                        uniqueId, rank.uuid, server.id
                     )
                 }
             }
