@@ -227,10 +227,10 @@ object PlayerListener : Listener
                             Lemon.instance.settings.id,
                             if (
                                 !channelMatch.usesRealRank &&
-                                player.hasMetadata("disguised")
+                                (player.hasMetadata("disguised") || lemonPlayer.disguiseRank() != null)
                             )
                             {
-                                RankHandler.getDefaultRank()
+                                lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
                             } else
                             {
                                 lemonPlayer.activeGrant!!.getRank()
@@ -308,10 +308,10 @@ object PlayerListener : Listener
                             Lemon.instance.settings.id,
                             if (
                                 !channelMatch.usesRealRank &&
-                                player.hasMetadata("disguised")
+                                (player.hasMetadata("disguised") || lemonPlayer.disguiseRank() != null)
                             )
                             {
-                                RankHandler.getDefaultRank()
+                                lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
                             } else
                             {
                                 lemonPlayer.activeGrant!!.getRank()
@@ -329,10 +329,10 @@ object PlayerListener : Listener
                             Lemon.instance.settings.id,
                             if (
                                 !channelMatch.usesRealRank &&
-                                player.hasMetadata("disguised")
+                                (player.hasMetadata("disguised") || lemonPlayer.disguiseRank() != null)
                             )
                             {
-                                RankHandler.getDefaultRank()
+                                lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
                             } else
                             {
                                 lemonPlayer.activeGrant!!.getRank()

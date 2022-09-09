@@ -157,7 +157,7 @@ object QuickAccess
     {
         uuid ?: return LemonConstants.CONSOLE
 
-        val grants = GrantHandler.fetchGrantsFor(uuid).get()
+        val grants = GrantHandler.fetchGrantsFor(uuid).join()
 
         val playerName = CubedCacheUtil.fetchName(uuid)
         val prominent = GrantRecalculationUtil.getProminentGrant(grants)
@@ -220,25 +220,27 @@ object QuickAccess
     fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true)
     {
         Bukkit.getPlayer(uuid)?.let {
-            PlayerHandler.findPlayer(it).ifPresent { lemonPlayer ->
-                it.displayName = lemonPlayer.getColoredName()
+            PlayerHandler.findPlayer(it)
+                .ifPresent { lemonPlayer ->
+                    it.displayName = lemonPlayer.getColoredName()
 
-                it.playerListName = lemonPlayer
-                    .getColoredName(
-                        customColor = false,
-                        prefixIncluded = minequest()
-                    )
+                    it.playerListName = lemonPlayer
+                        .getColoredName(
+                            rank = lemonPlayer.disguiseRank() ?: realRank(it),
+                            customColor = false,
+                            prefixIncluded = minequest()
+                        )
 
-                NametagHandler.reloadPlayer(it)
-                VisibilityHandler.update(it)
+                    NametagHandler.reloadPlayer(it)
+                    VisibilityHandler.update(it)
 
-                if (recalculateGrants)
-                {
-                    lemonPlayer.recalculateGrants(
-                        shouldCalculateNow = true
-                    )
+                    if (recalculateGrants)
+                    {
+                        lemonPlayer.recalculateGrants(
+                            shouldCalculateNow = true
+                        )
+                    }
                 }
-            }
         }
     }
 

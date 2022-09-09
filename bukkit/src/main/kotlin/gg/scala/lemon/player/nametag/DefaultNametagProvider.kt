@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.nametag
 
+import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.sorter.TeamBasedSortStrategy
 import gg.scala.lemon.util.QuickAccess.realRank
@@ -10,9 +11,13 @@ import org.bukkit.entity.Player
 
 object DefaultNametagProvider : NametagProvider("default", 10)
 {
-    override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo
+    override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo?
     {
-        val rank = realRank(toRefresh)
+        val lemonPlayer = PlayerHandler
+            .find(toRefresh.uniqueId)
+            ?: return null
+
+        val rank = lemonPlayer.disguiseRank() ?: realRank(toRefresh)
 
         return createNametag(
             if (minequest()) "${
