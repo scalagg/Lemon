@@ -178,6 +178,14 @@ object QuickAccess
     }
 
     @JvmStatic
+    fun computeRank(uuid: UUID): CompletableFuture<Rank?>
+    {
+        return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
+            GrantRecalculationUtil.getProminentGrant(it)?.getRank()
+        }
+    }
+
+    @JvmStatic
     fun fetchRankWeight(uuid: UUID?): CompletableFuture<Int>
     {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {

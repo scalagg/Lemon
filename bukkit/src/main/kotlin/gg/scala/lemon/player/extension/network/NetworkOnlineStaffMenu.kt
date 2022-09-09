@@ -2,20 +2,15 @@ package gg.scala.lemon.player.extension.network
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.handler.RankHandler
-import gg.scala.lemon.menu.staff.StaffListMenu
-import gg.scala.lemon.player.FundamentalLemonPlayer
-import gg.scala.lemon.player.extension.PlayerCachingExtension
-import gg.scala.store.storage.type.DataStoreStorageType
+import gg.scala.lemon.util.QuickAccess.username
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
-import java.util.*
 
 /**
  * @author GrowlyX
@@ -23,80 +18,72 @@ import java.util.*
  */
 class NetworkOnlineStaffMenu : PaginatedMenu()
 {
-    private lateinit var onlineStaff: List<FundamentalLemonPlayer>
+    companion object
+    {
+        @JvmStatic
+        val SLOTS = listOf(
+            10, 11, 12, 13, 14, 15, 16,
+            19, 20, 21, 22, 23, 24, 25,
+            28, 29, 30, 31, 32, 33, 34
+        )
+    }
 
     init
     {
         placeholdBorders = true
-        async = true
+
+        autoUpdate = true
+        autoUpdateInterval = 1000L
     }
 
-    override fun asyncLoadResources(player: Player, callback: (Boolean) -> Unit)
-    {
-        PlayerCachingExtension.controller.loadAll(DataStoreStorageType.REDIS)
-            .thenApply {
-                val staffList = mutableListOf<FundamentalLemonPlayer>()
+    override fun getAllPagesButtonSlots() = SLOTS
 
-                it.values.forEach { staff ->
-                    if (isStaffRank(staff.currentRank))
-                    {
-                        staffList.add(staff)
-                    }
+    override fun getAllPagesButtons(player: Player) = mutableMapOf<Int, Button>()
+        .also {
+            val sorted = NetworkOnlineStaffUpdates.staffMembers
+                .sortedByDescending { member ->
+                    RankHandler.findRank(member.rankId)?.weight ?: 0
                 }
 
-                return@thenApply staffList
+            for (staff in sorted)
+            {
+                it[it.size] = OnlineStaffButton(staff)
             }
-            .thenAccept {
-                onlineStaff = it
-                callback.invoke(true)
-            }
-    }
-
-    private fun isStaffRank(uuid: UUID): Boolean
-    {
-        val rank = RankHandler.findRank(uuid)
-            ?: return false
-
-        return rank.getCompoundedPermissions()
-            .contains("lemon.staff")
-    }
-
-    override fun getAllPagesButtonSlots() = StaffListMenu.SLOTS
-    override fun getAllPagesButtons(player: Player) = mutableMapOf<Int, Button>().also {
-        for (staff in onlineStaff)
-        {
-            it[it.size] = OnlineStaffButton(staff)
         }
-    }
 
     override fun size(buttons: Map<Int, Button>) = 45
-
-    override fun getMaxItemsPerPage(player: Player) = StaffListMenu.SLOTS.size
+    override fun getMaxItemsPerPage(player: Player) = SLOTS.size
 
     override fun getPrePaginatedTitle(player: Player) = "Online Staff"
 
     inner class OnlineStaffButton(
-        private val cached: FundamentalLemonPlayer
+        private val staffMember: NetworkOnlineStaffUpdates.StaffMember
     ) : Button()
     {
+        private val username = staffMember.uniqueId.username()
+
         override fun getButtonItem(player: Player): ItemStack
         {
+            val rank = RankHandler.findRank(staffMember.rankId)?.color ?: CC.GRAY
+
             val description = mutableListOf<String>()
-            description.add("${CC.GRAY}Server: ${CC.WHITE}${cached.currentServer}")
+            description.add("${CC.GRAY}Server: ${CC.WHITE}${staffMember.server}")
             description.add("")
             description.add("${CC.YELLOW}Click to jump.")
 
             return ItemBuilder(XMaterial.SKELETON_SKULL)
-                .data(3)
-                .name(cached.currentDisplayName)
-                .owner(cached.username)
+                .name("$rank$username")
+                .owner(username)
                 .setLore(description)
-                .build()
+                .data(3).build()
         }
 
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView)
+        override fun clicked(
+            player: Player, slot: Int,
+            clickType: ClickType, view: InventoryView
+        )
         {
-            player.chat("/jump ${cached.username}")
+            player.chat("/jump $username")
             player.closeInventory()
         }
     }
