@@ -1,6 +1,5 @@
 package gg.scala.lemon.cooldown
 
-import net.evilblock.cubed.util.time.TimeUtil
 import org.apache.commons.lang.time.DurationFormatUtils
 
 /**

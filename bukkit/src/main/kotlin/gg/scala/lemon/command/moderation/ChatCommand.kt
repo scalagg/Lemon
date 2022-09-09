@@ -43,7 +43,7 @@ object ChatCommand : ScalaCommand()
         Bukkit.broadcastMessage("${CC.GREEN}The chat has been enabled by ${if (hidden) "staff" else coloredName}${CC.GREEN}.")
 
         sendStaffMessage(
-            "$coloredName${CC.D_AQUA} has ${"${CC.GREEN}enabled"}${CC.D_AQUA} chat.", true
+            "$coloredName un-silenced chat.", true
         )
     }
 
@@ -65,8 +65,7 @@ object ChatCommand : ScalaCommand()
         Bukkit.broadcastMessage("${CC.RED}The chat has been disabled by ${if (hidden) "staff" else coloredName}${CC.RED}.")
 
         sendStaffMessage(
-            "$coloredName${CC.D_AQUA} has ${"${CC.RED}disabled"}${CC.D_AQUA} chat.",
-            true
+            "$coloredName silenced chat.", true
         )
     }
 

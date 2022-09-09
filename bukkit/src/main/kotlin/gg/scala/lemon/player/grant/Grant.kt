@@ -1,6 +1,7 @@
 package gg.scala.lemon.player.grant
 
 import gg.scala.common.Savable
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
@@ -72,7 +73,7 @@ class Grant(
 
         for (scope in scopes)
         {
-            if (Lemon.instance.settings.id.equals(scope, true))
+            if (scope in ServerSync.getLocalGameServer().groups)
             {
                 applicable = true
                 break
