@@ -64,8 +64,8 @@ class GrantRankContextMenu(
                 val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
                 it.add("${CC.WHITE}Priority: ${CC.YELLOW}${rank.weight}")
-                it.add("${CC.WHITE}Prefix: ${CC.YELLOW}${QuickAccess.replaceEmpty(rank.prefix)}")
-                it.add("${CC.WHITE}Suffix: ${CC.YELLOW}${QuickAccess.replaceEmpty(rank.suffix)}")
+                it.add("${CC.WHITE}Prefix: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.prefix)}")
+                it.add("${CC.WHITE}Suffix: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.suffix)}")
                 it.add("${CC.WHITE}Visible: ${CC.YELLOW}${rank.visible}")
                 it.add("")
 

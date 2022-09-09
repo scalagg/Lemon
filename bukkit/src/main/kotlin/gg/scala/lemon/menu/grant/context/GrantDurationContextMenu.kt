@@ -110,7 +110,7 @@ class GrantDurationContextMenu(
             Schedulers.sync().runLater({
                 if (scopes.isNotEmpty())
                 {
-                    ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
+                    ScopeSelectionMenu(uuid, name, colored, rank, scopes.toMutableList()).openMenu(player)
                     return@runLater
                 }
 

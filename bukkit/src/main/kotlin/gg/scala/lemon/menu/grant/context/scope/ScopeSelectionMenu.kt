@@ -25,11 +25,10 @@ class ScopeSelectionMenu(
     private val uuid: UUID,
     private val name: String,
     private val colored: String,
-    private val rank: Rank
+    private val rank: Rank,
+    private val chosen: MutableList<String> = mutableListOf()
 ) : PaginatedMenu()
 {
-    private val chosen = mutableListOf<String>()
-
     init
     {
         updateAfterClick = true
@@ -44,14 +43,22 @@ class ScopeSelectionMenu(
                 object : TexturedHeadButton(Constants.GREEN_PLUS_TEXTURE){}
                     .getButtonItem(player)
             )
-            .name("${CC.GREEN}Continue grant process")
+            .name("${CC.B_GREEN}Continue")
             .addToLore(
                 "${CC.WHITE}Using the scopes:",
-                "${CC.WHITE}${chosen.joinToString(", ")}",
+                "${CC.GREEN}${
+                    if (chosen.isEmpty()) "None" else chosen.joinToString(", ")
+                }",
                 "",
                 "${CC.YELLOW}Click to continue."
             )
             .toButton { _, _ ->
+                if (chosen.isEmpty())
+                {
+                    player.sendMessage("${CC.RED}You have chosen no scopes. Please select at least 1 scope or use the normal grant process.")
+                    return@toButton
+                }
+
                 GrantDurationContextMenu(uuid, name, rank, colored, chosen).openMenu(player)
             }
 
@@ -82,7 +89,7 @@ class ScopeSelectionMenu(
                     .data(
                         if (chosen.contains(it)) 5 else 0
                     )
-                    .name(it)
+                    .name("${CC.WHITE}$it")
                     .toButton { _, _ ->
                         if (chosen.contains(it))
                         {
