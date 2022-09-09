@@ -66,10 +66,15 @@ class NetworkOnlineStaffMenu : PaginatedMenu()
         {
             val rank = RankHandler.findRank(staffMember.rankId)?.color ?: CC.GRAY
 
+            val rankData = RankHandler
+                .findRank(staffMember.rankId)
+                ?: RankHandler.getDefaultRank()
+
             val description = mutableListOf<String>()
-            description.add("${CC.GRAY}Server: ${CC.WHITE}${staffMember.server}")
+            description.add("${CC.WHITE}Rank: ${CC.WHITE}${rankData.prefix}")
+            description.add("${CC.WHITE}Server: ${CC.YELLOW}${staffMember.server}")
             description.add("")
-            description.add("${CC.YELLOW}Click to jump.")
+            description.add("${CC.GREEN}Click to jump.")
 
             return ItemBuilder(XMaterial.SKELETON_SKULL)
                 .name("$rank$username")
