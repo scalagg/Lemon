@@ -3,6 +3,7 @@ package gg.scala.lemon.menu.grant.context
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
+import gg.scala.lemon.menu.grant.context.scope.ScopeSelectionMenu
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
@@ -88,7 +89,7 @@ class GrantRankContextMenu(
             if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
                 if (clickType.isRightClick)
                 {
-
+                    ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
                     return
                 }
 
