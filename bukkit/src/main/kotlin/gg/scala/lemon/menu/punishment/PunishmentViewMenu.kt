@@ -78,15 +78,13 @@ class PunishmentViewMenu(
                         "${CC.WHITE}Viewing statistics for this",
                         "${CC.WHITE}category:",
                         "",
-                        " ${CC.WHITE}Total: ${CC.YELLOW}${totalAmount}",
-                        " ${CC.WHITE}Active: ${CC.GREEN}${active}",
-                        " ${CC.WHITE}Inactive: ${CC.RED}${
+                        "${CC.WHITE}Total: ${CC.B_GREEN}$totalAmount",
+                        "${CC.WHITE}Active: ${CC.B_GREEN}$active",
+                        "${CC.WHITE}Inactive: ${CC.B_GREEN}${
                             punishments.filter { punishment ->
                                 punishment.category == it && punishment.isRemoved
                             }.size
                         }",
-                        "",
-                        " ${CC.WHITE}Affected users: ${CC.GOLD}0",
                         "",
                         "${CC.YELLOW}Click to view more!"
                     ).toButton { _, _ ->
@@ -141,7 +139,7 @@ class PunishmentViewMenu(
                             "${CC.WHITE}Viewing statistics for this",
                             "${CC.WHITE}category:",
                             "",
-                            " ${CC.WHITE}Total: ${CC.GREEN}${totalAmount}",
+                            "${CC.WHITE}Total: ${CC.B_GREEN}${totalAmount}",
                             "",
                             "${CC.YELLOW}Click to view more!"
                         ).toButton { _, _ ->

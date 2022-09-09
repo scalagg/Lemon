@@ -73,7 +73,7 @@ class LemonPlayer(
     val activePunishments =
         mutableMapOf<PunishmentCategory, Punishment?>()
 
-    var assignedPermissions = listOf<String>()
+    var assignedPermissions = mutableListOf<String>()
     var ignoring = mutableListOf<UUID>()
 
     private val handleOnConnection =
@@ -86,8 +86,7 @@ class LemonPlayer(
     private var attachment: PermissionAttachment? = null
 
     var metadata = mutableMapOf<String, Metadata>()
-
-    var persistIpAddress = false
+    var disguiseRankUniqueId: UUID? = null
 
     private val classInit = System
         .currentTimeMillis()
@@ -102,6 +101,9 @@ class LemonPlayer(
             activePunishments[value] = null
         }
     }
+
+    fun disguiseRank() = this.disguiseRankUniqueId
+        ?.let { RankHandler.findRank(it) }
 
     fun handleOnConnection(
         lambda: (Player) -> Unit

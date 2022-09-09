@@ -11,6 +11,7 @@ import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.bukkit.contexts.OnlinePlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 /**
@@ -20,7 +21,7 @@ import org.bukkit.entity.Player
 object DisguiseCheckCommand : ScalaCommand()
 {
     @CommandAlias("dgc|checkdisguise")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @CommandPermission("lemon.command.disguise.check")
     fun onCheckDisguise(player: Player, target: LemonPlayer)
     {
@@ -34,7 +35,7 @@ object DisguiseCheckCommand : ScalaCommand()
     }
 
     @CommandAlias("dgl|disguiselist")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @CommandPermission("lemon.command.disguise.list")
     fun onDisguiseList(player: Player)
     {
@@ -46,7 +47,7 @@ object DisguiseCheckCommand : ScalaCommand()
             throw ConditionFailedException("No online players are disguised.")
         }
 
-        player.sendMessage("${CC.B_PRI}Online Disguised Players:")
+        player.sendMessage("${CC.B_GOLD}${ChatColor.UNDERLINE}Online Disguised Players")
 
         disguised.forEach {
             val lemonPlayer = PlayerHandler.findPlayer(it).orElse(null)

@@ -512,12 +512,15 @@ object QuickAccess
 
         val lemonPlayer = PlayerHandler.findPlayer(player.uniqueId).orElse(null)
 
-        return if (lemonPlayer != null && (player.name == lemonPlayer.name || !player.hasMetadata("disguised")))
+        return if (
+            lemonPlayer != null &&
+            (player.name == lemonPlayer.name || !player.hasMetadata("disguised"))
+        )
         {
             lemonPlayer.activeGrant?.getRank() ?: RankHandler.getDefaultRank()
         } else
         {
-            RankHandler.getDefaultRank()
+            lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
         }
     }
 
