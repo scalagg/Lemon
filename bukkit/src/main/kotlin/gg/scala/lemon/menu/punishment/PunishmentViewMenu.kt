@@ -62,7 +62,7 @@ class PunishmentViewMenu(
 
                 buttons[index] = ItemBuilder(XMaterial.WHITE_WOOL)
                     .name(
-                        "${CC.GREEN}${
+                        "${CC.B_GREEN}${
                             when (viewType)
                             {
                                 HistoryViewType.STAFF_HIST -> "Issued "
@@ -71,14 +71,16 @@ class PunishmentViewMenu(
                         }${it.fancyVersion + "s"}"
                     )
                     .data(if (active >= 1 && viewType == HistoryViewType.TARGET_HIST) 5 else 14)
-                    .amount(totalAmount)
+                    .amount(
+                        if (totalAmount >= 64) 64 else totalAmount
+                    )
                     .addToLore(
-                        "${CC.GRAY}Viewing statistics for the",
-                        "${CC.GRAY}${it.fancyVersion} category:",
+                        "${CC.WHITE}Viewing statistics for this",
+                        "${CC.WHITE}category:",
                         "",
-                        " ${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
-                        " ${CC.GRAY}Active: ${CC.GREEN}${active}",
-                        " ${CC.GRAY}Inactive: ${CC.RED}${
+                        "${CC.WHITE}Total: ${CC.B_GREEN}$totalAmount",
+                        "${CC.WHITE}Active: ${CC.B_GREEN}$active",
+                        "${CC.WHITE}Inactive: ${CC.B_GREEN}${
                             punishments.filter { punishment ->
                                 punishment.category == it && punishment.isRemoved
                             }.size
@@ -122,7 +124,7 @@ class PunishmentViewMenu(
 
                     buttons[newIndex] = ItemBuilder(XMaterial.PAPER)
                         .name(
-                            "${CC.RED}${
+                            "${CC.B_GREEN}${
                                 when (viewType)
                                 {
                                     HistoryViewType.STAFF_HIST -> "Removed "
@@ -130,12 +132,14 @@ class PunishmentViewMenu(
                                 }
                             }${it.fancyVersion + "s"}"
                         )
-                        .amount(totalAmount)
+                        .amount(
+                            if (totalAmount >= 64) 64 else totalAmount
+                        )
                         .addToLore(
-                            "${CC.GRAY}Viewing statistics for the",
-                            "${CC.GRAY}removed ${it.fancyVersion}s category:",
+                            "${CC.WHITE}Viewing statistics for this",
+                            "${CC.WHITE}category:",
                             "",
-                            " ${CC.GRAY}Total: ${CC.WHITE}${totalAmount}",
+                            "${CC.WHITE}Total: ${CC.B_GREEN}${totalAmount}",
                             "",
                             "${CC.YELLOW}Click to view more!"
                         ).toButton { _, _ ->

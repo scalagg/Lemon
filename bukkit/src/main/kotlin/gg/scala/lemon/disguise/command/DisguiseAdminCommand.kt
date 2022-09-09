@@ -3,11 +3,9 @@ package gg.scala.lemon.disguise.command
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.information.DisguiseInfo
-import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.annotation.*
 import net.evilblock.cubed.util.CC
@@ -30,20 +28,21 @@ object DisguiseAdminCommand : ScalaCommand()
     }
 
     @Subcommand("add")
-    @Syntax("<player>")
-    fun onAdd(sender: CommandSender, uuid: UUID)
+    @Description("Add a disguise entry.")
+    @CommandCompletion("@players")
+    fun onAdd(sender: CommandSender, target: UUID)
     {
         DataStoreObjectControllerCache.findNotNull<DisguiseInfo>()
-            .load(uuid, DataStoreStorageType.REDIS).thenAccept {
+            .load(target, DataStoreStorageType.REDIS).thenAccept {
                 if (it != null)
                 {
-                    sender.sendMessage("${CC.RED}$uuid is already stored as a disguise profile.")
+                    sender.sendMessage("${CC.RED}$target is already stored as a disguise profile.")
                     return@thenAccept
                 }
 
                 val disguiseInfo = DisguiseProvider
                     .fetchDisguiseInfo(
-                        CubedCacheUtil.fetchName(uuid)!!, uuid
+                        CubedCacheUtil.fetchName(target)!!, target
                     )!!
 
                 DataStoreObjectControllerCache.findNotNull<DisguiseInfo>()
@@ -54,7 +53,8 @@ object DisguiseAdminCommand : ScalaCommand()
     }
 
     @Subcommand("remove")
-    @Syntax("<player>")
+    @CommandCompletion("@players")
+    @Description("Remove a disguise entry.")
     fun onRemove(sender: CommandSender, uuid: UUID)
     {
         DataStoreObjectControllerCache.findNotNull<DisguiseInfo>()

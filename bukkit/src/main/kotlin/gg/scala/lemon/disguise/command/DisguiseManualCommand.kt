@@ -22,7 +22,7 @@ import java.util.*
 object DisguiseManualCommand : ScalaCommand()
 {
     @CommandAlias("dgm|disguisemanual")
-    @CommandCompletion("@all-players @all-players")
+    @CommandCompletion("@players @players")
     @CommandPermission("lemon.command.disguise.manual")
     fun onDisguiseManual(
         sender: CommandSender, target: OnlinePlayer, uuid: UUID
