@@ -12,6 +12,7 @@ import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
@@ -34,6 +35,28 @@ object ProfileCommand : ScalaCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("disguise")
+    @CommandCompletion("@ranks @players")
+    @Description("Set a player's display rank.")
+    fun onDisguiseRank(sender: CommandSender, target: LemonPlayer, rank: Rank)
+    {
+        target.disguiseRankUniqueId = rank.uuid
+        QuickAccess.reloadPlayer(target.uniqueId, false)
+
+        sender.sendMessage("${CC.WHITE}${target.name}${CC.GREEN} is now disguised as ${rank.getColoredName()}${CC.GREEN}.")
+    }
+
+    @Subcommand("undisguise")
+    @CommandCompletion("@players")
+    @Description("Set a player's display rank to their original one.")
+    fun onUnDisguiseRank(sender: CommandSender, target: LemonPlayer)
+    {
+        target.disguiseRankUniqueId = null
+        QuickAccess.reloadPlayer(target.uniqueId, false)
+
+        sender.sendMessage("${CC.WHITE}${target.name}${CC.GREEN} has been undisguised.")
     }
 
     @Subcommand("disguise all")
@@ -60,7 +83,7 @@ object ProfileCommand : ScalaCommand()
             QuickAccess.reloadPlayer(value.uniqueId, false)
         }
 
-        sender.sendMessage("${CC.GREEN}All online players are now disguised as their original rank.")
+        sender.sendMessage("${CC.GREEN}All online players are now shown as their original rank.")
     }
 
     @Subcommand("permissions view")
@@ -74,7 +97,7 @@ object ProfileCommand : ScalaCommand()
         return target.validatePlayers(
             sender, false
         ) {
-            sender.sendMessage("${CC.B_GOLD}${ChatColor.UNDERLINE}Player permissions for ${CC.WHITE}${it.name}")
+            sender.sendMessage("${CC.B_GOLD}${ChatColor.UNDERLINE}Player permissions for ${it.name}:")
 
             it.assignedPermissions
                 .sortedByDescending { permission -> permission }

@@ -368,7 +368,7 @@ object PlayerListener : Listener
                 power = lemonPlayer.activeGrant!!.getRank().weight
             )
 
-            event.player.sendMessage("${CC.B_YELLOW}You've been vanished automatically due to your auto-vanish setting.")
+            event.player.sendMessage("${CC.B_YELLOW}You've been automatically put into vanish due to your auto-vanish setting.")
         } else
         {
             VisibilityHandler.updateToAll(event.player)

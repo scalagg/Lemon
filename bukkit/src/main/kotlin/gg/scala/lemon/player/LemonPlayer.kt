@@ -541,7 +541,7 @@ class LemonPlayer(
 
     @JvmOverloads
     fun getColoredName(
-        rank: Rank = realRank(bukkitPlayer),
+        rank: Rank = disguiseRank() ?: realRank(bukkitPlayer),
         customColor: Boolean = true,
         ignoreMinequest: Boolean = false,
         prefixIncluded: Boolean = false
