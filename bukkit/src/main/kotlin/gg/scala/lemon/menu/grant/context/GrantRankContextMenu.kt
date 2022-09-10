@@ -30,11 +30,11 @@ class GrantRankContextMenu(
 ) : PaginatedMenu() {
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Rank"
+        return "Granting ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Rank"
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
-        return hashMapOf<Int, Button>().also {
+        return mutableMapOf<Int, Button>().also {
             RankHandler.sorted.forEach { rank ->
                 it[it.size] = RankButton(rank)
             }
@@ -69,9 +69,20 @@ class GrantRankContextMenu(
                 it.add("${CC.WHITE}Visible: ${CC.YELLOW}${rank.visible}")
                 it.add("")
 
-                if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
-                    it.add("${CC.GREEN}Left-click to grant the ${rank.getColoredName()}${CC.GREEN} rank.")
-                    it.add("${CC.GREEN}Right-click to grant with scope selection.")
+                if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
+                    it.addAll(
+                        TextSplitter.split(
+                            text = "${CC.GREEN}Left-click to grant the ${rank.getColoredName()}${CC.GREEN} rank.",
+                            linePrefix = CC.GREEN
+                        )
+                    )
+
+                    it.addAll(
+                        TextSplitter.split(
+                            text = "${CC.GREEN}Right-click to grant with scope selection.",
+                            linePrefix = CC.GREEN
+                        )
+                    )
                 } else {
                     it.addAll(
                         TextSplitter.split(

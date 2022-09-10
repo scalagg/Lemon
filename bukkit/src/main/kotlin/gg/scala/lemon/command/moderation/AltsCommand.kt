@@ -8,8 +8,10 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess.coloredName
+import gg.scala.lemon.util.QuickAccess.online
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.time.TimeUtil
@@ -102,7 +104,7 @@ object AltsCommand : ScalaCommand()
                             }
 
                         hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
-                        hoverList.add("${target.getOriginalColoredName()}'s ${CC.SEC}Current IP Info:")
+                        hoverList.add("${target.getOriginalColoredName(ignoreMinequest = true)}'s ${CC.SEC}Current IP Info:")
 
                         addIpInfoToList(target, hoverList)
 
@@ -122,7 +124,7 @@ object AltsCommand : ScalaCommand()
                     }
 
                     sender.sendMessage("${CC.GRAY}[${CC.GREEN}Online${CC.GRAY}, Offline, ${CC.I_WHITE}Muted${CC.GRAY}, ${CC.RED}Ban${CC.GRAY}, ${CC.D_RED}Blacklist${CC.GRAY}]")
-                    sender.sendMessage("${target.getOriginalColoredName()}'s${CC.SEC} Alts ${CC.GRAY}(x${it.size})${CC.SEC}:")
+                    sender.sendMessage("${target.getOriginalColoredName(ignoreMinequest = true)}'s${CC.SEC} other accounts ${CC.GRAY}(x${it.size})${CC.SEC}:")
 
                     val lastComponent = finalMessage.components[finalMessage.components.size - 1]
 
@@ -173,14 +175,16 @@ object AltsCommand : ScalaCommand()
         lemonPlayer.recalculateGrants().join()
 
         val sortedPunishmentFirst = lemonPlayer
-            .sortedPunishments().firstOrNull()
+            .sortedPunishments().firstOrNull {
+                it.key != PunishmentCategory.KICK
+            }
 
         if (sortedPunishmentFirst != null)
         {
             return "${sortedPunishmentFirst.key.color}${lemonPlayer.name}"
         }
 
-        return if (lemonPlayer.bukkitPlayer != null)
+        return if (online(lemonPlayer.uniqueId).join())
         {
             "${CC.GREEN}${lemonPlayer.name}"
         } else

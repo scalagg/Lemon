@@ -1,6 +1,5 @@
 package gg.scala.lemon.discovery
 
-import com.google.common.net.HostAndPort
 import com.orbitz.consul.Consul
 import com.orbitz.consul.model.agent.ImmutableRegistration
 import com.orbitz.consul.model.agent.Registration
