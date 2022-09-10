@@ -54,7 +54,7 @@ class GrantViewMenu(
 
     override fun getPrePaginatedTitle(player: Player): String
     {
-        val base = "Grants ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY}"
+        val base = "Applicable grants ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY}"
 
         return when (viewType)
         {

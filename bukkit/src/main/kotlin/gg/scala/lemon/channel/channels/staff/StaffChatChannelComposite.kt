@@ -43,9 +43,7 @@ class StaffChatChannelComposite(
             .append(
                 LegacyComponentSerializer.legacySection()
                     .deserialize(
-                        "${rank.color}$username${CC.WHITE}: ${
-                            CC.AQUA + message
-                        }"
+                        "${rank.color}$username${CC.GRAY}: ${CC.AQUA}${message}"
                     )
             )
     }

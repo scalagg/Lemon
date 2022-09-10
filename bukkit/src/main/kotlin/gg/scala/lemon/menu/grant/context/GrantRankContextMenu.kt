@@ -30,11 +30,11 @@ class GrantRankContextMenu(
 ) : PaginatedMenu() {
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Rank"
+        return "Granting ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Rank"
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
-        return hashMapOf<Int, Button>().also {
+        return mutableMapOf<Int, Button>().also {
             RankHandler.sorted.forEach { rank ->
                 it[it.size] = RankButton(rank)
             }
@@ -69,13 +69,24 @@ class GrantRankContextMenu(
                 it.add("${CC.WHITE}Visible: ${CC.YELLOW}${rank.visible}")
                 it.add("")
 
-                if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
-                    it.add("${CC.GREEN}Left-click to grant the ${rank.getColoredName()}${CC.GREEN} rank.")
-                    it.add("${CC.GREEN}Right-click to grant with scope selection.")
+                if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
+                    it.addAll(
+                        TextSplitter.split(
+                            text = "${CC.GREEN}Left-click to grant the ${rank.getColoredName()}${CC.GREEN} rank.",
+                            linePrefix = CC.GREEN
+                        )
+                    )
+
+                    it.addAll(
+                        TextSplitter.split(
+                            text = "${CC.GREEN}Right-click to grant with scope selection.",
+                            linePrefix = CC.GREEN
+                        )
+                    )
                 } else {
                     it.addAll(
                         TextSplitter.split(
-                            text = "You must have a priority higher than ${rank.weight} to grant with this rank!",
+                            text = "You do not have permission to grant the ${rank.getColoredName()}${CC.RED} rank.",
                             linePrefix = CC.RED
                         )
                     )
@@ -86,7 +97,7 @@ class GrantRankContextMenu(
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-            if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
+            if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
                 if (clickType.isRightClick)
                 {
                     ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
@@ -95,7 +106,7 @@ class GrantRankContextMenu(
 
                 GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
             } else {
-                player.sendMessage("${CC.RED}You're not allowed to grant this rank.")
+                player.sendMessage("${CC.RED}You do not have permission to grant the ${rank.getColoredName()}${CC.RED} rank.")
             }
         }
     }

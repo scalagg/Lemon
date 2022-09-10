@@ -39,7 +39,7 @@ class ReportMenu(
                     .setLore(finalDescription)
                     .toButton { _, _ ->
                         sendStaffMessageWithFlag(
-                            "${CC.YELLOW}${coloredName(target)}${CC.RED} was reported by ${CC.YELLOW}${coloredName(player)}${CC.RED} for: ${CC.WHITE}${it.fancyName}${CC.RED}.",
+                            "${CC.YELLOW}${coloredName(player)}${CC.RED} has reported ${CC.YELLOW}${coloredName(target)}${CC.RED} for ${CC.GOLD}${it.fancyName}${CC.RED}.",
                             true, "reports-disabled"
                         ).whenComplete { _, throwable ->
                             if (throwable != null) {

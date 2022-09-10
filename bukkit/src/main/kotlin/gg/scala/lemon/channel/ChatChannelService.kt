@@ -76,18 +76,13 @@ object ChatChannelService
     {
         var match = this.channels
             .filter {
-                !it.override
-            }
-            .filter {
-                it.permissionLambda
-                    .invoke(player)
+                (it.prefix || !it.override) && it
+                    .permissionLambda.invoke(player)
             }
             .firstOrNull {
-                if (it.prefix)
-                {
-                    it.prefixed(message)
-                } else true
-            } ?: default
+                if (it.prefix) it.prefixed(message) else true
+            }
+            ?: default
 
         this.channels
             .filter {
