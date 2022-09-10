@@ -75,7 +75,7 @@ class GrantRankContextMenu(
                 } else {
                     it.addAll(
                         TextSplitter.split(
-                            text = "You must have a priority higher than ${rank.weight} to grant with this rank!",
+                            text = "You do not have permission to grant the ${rank.getColoredName()}${CC.RED} rank.",
                             linePrefix = CC.RED
                         )
                     )
@@ -86,7 +86,7 @@ class GrantRankContextMenu(
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
             val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
 
-            if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight > rank.weight) {
+            if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
                 if (clickType.isRightClick)
                 {
                     ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
@@ -95,7 +95,7 @@ class GrantRankContextMenu(
 
                 GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
             } else {
-                player.sendMessage("${CC.RED}You're not allowed to grant this rank.")
+                player.sendMessage("${CC.RED}You do not have permission to grant the ${rank.getColoredName()}${CC.RED} rank.")
             }
         }
     }
