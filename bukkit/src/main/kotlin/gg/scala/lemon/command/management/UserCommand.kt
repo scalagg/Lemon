@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture
 @AutoRegister
 @CommandAlias("user")
 @CommandPermission("op")
-object ProfileCommand : ScalaCommand()
+object UserCommand : ScalaCommand()
 {
     @Default
     @HelpCommand
@@ -45,7 +45,7 @@ object ProfileCommand : ScalaCommand()
         target.disguiseRankUniqueId = rank.uuid
         QuickAccess.reloadPlayer(target.uniqueId, false)
 
-        sender.sendMessage("${CC.WHITE}${target.name}${CC.GREEN} is now disguised as ${rank.getColoredName()}${CC.GREEN}.")
+        sender.sendMessage("${CC.GREEN}You've set ${target.getColoredName(ignoreMinequest = true)}'s${CC.GREEN} disguise rank to ${rank.getColoredName()}${CC.GREEN}.")
     }
 
     @Subcommand("undisguise")
@@ -70,7 +70,7 @@ object ProfileCommand : ScalaCommand()
             QuickAccess.reloadPlayer(value.uniqueId, false)
         }
 
-        sender.sendMessage("${CC.GREEN}All online players are now disguised as ${rank.getColoredName()}${CC.GREEN}.")
+        sender.sendMessage("${CC.GREEN}You've set everyone's disguise rank to ${rank.getColoredName()}${CC.GREEN}.")
     }
 
     @Subcommand("undisguise all")

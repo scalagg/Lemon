@@ -121,7 +121,8 @@ object AltsCommand : ScalaCommand()
                             .andHoverOf(*hoverList.toTypedArray())
                     }
 
-                    sender.sendMessage("${target.getOriginalColoredName()}'s${CC.SEC} Alternate Accounts ${CC.GRAY}(x${it.size}):")
+                    sender.sendMessage("${CC.GRAY}[${CC.GREEN}Online${CC.GRAY}, Offline, ${CC.I_WHITE}Muted${CC.GRAY}, ${CC.RED}Ban${CC.GRAY}, ${CC.D_RED}Blacklist${CC.GRAY}]")
+                    sender.sendMessage("${target.getOriginalColoredName()}'s${CC.SEC} Alts ${CC.GRAY}(x${it.size})${CC.SEC}:")
 
                     val lastComponent = finalMessage.components[finalMessage.components.size - 1]
 
@@ -184,7 +185,7 @@ object AltsCommand : ScalaCommand()
             "${CC.GREEN}${lemonPlayer.name}"
         } else
         {
-            "${CC.RED}${lemonPlayer.name}"
+            "${CC.GRAY}${lemonPlayer.name}"
         }
     }
 }

@@ -106,9 +106,8 @@ open class ChatChannel(
         message: String
     ): Boolean
     {
-        return this.prefix && message.startsWith(
-            "${this.prefixCharacter} "
-        )
+        return this.prefix && message.lowercase()
+            .startsWith("$prefixCharacter ", true)
     }
 
     fun preFormat(
