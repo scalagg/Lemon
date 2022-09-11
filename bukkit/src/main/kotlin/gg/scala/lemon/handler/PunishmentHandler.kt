@@ -156,31 +156,6 @@ object PunishmentHandler
             .load(uuid, DataStoreStorageType.MONGO)
     }
 
-    /**
-     * Handles warnings exclusively
-     *
-     * @author GrowlyX
-     */
-    fun handleWarning(issuer: CommandSender, uuid: UUID, reason: String): CompletableFuture<Void>
-    {
-        return CompletableFuture.runAsync {
-            val issuerName = nameOrConsole(issuer)
-            val targetName = fetchColoredName(uuid)
-
-            issuer.sendMessage("${CC.GREEN}You've warned $targetName${CC.GREEN} for ${CC.WHITE}$reason${CC.GREEN}.")
-
-            QuickAccess.sendGlobalPlayerMessage(
-                Lemon.instance.languageConfig
-                    .warnMessage.format(reason),
-                uuid
-            )
-
-            QuickAccess.sendStaffMessage(
-                "$issuerName${CC.D_AQUA} warned $targetName${CC.D_AQUA} for ${CC.AQUA}$reason${CC.D_AQUA}.", true
-            )
-        }
-    }
-
     @JvmOverloads
     fun handleUnPunishmentForTargetPlayerGlobally(
         issuer: CommandSender, uuid: UUID, reason: String,

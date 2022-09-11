@@ -303,44 +303,6 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun sendStaffMessage(
-        message: String,
-        addServer: Boolean
-    ): CompletableFuture<Void>
-    {
-        RedisHandler.buildMessage(
-            "staff-message",
-            "message" to message,
-            "permission" to "lemon.staff",
-            "server" to Lemon.instance.settings.id,
-            "with-server" to addServer
-        ).publish()
-
-        return CompletableFuture
-            .completedFuture(null)
-    }
-
-    @JvmStatic
-    fun sendStaffMessageWithFlag(
-        message: String,
-        addServer: Boolean,
-        flag: String
-    ): CompletableFuture<Void>
-    {
-        RedisHandler.buildMessage(
-            "staff-message",
-            "message" to message,
-            "permission" to "lemon.staff",
-            "flag" to flag,
-            "server" to Lemon.instance.settings.id,
-            "with-server" to addServer
-        ).publish()
-
-        return CompletableFuture
-            .completedFuture(null)
-    }
-
-    @JvmStatic
     fun isSilent(reason: String?) = reason?.endsWith("-s", true) == true || reason?.startsWith("-s", true) ?: false
 
     @JvmStatic

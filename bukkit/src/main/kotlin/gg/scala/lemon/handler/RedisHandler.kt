@@ -59,47 +59,6 @@ object RedisHandler
         }
     }
 
-    @Subscribe("staff-message")
-    fun onStaffMessage(message: AwareMessage)
-    {
-        val newMessage = message
-            .retrieve<String>("message")
-
-        val permission = message
-            .retrieveNullable<String>("permission")
-
-        val server = message
-            .retrieve<String>("server")
-
-        val potentialFlag = message
-            .retrieveNullable<String>("flag")
-
-        val withServer = message
-            .retrieve<Boolean>("with-server")
-
-        val baseMessage = "${CC.AQUA}[S] ${if (withServer) "${CC.D_AQUA}[$server] " else ""}"
-
-        sendMessage("$baseMessage$newMessage") {
-            if (permission == null)
-                return@sendMessage true
-
-            val lemonPlayer = PlayerHandler.findPlayer(it)
-                .orElse(null)
-
-            return@sendMessage if (lemonPlayer != null)
-            {
-                val base = lemonPlayer.hasPermission(permission) &&
-                        !lemonPlayer.getSetting("staff-messages-disabled")
-
-                if (potentialFlag != null)
-                {
-                    lemonPlayer.hasPermission(permission) &&
-                            !lemonPlayer.getSetting(potentialFlag)
-                } else base
-            } else false
-        }
-    }
-
     @Subscribe("global-message")
     fun onGlobalMessage(message: AwareMessage)
     {

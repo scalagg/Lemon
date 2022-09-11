@@ -34,17 +34,11 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.board.ModModeBoardProvider
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.entity.superboat.EntitySuperBoatCommand
-import gg.scala.lemon.player.extension.PlayerCachingExtension
-import gg.scala.lemon.player.extension.network.NetworkOnlineStaffCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
-import gg.scala.lemon.player.nametag.ModModeNametagProvider
-import gg.scala.lemon.player.nametag.VanishNametagProvider
 import gg.scala.lemon.player.nametag.command.NametagCommand
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
-import gg.scala.lemon.player.visibility.StaffVisibilityHandler
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.validate.ScalaValidateData
@@ -207,8 +201,6 @@ class Lemon : ExtendedScalaPlugin()
             commandManager.registerCommand(ColorCommand)
         }
 
-        commandManager.registerCommand(NetworkOnlineStaffCommand)
-
         commandManager.registerCommand(NametagCommand)
         commandManager.registerCommand(EntitySuperBoatCommand)
 
@@ -227,14 +219,7 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider)
-        NametagHandler.registerProvider(VanishNametagProvider)
-        NametagHandler.registerProvider(ModModeNametagProvider)
-
         NametagHandler.registerProvider(RainbowNametagProvider)
-
-        ScoreboardHandler.scoreboardOverride = ModModeBoardProvider
-
-        VisibilityHandler.registerAdapter("staff", StaffVisibilityHandler)
 
         if (settings.disguiseEnabled)
         {
@@ -266,10 +251,6 @@ class Lemon : ExtendedScalaPlugin()
         Events.subscribe(PlayerMoveEvent::class.java)
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
-
-        flavor {
-            inject(PlayerCachingExtension)
-        }
 
         logger.info("Memorizing fundamental player data to your redis server.")
 
