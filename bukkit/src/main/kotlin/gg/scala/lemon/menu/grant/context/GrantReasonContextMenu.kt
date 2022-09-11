@@ -117,6 +117,9 @@ class GrantReasonContextMenu(
 
                 grant.scopes.clear()
                 grant.scopes += this.scopes
+                    .ifEmpty {
+                        listOf("global")
+                    }
 
                 GrantHandler.handleGrant(player, grant)
             } else {

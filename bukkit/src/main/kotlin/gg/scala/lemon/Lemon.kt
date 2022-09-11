@@ -60,24 +60,15 @@ import org.bukkit.event.player.PlayerMoveEvent
 import java.util.*
 
 @Plugin(
-    name = Lemon.NAME,
-    description = Lemon.DESCRIPTION,
+    name = "Lemon",
     apiVersion = "1.18",
     depends = [
         PluginDependency("scala-commons"),
         PluginDependency("store-spigot"),
-        PluginDependency(
-            "spark", soft = true
-        ),
-        PluginDependency(
-            "LunarClient-API", soft = true
-        ),
-        PluginDependency(
-            "PlaceholderAPI", soft = true
-        ),
-        PluginDependency(
-            "cloudsync", soft = true
-        )
+        PluginDependency("spark", soft = true),
+        PluginDependency("LunarClient-API", soft = true),
+        PluginDependency("PlaceholderAPI", soft = true),
+        PluginDependency("cloudsync", soft = true)
     ]
 )
 @ContainerConfig(
@@ -94,9 +85,6 @@ class Lemon : ExtendedScalaPlugin()
     {
         @JvmStatic
         lateinit var instance: Lemon
-
-        const val NAME = "Lemon"
-        const val DESCRIPTION = "An extensive punishment, moderation, security and rank suite."
     }
 
     val settings: SettingsConfigProcessor
