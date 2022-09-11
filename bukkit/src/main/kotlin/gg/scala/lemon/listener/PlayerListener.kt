@@ -6,22 +6,14 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.cooldown.CooldownHandler
-import gg.scala.lemon.cooldown.impl.ChatCooldown
 import gg.scala.lemon.cooldown.impl.CommandCooldown
-import gg.scala.lemon.cooldown.impl.SlowChatCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.handler.ChatHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
-import gg.scala.lemon.handler.frozen.FrozenPlayerHandler
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
-import gg.scala.lemon.menu.frozen.PlayerFrozenMenu
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.event.impl.PostFreezeEvent
-import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
-import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
@@ -41,7 +33,12 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityTargetEvent
-import org.bukkit.event.player.*
+import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.event.player.PlayerEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.ServerCommandEvent
 
 @Listeners
@@ -101,11 +98,7 @@ object PlayerListener : Listener
         lemonPlayer.handlePostLoad()
     }
 
-    @EventHandler
-    fun onFreezeEvent(event: PostFreezeEvent)
-    {
-        PlayerFrozenMenu().openMenu(event.player)
-    }
+    var defaultChannelProtection = { event: AsyncPlayerChatEvent -> }
 
     @EventHandler(
         priority = EventPriority.MONITOR,
@@ -153,40 +146,11 @@ object PlayerListener : Listener
                 return
             }
 
-            if (ChatHandler.chatMuted && !lemonPlayer.hasPermission("lemon.mutechat.bypass"))
+            this.defaultChannelProtection.invoke(event)
+
+            if (event.isCancelled)
             {
-                cancel(event, "${CC.RED}The chat is currently muted, please wait until it is no longer muted to talk.")
-            } else if (ChatHandler.slowChatTime != 0 && !lemonPlayer.hasPermission("lemon.slowchat.bypass"))
-            {
-                val slowChat = CooldownHandler.find(
-                    SlowChatCooldown::class.java
-                )!!
-
-                if (slowChat.isActive(player))
-                {
-                    val formatted = slowChat.getRemainingFormatted(player)
-
-                    cancel(event, "${CC.RED}The chat is currently slowed, please wait $formatted before talking again.")
-                    return
-                }
-
-                slowChat.addOrOverride(player)
-            } else
-            {
-                if (!lemonPlayer.hasPermission("lemon.cooldown.chat.bypass"))
-                {
-                    val chat = CooldownHandler.find(
-                        ChatCooldown::class.java
-                    )!!
-
-                    if (!CooldownHandler.notifyAndContinue(ChatCooldown::class.java, player))
-                    {
-                        event.isCancelled = true
-                        return
-                    }
-
-                    chat.addOrOverride(player)
-                }
+                return
             }
         }
 
@@ -361,19 +325,8 @@ object PlayerListener : Listener
 
         lemonPlayer.performConnectionTasks()
 
-        if (lemonPlayer.hasMetadata("auto-vanish"))
-        {
-            PlayerHandler.vanishPlayer(
-                event.player,
-                power = lemonPlayer.activeGrant!!.getRank().weight
-            )
-
-            event.player.sendMessage("${CC.B_YELLOW}You've been automatically put into vanish due to your auto-vanish setting.")
-        } else
-        {
-            VisibilityHandler.updateToAll(event.player)
-            NametagHandler.reloadPlayer(event.player)
-        }
+        VisibilityHandler.updateToAll(event.player)
+        NametagHandler.reloadPlayer(event.player)
     }
 
     private fun updatePlayerRecord()
@@ -390,24 +343,6 @@ object PlayerListener : Listener
             ServerSync.getLocalGameServer().setMetadata(
                 Key.key("lemon", "highest-player-count"), currentPlayerCount
             )
-        }
-    }
-
-    @EventHandler
-    fun onEntityTarget(event: EntityTargetEvent)
-    {
-        if (event.reason != EntityTargetEvent.TargetReason.CUSTOM)
-        {
-            val entity = event.entity
-            val target = event.target
-
-            if (
-                (entity is ExperienceOrb || entity is LivingEntity) &&
-                target is Player && target.hasMetadata("vanished")
-            )
-            {
-                event.isCancelled = true
-            }
         }
     }
 
@@ -485,28 +420,6 @@ object PlayerListener : Listener
         handleDisconnection(event.player)
     }
 
-    private val interaction: (Player, Cancellable, String) -> Unit = { player, event, action ->
-        if (player.hasMetadata("mod-mode"))
-        {
-            cancel(event, player, "${CC.RED}You cannot $action while in mod-mode.")
-        } else if (player.hasMetadata("vanished"))
-        {
-            cancel(event, player, "${CC.RED}You cannot $action while vanished.")
-        }
-    }
-
-    @EventHandler
-    fun onBlockBreak(event: BlockBreakEvent)
-    {
-        interaction.invoke(event.player, event, "break blocks")
-    }
-
-    @EventHandler
-    fun onBlockPlace(event: BlockPlaceEvent)
-    {
-        interaction.invoke(event.player, event, "place blocks")
-    }
-
     @EventHandler
     fun onConsoleCommand(event: ServerCommandEvent)
     {
@@ -514,19 +427,6 @@ object PlayerListener : Listener
         {
             CommandAsyncFileLogger.queueForUpdates(
                 "Console: ${event.command}"
-            )
-        }
-    }
-
-    @EventHandler
-    fun onEntityDamageByEntity(event: EntityDamageByEntityEvent)
-    {
-        val damager = event.damager
-
-        if (damager is Player)
-        {
-            interaction.invoke(
-                damager, event, "damage entities"
             )
         }
     }
@@ -552,35 +452,7 @@ object PlayerListener : Listener
         val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            val isFrozen = player.hasMetadata("frozen")
-
-            if (isFrozen)
-            {
-                QuickAccess.sendStaffMessage(
-                    "${CC.AQUA}${coloredName(player)}${CC.D_AQUA} logged out while frozen.", true
-                )
-
-                player.removeMetadata("frozen", plugin)
-
-                FrozenPlayerHandler.expirables.remove(player.uniqueId)
-
-                if (Lemon.instance.settings.frozenAutoBan)
-                {
-                    Bukkit.dispatchCommand(
-                        Bukkit.getConsoleSender(),
-                        "ban ${player.name} perm Disconnected while frozen -s"
-                    )
-                    return@ifPresent
-                }
-            }
-
-            PlayerHandler.unModModePlayerSilent(player)
-            PlayerCachingExtension.forget(it)
-
-            player.removeMetadata("vanished", plugin)
-
-            PlayerHandler.players
-                .remove(it.uniqueId)?.save()
+            PlayerHandler.players.remove(it.uniqueId)?.save()
         }
     }
 }

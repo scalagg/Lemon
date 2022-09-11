@@ -9,16 +9,12 @@ import gg.scala.lemon.cooldown.impl.*
  * @author GrowlyX
  * @since 10/15/2021
  */
-@Service(name = "cooldown-lemon")
+@Service
 object LemonCooldownHandler
 {
     @Configure
     fun configure()
     {
-        CooldownHandler.register(
-            ChatCooldown, SlowChatCooldown,
-            CommandCooldown, RequestCooldown,
-            ReportCooldown
-        )
+        CooldownHandler.register(CommandCooldown)
     }
 }

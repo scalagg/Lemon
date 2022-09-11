@@ -14,7 +14,6 @@ import gg.scala.lemon.minequest
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
-import gg.scala.lemon.player.extension.PlayerCachingExtension
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.player.punishment.Punishment
@@ -26,7 +25,6 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.KICK
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.MUTE
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
-import gg.scala.lemon.util.ClientUtil.handleApplicableClient
 import gg.scala.lemon.util.GrantRecalculationUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.originalRank
@@ -40,7 +38,6 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -741,10 +738,7 @@ class LemonPlayer(
         recalculateGrants(
             connecting = true,
             forceRecalculatePermissions = true
-        ).thenRun {
-            PlayerCachingExtension
-                .memorize(this).join()
-        }
+        )
 
         recalculatePunishments(
             connecting = true
@@ -754,10 +748,6 @@ class LemonPlayer(
 
         handleOnConnection.add {
             checkChannelPermission(it)
-
-            Tasks.delayed(1L) {
-                handleAutomaticStaffModules(it)
-            }
         }
     }
 
@@ -779,20 +769,6 @@ class LemonPlayer(
             )
             {
                 this remove "channel"
-            }
-        }
-    }
-
-    private fun handleAutomaticStaffModules(player: Player)
-    {
-        if (
-            player.hasPermission("lemon.staff")
-        )
-        {
-            handleApplicableClient(player) {
-                it.enableStaffModules(player)
-
-                player.sendMessage("${CC.GREEN}${it.getClientName()} staff modules have been enabled.")
             }
         }
     }

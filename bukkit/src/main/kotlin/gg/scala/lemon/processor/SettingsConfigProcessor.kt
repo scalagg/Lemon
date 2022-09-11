@@ -17,9 +17,6 @@ class SettingsConfigProcessor
     @Comment("Dummy server?")
     val dummyServer = false
 
-    @Comment("What is the server address?")
-    val serverAddress = "127.0.0.1"
-
     @Comment("What are the consul connection details?")
     val consulAddress = "127.0.0.1"
     val consulPort = 8500
@@ -28,9 +25,6 @@ class SettingsConfigProcessor
     val serverPassword = "server_password"
     val serverPasswordSupplier = "127.0.0.1"
     val serverPasswordHttps = false
-
-    @Comment("Should we auto-ban players if they disconnect whilst frozen?")
-    val frozenAutoBan = false
 
     @Comment("Shall console be able to view chat messages?")
     val consoleChat = false

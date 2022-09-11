@@ -51,24 +51,6 @@ class LanguageConfigProcessor
                 "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg."
 
     @Coloured
-    var frozenPlayerHasTimeMessage = """
-        ${CC.RED}  
-        ${CC.RED}You've been frozen by a staff member!
-        ${CC.YELLOW}You have ${CC.WHITE}%s${CC.YELLOW} to join ${CC.GREEN}discord.scala.gg${CC.YELLOW}.
-        ${CC.GRAY}If you fail to comply with our staff team's orders, you will be banned.
-        ${CC.RED}  
-    """.trimIndent()
-
-    @Coloured
-    var frozenPlayerTimeIsUpMessage = """
-        ${CC.RED}  
-        ${CC.RED}You've been frozen by a staff member!
-        ${CC.YELLOW}It has been 5 minutes! Please join as soon as possible.
-        ${CC.GRAY}If you fail to comply with our staff team's orders, you will be banned.
-        ${CC.RED}  
-    """.trimIndent()
-
-    @Coloured
     @Comment(
         "The replacements for this mute message are as follows:",
         " - Tense: \"You've been/You're currently\"",
