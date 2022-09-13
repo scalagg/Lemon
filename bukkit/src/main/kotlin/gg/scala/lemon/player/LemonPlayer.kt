@@ -777,7 +777,7 @@ class LemonPlayer(
     {
         updateOrAddMetadata(
             "first-connection",
-            Metadata(System.currentTimeMillis())
+            Metadata("${System.currentTimeMillis()}")
         )
 
         updateOrAddMetadata(
