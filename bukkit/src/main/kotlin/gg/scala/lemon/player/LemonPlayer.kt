@@ -38,6 +38,7 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -559,7 +560,8 @@ class LemonPlayer(
                 )
         }
 
-        return rank.color + (if (customColor) customColor() else "") +
+        return (if (prefixIncluded) if (ChatColor.stripColor(rank.prefix).isEmpty())
+            "" else "${rank.prefix} " else "") + rank.color + (if (customColor) customColor() else "") +
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
