@@ -6,6 +6,7 @@ import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
@@ -145,7 +146,9 @@ object DefaultChatChannel : ChatChannelComposite
                 }
             }
             .append(
-                serializer.deserialize(colored)
+                serializer.deserialize(
+                    if (rank.uuid == RankHandler.getDefaultRank().uuid) "${CC.GRAY}$colored" else colored
+                )
             )
     }
 
