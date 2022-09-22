@@ -9,6 +9,7 @@ import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.software.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.broadcast
+import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
@@ -179,11 +180,12 @@ object RedisHandler
         val targetUuid = message
             .retrieve<UUID>("target")
 
-        PlayerHandler.findPlayer(targetUuid).ifPresent {
-            it.recalculateGrants(
-                shouldCalculateNow = true
-            )
-        }
+        PlayerHandler.findPlayer(targetUuid)
+            .ifPresent {
+                it.recalculateGrants(
+                    shouldCalculateNow = true
+                )
+            }
     }
 
     @Subscribe("recalculate-punishments")
