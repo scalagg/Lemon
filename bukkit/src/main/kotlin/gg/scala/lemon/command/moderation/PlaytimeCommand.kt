@@ -84,7 +84,8 @@ object PlaytimeCommand : ScalaCommand()
 
         val currentWeek = target
             .pastLogins.filter {
-                val current = Instant.ofEpochMilli(it.value)
+                val current = Instant
+                    .ofEpochMilli(it.key.toLongOrNull() ?: 1L)
                     .atZone(zoneId)
                     .toLocalDate()
 
