@@ -14,6 +14,10 @@ object MinequestInvalidCharFilter : MessagePhraseFilter
 
     override fun loadResources()
     {
+        val mappings = """
+            áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ
+        """.trimIndent()
+
         validCharacters += 'A'..'Z'
         validCharacters += 'a'..'z'
         validCharacters += '1'..'9'
@@ -26,6 +30,11 @@ object MinequestInvalidCharFilter : MessagePhraseFilter
             '.', '/', '?', '~', '=',
             '\n', '\t', '\r', '`'
         )
+
+        for (mapping in mappings)
+        {
+            validCharacters += mapping
+        }
     }
 
     override fun isFiltered(
