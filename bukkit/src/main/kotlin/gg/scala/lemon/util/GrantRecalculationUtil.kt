@@ -17,6 +17,16 @@ object GrantRecalculationUtil {
     }
 
     @JvmStatic
+    fun getProminentSubGrant(prominent: Grant, grants: List<Grant>): Grant? {
+        return grants
+            .sortedByDescending { it.addedAt }
+            .sortedByDescending { it.getRank().weight }
+            .firstOrNull {
+                it.uuid != prominent.uuid && it.isActive && it.isApplicable() && it.getRank().visible
+            }
+    }
+
+    @JvmStatic
     fun getPermissionGrants(grants: List<Grant>): List<Grant> {
         return grants
             .sortedByDescending { it.addedAt }

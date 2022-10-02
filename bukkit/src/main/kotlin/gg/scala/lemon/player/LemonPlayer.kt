@@ -37,6 +37,7 @@ import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.time.DateUtil
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -81,6 +82,8 @@ class LemonPlayer(
         mutableListOf<(Player) -> Unit>()
 
     var activeGrant: Grant? = null
+    var activeSubGrant: Grant? = null
+
     private var attachment: PermissionAttachment? = null
 
     var metadata = mutableMapOf<String, Metadata>()
@@ -327,21 +330,55 @@ class LemonPlayer(
 
             var shouldRecalculatePermissions = forceRecalculatePermissions
 
-            if (previousRank != null && activeGrant != null && previousRank != activeGrant!!.getRank().uuid)
+            if (
+                previousRank != null && activeGrant != null &&
+                previousRank != activeGrant!!.getRank().uuid
+            )
             {
                 shouldRecalculatePermissions = true
                 shouldNotifyPlayer = true
             }
 
+            var subGrant: Grant? = null
+
+            if (activeGrant != null)
+            {
+                subGrant = GrantRecalculationUtil
+                    .getProminentSubGrant(
+                        activeGrant!!, grants
+                    )
+
+                if (
+                    subGrant != null && this.activeSubGrant?.uuid != subGrant.uuid &&
+                    subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid
+                )
+                {
+                    shouldNotifyPlayer = true
+                    shouldRecalculatePermissions = true
+                }
+            }
+
             if (shouldNotifyPlayer && !connecting)
             {
                 bukkitPlayer?.ifPresent {
-                    notifyPlayerOfRankUpdate(it)
+                    notifyPlayerOfRankUpdate(
+                        it, this.activeGrant!!,
+                        if (
+                            subGrant != null && this.activeSubGrant?.uuid != subGrant.uuid &&
+                            subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid
+                        )
+                            subGrant else null
+                    )
 
                     RankChangeEvent(
                         it, previousRank, activeGrant!!.rankId
                     ).dispatch()
                 }
+            }
+
+            if (subGrant != null)
+            {
+                this.activeSubGrant = subGrant
             }
 
             if (activeGrant == null)
@@ -350,7 +387,9 @@ class LemonPlayer(
             }
 
             if (shouldRecalculatePermissions)
+            {
                 handlePermissionApplication(grants, shouldCalculateNow)
+            }
         }.exceptionally {
             Lemon.instance.logger.log(
                 Level.WARNING, "Grant update", it
@@ -437,10 +476,33 @@ class LemonPlayer(
         )
     }
 
-    private fun notifyPlayerOfRankUpdate(player: Player)
+    private fun notifyPlayerOfRankUpdate(
+        player: Player, primaryGrant: Grant?, subGrant: Grant?
+    )
     {
-        activeGrant?.let { grant ->
-            player.sendMessage("${CC.GREEN}Your rank has been set to ${grant.getRank().getColoredName()}${CC.GREEN}.")
+        val messenger = { grant: Grant, prefix: String, suffix: String ->
+            player.sendMessage(
+                "${CC.GREEN}$prefix ${grant.getRank().getColoredName()}${CC.GREEN}$suffix."
+            )
+
+            if (!grant.isPermanent)
+            {
+                player.sendMessage(
+                    "${CC.GREEN}This rank will expire in: ${CC.WHITE}${
+                        DateUtil.formatDateDiff(grant.expireDate.time)
+                    }"
+                )
+            }
+        }
+
+        if (primaryGrant != null)
+        {
+            messenger(primaryGrant, "You've been granted the", " rank")
+        }
+
+        if (subGrant != null)
+        {
+            messenger(subGrant, "You've been granted a sub-rank of", "")
         }
     }
 
