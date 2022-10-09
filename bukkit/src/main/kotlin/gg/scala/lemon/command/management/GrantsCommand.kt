@@ -92,9 +92,8 @@ object GrantsCommand : ScalaCommand()
             GrantHandler.fetchGrantsByExecutor(uuid)
         }
 
-        completableFuture.thenAccept { grants ->
-            try
-            {
+        completableFuture
+            .thenAccept { grants ->
                 if (grants.isEmpty())
                 {
                     player.sendMessage("${CC.RED}No grants found for ${CC.YELLOW}$colored${CC.RED}.")
@@ -104,11 +103,11 @@ object GrantsCommand : ScalaCommand()
                 GrantViewMenu(
                     uuid, type, grants, colored
                 ).openMenu(player)
-            } catch (e: Exception)
-            {
-                e.printStackTrace()
             }
-        }
+            .exceptionally {
+                it.printStackTrace()
+                return@exceptionally null
+            }
     }
 
     @Syntax("<player>")

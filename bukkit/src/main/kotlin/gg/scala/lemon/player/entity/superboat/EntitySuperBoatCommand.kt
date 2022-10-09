@@ -41,9 +41,9 @@ object EntitySuperBoatCommand : ScalaCommand()
         val start = Random.nextInt(12000, 19000)
 
         val entity = WrapperPlayServerSpawnEntity()
-        entity.handle.integers.write(0, target.player.x.toInt())
-        entity.handle.integers.write(1, target.player.y.toInt())
-        entity.handle.integers.write(2, target.player.z.toInt())
+        entity.handle.integers.write(0, target.player.location.x.toInt())
+        entity.handle.integers.write(1, target.player.location.y.toInt())
+        entity.handle.integers.write(2, target.player.location.z.toInt())
         entity.type = WrapperPlayServerSpawnEntity.ObjectTypes.BOAT
 
         return CompletableFuture

@@ -207,7 +207,7 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider)
-        NametagHandler.registerProvider(RainbowNametagProvider)
+//        NametagHandler.registerProvider(RainbowNametagProvider)
 
         if (settings.disguiseEnabled)
         {
