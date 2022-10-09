@@ -55,9 +55,6 @@ subprojects {
         // we don't want kotlin
         exclude "kotlin"
 
-        // helper-redis assets
-        exclude "config.yml"
-
         archiveFileName = "Lemon.jar"
     }
 
