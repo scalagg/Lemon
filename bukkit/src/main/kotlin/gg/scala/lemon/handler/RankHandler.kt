@@ -68,7 +68,10 @@ object RankHandler
             .filter { it.visible }
             .sortedBy { -it.weight }
             .joinToString(separator = "${CC.WHITE}, ") {
-                it.getColoredName()
+                if (it.uuid == getDefaultRank().uuid)
+                    it.getColoredName()
+                else
+                    it.prefix
             }
     }
 

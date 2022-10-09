@@ -3,6 +3,7 @@ package gg.scala.lemon.disguise
 import com.google.gson.JsonParser
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
@@ -19,8 +20,6 @@ import gg.scala.lemon.util.BukkitUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import me.lucko.helper.Events
-import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.entity.npc.protocol.NpcProtocol
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -28,12 +27,10 @@ import net.evilblock.cubed.util.Reflection
 import net.evilblock.cubed.util.bukkit.Tasks.sync
 import net.evilblock.cubed.util.nms.MinecraftProtocol
 import net.evilblock.cubed.util.nms.MinecraftReflection
-import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import java.io.InputStreamReader
-import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.net.URL
 import java.util.*
