@@ -11,12 +11,6 @@ import java.util.*
 
 object LemonConstants {
 
-    // as CC.PRI & CC.SEC are instantiated later
-    @JvmStatic
-    val AUTH_PREFIX by lazy {
-        "${CC.B_PRI}Staff ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT} "
-    }
-
     @JvmStatic
     val DEBUG by lazy {
         Reflection.DEBUG

@@ -207,7 +207,7 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider)
-//        NametagHandler.registerProvider(RainbowNametagProvider)
+        NametagHandler.registerProvider(RainbowNametagProvider)
 
         if (settings.disguiseEnabled)
         {
@@ -239,8 +239,6 @@ class Lemon : ExtendedScalaPlugin()
         Events.subscribe(PlayerMoveEvent::class.java)
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
-
-        logger.info("Memorizing fundamental player data to your redis server.")
 
         // Loading all default player colors
         if (settings.playerColorsEnabled)
