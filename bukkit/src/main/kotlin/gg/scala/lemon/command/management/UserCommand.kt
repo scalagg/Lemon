@@ -9,6 +9,7 @@ import gg.scala.commons.acf.annotation.Default
 import gg.scala.commons.acf.annotation.Description
 import gg.scala.commons.acf.annotation.HelpCommand
 import gg.scala.commons.acf.annotation.Subcommand
+import gg.scala.commons.annotations.commands.AssignPermission
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.PlayerHandler
@@ -37,6 +38,7 @@ object UserCommand : ScalaCommand()
         help.showHelp()
     }
 
+    @AssignPermission
     @Subcommand("disguise")
     @CommandCompletion("@ranks @players")
     @Description("Set a player's display rank.")
@@ -48,6 +50,7 @@ object UserCommand : ScalaCommand()
         sender.sendMessage("${CC.GREEN}You've set ${target.getColoredName(ignoreMinequest = true)}'s${CC.GREEN} disguise rank to ${rank.getColoredName()}${CC.GREEN}.")
     }
 
+    @AssignPermission
     @Subcommand("undisguise")
     @CommandCompletion("@players")
     @Description("Set a player's display rank to their original one.")
@@ -59,6 +62,7 @@ object UserCommand : ScalaCommand()
         sender.sendMessage("${CC.WHITE}${target.name}${CC.GREEN} has been undisguised.")
     }
 
+    @AssignPermission
     @Subcommand("disguise all")
     @CommandCompletion("@ranks")
     @Description("Set all online players' display ranks.")
@@ -73,6 +77,7 @@ object UserCommand : ScalaCommand()
         sender.sendMessage("${CC.GREEN}You've set everyone's disguise rank to ${rank.getColoredName()}${CC.GREEN}.")
     }
 
+    @AssignPermission
     @Subcommand("undisguise all")
     @Description("Set all online players' display ranks to their original ones.")
     fun onUnDisguiseRankAll(sender: CommandSender)
@@ -86,6 +91,7 @@ object UserCommand : ScalaCommand()
         sender.sendMessage("${CC.GREEN}All online players are now shown as their original rank.")
     }
 
+    @AssignPermission
     @Subcommand("permissions view")
     @CommandCompletion("@players")
     @Description("View all persistent player-specific permissions for a player.")
@@ -107,6 +113,7 @@ object UserCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("permissions add")
     @CommandCompletion("@players")
     @Description("Assign a persistent player-specific permission.")
@@ -133,6 +140,7 @@ object UserCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @CommandCompletion("@players")
     @Subcommand("permissions remove")
     @Description("Remove a player-specific permission.")

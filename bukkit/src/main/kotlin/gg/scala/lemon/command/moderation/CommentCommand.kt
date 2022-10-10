@@ -10,6 +10,7 @@ import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
+import gg.scala.commons.annotations.commands.AssignPermission
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -32,8 +33,7 @@ object CommentCommand : ScalaCommand()
     }
 
     @Subcommand("list")
-    @Syntax("<player> [page]")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @Description("List all comments attached to a player.")
     fun onList(sender: CommandSender, uniqueId: UUID, @Optional page: Int?)
     {
@@ -49,18 +49,18 @@ object CommentCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("add|set")
-    @Syntax("<player> <comment>")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @Description("Attach a comment to a player.")
     fun onAdd(player: Player, uniqueId: UUID, comment: String)
     {
         CommentHandler.addCommentToPlayer(player, uniqueId, comment)
     }
 
+    @AssignPermission
     @Syntax("<id>")
-    @Subcommand("remove|delete")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @Description("Remove a comment from a player.")
     fun onRemove(player: Player, @Single id: String)
     {

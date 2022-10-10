@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture
 object AltsCommand : ScalaCommand()
 {
     @CommandAlias("alts|ipreport")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @CommandPermission("lemon.command.alts")
     fun onAlts(
         sender: Player,

@@ -25,7 +25,7 @@ object GrantManualCommand : ScalaCommand()
 {
     @CommandAlias("grantmanual")
     @CommandPermission("lemon.command.grantmanual")
-    @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent")
+    @CommandCompletion("@players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent")
     fun onGrantManual(
         sender: CommandSender,
         target: AsyncLemonPlayer,
@@ -52,7 +52,7 @@ object GrantManualCommand : ScalaCommand()
 
     @CommandAlias("grantmanualscope")
     @CommandPermission("lemon.command.grantmanualscope")
-    @CommandCompletion("@all-players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent global")
+    @CommandCompletion("@players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent global")
     fun onGrantManualScope(
         sender: CommandSender,
         target: AsyncLemonPlayer,

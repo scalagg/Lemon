@@ -28,7 +28,7 @@ object MuteCommand : ScalaCommand()
     @CommandAlias("mute|tmute|tempmute")
     @CommandPermission("lemon.command.mute")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
+    @CommandCompletion("@players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onMute(
         sender: CommandSender, uuid: AsyncLemonPlayer,
         @Optional duration: Duration?, @Optional reason: String?
@@ -50,7 +50,7 @@ object MuteCommand : ScalaCommand()
     @CommandAlias("remute|rm")
     @CommandPermission("lemon.command.mute")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
+    @CommandCompletion("@players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onReMute(
         sender: CommandSender, uuid: AsyncLemonPlayer,
         @Optional duration: Duration?, @Optional reason: String?
@@ -71,7 +71,7 @@ object MuteCommand : ScalaCommand()
 
     @CommandAlias("unmute|um")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players Appealed")
+    @CommandCompletion("@players Appealed")
     @CommandPermission("lemon.command.mute.remove")
     fun onUnMute(
         sender: CommandSender,

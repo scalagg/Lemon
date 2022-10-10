@@ -27,7 +27,7 @@ object BanCommand : ScalaCommand()
     @CommandAlias("ban|tban|tempban|b")
     @CommandPermission("lemon.command.ban")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
+    @CommandCompletion("@players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onBan(
         sender: CommandSender, uuid: AsyncLemonPlayer,
         @Optional duration: Duration?, @Optional reason: String?
@@ -48,7 +48,7 @@ object BanCommand : ScalaCommand()
     @CommandAlias("reban|rb")
     @CommandPermission("lemon.command.ban")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
+    @CommandCompletion("@players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onReBan(
         sender: CommandSender, uuid: AsyncLemonPlayer,
         @Optional duration: Duration?, @Optional reason: String?
@@ -68,7 +68,7 @@ object BanCommand : ScalaCommand()
 
     @CommandAlias("unban|ub")
     @Syntax("<player> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players Appealed")
+    @CommandCompletion("@players Appealed")
     @CommandPermission("lemon.command.ban.remove")
     fun onUnBan(
         sender: CommandSender, uuid: AsyncLemonPlayer,

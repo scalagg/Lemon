@@ -15,6 +15,7 @@ import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
+import gg.scala.commons.annotations.commands.AssignPermission
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.md_5.bungee.api.ChatColor
@@ -124,9 +125,9 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("create")
     @Description("Create a new rank.")
-    @CommandPermission("lemon.command.rank.management")
     fun onCreate(sender: CommandSender, @Single name: String)
     {
         val existing = RankHandler.findRank(name)
@@ -153,10 +154,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("delete")
     @CommandCompletion("@ranks")
     @Description("Delete an existing rank.")
-    @CommandPermission("lemon.command.rank.management")
     fun onDelete(sender: CommandSender, rank: Rank)
     {
         if (rank.uuid == RankHandler.getDefaultRank().uuid)
@@ -178,10 +179,10 @@ object RankCommand : ScalaCommand()
             }
     }
 
+    @AssignPermission
     @Subcommand("meta prefix")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's prefix.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaPrefix(sender: CommandSender, rank: Rank, prefix: String)
     {
         rank.prefix = Color.translate(prefix)
@@ -191,10 +192,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("meta display")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's display name.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaDisplay(sender: CommandSender, rank: Rank, display: String)
     {
         rank.displayName = Color.translate(display)
@@ -204,10 +205,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("meta name")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's name.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaName(sender: CommandSender, rank: Rank, name: String)
     {
         rank.name = ChatColor.stripColor(
@@ -219,10 +220,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("meta suffix")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's suffix.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaSuffix(sender: CommandSender, rank: Rank, suffix: String)
     {
         rank.suffix = Color.translate(suffix)
@@ -232,10 +233,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("meta color")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's color.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaColor(sender: CommandSender, rank: Rank, color: String)
     {
         rank.color = Color.translate(color)
@@ -245,10 +246,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("meta visible")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's visibility.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaVisible(sender: CommandSender, rank: Rank, visibility: Boolean)
     {
         rank.visible = visibility
@@ -258,10 +259,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("meta weight")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's weight.")
-    @CommandPermission("lemon.command.rank.meta.edit")
     fun onMetaWeight(sender: CommandSender, rank: Rank, weight: Int)
     {
         rank.weight = weight
@@ -271,10 +272,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("child list")
     @CommandCompletion("@ranks")
     @Description("View all available children.")
-    @CommandPermission("lemon.command.rank.child.edit")
     fun onChildList(sender: CommandSender, rank: Rank)
     {
         if (rank.children.isEmpty())
@@ -300,10 +301,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("child add")
     @CommandCompletion("@ranks @ranks")
     @Description("Add a child to a rank.")
-    @CommandPermission("lemon.command.rank.child.edit")
     fun onChildAdd(sender: CommandSender, rank: Rank, child: Rank)
     {
         if (rank.children.contains(child.uuid))
@@ -318,10 +319,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("child remove")
     @CommandCompletion("@ranks @ranks")
     @Description("Remove a child from a rank.")
-    @CommandPermission("lemon.command.rank.child.edit")
     fun onChildRemove(sender: CommandSender, rank: Rank, child: Rank)
     {
         if (!rank.children.contains(child.uuid))
@@ -336,10 +337,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("permission list")
     @CommandCompletion("@ranks")
     @Description("View all permissions for a rank.")
-    @CommandPermission("lemon.command.rank.permission.edit")
     fun onPermissionList(sender: CommandSender, rank: Rank)
     {
         if (rank.permissions.isEmpty())
@@ -360,10 +361,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("permission add")
     @CommandCompletion("@ranks")
     @Description("Add a permission to a rank.")
-    @CommandPermission("lemon.command.rank.permission.edit")
     fun onPermissionAdd(sender: CommandSender, rank: Rank, permission: String)
     {
         if (rank.permissions.contains(permission))
@@ -393,10 +394,10 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("permission remove")
     @CommandCompletion("@ranks")
     @Description("Remove a permission from a rank.")
-    @CommandPermission("lemon.command.rank.permission.edit")
     fun onPermissionRemove(sender: CommandSender, rank: Rank, permission: String)
     {
         if (!rank.permissions.contains(permission))
@@ -411,6 +412,7 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("tools inherit-from-start")
     @Description("Make all ranks inherit the rank before them.")
     fun onToolsInheritStart(sender: CommandSender)
@@ -446,6 +448,7 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("tools inherit")
     @Description("Make all ranks inherit a specified rank.")
     fun onToolsInherit(sender: CommandSender, rank: Rank)
@@ -472,6 +475,7 @@ object RankCommand : ScalaCommand()
         sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
     }
 
+    @AssignPermission
     @Subcommand("tools clear-all-inheritances")
     @Description("Clear all inheritances for all ranks.")
     fun onToolsClear(sender: CommandSender)
@@ -493,6 +497,7 @@ object RankCommand : ScalaCommand()
         sender.sendMessage("${CC.SEC}Modified ${CC.PRI}${ranksToModify.size}${CC.SEC} ranks.")
     }
 
+    @AssignPermission
     @Subcommand("tools clear-all-permissions")
     @Description("Clear all permissions for all ranks.")
     fun onToolsClearPermissions(player: Player)
@@ -505,6 +510,7 @@ object RankCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("tools clear-duplicates")
     @Description("Clear all duplicate permissions for all ranks.")
     fun onToolsClearDuplicates(player: Player)

@@ -30,7 +30,7 @@ object PlaytimeCommand : ScalaCommand()
 {
     @Syntax("<player>")
     @CommandAlias("playtime|pt")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     @CommandPermission("lemon.command.playtime")
     fun onPlayTime(
         player: Player, @Optional target: AsyncLemonPlayer?

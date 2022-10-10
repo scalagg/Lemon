@@ -6,6 +6,7 @@ import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
+import gg.scala.commons.annotations.commands.AssignPermission
 import gg.scala.commons.annotations.commands.AutoRegister
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.Duration
@@ -28,6 +29,7 @@ object ShutdownCommand : ScalaCommand()
         help.showHelp()
     }
 
+    @AssignPermission
     @Subcommand("initiate|start")
     @Description("Initiate a server shutdown.")
     fun onInitiate(player: Player, @Name("time") time: Duration)
@@ -50,6 +52,7 @@ object ShutdownCommand : ScalaCommand()
         ServerHandler.initiateShutdown(seconds)
     }
 
+    @AssignPermission
     @Subcommand("status")
     @Description("View the status of the current shutdown.")
     fun onStatus(player: Player)
@@ -71,6 +74,7 @@ object ShutdownCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("cancel|stop")
     @Description("Cancel the current shutdown.")
     fun onCancel(player: Player)

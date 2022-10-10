@@ -23,7 +23,7 @@ object KickCommand : ScalaCommand()
     @CommandAlias("kick|k")
     @Syntax("<player> [-s] [reason] [-s]")
     @CommandPermission("lemon.command.kick")
-    @CommandCompletion("@all-players Camping")
+    @CommandCompletion("@players Camping")
     fun onKick(
         sender: CommandSender,
         uuid: AsyncLemonPlayer,

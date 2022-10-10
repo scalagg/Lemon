@@ -26,7 +26,7 @@ object BlacklistCommand : ScalaCommand()
     @Syntax("<player> [-s] [reason] [-s]")
     @CommandAlias("blacklist|bl")
     @CommandPermission("lemon.command.blacklist")
-    @CommandCompletion("@all-players Unfair Advantage")
+    @CommandCompletion("@players Unfair Advantage")
     fun onBlacklist(
         sender: CommandSender,
         uuid: AsyncLemonPlayer, @Optional reason: String?
@@ -46,7 +46,7 @@ object BlacklistCommand : ScalaCommand()
     @Syntax("<player> [-s] [reason] [-s]")
     @CommandAlias("reblacklist|rbl")
     @CommandPermission("lemon.command.blacklist")
-    @CommandCompletion("@all-players Unfair Advantage")
+    @CommandCompletion("@players Unfair Advantage")
     fun onReBlacklist(
         sender: CommandSender,
         uuid: AsyncLemonPlayer, @Optional reason: String?
@@ -66,7 +66,7 @@ object BlacklistCommand : ScalaCommand()
 
     @CommandAlias("unblacklist|ubl")
     @Syntax("<player> [-s] [reason] [-s]")
-    @CommandCompletion("@all-players Appealed")
+    @CommandCompletion("@players Appealed")
     @CommandPermission("lemon.command.blacklist.remove")
     fun onUnBlacklist(
         sender: CommandSender,

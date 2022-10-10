@@ -7,6 +7,7 @@ import gg.scala.commons.acf.annotation.Default
 import gg.scala.commons.acf.annotation.Description
 import gg.scala.commons.acf.annotation.HelpCommand
 import gg.scala.commons.acf.annotation.Subcommand
+import gg.scala.commons.annotations.commands.AssignPermission
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.grant.Grant
@@ -33,7 +34,7 @@ import java.util.concurrent.ForkJoinPool
  */
 @AutoRegister
 @CommandAlias("lemon")
-@CommandPermission("op")
+@CommandPermission("lemon.command.lemon")
 object LemonCommand : ScalaCommand()
 {
     @Default
@@ -43,6 +44,7 @@ object LemonCommand : ScalaCommand()
         help.showHelp()
     }
 
+    @AssignPermission
     @Subcommand("dump")
     @Description("Dump general internal software details.")
     fun onDump(player: Player)
@@ -89,6 +91,7 @@ object LemonCommand : ScalaCommand()
             .sendToPlayer(player)
     }
 
+    @AssignPermission
     @Subcommand("visibility-dump")
     @Description("Dump visibility debug information.")
     fun onVisibilityDump(player: Player)
@@ -108,6 +111,7 @@ object LemonCommand : ScalaCommand()
         }
     }
 
+    @AssignPermission
     @Subcommand("punishment-dump")
     @Description("Dump punishment information.")
     fun onPunishmentDump(player: Player)
@@ -148,6 +152,7 @@ object LemonCommand : ScalaCommand()
         GRANT, PUNISHMENT, RANK
     }
 
+    @AssignPermission
     @Subcommand("export")
     @Description("Export information.")
     fun onExport(player: Player, spec: ExportSpec): CompletableFuture<Void>
@@ -193,6 +198,7 @@ object LemonCommand : ScalaCommand()
             }
     }
 
+    @AssignPermission
     @Subcommand("grant-dump")
     @Description("Dump grant information.")
     fun onGrantDump(player: Player)

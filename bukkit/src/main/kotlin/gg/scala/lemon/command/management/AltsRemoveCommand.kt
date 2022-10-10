@@ -27,7 +27,7 @@ object AltsRemoveCommand : ScalaCommand()
 {
     @CommandAlias("removealts")
     @CommandPermission("lemon.command.removealts")
-    @CommandCompletion("@all-players")
+    @CommandCompletion("@players")
     fun onAltsRemove(
         sender: CommandSender,
         target: AsyncLemonPlayer
