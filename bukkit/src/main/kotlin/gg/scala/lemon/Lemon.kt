@@ -14,6 +14,10 @@ import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.config.annotations.ContainerConfig
+import gg.scala.commons.core.plugin.Plugin
+import gg.scala.commons.core.plugin.PluginAuthor
+import gg.scala.commons.core.plugin.PluginDependency
+import gg.scala.commons.core.plugin.PluginWebsite
 import gg.scala.lemon.adapter.LemonPlayerTypeAdapter
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
@@ -44,15 +48,11 @@ import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
-import me.lucko.helper.plugin.ap.Plugin
-import me.lucko.helper.plugin.ap.PluginDependency
 import net.evilblock.cubed.nametag.NametagHandler
-import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.EventUtils
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
-import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -61,16 +61,20 @@ import java.util.*
 
 @Plugin(
     name = "Lemon",
-    apiVersion = "1.18",
-    depends = [
-        PluginDependency("scala-commons"),
-        PluginDependency("store-spigot"),
-        PluginDependency("spark", soft = true),
-        PluginDependency("LunarClient-API", soft = true),
-        PluginDependency("PlaceholderAPI", soft = true),
-        PluginDependency("cloudsync", soft = true)
-    ]
+    version = "%remote%/%branch%/%id%",
+    description = ""
 )
+
+@PluginAuthor("%author%")
+@PluginWebsite("%website%")
+
+@PluginDependency("scala-commons")
+@PluginDependency("store-spigot")
+
+@PluginDependency("spark", soft = true)
+@PluginDependency("LunarClient-API", soft = true)
+@PluginDependency("PlaceholderAPI", soft = true)
+@PluginDependency("cloudsync", soft = true)
 
 @ContainerConfig(
     value = "settings",
