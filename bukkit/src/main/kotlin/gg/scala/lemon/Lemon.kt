@@ -71,6 +71,7 @@ import java.util.*
         PluginDependency("cloudsync", soft = true)
     ]
 )
+
 @ContainerConfig(
     value = "settings",
     model = SettingsConfigProcessor::class
