@@ -92,12 +92,15 @@ object LemonCommandCustomizer
 
             if (it.player != null)
             {
+                val selfLemonPlayer = PlayerHandler.find(it.player.uniqueId)
+                    ?: return@registerContext lemonPlayer
+
                 if (it.player.uniqueId == lemonPlayer.uniqueId)
                 {
                     return@registerContext lemonPlayer
                 }
 
-                if (!VisibilityHandler.treatAsOnline(lemonPlayer.bukkitPlayer!!, it.player))
+                if (!selfLemonPlayer.canInteract(lemonPlayer))
                 {
                     throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
                 }
@@ -113,9 +116,17 @@ object LemonCommandCustomizer
                 return Bukkit.getOnlinePlayers().map(Player::getName)
             }
 
+            val lemonPlayer = PlayerHandler
+                .find(context.player.uniqueId)
+                ?: return emptyList()
+
             return Bukkit.getOnlinePlayers()
                 .filter {
-                    VisibilityHandler.treatAsOnline(context.player, it)
+                    val targetLemonPlayer = PlayerHandler
+                        .find(context.player.uniqueId)
+                        ?: return@filter false
+
+                    lemonPlayer.canInteract(targetLemonPlayer)
                 }
                 .map(Player::getName)
         }

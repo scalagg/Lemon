@@ -103,6 +103,12 @@ class LemonPlayer(
         }
     }
 
+    fun canInteract(player: LemonPlayer): Boolean
+    {
+        return !player.bukkitPlayer!!.hasMetadata("vanished") ||
+                this.activeGrant!!.getRank().weight >= player.activeGrant!!.getRank().weight
+    }
+
     fun disguiseRank() = this.disguiseRankUniqueId
         ?.let { RankHandler.findRank(it) }
 
