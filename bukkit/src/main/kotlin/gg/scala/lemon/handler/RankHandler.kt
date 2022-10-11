@@ -53,7 +53,7 @@ object RankHandler
     fun findRank(name: String): Rank?
     {
         return ranks.values.firstOrNull {
-            it.name.equals(name, true)
+            it.name.startsWith(name, true)
         }
     }
 

@@ -29,9 +29,9 @@ object LemonCommandCustomizer
     )
     {
         commandManager.commandCompletions
-            .registerCompletion("permissions") { context ->
+            .registerAsyncCompletion("permissions") { context ->
                 val rank = context.getContextValue(Rank::class.java)
-                    ?: return@registerCompletion listOf()
+                    ?: return@registerAsyncCompletion listOf()
 
                 val input = context.input.lowercase()
 
@@ -41,16 +41,26 @@ object LemonCommandCustomizer
                     }
             }
 
-        commandManager.commandCompletions.registerAsyncCompletion("ranks") {
-            return@registerAsyncCompletion RankHandler.ranks.map { it.value.name }
-        }
+        commandManager.commandCompletions
+            .registerAsyncCompletion("ranks") { context ->
+                val input = context.input.lowercase()
 
-        commandManager.commandContexts.registerContext(Rank::class.java) {
-            val firstArgument = it.popFirstArg()
+                RankHandler.ranks.values
+                    .filter { rank ->
+                        input.isEmpty() || rank.name.startsWith(input)
+                    }
+                    .map(Rank::name)
+            }
 
-            return@registerContext RankHandler.findRank(firstArgument)
-                ?: throw ConditionFailedException("No rank matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-        }
+        commandManager.commandContexts
+            .registerContext(Rank::class.java) {
+                val firstArgument = it.popFirstArg()
+
+                return@registerContext RankHandler.findRank(firstArgument)
+                    ?: throw ConditionFailedException(
+                        "No rank matching ${CC.YELLOW}$firstArgument${CC.RED} could be found."
+                    )
+            }
 
         commandManager.commandContexts
             .registerContext(AsyncLemonPlayer::class.java) {
