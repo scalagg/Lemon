@@ -27,8 +27,8 @@ import java.util.concurrent.CompletableFuture
  * @since 9/9/2022
  */
 @AutoRegister
-@CommandAlias("user")
-@CommandPermission("op")
+@CommandAlias("user|users|u")
+@CommandPermission("lemon.command.user")
 object UserCommand : ScalaCommand()
 {
     @Default
