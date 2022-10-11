@@ -39,7 +39,6 @@ import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.color.PlayerColorHandler
-import gg.scala.lemon.player.entity.superboat.EntitySuperBoatCommand
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.player.nametag.command.NametagCommand
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
@@ -195,7 +194,6 @@ class Lemon : ExtendedScalaPlugin()
         }
 
         commandManager.registerCommand(NametagCommand)
-        commandManager.registerCommand(EntitySuperBoatCommand)
 
         commandManager.registerCommand(
             AdditionalFlavorCommands(flavor())

@@ -4,7 +4,6 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.comment.Comment
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
@@ -23,7 +22,7 @@ object DataStoreOrchestrator
     {
         listOf(
             LemonPlayer::class, Punishment::class,
-            Rank::class, Grant::class, Comment::class
+            Rank::class, Grant::class
         ).forEach {
             DataStoreObjectControllerCache
                 .create(it)
