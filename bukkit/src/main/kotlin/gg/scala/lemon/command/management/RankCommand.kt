@@ -396,13 +396,13 @@ object RankCommand : ScalaCommand()
 
     @AssignPermission
     @Subcommand("permission remove")
-    @CommandCompletion("@ranks")
+    @CommandCompletion("@ranks @permissions")
     @Description("Remove a permission from a rank.")
     fun onPermissionRemove(sender: CommandSender, rank: Rank, permission: String)
     {
         if (!rank.permissions.contains(permission))
         {
-            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} does not have the ${CC.YELLOW}${permission}${CC.RED} permission.")
+            throw ConditionFailedException("${CC.YELLOW}${rank.name}${CC.RED} doesn't have the permission node ${CC.YELLOW}${permission}${CC.RED}.")
         }
 
         rank.permissions.remove(permission)

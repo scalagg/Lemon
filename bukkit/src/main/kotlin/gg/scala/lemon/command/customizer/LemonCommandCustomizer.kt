@@ -1,6 +1,8 @@
 package gg.scala.lemon.customizer
 
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
+import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannel
 import gg.scala.lemon.channel.ChatChannelService
@@ -9,11 +11,11 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
-import gg.scala.commons.acf.ConditionFailedException
-import gg.scala.commons.command.ScalaCommandManager
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import java.util.stream.Collectors
+
 
 /**
  * @author GrowlyX
@@ -26,6 +28,19 @@ object LemonCommandCustomizer
         commandManager: ScalaCommandManager
     )
     {
+        commandManager.commandCompletions
+            .registerCompletion("permissions") { context ->
+                val rank = context.getContextValue(Rank::class.java)
+                    ?: return@registerCompletion listOf()
+
+                val input = context.input.lowercase()
+
+                rank.permissions
+                    .filter { permission ->
+                        input.isEmpty() || permission.startsWith(input)
+                    }
+            }
+
         commandManager.commandCompletions.registerAsyncCompletion("ranks") {
             return@registerAsyncCompletion RankHandler.ranks.map { it.value.name }
         }
