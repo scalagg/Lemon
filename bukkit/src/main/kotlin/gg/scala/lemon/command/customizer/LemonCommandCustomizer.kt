@@ -13,11 +13,8 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.stream.Collectors
-
 
 /**
  * @author GrowlyX
@@ -123,7 +120,7 @@ object LemonCommandCustomizer
             return Bukkit.getOnlinePlayers()
                 .filter {
                     val targetLemonPlayer = PlayerHandler
-                        .find(context.player.uniqueId)
+                        .find(it.uniqueId)
                         ?: return@filter false
 
                     lemonPlayer.canInteract(targetLemonPlayer)
