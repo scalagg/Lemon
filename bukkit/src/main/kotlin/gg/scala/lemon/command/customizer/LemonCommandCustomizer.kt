@@ -1,5 +1,6 @@
 package gg.scala.lemon.customizer
 
+import gg.scala.commons.acf.BukkitCommandCompletionContext
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
@@ -14,6 +15,7 @@ import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import java.util.stream.Collectors
 
 
@@ -42,14 +44,8 @@ object LemonCommandCustomizer
             }
 
         commandManager.commandCompletions
-            .registerAsyncCompletion("ranks") { context ->
-                val input = context.input.lowercase()
-
-                RankHandler.ranks.values
-                    .filter { rank ->
-                        input.isEmpty() || rank.name.startsWith(input)
-                    }
-                    .map(Rank::name)
+            .registerAsyncCompletion("ranks") {
+                RankHandler.ranks.values.map(Rank::name)
             }
 
         commandManager.commandContexts
@@ -66,17 +62,21 @@ object LemonCommandCustomizer
             .registerContext(AsyncLemonPlayer::class.java) {
                 val parsed = Lemon.instance.parseUniqueIdFromContext(it)
 
-                return@registerContext AsyncLemonPlayer.of(
-                    parsed.first, parsed.second
-                )
+                return@registerContext AsyncLemonPlayer
+                    .of(
+                        parsed.first, parsed.second
+                    )
             }
 
-        commandManager.commandContexts.registerContext(ChatChannel::class.java) {
-            val firstArgument = it.popFirstArg()
+        commandManager.commandContexts
+            .registerContext(ChatChannel::class.java) {
+                val firstArgument = it.popFirstArg()
 
-            return@registerContext ChatChannelService.find(firstArgument)
-                ?: throw ConditionFailedException("No channel matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
-        }
+                return@registerContext ChatChannelService.find(firstArgument)
+                    ?: throw ConditionFailedException(
+                        "No channel matching ${CC.YELLOW}$firstArgument${CC.RED} could be found."
+                    )
+            }
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val firstArgument = it.popFirstArg()
@@ -106,22 +106,28 @@ object LemonCommandCustomizer
             return@registerContext lemonPlayer
         }
 
-        commandManager.commandCompletions.registerAsyncCompletion("all-players") {
-            return@registerAsyncCompletion mutableListOf<String>().also {
-                Bukkit.getOnlinePlayers()
-                    .filter { !it.hasMetadata("vanished") }
-                    .forEach { player ->
-                        it.add(player.name)
-                    }
+        fun parseFromContext(context: BukkitCommandCompletionContext): List<String>
+        {
+            if (context.player == null)
+            {
+                return Bukkit.getOnlinePlayers().map(Player::getName)
             }
+
+            return Bukkit.getOnlinePlayers()
+                .filter {
+                    VisibilityHandler.treatAsOnline(context.player, it)
+                }
+                .map(Player::getName)
         }
 
-        commandManager.commandCompletions.registerAsyncCompletion("players") {
-            return@registerAsyncCompletion mutableListOf<String>().also {
-                Bukkit.getOnlinePlayers()
-                    .filter { !it.hasMetadata("vanished") }
-                    .forEach { player -> it.add(player.name) }
-            }
-        }
+        commandManager.commandCompletions
+            .registerAsyncCompletion(
+                "players", ::parseFromContext
+            )
+
+        commandManager.commandCompletions
+            .registerAsyncCompletion(
+                "all-players", ::parseFromContext
+            )
     }
 }

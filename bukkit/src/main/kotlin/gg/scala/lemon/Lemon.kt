@@ -31,7 +31,6 @@ import gg.scala.lemon.disguise.command.DisguiseCommand
 import gg.scala.lemon.disguise.command.DisguiseManualCommand
 import gg.scala.lemon.disguise.information.DisguiseInfoProvider
 import gg.scala.lemon.disguise.update.DisguiseListener
-import gg.scala.lemon.extension.AdditionalFlavorCommands
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
@@ -40,7 +39,6 @@ import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
-import gg.scala.lemon.player.nametag.command.NametagCommand
 import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
@@ -192,12 +190,6 @@ class Lemon : ExtendedScalaPlugin()
         {
             commandManager.registerCommand(ColorCommand)
         }
-
-        commandManager.registerCommand(NametagCommand)
-
-        commandManager.registerCommand(
-            AdditionalFlavorCommands(flavor())
-        )
     }
 
     private fun configureQol()

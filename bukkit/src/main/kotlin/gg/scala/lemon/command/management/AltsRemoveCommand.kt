@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture
 @AutoRegister
 object AltsRemoveCommand : ScalaCommand()
 {
-    @CommandAlias("removealts")
+    @CommandAlias("removealts|altsremove")
     @CommandPermission("lemon.command.removealts")
     @CommandCompletion("@players")
     fun onAltsRemove(

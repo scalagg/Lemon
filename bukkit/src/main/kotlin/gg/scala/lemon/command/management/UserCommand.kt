@@ -40,7 +40,7 @@ object UserCommand : ScalaCommand()
 
     @AssignPermission
     @Subcommand("disguise")
-    @CommandCompletion("@ranks @players")
+    @CommandCompletion("@players @ranks")
     @Description("Set a player's display rank.")
     fun onDisguiseRank(sender: CommandSender, target: LemonPlayer, rank: Rank)
     {

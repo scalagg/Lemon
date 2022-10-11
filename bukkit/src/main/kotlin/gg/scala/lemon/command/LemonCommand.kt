@@ -10,6 +10,9 @@ import gg.scala.commons.acf.annotation.Subcommand
 import gg.scala.commons.annotations.commands.AssignPermission
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
+import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Service
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
@@ -24,6 +27,7 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.visibility.VisibilityHandler
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
@@ -33,10 +37,13 @@ import java.util.concurrent.ForkJoinPool
  * @since 10/7/2021
  */
 @AutoRegister
-@CommandAlias("lemon")
+@CommandAlias("scl")
 @CommandPermission("lemon.command.lemon")
 object LemonCommand : ScalaCommand()
 {
+    @Inject
+    lateinit var plugin: Lemon
+
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)
@@ -199,6 +206,24 @@ object LemonCommand : ScalaCommand()
     }
 
     @AssignPermission
+    @CommandAlias("services")
+    @Description("View all enabled services.")
+    fun onDefault(sender: CommandSender)
+    {
+        val services = plugin.flavor().services
+        sender.sendMessage("${CC.SEC}Loaded services ${CC.GRAY}(${services.size})${CC.SEC}: ${CC.PRI}${
+            services.values
+                .map { it.javaClass.getAnnotation(Service::class.java) to it }
+                .joinToString(
+                    separator = "${CC.SEC}, ${CC.PRI}"
+                ) {
+                    it.first.name.ifBlank {
+                        it.second.javaClass.simpleName
+                    }
+                }
+        }")
+    }
+
     @Subcommand("grant-dump")
     @Description("Dump grant information.")
     fun onGrantDump(player: Player)
