@@ -8,7 +8,7 @@ import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
-import gg.scala.lemon.handler.ChatHandler
+import gg.scala.lemon.channel.ChatChannelCheckService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
@@ -148,7 +148,7 @@ object PlayerListener : Listener
             }
         }
 
-        for (chatCheck in ChatHandler.chatChecks)
+        for (chatCheck in ChatChannelCheckService.chatChecks)
         {
             val result = chatCheck.invoke(event)
 

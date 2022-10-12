@@ -58,12 +58,11 @@ import java.util.*
 
 @Plugin(
     name = "Lemon",
-    version = "%remote%/%branch%/%id%",
-    description = ""
+    version = "%remote%/%branch%/%id%"
 )
 
-@PluginAuthor("%author%")
-@PluginWebsite("%website%")
+@PluginAuthor("Scala")
+@PluginWebsite("https://scala.gg")
 
 @PluginDependency("scala-commons")
 @PluginDependency("store-spigot")
