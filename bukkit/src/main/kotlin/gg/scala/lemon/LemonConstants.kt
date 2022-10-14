@@ -17,13 +17,6 @@ object LemonConstants {
     }
 
     @JvmStatic
-    val FLAGS = mutableMapOf<String, (String) -> String>(
-        "r" to {
-            "${CC.D_GRAY}[${CC.D_RED}Alert${CC.D_GRAY}] ${CC.RESET}${Color.translate(it)}"
-        }
-    )
-
-    @JvmStatic
     val STRING_METADATA_MAP_TYPE: Type = object : TypeToken<HashMap<String, Metadata>>() {}.type
 
     @JvmStatic

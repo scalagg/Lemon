@@ -39,7 +39,6 @@ import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
-import gg.scala.lemon.player.nametag.rainbow.RainbowNametagProvider
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.validate.ScalaValidateData
@@ -201,7 +200,6 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider)
-        NametagHandler.registerProvider(RainbowNametagProvider)
 
         if (settings.disguiseEnabled)
         {
