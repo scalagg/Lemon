@@ -263,7 +263,7 @@ class Lemon : ExtendedScalaPlugin()
         {
             val uniqueId = UUIDUtil.formatUUID(firstArg)
                 ?: throw ConditionFailedException(
-                    "${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid."
+                    "${CC.YELLOW}${firstArg}${CC.RED} is not a valid UUID."
                 )
 
             return Pair(uniqueId, true)
@@ -272,7 +272,7 @@ class Lemon : ExtendedScalaPlugin()
             val uniqueId = ScalaStoreUuidCache
                 .uniqueId(firstArg)
                 ?: throw ConditionFailedException(
-                    "No player with the username ${CC.YELLOW}${firstArg}${CC.RED} exists."
+                    "No player with the username matching ${CC.YELLOW}${firstArg}${CC.RED} exists."
                 )
 
             return Pair(uniqueId, false)
