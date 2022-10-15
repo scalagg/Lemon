@@ -93,6 +93,8 @@ object PlayerListener : Listener
     }
 
     var defaultChannelProtection = { event: AsyncPlayerChatEvent -> }
+    var defaultChannelProtection2 = { event: AsyncPlayerChatEvent -> }
+    var defaultChannelProtection3 = { player: Player -> true }
 
     @EventHandler(
         priority = EventPriority.MONITOR,
@@ -141,6 +143,7 @@ object PlayerListener : Listener
             }
 
             this.defaultChannelProtection.invoke(event)
+            this.defaultChannelProtection2.invoke(event)
 
             if (event.isCancelled)
             {
@@ -257,6 +260,11 @@ object PlayerListener : Listener
                     {
                         continue
                     }
+                }
+
+                if (!defaultChannelProtection3.invoke(target))
+                {
+                    continue
                 }
 
                 channelMatch.sendToPlayer(
