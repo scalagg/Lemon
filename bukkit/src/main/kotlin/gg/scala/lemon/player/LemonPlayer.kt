@@ -11,7 +11,6 @@ import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
-import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
 import gg.scala.lemon.player.grant.Grant
@@ -656,17 +655,8 @@ class LemonPlayer(
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
-    fun customColor(): String
-    {
-        val metadata = getMetadata("color")
-
-        return if (metadata != null)
-        {
-            val color = PlayerColorHandler.find(metadata.asString())
-
-            color?.chatColor?.toString() ?: ""
-        } else ""
-    }
+    // TODO: asdf
+    fun customColor() = ""
 
     fun getSetting(id: String): Boolean
     {
