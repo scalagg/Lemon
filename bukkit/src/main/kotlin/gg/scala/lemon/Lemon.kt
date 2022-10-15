@@ -22,7 +22,6 @@ import gg.scala.lemon.adapter.LemonPlayerTypeAdapter
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
-import gg.scala.lemon.command.ColorCommand
 import gg.scala.lemon.customizer.LemonCommandCustomizer
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.command.DisguiseAdminCommand
@@ -37,7 +36,6 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
 import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.color.PlayerColorHandler
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
@@ -183,11 +181,6 @@ class Lemon : ExtendedScalaPlugin()
             commandManager.registerCommand(DisguiseCommand)
             commandManager.registerCommand(DisguiseManualCommand)
         }
-
-        if (settings.playerColorsEnabled)
-        {
-            commandManager.registerCommand(ColorCommand)
-        }
     }
 
     private fun configureQol()
@@ -231,16 +224,6 @@ class Lemon : ExtendedScalaPlugin()
         Events.subscribe(PlayerMoveEvent::class.java)
             .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
             .handler { it.player.teleport(it.from) }
-
-        // Loading all default player colors
-        if (settings.playerColorsEnabled)
-        {
-            flavor {
-                inject(PlayerColorHandler)
-            }
-
-            logger.info("Loaded default player colors for /colors.")
-        }
 
         this.serverStatisticProvider =
             DefaultServerStatisticProvider
@@ -302,11 +285,5 @@ class Lemon : ExtendedScalaPlugin()
         {
             throw ConditionFailedException("${CC.YELLOW}${firstArg}${CC.RED} is not a valid uuid.")
         }
-    }
-
-    @ContainerDisable
-    fun containerDisable()
-    {
-        aware.shutdown()
     }
 }
