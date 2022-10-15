@@ -108,7 +108,7 @@ class Lemon : ExtendedScalaPlugin()
     fun containerEnable()
     {
         instance = this
-        logger.info("Attempting to load Lemon using provided password...")
+        logger.info("Attempting to load Lemon using provided id.")
 
         validatePlatformInformation()
         runAfterDataValidation()
@@ -137,7 +137,7 @@ class Lemon : ExtendedScalaPlugin()
         lemonWebData = webData
 
         logger.info(
-            "Now loading Lemon with ${lemonWebData.serverName}'s information..."
+            "Loading Lemon with ${lemonWebData.serverName}'s information."
         )
     }
 
