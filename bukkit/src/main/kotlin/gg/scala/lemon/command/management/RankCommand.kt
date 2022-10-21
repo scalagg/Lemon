@@ -710,7 +710,7 @@ object RankCommand : ScalaCommand()
     @AssignPermission
     @CommandCompletion("@ranks")
     @Subcommand("meta listrank")
-    @Description("List all players applied to a rank")
+    @Description("List all players applied to a rank.")
     fun onMetaListRank(player: Player, rank: Rank): CompletableFuture<Void>
     {
         player.sendMessage("${CC.SEC}Fetching...")
@@ -730,14 +730,14 @@ object RankCommand : ScalaCommand()
                     .map(CubedCacheUtil::fetchName)
 
                 player.sendMessage(
-                    "${CC.PRI}Accounts with the ${rank.getColoredName()}${CC.PRI} rank ${CC.GRAY}(${users.size})${CC.PRI}:"
+                    "${CC.SEC}Accounts with the ${rank.getColoredName()}${CC.SEC} rank ${CC.GRAY}(${users.size})${CC.SEC}:"
                 )
 
                 player.sendMessage(
-                    users.take(25).joinToString(", ")
+                    users.take(50).joinToString(", ")
                 )
 
-                if (users.size > 25)
+                if (users.size > 50)
                 {
                     player.sendMessage("${CC.RED}Showing first 25 users)")
                 }
