@@ -60,7 +60,6 @@ object RankCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("scope add")
     @CommandCompletion("@ranks")
-    @Description("Add a server scope to a rank.")
     fun onScopeAdd(
         sender: CommandSender, rank: Rank, @Single scope: String
     )
@@ -83,7 +82,6 @@ object RankCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("scope remove")
     @CommandCompletion("@ranks @scopes")
-    @Description("Remove a server scope from a rank.")
     fun onScopeRemove(
         sender: CommandSender, rank: Rank, @Single scope: String
     )
@@ -109,7 +107,6 @@ object RankCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("scope list")
     @CommandCompletion("@ranks")
-    @Description("Add a server scope to a rank.")
     fun onScopeList(sender: CommandSender, rank: Rank)
     {
         if (rank.scopes().isEmpty())
@@ -134,7 +131,6 @@ object RankCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("scope server list")
     @CommandCompletion("@ranks @scopes")
-    @Description("View servers assigned to a rank's server-scope server assignment list.")
     fun onScopeServerList(sender: CommandSender, rank: Rank, @Single scope: String)
     {
         val serverScope = rank.scopes()
@@ -163,7 +159,6 @@ object RankCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("scope server add")
     @CommandCompletion("@ranks @scopes")
-    @Description("Add a server scope server assignment to a rank.")
     fun onScopeServerAdd(
         sender: CommandSender, rank: Rank, @Single scope: String, @Single server: String
     )
@@ -192,9 +187,8 @@ object RankCommand : ScalaCommand()
     }
 
     @AssignPermission
-    @Subcommand("scope remove")
+    @Subcommand("scope server remove")
     @CommandCompletion("@ranks @scopes @scopes:servers")
-    @Description("Remove a server scope server assignment from a rank.")
     fun onScopeServerRemove(
         sender: CommandSender, rank: Rank, @Single scope: String, @Single server: String
     )
