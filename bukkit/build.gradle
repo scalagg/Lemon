@@ -14,7 +14,7 @@ dependencies {
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
     compileOnly "me.clip:placeholderapi:2.11.2"
-    compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
+    compileOnly "com.comphenix.protocol:ProtocolLib:4.8.0"
     compileOnly "me.lucko:spark-api:0.1-SNAPSHOT"
 
     compileOnly "gg.scala.spigot:server:1.1.0"
