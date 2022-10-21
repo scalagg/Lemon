@@ -13,7 +13,7 @@ dependencies {
     compileOnly "gg.scala.commons:bukkit:3.0.4"
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
-    compileOnly "me.clip:placeholderapi:2.10.10"
+    compileOnly "me.clip:placeholderapi:2.11.2"
     compileOnly "com.comphenix.protocol:ProtocolLib:4.7.0"
     compileOnly "me.lucko:spark-api:0.1-SNAPSHOT"
 
