@@ -20,7 +20,7 @@ import java.util.UUID
  * @author GrowlyX
  * @since 12/29/2021
  */
-@Service(name = "cm-filter")
+@Service
 object ChatMessageFilterHandler
 {
     private val phraseFilters = mutableListOf<MessagePhraseFilter>()

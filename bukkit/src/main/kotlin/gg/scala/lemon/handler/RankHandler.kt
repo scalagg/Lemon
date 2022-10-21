@@ -9,7 +9,7 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import java.util.*
 
-@Service(name = "rank")
+@Service
 @IgnoreAutoScan
 object RankHandler
 {
@@ -25,6 +25,7 @@ object RankHandler
                     if (it.value.serverScopes == null)
                     {
                         it.value.serverScopes = mutableListOf()
+                        it.value.save()
                     }
 
                     ranks[it.value.uuid] = it.value

@@ -14,7 +14,7 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
  * @since 9/7/2021
  */
 @IgnoreAutoScan
-@Service(name = "ds-orchestrator")
+@Service
 object DataStoreOrchestrator
 {
     @Configure

@@ -12,7 +12,7 @@ import net.evilblock.cubed.util.bukkit.Tasks
  * @author GrowlyX
  * @since 9/29/2021
  */
-@Service(name = "disguise-inf")
+@Service
 @IgnoreAutoScan
 object DisguiseInfoProvider
 {

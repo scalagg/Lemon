@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent
  * @author GrowlyX
  * @since 11/28/2021
  */
-@Service(name = "hotbar")
+@Service
 object HotbarPresetHandler
 {
     private val trackedHotbars = mutableMapOf<String, HotbarPreset>()

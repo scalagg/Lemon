@@ -33,7 +33,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author GrowlyX, puugz
  */
-@Service(name = "LemonQuickAccess")
+@Service
 object QuickAccess
 {
     private val connection by lazy {

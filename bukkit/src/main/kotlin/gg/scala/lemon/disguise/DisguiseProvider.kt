@@ -39,7 +39,7 @@ import java.util.*
  * @author GrowlyX
  * @since 9/29/2021
  */
-@Service(name = "disguise")
+@Service
 @IgnoreAutoScan
 object DisguiseProvider
 {
