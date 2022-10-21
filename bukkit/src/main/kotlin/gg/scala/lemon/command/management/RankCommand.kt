@@ -240,7 +240,6 @@ object RankCommand : ScalaCommand()
 
         if (rank.scopes().isNotEmpty())
         {
-            sender.sendMessage("")
             sender.sendMessage("${CC.GRAY}Scopes:")
 
             for (scope in rank.scopes())
@@ -251,6 +250,8 @@ object RankCommand : ScalaCommand()
                     }"
                 )
             }
+
+            sender.sendMessage("")
         }
 
         sender.sendMessage("${CC.GRAY}Children: ${if (rank.children.isEmpty()) "${CC.RED}None" else ""}")
