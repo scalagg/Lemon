@@ -52,7 +52,7 @@ object GrantManualCommand : ScalaCommand()
 
     @CommandAlias("grantmanualscope")
     @CommandPermission("lemon.command.grantmanualscope")
-    @CommandCompletion("@players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent global")
+    @CommandCompletion("@players @ranks 1d|1w|1mo|3mo|6mo|1y|perm|permanent @scopes")
     fun onGrantManualScope(
         sender: CommandSender,
         target: AsyncLemonPlayer,
