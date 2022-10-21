@@ -23,7 +23,7 @@ dependencies {
     compileOnly "gg.scala.cloudsync:spigot:1.0.1"
 
     compileOnly "com.orbitz.consul:consul-client:1.5.3"
-    compileOnly "com.github.LunarClient:BukkitAPI:v1.0.1"
+    compileOnly "com.github.LunarClient:BukkitAPI:1.0.1"
 }
 
 kapt {
