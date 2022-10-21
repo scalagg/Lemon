@@ -26,7 +26,7 @@ object GrantCommand : ScalaCommand()
 {
     @Syntax("<player>")
     @CommandCompletion("@players")
-    @CommandAlias("grant|g|grantscope")
+    @CommandAlias("grant|g|grantscoped|grantrank")
     @CommandPermission("lemon.command.grant")
     fun onGrant(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {

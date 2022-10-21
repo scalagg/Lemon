@@ -22,6 +22,11 @@ object RankHandler
             .loadAll(DataStoreStorageType.MONGO)
             .thenAccept { entries ->
                 entries.forEach {
+                    if (it.value.serverScopes == null)
+                    {
+                        it.value.serverScopes = mutableListOf()
+                    }
+
                     ranks[it.value.uuid] = it.value
                 }
 

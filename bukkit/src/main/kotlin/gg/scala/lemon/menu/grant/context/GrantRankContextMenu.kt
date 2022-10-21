@@ -77,12 +77,18 @@ class GrantRankContextMenu(
                         )
                     )
 
-                    it.addAll(
-                        TextSplitter.split(
-                            text = "${CC.GREEN}Right-click to grant with scope selection.",
-                            linePrefix = CC.GREEN
-                        )
+                    if (
+                        rank.scopes().isNotEmpty() &&
+                        player.hasPermission("lemon.command.grant.scopeselection")
                     )
+                    {
+                        it.addAll(
+                            TextSplitter.split(
+                                text = "${CC.GREEN}Right-click to grant with scope selection.",
+                                linePrefix = CC.GREEN
+                            )
+                        )
+                    }
                 } else {
                     it.addAll(
                         TextSplitter.split(
@@ -100,7 +106,14 @@ class GrantRankContextMenu(
             if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
                 if (clickType.isRightClick)
                 {
-                    ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
+                    if (
+                        rank.scopes().isNotEmpty() &&
+                        player.hasPermission("lemon.command.grant.scopeselection")
+                    )
+                    {
+                        ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
+                    }
+
                     return
                 }
 

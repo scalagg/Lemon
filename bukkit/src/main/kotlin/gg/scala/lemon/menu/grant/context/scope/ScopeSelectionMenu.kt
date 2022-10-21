@@ -6,6 +6,7 @@ import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.lemon.menu.grant.context.GrantDurationContextMenu
 import gg.scala.lemon.menu.grant.context.GrantRankContextMenu
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.scope.ServerScope
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.buttons.TexturedHeadButton
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
@@ -80,9 +81,8 @@ class ScopeSelectionMenu(
     {
         val buttons = mutableMapOf<Int, Button>()
 
-        ServerContainer
-            .allServers<GameServer>()
-            .flatMap { it.groups }
+        rank.scopes()
+            .map(ServerScope::group)
             .forEach {
                 buttons[buttons.size] = ItemBuilder
                     .of(Material.WOOL)
@@ -105,5 +105,5 @@ class ScopeSelectionMenu(
     }
 
     override fun getPrePaginatedTitle(player: Player) =
-        "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Scopes"
+        "Grant ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Scope Selection"
 }

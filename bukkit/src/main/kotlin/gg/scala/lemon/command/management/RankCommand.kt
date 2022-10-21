@@ -16,12 +16,16 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AssignPermission
+import gg.scala.lemon.player.grant.Grant
+import gg.scala.lemon.scope.ServerScope
+import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -56,6 +60,169 @@ object RankCommand : ScalaCommand()
         )
     }
 
+    @AssignPermission
+    @Subcommand("scope add")
+    @CommandCompletion("@ranks")
+    fun onScopeAdd(
+        sender: CommandSender, rank: Rank, @Single scope: String
+    )
+    {
+        if (rank.scopes().any { it.group == scope.lowercase() })
+        {
+            throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} already has a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+        }
+
+        rank.scopes().add(ServerScope(scope.lowercase()))
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The server scope with the group ${CC.PRI}${scope.lowercase()}${CC.SEC} has been added to the rank ${CC.PRI}${rank.getColoredName()}${CC.SEC}."
+        )
+    }
+
+    @AssignPermission
+    @Subcommand("scope remove")
+    @CommandCompletion("@ranks @scopes")
+    fun onScopeRemove(
+        sender: CommandSender, rank: Rank, @Single scope: String
+    )
+    {
+        if (!rank.scopes().any { it.group == scope.lowercase() })
+        {
+            throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+        }
+
+        rank.scopes().removeIf {
+            it.group == scope.lowercase()
+        }
+
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The server scope with the group ${CC.PRI}${scope.lowercase()}${CC.SEC} has been removed from the rank ${CC.PRI}${rank.getColoredName()}${CC.SEC}."
+        )
+    }
+
+    @AssignPermission
+    @Subcommand("scope list")
+    @CommandCompletion("@ranks")
+    fun onScopeList(sender: CommandSender, rank: Rank)
+    {
+        if (rank.scopes().isEmpty())
+        {
+            throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} is a global-scoped rank."
+            )
+        }
+
+        sender.sendMessage("${CC.B_PRI}Scopes for rank ${CC.SEC}${rank.getColoredName()}${CC.B_PRI}:")
+
+        for (scope in rank.scopes())
+        {
+            sender.sendMessage(
+                " ${CC.WHITE}- ${scope.group}${
+                    if (scope.individual.isEmpty()) "" else "${CC.GRAY} (${scope.individual.joinToString()})"
+                }"
+            )
+        }
+    }
+
+    @AssignPermission
+    @Subcommand("scope server list")
+    @CommandCompletion("@ranks @scopes")
+    fun onScopeServerList(sender: CommandSender, rank: Rank, @Single scope: String)
+    {
+        val serverScope = rank.scopes()
+            .firstOrNull {
+                it.group == scope.lowercase()
+            }
+            ?: throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+
+        if (serverScope.individual.isEmpty())
+        {
+            throw ConditionFailedException(
+                "The server scope with the group ${CC.YELLOW}$scope${CC.RED} does not have any server assignments."
+            )
+        }
+
+        sender.sendMessage("${CC.B_PRI}Assigned servers for scope ${CC.SEC}$scope${CC.B_PRI}:")
+
+        for (server in serverScope.individual)
+        {
+            sender.sendMessage(" ${CC.WHITE}- $server")
+        }
+    }
+
+    @AssignPermission
+    @Subcommand("scope server add")
+    @CommandCompletion("@ranks @scopes")
+    fun onScopeServerAdd(
+        sender: CommandSender, rank: Rank, @Single scope: String, @Single server: String
+    )
+    {
+        val serverScope = rank.scopes()
+            .firstOrNull {
+                it.group == scope.lowercase()
+            }
+            ?: throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+
+        if (serverScope.individual.contains(server.lowercase()))
+        {
+            throw ConditionFailedException(
+                "The server scope with the group ${CC.YELLOW}$scope${CC.RED} already contains the server assignment ${CC.YELLOW}$server${CC.RED}."
+            )
+        }
+
+        serverScope.individual.add(server)
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The server assignment with the ID ${CC.PRI}$server${CC.SEC} has been added to the server scope ${CC.PRI}$server${CC.SEC}."
+        )
+    }
+
+    @AssignPermission
+    @Subcommand("scope server remove")
+    @CommandCompletion("@ranks @scopes @scopes:servers")
+    fun onScopeServerRemove(
+        sender: CommandSender, rank: Rank, @Single scope: String, @Single server: String
+    )
+    {
+        val serverScope = rank.scopes()
+            .firstOrNull {
+                it.group == scope.lowercase()
+            }
+            ?: throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+
+        if (!serverScope.individual.contains(server.lowercase()))
+        {
+            throw ConditionFailedException(
+                "The server scope with the group ${CC.YELLOW}$scope${CC.RED} does not contains the server assignment ${CC.YELLOW}$server${CC.RED}."
+            )
+        }
+
+        serverScope.individual
+            .removeIf {
+                it == server.lowercase()
+            }
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The scope with the group ${CC.PRI}$scope${CC.SEC} has the server assignment ${CC.PRI}$server${CC.SEC} removed from it."
+        )
+    }
+
+    @AssignPermission
     @CommandCompletion("@ranks")
     @Subcommand("view|info|information")
     @Description("View information for a certain rank.")
@@ -73,6 +240,22 @@ object RankCommand : ScalaCommand()
         sender.sendMessage("")
         sender.sendMessage("${CC.GRAY}Visible: ${CC.WHITE}${rank.visible}")
         sender.sendMessage("")
+
+        if (rank.scopes().isNotEmpty())
+        {
+            sender.sendMessage("${CC.GRAY}Scopes:")
+
+            for (scope in rank.scopes())
+            {
+                sender.sendMessage(
+                    " ${CC.WHITE}- ${scope.group}${
+                        if (scope.individual.isEmpty()) "" else "${CC.GRAY} (${scope.individual.joinToString()})"
+                    }"
+                )
+            }
+
+            sender.sendMessage("")
+        }
 
         sender.sendMessage("${CC.GRAY}Children: ${if (rank.children.isEmpty()) "${CC.RED}None" else ""}")
 
@@ -508,6 +691,62 @@ object RankCommand : ScalaCommand()
 
             player.sendMessage("${CC.GREEN}Cleared ${it.value.getColoredName()}'s ${CC.GREEN}permissions.")
         }
+    }
+
+    @AssignPermission
+    @CommandCompletion("@ranks")
+    @Subcommand("tools clear-scopes")
+    @Description("Clear all scopes for a ranks.")
+    fun onToolsClearPermissions(player: Player, rank: Rank)
+    {
+        rank.scopes().clear()
+        rank.saveAndPushUpdatesGlobally()
+
+        player.sendMessage(
+            "${CC.SEC}Cleared scopes for rank ${CC.PRI}${rank.name}${CC.SEC}!"
+        )
+    }
+
+    @AssignPermission
+    @CommandCompletion("@ranks")
+    @Subcommand("meta listrank")
+    @Description("List all players applied to a rank.")
+    fun onMetaListRank(player: Player, rank: Rank): CompletableFuture<Void>
+    {
+        if (rank.uuid == RankHandler.getDefaultRank().uuid)
+        {
+            throw ConditionFailedException("You may not do a listrank search on the default rank.")
+        }
+
+        player.sendMessage("${CC.SEC}Fetching...")
+
+        return DataStoreObjectControllerCache
+            .findNotNull<Grant>()
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAccept {
+                val rankScoped = it.values
+                    .filter { grant ->
+                        grant.rankId == rank.uuid && grant.isActive
+                    }
+
+                val users = rankScoped
+                    .map(Grant::target)
+                    .toSet()
+                    .map(CubedCacheUtil::fetchName)
+
+                player.sendMessage(
+                    "${CC.SEC}Accounts with the ${rank.getColoredName()}${CC.SEC} rank ${CC.GRAY}(${users.size})${CC.SEC}:"
+                )
+
+                player.sendMessage(
+                    users.take(50).joinToString(", ")
+                )
+
+                if (users.size > 50)
+                {
+                    player.sendMessage("${CC.RED}Showing first 25 users)")
+                }
+            }
     }
 
     @AssignPermission
