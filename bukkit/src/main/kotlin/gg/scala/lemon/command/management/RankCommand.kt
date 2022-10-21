@@ -16,13 +16,16 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AssignPermission
+import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.scope.ServerScope
+import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -688,6 +691,57 @@ object RankCommand : ScalaCommand()
 
             player.sendMessage("${CC.GREEN}Cleared ${it.value.getColoredName()}'s ${CC.GREEN}permissions.")
         }
+    }
+
+    @AssignPermission
+    @CommandCompletion("@ranks")
+    @Subcommand("tools clear-scopes")
+    @Description("Clear all scopes for a ranks.")
+    fun onToolsClearPermissions(player: Player, rank: Rank)
+    {
+        rank.scopes().clear()
+        rank.saveAndPushUpdatesGlobally()
+
+        player.sendMessage(
+            "${CC.SEC}Cleared scopes for rank ${CC.PRI}${rank.name}${CC.SEC}!"
+        )
+    }
+
+    @AssignPermission
+    @CommandCompletion("@ranks")
+    @Subcommand("meta listrank")
+    @Description("List all players applied to a rank")
+    fun onMetaListRank(player: Player, rank: Rank): CompletableFuture<Void>
+    {
+        player.sendMessage("${CC.SEC}Fetching...")
+
+        return DataStoreObjectControllerCache
+            .findNotNull<Grant>()
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAccept {
+                val rankScoped = it.values
+                    .filter { grant ->
+                        grant.rankId == rank.uuid && grant.isActive
+                    }
+
+                val users = rankScoped
+                    .map(Grant::target)
+                    .toSet()
+                    .map(CubedCacheUtil::fetchName)
+
+                player.sendMessage(
+                    "${CC.PRI}Accounts with the ${rank.getColoredName()}${CC.PRI} rank ${CC.GRAY}(${users.size})${CC.PRI}:"
+                )
+
+                player.sendMessage(
+                    users.take(25).joinToString(", ")
+                )
+
+                if (users.size > 25)
+                {
+                    player.sendMessage("${CC.RED}Showing first 25 users)")
+                }
+            }
     }
 
     @AssignPermission
