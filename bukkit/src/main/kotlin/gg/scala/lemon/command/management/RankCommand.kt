@@ -238,6 +238,21 @@ object RankCommand : ScalaCommand()
         sender.sendMessage("${CC.GRAY}Visible: ${CC.WHITE}${rank.visible}")
         sender.sendMessage("")
 
+        if (rank.scopes().isNotEmpty())
+        {
+            sender.sendMessage("")
+            sender.sendMessage("${CC.GRAY}Scopes:")
+
+            for (scope in rank.scopes())
+            {
+                sender.sendMessage(
+                    " ${CC.WHITE}- ${scope.group}${
+                        if (scope.individual.isEmpty()) "" else "${CC.GRAY} (${scope.individual.joinToString()})"
+                    }"
+                )
+            }
+        }
+
         sender.sendMessage("${CC.GRAY}Children: ${if (rank.children.isEmpty()) "${CC.RED}None" else ""}")
 
         if (rank.children.isNotEmpty())
