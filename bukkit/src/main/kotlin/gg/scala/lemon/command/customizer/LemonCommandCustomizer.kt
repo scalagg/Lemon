@@ -12,6 +12,7 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
+import gg.scala.lemon.scope.ServerScope
 import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -37,6 +38,33 @@ object LemonCommandCustomizer
                 rank.permissions
                     .filter { permission ->
                         input.isEmpty() || permission.startsWith(input)
+                    }
+            }
+
+        commandManager.commandCompletions
+            .registerAsyncCompletion("scopes") { context ->
+                val rank = context.getContextValue(Rank::class.java)
+                    ?: return@registerAsyncCompletion listOf()
+
+                val input = context.input.lowercase()
+
+                rank.scopes()
+                    .filter { permission ->
+                        input.isEmpty() || permission.group.startsWith(input)
+                    }
+                    .map(ServerScope::group)
+            }
+
+        commandManager.commandCompletions
+            .registerAsyncCompletion("scopes:servers") { context ->
+                val rank = context.getContextValue(ServerScope::class.java)
+                    ?: return@registerAsyncCompletion listOf()
+
+                val input = context.input.lowercase()
+
+                rank.individual
+                    .filter { server ->
+                        input.isEmpty() || server.startsWith(input)
                     }
             }
 

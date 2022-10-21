@@ -6,6 +6,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.internal.ExtHookIns
+import gg.scala.lemon.scope.ServerScope
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -36,6 +37,11 @@ constructor(
 
     val children = ArrayList<UUID>()
     val permissions = ArrayList<String>()
+
+    var serverScopes: MutableList<ServerScope>? =
+        mutableListOf()
+
+    fun scopes() = serverScopes!!
 
     /**
      * Validates all [Rank]'s

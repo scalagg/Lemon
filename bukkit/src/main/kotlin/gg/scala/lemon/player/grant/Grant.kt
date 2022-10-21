@@ -74,6 +74,21 @@ class Grant(
 
         for (scope in scopes)
         {
+            val serverScope = getRank().scopes()
+                .firstOrNull {
+                    it.group == scope
+                }
+
+            if (
+                serverScope != null &&
+                serverScope.individual
+                    .contains(ServerSync.getLocalGameServer().id)
+            )
+            {
+                applicable = true
+                break
+            }
+
             if (scope in ServerSync.getLocalGameServer().groups)
             {
                 applicable = true

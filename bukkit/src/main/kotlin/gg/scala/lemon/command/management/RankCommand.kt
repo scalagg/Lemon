@@ -16,6 +16,7 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AssignPermission
+import gg.scala.lemon.scope.ServerScope
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.md_5.bungee.api.ChatColor
@@ -56,6 +57,175 @@ object RankCommand : ScalaCommand()
         )
     }
 
+    @AssignPermission
+    @Subcommand("scope add")
+    @CommandCompletion("@ranks")
+    @Description("Add a server scope to a rank.")
+    fun onScopeAdd(
+        sender: CommandSender, rank: Rank, @Single scope: String
+    )
+    {
+        if (rank.scopes().any { it.group == scope.lowercase() })
+        {
+            throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} already has a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+        }
+
+        rank.scopes().add(ServerScope(scope.lowercase()))
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The server scope with the group ${CC.PRI}${scope.lowercase()}${CC.SEC} has been added to the rank ${CC.PRI}${rank.getColoredName()}${CC.SEC}."
+        )
+    }
+
+    @AssignPermission
+    @Subcommand("scope remove")
+    @CommandCompletion("@ranks @scopes")
+    @Description("Remove a server scope from a rank.")
+    fun onScopeRemove(
+        sender: CommandSender, rank: Rank, @Single scope: String
+    )
+    {
+        if (!rank.scopes().any { it.group == scope.lowercase() })
+        {
+            throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+        }
+
+        rank.scopes().removeIf {
+            it.group == scope.lowercase()
+        }
+
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The server scope with the group ${CC.PRI}${scope.lowercase()}${CC.SEC} has been removed from the rank ${CC.PRI}${rank.getColoredName()}${CC.SEC}."
+        )
+    }
+
+    @AssignPermission
+    @Subcommand("scope list")
+    @CommandCompletion("@ranks")
+    @Description("Add a server scope to a rank.")
+    fun onScopeList(sender: CommandSender, rank: Rank)
+    {
+        if (rank.scopes().isEmpty())
+        {
+            throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} is a global-scoped rank."
+            )
+        }
+
+        sender.sendMessage("${CC.B_PRI}Scopes for rank ${CC.SEC}${rank.getColoredName()}${CC.B_PRI}:")
+
+        for (scope in rank.scopes())
+        {
+            sender.sendMessage(
+                " ${CC.WHITE}- ${scope.group}${
+                    if (scope.individual.isEmpty()) "" else "${CC.GRAY} (${scope.individual.joinToString()})"
+                }"
+            )
+        }
+    }
+
+    @AssignPermission
+    @Subcommand("scope server list")
+    @CommandCompletion("@ranks @scopes")
+    @Description("View servers assigned to a rank's server-scope server assignment list.")
+    fun onScopeServerList(sender: CommandSender, rank: Rank, @Single scope: String)
+    {
+        val serverScope = rank.scopes()
+            .firstOrNull {
+                it.group == scope.lowercase()
+            }
+            ?: throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+
+        if (serverScope.individual.isEmpty())
+        {
+            throw ConditionFailedException(
+                "The server scope with the group ${CC.YELLOW}$scope${CC.RED} does not have any server assignments."
+            )
+        }
+
+        sender.sendMessage("${CC.B_PRI}Assigned servers for scope ${CC.SEC}$scope${CC.B_PRI}:")
+
+        for (server in serverScope.individual)
+        {
+            sender.sendMessage(" ${CC.WHITE}- $server")
+        }
+    }
+
+    @AssignPermission
+    @Subcommand("scope server add")
+    @CommandCompletion("@ranks @scopes")
+    @Description("Add a server scope server assignment to a rank.")
+    fun onScopeServerAdd(
+        sender: CommandSender, rank: Rank, @Single scope: String, @Single server: String
+    )
+    {
+        val serverScope = rank.scopes()
+            .firstOrNull {
+                it.group == scope.lowercase()
+            }
+            ?: throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+
+        if (serverScope.individual.contains(server.lowercase()))
+        {
+            throw ConditionFailedException(
+                "The server scope with the group ${CC.YELLOW}$scope${CC.RED} already contains the server assignment ${CC.YELLOW}$server${CC.RED}."
+            )
+        }
+
+        serverScope.individual.add(server)
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The server assignment with the ID ${CC.PRI}$server${CC.SEC} has been added to the server scope ${CC.PRI}$server${CC.SEC}."
+        )
+    }
+
+    @AssignPermission
+    @Subcommand("scope remove")
+    @CommandCompletion("@ranks @scopes @scopes:servers")
+    @Description("Remove a server scope server assignment from a rank.")
+    fun onScopeServerRemove(
+        sender: CommandSender, rank: Rank, @Single scope: String, @Single server: String
+    )
+    {
+        val serverScope = rank.scopes()
+            .firstOrNull {
+                it.group == scope.lowercase()
+            }
+            ?: throw ConditionFailedException(
+                "The rank by the name ${CC.YELLOW}${rank.name}${CC.RED} does not have a server scope with the group ${CC.YELLOW}$scope${CC.RED}."
+            )
+
+        if (!serverScope.individual.contains(server.lowercase()))
+        {
+            throw ConditionFailedException(
+                "The server scope with the group ${CC.YELLOW}$scope${CC.RED} does not contains the server assignment ${CC.YELLOW}$server${CC.RED}."
+            )
+        }
+
+        serverScope.individual
+            .removeIf {
+                it == server.lowercase()
+            }
+        rank.saveAndPushUpdatesGlobally()
+
+        sender.sendMessage(
+            "${CC.SEC}The scope with the group ${CC.PRI}$scope${CC.SEC} has the server assignment ${CC.PRI}$server${CC.SEC} removed from it."
+        )
+    }
+
+    @AssignPermission
     @CommandCompletion("@ranks")
     @Subcommand("view|info|information")
     @Description("View information for a certain rank.")
