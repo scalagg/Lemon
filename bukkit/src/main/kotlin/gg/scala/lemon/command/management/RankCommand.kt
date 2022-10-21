@@ -713,6 +713,11 @@ object RankCommand : ScalaCommand()
     @Description("List all players applied to a rank.")
     fun onMetaListRank(player: Player, rank: Rank): CompletableFuture<Void>
     {
+        if (rank.uuid == RankHandler.getDefaultRank().uuid)
+        {
+            throw ConditionFailedException("You may not do a listrank search on the default rank.")
+        }
+
         player.sendMessage("${CC.SEC}Fetching...")
 
         return DataStoreObjectControllerCache
