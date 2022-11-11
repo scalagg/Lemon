@@ -11,15 +11,8 @@ class SettingsConfigProcessor
     val group: String
         get() = ServerSync.getLocalGameServer().groups.first()
 
-    @Comment("Do we enable consul integration?")
-    val consulEnabled = true
-
     @Comment("Dummy server?")
     val dummyServer = false
-
-    @Comment("What are the consul connection details?")
-    val consulAddress = "127.0.0.1"
-    val consulPort = 8500
 
     @Comment("What's the password to your network details?")
     val serverPassword = "server_password"

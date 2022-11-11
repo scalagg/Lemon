@@ -14,12 +14,6 @@ import gg.scala.commons.library.model.Library
     repository = "https://jitpack.io/"
 )
 @Library(
-    groupId = "com.orbitz.consul",
-    artifactId = "consul-client",
-    version = "1.5.3",
-    shadedClassifier = true
-)
-@Library(
     groupId = "com.squareup.retrofit2",
     artifactId = "converter-jackson",
     version = "2.9.0"
