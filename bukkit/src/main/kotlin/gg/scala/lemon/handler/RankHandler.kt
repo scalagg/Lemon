@@ -3,6 +3,8 @@ package gg.scala.lemon.handler
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
+import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -74,10 +76,16 @@ object RankHandler
             .filter { it.visible }
             .sortedBy { -it.weight }
             .joinToString(separator = "${CC.WHITE}, ") {
-                if (it.uuid == getDefaultRank().uuid)
+                if (minequest())
+                {
+                    if (it.uuid == getDefaultRank().uuid)
+                        it.getColoredName()
+                    else
+                        it.prefix
+                } else
+                {
                     it.getColoredName()
-                else
-                    it.prefix
+                }
             }
     }
 
