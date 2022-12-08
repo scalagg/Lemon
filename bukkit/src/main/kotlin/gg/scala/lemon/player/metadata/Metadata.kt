@@ -11,8 +11,13 @@ class Metadata(private var value: Any?)
         return value as Int
     }
 
-    fun asString(): String
+    fun asString(): String?
     {
+        if (value == null)
+        {
+            return null
+        }
+
         return value as String
     }
 

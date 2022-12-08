@@ -570,7 +570,9 @@ class LemonPlayer(
     {
         if (this.attachment != null)
         {
-            player.removeAttachment(this.attachment!!)
+            kotlin.runCatching {
+                player.removeAttachment(this.attachment!!)
+            }
             player.recalculatePermissions()
 
             this.attachment = player.addAttachment(Lemon.instance)
@@ -819,7 +821,7 @@ class LemonPlayer(
     {
         metadata["channel"]?.let { metadata ->
             val channel = ChatChannelService
-                .find(metadata.asString())
+                .find(metadata.asString() ?: "default")
                 ?: return@let
 
             if (
