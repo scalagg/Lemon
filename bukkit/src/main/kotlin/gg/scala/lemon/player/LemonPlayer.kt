@@ -287,6 +287,14 @@ class LemonPlayer(
         connecting: Boolean = false
     ): CompletableFuture<Void>
     {
+        if (Lemon.instance.settings.dummyServer)
+        {
+            return CompletableFuture
+                .runAsync {
+                    setupAutomaticGrant(null, register = false)
+                }
+        }
+
         return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
             if (grants == null || grants.isEmpty())
             {
@@ -582,7 +590,7 @@ class LemonPlayer(
         }
     }
 
-    private fun setupAutomaticGrant(grants: List<Grant>?)
+    private fun setupAutomaticGrant(grants: List<Grant>?, register: Boolean = true)
     {
         if (
             grants != null &&
@@ -606,7 +614,10 @@ class LemonPlayer(
             Long.MAX_VALUE
         )
 
-        GrantHandler.registerGrant(activeGrant!!)
+        if (register)
+        {
+            GrantHandler.registerGrant(activeGrant!!)
+        }
     }
 
     @JvmOverloads
