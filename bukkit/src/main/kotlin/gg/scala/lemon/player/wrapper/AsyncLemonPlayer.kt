@@ -44,7 +44,6 @@ data class AsyncLemonPlayer(
                 {
                     lambda.invoke(LemonPlayer(
                         this.uniqueId,
-                        username,
                         null
                     ))
 

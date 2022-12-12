@@ -59,7 +59,6 @@ object PlayerListener : Listener
             this.playerController.localCache()[event.uniqueId] =
                 LemonPlayer(
                     uniqueId = event.uniqueId,
-                    name = event.name,
                     ipAddress = event.address.hostAddress ?: "",
                     firstLogin = true
                 )
@@ -70,7 +69,6 @@ object PlayerListener : Listener
             .loadOptimalCopy(event.uniqueId) {
                 LemonPlayer(
                     uniqueId = event.uniqueId,
-                    name = event.name,
                     ipAddress = event.address.hostAddress ?: "",
                     firstLogin = true
                 )
@@ -83,8 +81,6 @@ object PlayerListener : Listener
             lemonPlayer.handleIfFirstCreated()
             return
         }
-
-        lemonPlayer.name = event.name
 
         lemonPlayer.ipAddress =
             event.address.hostAddress ?: ""

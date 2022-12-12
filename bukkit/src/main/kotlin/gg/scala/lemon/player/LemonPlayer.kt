@@ -24,6 +24,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.KICK
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.MUTE
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.GrantRecalculationUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.originalRank
@@ -49,7 +50,6 @@ import java.util.logging.Level
 
 class LemonPlayer(
     var uniqueId: UUID,
-    var name: String,
 
     @JvmField
     var ipAddress: String? = null,
@@ -62,6 +62,9 @@ class LemonPlayer(
 
     override val identifier: UUID
         get() = uniqueId
+
+    val name: String
+        get() = CubedCacheUtil.fetchName(identifier)!!
 
     var previousIpAddress: String? = null
 

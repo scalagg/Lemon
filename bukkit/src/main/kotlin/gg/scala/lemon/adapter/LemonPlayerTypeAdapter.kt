@@ -86,8 +86,7 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             val player = LemonPlayer(
                 UUID.fromString(
                     jsonObject.get("uniqueId").asString
-                ),
-                jsonObject.get("name").asString
+                )
             )
 
             player.timestamp =

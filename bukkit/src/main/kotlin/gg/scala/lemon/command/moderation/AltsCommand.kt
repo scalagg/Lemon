@@ -49,8 +49,8 @@ object AltsCommand : ScalaCommand()
                         val colored = lemonPlayer.getColoredName()
                         val hoverList = mutableListOf<String>()
 
-                        val lastIpAddress = lemonPlayer.getMetadata("last-ip-address")?.asString() ?: ""
-                        val targetLastIpAddress = target.getMetadata("last-ip-address")?.asString() ?: ""
+                        val lastIpAddress = lemonPlayer.previousIpAddress
+                        val targetLastIpAddress = target.previousIpAddress
 
                         val matchingIpInfo = lastIpAddress == targetLastIpAddress
                         val previouslyMatched = lemonPlayer.pastIpAddresses.contains(targetLastIpAddress)
@@ -69,7 +69,7 @@ object AltsCommand : ScalaCommand()
                         hoverList.add("${CC.SEC}Active Rank: ${lemonPlayer.activeGrant!!.getRank().getColoredName()}")
                         hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
 
-                        val playerName = lemonPlayer.getColoredName()
+                        val playerName = target.getColoredName()
 
                         hoverList.add(
                             if (matchingIpInfo)
@@ -179,7 +179,7 @@ object AltsCommand : ScalaCommand()
                 it.key != PunishmentCategory.KICK
             }
 
-        if (sortedPunishmentFirst != null)
+        if (sortedPunishmentFirst?.value != null)
         {
             return "${sortedPunishmentFirst.key.color}${lemonPlayer.name}"
         }
