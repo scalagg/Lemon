@@ -29,7 +29,7 @@ enum class PunishmentCategory(
         val VALUES_2 = listOf(KICK, MUTE, BAN, BLACKLIST)
 
         @JvmStatic
-        val IP_REL = listOf(BLACKLIST, BAN)
+        val IP_REL = listOf(BLACKLIST)
 
         @JvmStatic
         val WEIGHTED_DENIED = listOf(IP_RELATIVE, BLACKLIST, BAN)
