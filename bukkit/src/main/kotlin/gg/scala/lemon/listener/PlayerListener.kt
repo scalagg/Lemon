@@ -240,7 +240,7 @@ object PlayerListener : Listener
                 {
                     if (
                         channelMatch.composite().identifier() == "default" &&
-                        !player.hasPermission("lemon.staff")
+                        !player.hasPermission("scstaff.staff-member")
                     )
                     {
                         if (lemonTarget.getSetting("global-chat-disabled"))
@@ -251,7 +251,7 @@ object PlayerListener : Listener
 
                     if (
                         lemonTarget.ignoring.contains(player.uniqueId) &&
-                        !player.hasPermission("lemon.staff")
+                        !player.hasPermission("scstaff.staff-member")
                     )
                     {
                         continue

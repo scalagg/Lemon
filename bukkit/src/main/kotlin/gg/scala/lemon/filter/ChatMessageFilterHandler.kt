@@ -136,7 +136,7 @@ object ChatMessageFilterHandler
             if (reportToStaff)
                 Bukkit.getOnlinePlayers()
                     .mapNotNull { PlayerHandler.findPlayer(it).orElse(null) }
-                    .filter { it.hasPermission("lemon.staff") }
+                    .filter { it.hasPermission("scstaff.staff-member") }
                     .filter { !it.hasMetadata("filter-disabled") }
                     .forEach {
                         fancyMessage.sendToPlayer(it.bukkitPlayer!!)

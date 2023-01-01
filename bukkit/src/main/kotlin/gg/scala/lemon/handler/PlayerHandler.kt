@@ -104,7 +104,7 @@ object PlayerHandler
             currentList = currentList.subList(0, 350)
         }
 
-        if (sender.hasPermission("lemon.staff"))
+        if (sender.isOp)
         {
             return currentList
         }

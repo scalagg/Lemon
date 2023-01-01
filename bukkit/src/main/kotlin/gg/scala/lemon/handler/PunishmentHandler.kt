@@ -307,7 +307,7 @@ object PunishmentHandler
         val issuerName = fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
-        val broadcastPermission = if (silent) "lemon.staff" else null
+        val broadcastPermission = if (silent) "scstaff.staff-member" else null
         val broadcastPermanent = if (punishment.isPermanent) "permanently " else "temporarily "
         val broadcastSuffix = if (!punishment.isPermanent) " for ${punishment.durationString}${CC.GREEN}." else "."
 
@@ -339,7 +339,7 @@ object PunishmentHandler
             sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
                 permission = broadcastPermission,
-                metaPermission = "lemon.staff"
+                metaPermission = "scstaff.staff-member"
             ).thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
@@ -371,7 +371,7 @@ object PunishmentHandler
         val issuerName = fetchColoredName(issuerUuid)
 
         val broadcastPrefix = if (silent) "${CC.GRAY}(Silent) " else ""
-        val broadcastPermission = if (silent) "lemon.staff" else null
+        val broadcastPermission = if (silent) "scstaff.staff-member" else null
         val broadcastSuffix = if (silent) " for ${CC.WHITE}${punishment.removedReason}${CC.GREEN}." else "."
 
         val broadcastBody =
@@ -402,7 +402,7 @@ object PunishmentHandler
             sendGlobalFancyBroadcast(
                 fancyMessage = fancyMessage,
                 permission = broadcastPermission,
-                metaPermission = "lemon.staff"
+                metaPermission = "scstaff.staff-member"
             ).thenRun {
                 RedisHandler.buildMessage(
                     "recalculate-punishments",
