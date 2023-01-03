@@ -70,7 +70,7 @@ object PlayerHandler
 
                 val lemonPlayer = findPlayer(uuid).orElse(null)
                     ?: AsyncLemonPlayer.of(uuid, true)
-                        .future.join().firstOrNull()
+                        .future().join().firstOrNull()
                     ?: return@thenApplyAsync accounts
 
                 for (entry in it)
