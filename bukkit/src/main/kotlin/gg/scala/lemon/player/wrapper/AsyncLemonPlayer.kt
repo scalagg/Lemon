@@ -1,6 +1,7 @@
 package gg.scala.lemon.player.wrapper
 
 import com.mongodb.client.model.Filters
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
@@ -8,10 +9,8 @@ import gg.scala.lemon.util.SplitUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
-import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -25,7 +24,7 @@ import java.util.concurrent.CompletableFuture
  */
 data class AsyncLemonPlayer(
     val uniqueId: UUID,
-    val future: CompletableFuture<List<LemonPlayer>>
+    val future: () -> CompletableFuture<List<LemonPlayer>>
 )
 {
     fun validatePlayers(
@@ -34,7 +33,7 @@ data class AsyncLemonPlayer(
         lambda: (LemonPlayer) -> Unit
     ): CompletableFuture<Void>
     {
-        return future.thenAcceptAsync {
+        return future().thenAcceptAsync {
             if (it.isEmpty())
             {
                 val username = CubedCacheUtil
@@ -135,22 +134,17 @@ data class AsyncLemonPlayer(
                 val player = PlayerHandler
                     .findPlayer(uniqueId)
                     .orElse(null)
-                    ?: return AsyncLemonPlayer(
-                        uniqueId,
+                    ?: return AsyncLemonPlayer(uniqueId) {
                         CompletableFuture
                             .completedFuture(listOf())
-                    )
+                    }
 
-                AsyncLemonPlayer(
-                    uniqueId,
-                    CompletableFuture.completedFuture(
-                        listOf(player)
-                    )
-                )
+                AsyncLemonPlayer(uniqueId) {
+                    CompletableFuture.completedFuture(listOf(player))
+                }
             } else
             {
-                AsyncLemonPlayer(
-                    uniqueId,
+                AsyncLemonPlayer(uniqueId) {
                     DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
                         .useLayerWithReturn<MongoDataStoreStorageLayer<LemonPlayer>, CompletableFuture<List<LemonPlayer>>>(
                             DataStoreStorageType.MONGO
@@ -176,7 +170,7 @@ data class AsyncLemonPlayer(
                                 it.values.toList()
                             }
                         }
-                )
+                }
             }
         }
     }
