@@ -1,6 +1,7 @@
 package gg.scala.lemon.player.wrapper
 
 import com.mongodb.client.model.Filters
+import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -33,50 +34,84 @@ data class AsyncLemonPlayer(
         lambda: (LemonPlayer) -> Unit
     ): CompletableFuture<Void>
     {
-        return future().thenAcceptAsync {
-            if (it.isEmpty())
-            {
-                val username = CubedCacheUtil
-                    .fetchName(this.uniqueId)
-
-                if (ignoreEmpty && username != null)
+        return future()
+            .thenAcceptAsync {
+                if (it.isEmpty())
                 {
-                    lambda.invoke(LemonPlayer(
-                        this.uniqueId,
-                        null
-                    ))
+                    val username = CubedCacheUtil
+                        .fetchName(this.uniqueId)
 
-                    return@thenAcceptAsync
-                }
-
-                throw ConditionFailedException("No user entry matching the username ${CC.YELLOW}$username${CC.RED} was found.")
-            }
-
-            if (it.size > 1)
-            {
-                val sortedByLastLogin = it
-                    .sortedByDescending { lemonPlayer ->
-                        lemonPlayer
-                            .getMetadata("last-connection")
-                            ?.asString()?.toLong() ?: 0L
-                    }
-
-                val bestChoice = sortedByLastLogin.first()
-
-                if (sender is Player)
-                {
-                    val fancyMessage = FancyMessage()
-                        .withMessage(
-                            "",
-                            "${CC.D_RED}Multiple accounts with that name were found.",
-                            "${CC.RED}Click one of the following messages to copy their unique id."
+                    if (ignoreEmpty && username != null)
+                    {
+                        lambda.invoke(
+                            LemonPlayer(
+                                this.uniqueId,
+                                null
+                            )
                         )
 
-                    for (lemonPlayer in it)
+                        return@thenAcceptAsync
+                    }
+
+                    throw ConditionFailedException("No user entry matching the username ${CC.YELLOW}$username${CC.RED} was found.")
+                }
+
+                if (it.size > 1)
+                {
+                    val sortedByLastLogin = it
+                        .sortedByDescending { lemonPlayer ->
+                            lemonPlayer
+                                .getMetadata("last-connection")
+                                ?.asString()?.toLong() ?: 0L
+                        }
+
+                    val bestChoice = sortedByLastLogin.first()
+
+                    if (sender is Player)
                     {
-                        fancyMessage
+                        val fancyMessage = FancyMessage()
                             .withMessage(
-                                "\n${CC.GRAY}  - ${
+                                "",
+                                "${CC.D_RED}Multiple accounts with that name were found.",
+                                "${CC.RED}Click one of the following messages to copy their unique id."
+                            )
+
+                        for (lemonPlayer in it)
+                        {
+                            fancyMessage
+                                .withMessage(
+                                    "\n${CC.GRAY}  - ${
+                                        SplitUtil.splitUuid(lemonPlayer.uniqueId)
+                                    }${
+                                        if (bestChoice.uniqueId == lemonPlayer.uniqueId)
+                                        {
+                                            " ${CC.I_WHITE}(best choice)"
+                                        } else ""
+                                    }"
+                                )
+                                .andHoverOf(
+                                    "${CC.YELLOW}Click to copy their unique id."
+                                )
+                                .andCommandOf(
+                                    ClickEvent.Action.SUGGEST_COMMAND,
+                                    lemonPlayer.uniqueId.toString()
+                                )
+                        }
+
+                        fancyMessage.withMessage("\n")
+                        fancyMessage.sendToPlayer(sender)
+                    } else
+                    {
+                        sender.sendMessage(
+                            arrayOf(
+                                "${CC.D_RED}Multiple accounts with that name were found."
+                            )
+                        )
+
+                        for (lemonPlayer in it)
+                        {
+                            sender.sendMessage(
+                                "${CC.GRAY}  - ${
                                     SplitUtil.splitUuid(lemonPlayer.uniqueId)
                                 }${
                                     if (bestChoice.uniqueId == lemonPlayer.uniqueId)
@@ -85,41 +120,14 @@ data class AsyncLemonPlayer(
                                     } else ""
                                 }"
                             )
-                            .andHoverOf(
-                                "${CC.YELLOW}Click to copy their unique id."
-                            )
-                            .andCommandOf(
-                                ClickEvent.Action.SUGGEST_COMMAND,
-                                lemonPlayer.uniqueId.toString()
-                            )
+                        }
                     }
 
-                    fancyMessage.withMessage("\n")
-                    fancyMessage.sendToPlayer(sender)
-                } else
-                {
-                    sender.sendMessage(arrayOf(
-                        "${CC.D_RED}Multiple accounts with that name were found."
-                    ))
-
-                    for (lemonPlayer in it)
-                    {
-                        sender.sendMessage("${CC.GRAY}  - ${
-                            SplitUtil.splitUuid(lemonPlayer.uniqueId)
-                        }${
-                            if (bestChoice.uniqueId == lemonPlayer.uniqueId)
-                            {
-                                " ${CC.I_WHITE}(best choice)"
-                            } else ""
-                        }")
-                    }
+                    return@thenAcceptAsync
                 }
 
-                return@thenAcceptAsync
+                lambda.invoke(it[0])
             }
-
-            lambda.invoke(it[0])
-        }
     }
 
     companion object
@@ -151,7 +159,8 @@ data class AsyncLemonPlayer(
                         ) {
                             if (forcefullySpecified)
                             {
-                                return@useLayerWithReturn this.load(uniqueId)
+                                return@useLayerWithReturn this
+                                    .load(uniqueId)
                                     .thenApply {
                                         if (it == null)
                                             return@thenApply listOf()
@@ -160,15 +169,18 @@ data class AsyncLemonPlayer(
                                     }
                             }
 
-                            val username = CubedCacheUtil
-                                .fetchName(uniqueId)
-
-                            return@useLayerWithReturn this.loadAllWithFilter(
-                                // praying this never throws an exception.
-                                Filters.eq("name", username)
-                            ).thenApply {
-                                it.values.toList()
-                            }
+                            return@useLayerWithReturn CompletableFuture
+                                .supplyAsync {
+                                    ScalaStoreUuidCache.username(uniqueId)
+                                }
+                                .thenComposeAsync {
+                                    loadAllWithFilter(
+                                        // praying this never throws an exception.
+                                        Filters.eq("name", it)
+                                    ).thenApply { mappings ->
+                                        mappings.values.toList()
+                                    }
+                                }
                         }
                 }
             }
