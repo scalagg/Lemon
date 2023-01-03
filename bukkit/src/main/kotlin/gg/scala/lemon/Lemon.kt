@@ -10,7 +10,6 @@ import gg.scala.commons.acf.BukkitCommandExecutionContext
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.annotations.commands.ManualRegister
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizers
-import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.config.annotations.ContainerConfig
@@ -33,8 +32,6 @@ import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
-import gg.scala.lemon.logger.impl.`object`.ChatAsyncFileLogger
-import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.processor.LanguageConfigProcessor
@@ -205,14 +202,6 @@ class Lemon : ExtendedScalaPlugin()
                 .registerEvents(DisguiseListener, this)
 
             logger.info("Loaded disguise resources.")
-        }
-
-        if (settings.logDataToFile)
-        {
-            ChatAsyncFileLogger.initialize()
-            CommandAsyncFileLogger.initialize()
-
-            logger.info("Started log queue for chat & commands.")
         }
 
         Events.subscribe(PlayerInteractAtEntityEvent::class.java)

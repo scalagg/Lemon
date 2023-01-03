@@ -85,12 +85,7 @@ object LemonCommandCustomizer
 
         commandManager.commandContexts
             .registerContext(AsyncLemonPlayer::class.java) {
-                val parsed = Lemon.instance.parseUniqueIdFromContext(it)
-
-                return@registerContext AsyncLemonPlayer
-                    .of(
-                        parsed.first, parsed.second
-                    )
+                AsyncLemonPlayer.of(uniqueId = null, context = it)
             }
 
         commandManager.commandContexts

@@ -11,7 +11,6 @@ import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.scala.lemon.channel.ChatChannelCheckService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
-import gg.scala.lemon.logger.impl.`object`.CommandAsyncFileLogger
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
@@ -21,7 +20,6 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import net.kyori.adventure.key.Key
 import org.bukkit.Bukkit
-import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -33,7 +31,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.event.server.ServerCommandEvent
 
 @Listeners
 object PlayerListener : Listener
@@ -402,10 +399,6 @@ object PlayerListener : Listener
                 }
             }
         }
-
-        CommandAsyncFileLogger.queueForUpdates(
-            "${event.player.name}: ${event.message}"
-        )
     }
 
     @EventHandler(
@@ -416,17 +409,6 @@ object PlayerListener : Listener
     {
         event.quitMessage = null
         handleDisconnection(event.player)
-    }
-
-    @EventHandler
-    fun onConsoleCommand(event: ServerCommandEvent)
-    {
-        if (event.sender is ConsoleCommandSender)
-        {
-            CommandAsyncFileLogger.queueForUpdates(
-                "Console: ${event.command}"
-            )
-        }
     }
 
     private fun cancel(

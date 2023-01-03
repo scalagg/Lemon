@@ -69,8 +69,11 @@ object PlayerHandler
                 val accounts = mutableListOf<LemonPlayer>()
 
                 val lemonPlayer = findPlayer(uuid).orElse(null)
-                    ?: AsyncLemonPlayer.of(uuid, true)
-                        .future().join().firstOrNull()
+                    ?: AsyncLemonPlayer
+                        .of(uuid)
+                        .computeNow()
+                        .join()
+                        .firstOrNull()
                     ?: return@thenApplyAsync accounts
 
                 for (entry in it)

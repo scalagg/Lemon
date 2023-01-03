@@ -2,7 +2,9 @@ package gg.scala.lemon.player.wrapper
 
 import com.mongodb.client.model.Filters
 import gg.scala.cache.uuid.ScalaStoreUuidCache
+import gg.scala.commons.acf.BukkitCommandExecutionContext
 import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
@@ -24,28 +26,39 @@ import java.util.concurrent.CompletableFuture
  * @since 12/29/2021
  */
 data class AsyncLemonPlayer(
-    val uniqueId: UUID,
-    val future: () -> CompletableFuture<List<LemonPlayer>>
+    val uniqueIdCompute: () -> Pair<UUID, Boolean>,
+    val future: (Pair<UUID, Boolean>) -> CompletableFuture<List<LemonPlayer>>
 )
 {
+    fun computeNow() = future(uniqueIdCompute())
+
     fun validatePlayers(
         sender: CommandSender,
         ignoreEmpty: Boolean,
         lambda: (LemonPlayer) -> Unit
     ): CompletableFuture<Void>
     {
-        return future()
+        return CompletableFuture
+            .supplyAsync {
+                uniqueIdCompute()
+            }
+            .thenComposeAsync {
+                future.invoke(it)
+                    .thenApply { result ->
+                        it to result
+                    }
+            }
             .thenAcceptAsync {
-                if (it.isEmpty())
+                if (it.second.isEmpty())
                 {
                     val username = CubedCacheUtil
-                        .fetchName(this.uniqueId)
+                        .fetchName(it.first.first)
 
                     if (ignoreEmpty && username != null)
                     {
                         lambda.invoke(
                             LemonPlayer(
-                                this.uniqueId,
+                                it.first.first,
                                 null
                             )
                         )
@@ -56,9 +69,9 @@ data class AsyncLemonPlayer(
                     throw ConditionFailedException("No user entry matching the username ${CC.YELLOW}$username${CC.RED} was found.")
                 }
 
-                if (it.size > 1)
+                if (it.second.size > 1)
                 {
-                    val sortedByLastLogin = it
+                    val sortedByLastLogin = it.second
                         .sortedByDescending { lemonPlayer ->
                             lemonPlayer
                                 .getMetadata("last-connection")
@@ -76,7 +89,7 @@ data class AsyncLemonPlayer(
                                 "${CC.RED}Click one of the following messages to copy their unique id."
                             )
 
-                        for (lemonPlayer in it)
+                        for (lemonPlayer in it.second)
                         {
                             fancyMessage
                                 .withMessage(
@@ -108,7 +121,7 @@ data class AsyncLemonPlayer(
                             )
                         )
 
-                        for (lemonPlayer in it)
+                        for (lemonPlayer in it.second)
                         {
                             sender.sendMessage(
                                 "${CC.GRAY}  - ${
@@ -126,57 +139,74 @@ data class AsyncLemonPlayer(
                     return@thenAcceptAsync
                 }
 
-                lambda.invoke(it[0])
+                lambda.invoke(it.second[0])
             }
     }
 
     companion object
     {
         @JvmStatic
-        fun of(uniqueId: UUID, forcefullySpecified: Boolean): AsyncLemonPlayer
+        fun of(
+            uniqueId: UUID?, context: BukkitCommandExecutionContext? = null
+        ): AsyncLemonPlayer
         {
             val online = Bukkit.getPlayer(uniqueId)
+
+            if (uniqueId == null && context == null)
+            {
+                throw IllegalArgumentException(
+                    "Both BukkitCommandExecutionContext and uniqueId is null. There is no way of deriving a player attribute."
+                )
+            }
+
+            var actualUniqueId = ctx@{
+                if (uniqueId != null)
+                    // fallback to true for faster lookups when searching for alt accounts
+                    return@ctx uniqueId to true
+
+                // context must not be null at this point
+                Lemon.instance.parseUniqueIdFromContext(context!!)
+            }
 
             return if (online != null)
             {
                 val player = PlayerHandler
-                    .findPlayer(uniqueId)
+                    .findPlayer(online.uniqueId)
                     .orElse(null)
-                    ?: return AsyncLemonPlayer(uniqueId) {
+                    ?: return AsyncLemonPlayer(actualUniqueId) {
                         CompletableFuture
                             .completedFuture(listOf())
                     }
 
-                AsyncLemonPlayer(uniqueId) {
+                AsyncLemonPlayer(actualUniqueId) {
                     CompletableFuture.completedFuture(listOf(player))
                 }
             } else
             {
-                AsyncLemonPlayer(uniqueId) {
+                AsyncLemonPlayer(actualUniqueId) {
                     DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
                         .useLayerWithReturn<MongoDataStoreStorageLayer<LemonPlayer>, CompletableFuture<List<LemonPlayer>>>(
                             DataStoreStorageType.MONGO
                         ) {
-                            if (forcefullySpecified)
+                            if (it.second)
                             {
                                 return@useLayerWithReturn this
-                                    .load(uniqueId)
-                                    .thenApply {
-                                        if (it == null)
+                                    .load(it.first)
+                                    .thenApply { copy ->
+                                        if (copy == null)
                                             return@thenApply listOf()
 
-                                        listOf(it)
+                                        listOf(copy)
                                     }
                             }
 
                             return@useLayerWithReturn CompletableFuture
                                 .supplyAsync {
-                                    ScalaStoreUuidCache.username(uniqueId)
+                                    ScalaStoreUuidCache.username(it.first)
                                 }
-                                .thenComposeAsync {
+                                .thenComposeAsync { username ->
                                     loadAllWithFilter(
-                                        // praying this never throws an exception.
-                                        Filters.eq("name", it)
+                                        Filters.eq("name", username ?: "")
                                     ).thenApply { mappings ->
                                         mappings.values.toList()
                                     }
