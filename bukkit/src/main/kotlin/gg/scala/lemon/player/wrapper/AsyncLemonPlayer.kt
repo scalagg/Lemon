@@ -159,13 +159,15 @@ data class AsyncLemonPlayer(
                 )
             }
 
+            val poppedFirstArg = context?.popFirstArg()
+
             var actualUniqueId = ctx@{
                 if (uniqueId != null)
                     // fallback to true for faster lookups when searching for alt accounts
                     return@ctx uniqueId to true
 
-                // context must not be null at this point
-                Lemon.instance.parseUniqueIdFromContext(context!!)
+                // context must not be null at this point, so, poppedFirstArg shouldn't either
+                Lemon.instance.parseUniqueIdFromContext(poppedFirstArg!!)
             }
 
             return if (online != null)
