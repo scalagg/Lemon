@@ -1,10 +1,9 @@
-package gg.scala.lemon.customizer
+package gg.scala.lemon.command.customizer
 
 import gg.scala.commons.acf.BukkitCommandCompletionContext
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannel
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.PlayerHandler

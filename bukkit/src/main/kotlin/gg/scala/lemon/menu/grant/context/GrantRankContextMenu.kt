@@ -56,7 +56,7 @@ class GrantRankContextMenu(
         override fun getDamageValue(player: Player): Byte {
             return ColorUtil.CHAT_COLOR_TO_WOOL_DATA[
                     ChatColor.getByChar(rank.color[1]) ?: ChatColor.WHITE
-            ]!!.toByte()
+            ]?.toByte() ?: 1
         }
 
         override fun getDescription(player: Player): List<String> {

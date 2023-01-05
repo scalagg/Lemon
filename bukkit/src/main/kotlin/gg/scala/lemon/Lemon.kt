@@ -21,7 +21,7 @@ import gg.scala.lemon.adapter.LemonPlayerTypeAdapter
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
-import gg.scala.lemon.customizer.LemonCommandCustomizer
+import gg.scala.lemon.command.customizer.LemonCommandCustomizer
 import gg.scala.lemon.disguise.DisguiseProvider
 import gg.scala.lemon.disguise.command.DisguiseAdminCommand
 import gg.scala.lemon.disguise.command.DisguiseCheckCommand
