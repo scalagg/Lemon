@@ -244,10 +244,8 @@ class Lemon : ExtendedScalaPlugin()
         logger.info("Setup data storage & distribution controllers.")
     }
 
-    fun parseUniqueIdFromContext(context: BukkitCommandExecutionContext): Pair<UUID, Boolean>
+    fun parseUniqueIdFromContext(firstArg: String): Pair<UUID, Boolean>
     {
-        val firstArg = context.popFirstArg()
-
         if (firstArg.length == 32)
         {
             val uniqueId = UUIDUtil.formatUUID(firstArg)
