@@ -2,6 +2,7 @@ package gg.scala.lemon.channel.channels
 
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
@@ -66,7 +67,11 @@ object DefaultChatChannel : ChatChannelComposite
     }
 
     val serializer =
-        LegacyComponentSerializer.legacySection()
+        LegacyComponentSerializer
+            .legacySection()
+            .toBuilder()
+            .extractUrls()
+            .build()
 
     override fun identifier() = "default"
 
@@ -147,7 +152,13 @@ object DefaultChatChannel : ChatChannelComposite
             }
             .append(
                 serializer.deserialize(
-                    if (rank.uuid == RankHandler.getDefaultRank().uuid) "${CC.GRAY}$colored" else colored
+                    if (minequest())
+                    {
+                        if (rank.uuid == RankHandler.getDefaultRank().uuid) "${CC.GRAY}$colored" else colored
+                    } else
+                    {
+                        colored
+                    }
                 )
             )
     }
