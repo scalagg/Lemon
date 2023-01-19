@@ -80,7 +80,7 @@ open class PlayerRedirectSystem<T>(
                         .call {
                             val expectation =
                                 PlayerRedirectExpectationEvent(
-                                    message.uniqueId, message.server
+                                    message.uniqueId, message.from
                                 )
 
                             Bukkit.getPluginManager().callEvent(expectation)
