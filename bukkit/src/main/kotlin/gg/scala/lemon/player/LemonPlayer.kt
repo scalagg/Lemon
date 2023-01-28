@@ -68,7 +68,7 @@ class LemonPlayer(
 
     var previousIpAddress: String? = null
 
-    var pastIpAddresses = mutableMapOf<String, Long>()
+    var pastIpAddresses = mutableListOf<String>()
     var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments =
@@ -800,7 +800,7 @@ class LemonPlayer(
         )
 
         ipAddress?.let {
-            pastIpAddresses.put(it, System.currentTimeMillis())
+            pastIpAddresses.add(it)
         }
 
         pastLogins[System.currentTimeMillis().toString()] = System.currentTimeMillis() - classInit
@@ -812,7 +812,7 @@ class LemonPlayer(
         }
     }
 
-    fun handlePostLoad(): CompletableFuture<Void>
+    fun completePostLoad(): CompletableFuture<Void>
     {
         handleOnConnection.add {
             checkChannelPermission(it)
@@ -852,7 +852,7 @@ class LemonPlayer(
         }
     }
 
-    fun handleIfFirstCreated(): CompletableFuture<Void>
+    fun completeFirstLogin(): CompletableFuture<Void>
     {
         updateOrAddMetadata(
             "first-connection",
@@ -868,7 +868,7 @@ class LemonPlayer(
 
         return save()
             .thenComposeAsync {
-                handlePostLoad()
+                completePostLoad()
             }
     }
 

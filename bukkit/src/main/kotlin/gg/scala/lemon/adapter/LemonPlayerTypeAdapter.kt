@@ -115,10 +115,16 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
                     LemonConstants.STRING_METADATA_MAP_TYPE
                 )
 
+            val pastIpAddresses = jsonObject
+                .get("pastIpAddresses")
+
             player.pastIpAddresses = Serializers.gson
                 .fromJson(
-                    jsonObject.get("pastIpAddresses"),
-                    LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
+                    pastIpAddresses,
+                    if (pastIpAddresses.isJsonArray)
+                        LemonConstants.STRING_MUTABLE_LIST
+                    else
+                        LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
                 )
 
             player.pastLogins =

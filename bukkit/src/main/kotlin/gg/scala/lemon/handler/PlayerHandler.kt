@@ -101,7 +101,7 @@ object PlayerHandler
                             Filters.eq("ipAddress", lemonPlayer.ipAddress),
                             Filters.`in`(
                                 "pastIpAddresses",
-                                *lemonPlayer.pastIpAddresses.keys.toList().toTypedArray()
+                                *lemonPlayer.pastIpAddresses.toTypedArray()
                             )
                         )
                     )
