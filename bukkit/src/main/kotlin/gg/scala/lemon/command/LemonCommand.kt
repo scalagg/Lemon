@@ -183,7 +183,7 @@ object LemonCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("export")
     @Description("Export information.")
-    fun onExport(player: Player, spec: ExportSpec): CompletableFuture<Void>
+    fun onExport(player: CommandSender, spec: ExportSpec): CompletableFuture<Void>
     {
         val controller = when (spec)
         {
@@ -222,7 +222,13 @@ object LemonCommand : ScalaCommand()
                         "${CC.YELLOW}Click to open the page!"
                     )
 
-                fancy.sendToPlayer(player)
+                if (player is Player)
+                {
+                    fancy.sendToPlayer(player)
+                } else
+                {
+                    player.sendMessage("https://pastes.dev/$key/")
+                }
             }
     }
 
