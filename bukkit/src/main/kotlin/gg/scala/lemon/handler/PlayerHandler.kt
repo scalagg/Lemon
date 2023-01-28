@@ -128,11 +128,6 @@ object PlayerHandler
                 -QuickAccess.realRank(it.bukkitPlayer!!).weight
             }
 
-        if (currentList.size > 350)
-        {
-            currentList = currentList.subList(0, 350)
-        }
-
         if (sender.isOp)
         {
             return currentList

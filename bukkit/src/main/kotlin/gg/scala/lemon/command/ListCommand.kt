@@ -25,6 +25,7 @@ object ListCommand : ScalaCommand()
         val isMoreThan350 = correctedPlayerList.size > 350
 
         val sortedPlayers = correctedPlayerList
+            .take(350)
             .joinToString(separator = "${CC.WHITE}, ") {
                 it.getColoredName()
             }
