@@ -207,7 +207,7 @@ class LemonPlayer(
 
                 if (LemonConstants.DEBUG)
                 {
-                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
+                    Lemon.instance.logger.info("Took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
                 }
             }
     }
@@ -306,7 +306,7 @@ class LemonPlayer(
                 {
                     if (LemonConstants.DEBUG)
                     {
-                        println("[Lemon] Skipping entity grant update for $name as their active grant is not-null.")
+                        Lemon.instance.logger.info("Skipping entity grant update for $name as their active grant is not-null.")
                     }
                 } else
                 {
@@ -463,7 +463,7 @@ class LemonPlayer(
 
                 if (LemonConstants.DEBUG)
                 {
-                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+                    Lemon.instance.logger.info("Took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
                 }
             }
     }
