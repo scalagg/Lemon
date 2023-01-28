@@ -51,12 +51,14 @@ object PlayerListener : Listener
         event: AsyncPlayerPreLoginEvent
     )
     {
+        val hostAddress = event.address.hostAddress ?: ""
+
         if (plugin.settings.dummyServer)
         {
             this.playerController.localCache()[event.uniqueId] =
                 LemonPlayer(
                     uniqueId = event.uniqueId,
-                    ipAddress = event.address.hostAddress ?: "",
+                    ipAddress = hostAddress,
                     firstLogin = true
                 )
             return
@@ -66,21 +68,20 @@ object PlayerListener : Listener
             .loadOptimalCopy(event.uniqueId) {
                 LemonPlayer(
                     uniqueId = event.uniqueId,
-                    ipAddress = event.address.hostAddress ?: "",
+                    ipAddress = hostAddress,
                     firstLogin = true
                 )
             }.join()
 
+        lemonPlayer.ipAddress = hostAddress
+
         // We're assuming the data object has
-        // never been saved as the timestamp is 0L.
-        if (lemonPlayer.timestamp == 0L)
+        // never been saved if there is no metadata attached to it.
+        if (lemonPlayer.metadata.isEmpty())
         {
             lemonPlayer.handleIfFirstCreated()
             return
         }
-
-        lemonPlayer.ipAddress =
-            event.address.hostAddress ?: ""
 
         lemonPlayer.handlePostLoad()
     }

@@ -141,7 +141,8 @@ class LemonPlayer(
         val current = System.currentTimeMillis()
 
         return PunishmentHandler
-            .fetchAllPunishmentsForTarget(uniqueId).thenAccept { list ->
+            .fetchAllPunishmentsForTarget(uniqueId)
+            .thenAccept { list ->
                 list.forEach { QuickAccess.attemptExpiration(it) }
 
                 for (value in PunishmentCategory.VALUES)
@@ -414,55 +415,57 @@ class LemonPlayer(
         }
     }
 
-    private fun checkForIpRelative()
+    private fun checkForIpRelative(): CompletableFuture<Void>
     {
         val current = System.currentTimeMillis()
 
-        PlayerHandler.fetchAlternateAccountsFor(uniqueId).thenAcceptAsync { lemonPlayers ->
-            lemonPlayers.forEach {
-                val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
-                val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
+        return PlayerHandler
+            .fetchAlternateAccountsFor(uniqueId)
+            .thenAcceptAsync { lemonPlayers ->
+                lemonPlayers.forEach {
+                    val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
+                    val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
 
-                val matchingIpInfo = lastIpAddress == targetLastIpAddress
+                    val matchingIpInfo = lastIpAddress == targetLastIpAddress
 
-                if (matchingIpInfo)
-                {
-                    for (punishmentCategory in PunishmentCategory.IP_REL)
+                    if (matchingIpInfo)
                     {
-                        val punishments = PunishmentHandler
-                            .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
-                            .join()
-
-                        if (punishments.isNotEmpty())
+                        for (punishmentCategory in PunishmentCategory.IP_REL)
                         {
-                            activePunishments[IP_RELATIVE] = punishments[0]
+                            val punishments = PunishmentHandler
+                                .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
+                                .join()
+
+                            if (punishments.isNotEmpty())
+                            {
+                                activePunishments[IP_RELATIVE] = punishments[0]
+                            }
                         }
                     }
                 }
-            }
 
-            val ipRelPunishment = activePunishments[IP_RELATIVE]
+                val ipRelPunishment = activePunishments[IP_RELATIVE]
 
-            if (ipRelPunishment != null)
-            {
-                lazyHandleOnConnection.add {
-                    CompletableFuture.supplyAsync {
-                        QuickAccess.fetchColoredName(ipRelPunishment.target)
-                    }.thenAccept { coloredName ->
-                        val message = getIpRelMessage(
-                            coloredName, ipRelPunishment
-                        )
+                if (ipRelPunishment != null)
+                {
+                    lazyHandleOnConnection.add {
+                        CompletableFuture.supplyAsync {
+                            QuickAccess.fetchColoredName(ipRelPunishment.target)
+                        }.thenAccept { coloredName ->
+                            val message = getIpRelMessage(
+                                coloredName, ipRelPunishment
+                            )
 
-                        it.sendMessage(message)
+                            it.sendMessage(message)
+                        }
                     }
                 }
-            }
 
-            if (LemonConstants.DEBUG)
-            {
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+                if (LemonConstants.DEBUG)
+                {
+                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+                }
             }
-        }
     }
 
     private fun fetchPreviousRank(grants: List<Grant>): UUID?
@@ -809,21 +812,21 @@ class LemonPlayer(
         }
     }
 
-    fun handlePostLoad()
+    fun handlePostLoad(): CompletableFuture<Void>
     {
-        recalculateGrants(
-            connecting = true,
-            forceRecalculatePermissions = true
-        )
-
-        recalculatePunishments(
-            connecting = true
-        )
-
-        checkForIpRelative()
-
         handleOnConnection.add {
             checkChannelPermission(it)
+        }
+
+        return recalculateGrants(
+            connecting = true,
+            forceRecalculatePermissions = true
+        ).thenComposeAsync {
+            recalculatePunishments(
+                connecting = true
+            )
+        }.thenComposeAsync {
+            checkForIpRelative()
         }
     }
 
@@ -863,12 +866,10 @@ class LemonPlayer(
 
         finalizeMetaData()
 
-        save().exceptionally {
-            it.printStackTrace()
-            return@exceptionally null
-        }
-
-        handlePostLoad()
+        save()
+            .thenComposeAsync {
+                handlePostLoad()
+            }
     }
 
     private fun Player?.ifPresent(block: (Player) -> Unit)
