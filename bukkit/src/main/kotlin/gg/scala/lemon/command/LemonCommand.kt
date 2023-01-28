@@ -13,6 +13,7 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
@@ -28,6 +29,7 @@ import net.evilblock.cubed.visibility.VisibilityHandler
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
@@ -49,6 +51,25 @@ object LemonCommand : ScalaCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("run-migrations")
+    @Description("Run account migrations.")
+    fun onRunMigrations(
+        console: ConsoleCommandSender
+    ): CompletableFuture<Void>
+    {
+        return DataStoreObjectControllerCache
+            .findNotNull<LemonPlayer>()
+            .loadAll(DataStoreStorageType.MONGO)
+            .thenAcceptAsync {
+                for (lemonPlayer in it.values)
+                {
+                    lemonPlayer.save().join()
+                }
+
+                console.sendMessage("${CC.GREEN}Completed migrations.")
+            }
     }
 
     @AssignPermission
@@ -162,7 +183,7 @@ object LemonCommand : ScalaCommand()
     @AssignPermission
     @Subcommand("export")
     @Description("Export information.")
-    fun onExport(player: Player, spec: ExportSpec): CompletableFuture<Void>
+    fun onExport(player: CommandSender, spec: ExportSpec): CompletableFuture<Void>
     {
         val controller = when (spec)
         {
@@ -201,7 +222,13 @@ object LemonCommand : ScalaCommand()
                         "${CC.YELLOW}Click to open the page!"
                     )
 
-                fancy.sendToPlayer(player)
+                if (player is Player)
+                {
+                    fancy.sendToPlayer(player)
+                } else
+                {
+                    player.sendMessage("https://pastes.dev/$key/")
+                }
             }
     }
 

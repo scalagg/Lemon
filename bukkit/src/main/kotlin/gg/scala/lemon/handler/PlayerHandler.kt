@@ -1,12 +1,16 @@
 package gg.scala.lemon.handler
 
+import com.mongodb.client.model.Filters
 import gg.scala.lemon.menu.modmode.InspectionMenu
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
+import org.bson.conversions.Bson
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -61,35 +65,57 @@ object PlayerHandler
         return Optional.ofNullable(players[player?.uniqueId])
     }
 
+    private fun fetchPlayerAccountsFiltered(filter: Bson) =
+        DataStoreObjectControllerCache
+            .findNotNull<LemonPlayer>()
+            .useLayerWithReturn<MongoDataStoreStorageLayer<LemonPlayer>, CompletableFuture<Map<UUID, LemonPlayer>>>(
+                DataStoreStorageType.MONGO
+            ) {
+                this.loadAllWithFilter(filter)
+            }
+
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>>
     {
-        return DataStoreObjectControllerCache.findNotNull<LemonPlayer>()
-            .loadAll(DataStoreStorageType.MONGO)
-            .thenApplyAsync {
-                val accounts = mutableListOf<LemonPlayer>()
-
-                val lemonPlayer = findPlayer(uuid).orElse(null)
+        return CompletableFuture
+            .supplyAsync {
+                findPlayer(uuid).orElse(null)
                     ?: AsyncLemonPlayer
                         .of(uuid)
                         .computeNow()
                         .join()
                         .firstOrNull()
-                    ?: return@thenApplyAsync accounts
-
-                for (entry in it)
+            }
+            .thenComposeAsync { lemonPlayer ->
+                if (lemonPlayer == null)
                 {
-                    if (entry.value.uniqueId == uuid) continue
-
-                    lemonPlayer.pastIpAddresses.keys.forEachIndexed { _, address ->
-                        if (entry.value.pastIpAddresses.containsKey(address))
-                        {
-                            accounts.add(entry.value)
-                            return@forEachIndexed
-                        }
-                    }
+                    return@thenComposeAsync CompletableFuture
+                        .completedFuture(
+                            null to mapOf<UUID, LemonPlayer>()
+                        )
                 }
 
-                return@thenApplyAsync accounts
+                fetchPlayerAccountsFiltered(
+                    Filters.and(
+                        Filters.ne("uniqueId", uuid.toString()),
+                        Filters.or(
+                            Filters.eq("ipAddress", lemonPlayer.ipAddress),
+                            Filters.`in`(
+                                "pastIpAddresses",
+                                *lemonPlayer.pastIpAddresses.toTypedArray()
+                            )
+                        )
+                    )
+                ).thenApply { lemonPlayer to it }
+            }
+            .thenApplyAsync {
+                it.first
+                    ?: return@thenApplyAsync mutableListOf<LemonPlayer>()
+
+                return@thenApplyAsync it.second.values.toList()
+            }
+            .exceptionally {
+                it.printStackTrace()
+                return@exceptionally listOf<LemonPlayer>()
             }
     }
 

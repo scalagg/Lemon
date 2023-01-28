@@ -68,7 +68,7 @@ class LemonPlayer(
 
     var previousIpAddress: String? = null
 
-    var pastIpAddresses = mutableMapOf<String, Long>()
+    var pastIpAddresses = mutableListOf<String>()
     var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments =
@@ -141,7 +141,8 @@ class LemonPlayer(
         val current = System.currentTimeMillis()
 
         return PunishmentHandler
-            .fetchAllPunishmentsForTarget(uniqueId).thenAccept { list ->
+            .fetchAllPunishmentsForTarget(uniqueId)
+            .thenAccept { list ->
                 list.forEach { QuickAccess.attemptExpiration(it) }
 
                 for (value in PunishmentCategory.VALUES)
@@ -206,7 +207,7 @@ class LemonPlayer(
 
                 if (LemonConstants.DEBUG)
                 {
-                    println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
+                    Lemon.instance.logger.info("Took ${System.currentTimeMillis() - current}ms to calculate punishments. ($name)")
                 }
             }
     }
@@ -305,7 +306,7 @@ class LemonPlayer(
                 {
                     if (LemonConstants.DEBUG)
                     {
-                        println("[Lemon] Skipping entity grant update for $name as their active grant is not-null.")
+                        Lemon.instance.logger.info("Skipping entity grant update for $name as their active grant is not-null.")
                     }
                 } else
                 {
@@ -414,55 +415,57 @@ class LemonPlayer(
         }
     }
 
-    private fun checkForIpRelative()
+    private fun checkForIpRelative(): CompletableFuture<Void>
     {
         val current = System.currentTimeMillis()
 
-        PlayerHandler.fetchAlternateAccountsFor(uniqueId).thenAcceptAsync { lemonPlayers ->
-            lemonPlayers.forEach {
-                val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
-                val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
+        return PlayerHandler
+            .fetchAlternateAccountsFor(uniqueId)
+            .thenAcceptAsync { lemonPlayers ->
+                lemonPlayers.forEach {
+                    val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
+                    val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
 
-                val matchingIpInfo = lastIpAddress == targetLastIpAddress
+                    val matchingIpInfo = lastIpAddress == targetLastIpAddress
 
-                if (matchingIpInfo)
-                {
-                    for (punishmentCategory in PunishmentCategory.IP_REL)
+                    if (matchingIpInfo)
                     {
-                        val punishments = PunishmentHandler
-                            .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
-                            .join()
-
-                        if (punishments.isNotEmpty())
+                        for (punishmentCategory in PunishmentCategory.IP_REL)
                         {
-                            activePunishments[IP_RELATIVE] = punishments[0]
+                            val punishments = PunishmentHandler
+                                .fetchPunishmentsForTargetOfCategoryAndActive(it.uniqueId, punishmentCategory)
+                                .join()
+
+                            if (punishments.isNotEmpty())
+                            {
+                                activePunishments[IP_RELATIVE] = punishments[0]
+                            }
                         }
                     }
                 }
-            }
 
-            val ipRelPunishment = activePunishments[IP_RELATIVE]
+                val ipRelPunishment = activePunishments[IP_RELATIVE]
 
-            if (ipRelPunishment != null)
-            {
-                lazyHandleOnConnection.add {
-                    CompletableFuture.supplyAsync {
-                        QuickAccess.fetchColoredName(ipRelPunishment.target)
-                    }.thenAccept { coloredName ->
-                        val message = getIpRelMessage(
-                            coloredName, ipRelPunishment
-                        )
+                if (ipRelPunishment != null)
+                {
+                    lazyHandleOnConnection.add {
+                        CompletableFuture.supplyAsync {
+                            QuickAccess.fetchColoredName(ipRelPunishment.target)
+                        }.thenAccept { coloredName ->
+                            val message = getIpRelMessage(
+                                coloredName, ipRelPunishment
+                            )
 
-                        it.sendMessage(message)
+                            it.sendMessage(message)
+                        }
                     }
                 }
-            }
 
-            if (LemonConstants.DEBUG)
-            {
-                println("[Lemon] It took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+                if (LemonConstants.DEBUG)
+                {
+                    Lemon.instance.logger.info("Took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+                }
             }
-        }
     }
 
     private fun fetchPreviousRank(grants: List<Grant>): UUID?
@@ -797,7 +800,7 @@ class LemonPlayer(
         )
 
         ipAddress?.let {
-            pastIpAddresses.put(it, System.currentTimeMillis())
+            pastIpAddresses.add(it)
         }
 
         pastLogins[System.currentTimeMillis().toString()] = System.currentTimeMillis() - classInit
@@ -809,21 +812,21 @@ class LemonPlayer(
         }
     }
 
-    fun handlePostLoad()
+    fun completePostLoad(): CompletableFuture<Void>
     {
-        recalculateGrants(
-            connecting = true,
-            forceRecalculatePermissions = true
-        )
-
-        recalculatePunishments(
-            connecting = true
-        )
-
-        checkForIpRelative()
-
         handleOnConnection.add {
             checkChannelPermission(it)
+        }
+
+        return recalculateGrants(
+            connecting = true,
+            forceRecalculatePermissions = true
+        ).thenComposeAsync {
+            recalculatePunishments(
+                connecting = true
+            )
+        }.thenComposeAsync {
+            checkForIpRelative()
         }
     }
 
@@ -849,7 +852,7 @@ class LemonPlayer(
         }
     }
 
-    fun handleIfFirstCreated()
+    fun completeFirstLogin(): CompletableFuture<Void>
     {
         updateOrAddMetadata(
             "first-connection",
@@ -863,12 +866,10 @@ class LemonPlayer(
 
         finalizeMetaData()
 
-        save().exceptionally {
-            it.printStackTrace()
-            return@exceptionally null
-        }
-
-        handlePostLoad()
+        return save()
+            .thenComposeAsync {
+                completePostLoad()
+            }
     }
 
     private fun Player?.ifPresent(block: (Player) -> Unit)

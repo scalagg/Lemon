@@ -115,11 +115,22 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
                     LemonConstants.STRING_METADATA_MAP_TYPE
                 )
 
-            player.pastIpAddresses = Serializers.gson
-                .fromJson(
-                    jsonObject.get("pastIpAddresses"),
-                    LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
-                )
+            val pastIpAddresses = jsonObject
+                .get("pastIpAddresses")
+
+            player.pastIpAddresses = kotlin
+                .runCatching {
+                    Serializers.gson
+                        .fromJson(
+                            pastIpAddresses,
+                            LemonConstants.STRING_MUTABLE_LIST
+                        ) as MutableList<String>
+                }.getOrNull()
+                ?: (Serializers.gson
+                    .fromJson(
+                        pastIpAddresses,
+                        LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
+                    ) as MutableMap<String, Long>).keys.toMutableList()
 
             player.pastLogins =
                 Serializers.gson.fromJson(
