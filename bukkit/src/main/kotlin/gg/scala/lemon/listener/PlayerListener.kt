@@ -79,11 +79,11 @@ object PlayerListener : Listener
         // never been saved if there is no metadata attached to it.
         if (lemonPlayer.metadata.isEmpty())
         {
-            lemonPlayer.handleIfFirstCreated()
+            lemonPlayer.handleIfFirstCreated().join()
             return
         }
 
-        lemonPlayer.handlePostLoad()
+        lemonPlayer.handlePostLoad().join()
     }
 
     var defaultChannelProtection = { event: AsyncPlayerChatEvent -> }

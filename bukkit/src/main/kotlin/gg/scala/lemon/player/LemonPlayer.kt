@@ -852,7 +852,7 @@ class LemonPlayer(
         }
     }
 
-    fun handleIfFirstCreated()
+    fun handleIfFirstCreated(): CompletableFuture<Void>
     {
         updateOrAddMetadata(
             "first-connection",
@@ -866,7 +866,7 @@ class LemonPlayer(
 
         finalizeMetaData()
 
-        save()
+        return save()
             .thenComposeAsync {
                 handlePostLoad()
             }
