@@ -36,7 +36,8 @@ object AltsRemoveCommand : ScalaCommand()
         sender.sendMessage("${CC.GRAY}Fetching alternate accounts...")
 
         return target.validatePlayers(sender, false) {
-            PlayerHandler.fetchAlternateAccountsFor(it.uniqueId)
+            PlayerHandler
+                .fetchAlternateAccountsFor(it.uniqueId)
                 .thenAccept { accounts ->
                     if (accounts.isEmpty())
                     {

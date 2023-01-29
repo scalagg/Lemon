@@ -97,6 +97,8 @@ class LemonPlayer(
     val bukkitPlayer: Player?
         get() = Bukkit.getPlayer(uniqueId)
 
+    val cachedAlternateAccounts = mutableListOf<UUID>()
+
     init
     {
         for (value in PunishmentCategory.VALUES)
@@ -379,12 +381,7 @@ class LemonPlayer(
             {
                 bukkitPlayer?.ifPresent {
                     notifyPlayerOfRankUpdate(
-                        it, this.activeGrant!!,
-                        if (
-                            subGrant != null && this.activeSubGrant?.uuid != subGrant.uuid &&
-                            subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid
-                        )
-                            subGrant else null
+                        it, this.activeGrant!!
                     )
 
                     RankChangeEvent(
@@ -422,9 +419,16 @@ class LemonPlayer(
         return PlayerHandler
             .fetchAlternateAccountsFor(uniqueId)
             .thenAcceptAsync { lemonPlayers ->
+                this.cachedAlternateAccounts.clear()
+                this.cachedAlternateAccounts += lemonPlayers
+                    .map(LemonPlayer::uniqueId)
+
                 lemonPlayers.forEach {
-                    val lastIpAddress = getMetadata("last-ip-address")?.asString() ?: ""
-                    val targetLastIpAddress = it.getMetadata("last-ip-address")?.asString() ?: ""
+                    val lastIpAddress = getMetadata("last-ip-address")
+                        ?.asString() ?: ""
+
+                    val targetLastIpAddress = it.getMetadata("last-ip-address")
+                        ?.asString() ?: ""
 
                     val matchingIpInfo = lastIpAddress == targetLastIpAddress
 
@@ -449,21 +453,25 @@ class LemonPlayer(
                 if (ipRelPunishment != null)
                 {
                     lazyHandleOnConnection.add {
-                        CompletableFuture.supplyAsync {
-                            QuickAccess.fetchColoredName(ipRelPunishment.target)
-                        }.thenAccept { coloredName ->
-                            val message = getIpRelMessage(
-                                coloredName, ipRelPunishment
-                            )
+                        CompletableFuture
+                            .supplyAsync {
+                                QuickAccess.fetchColoredName(ipRelPunishment.target)
+                            }
+                            .thenAccept { coloredName ->
+                                val message = getIpRelMessage(
+                                    coloredName, ipRelPunishment
+                                )
 
-                            it.sendMessage(message)
-                        }
+                                it.sendMessage(message)
+                            }
                     }
                 }
 
                 if (LemonConstants.DEBUG)
                 {
-                    Lemon.instance.logger.info("Took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)")
+                    Lemon.instance.logger.info(
+                        "Took ${System.currentTimeMillis() - current}ms to calculate ip-relative punishments. ($name)"
+                    )
                 }
             }
     }
@@ -496,7 +504,7 @@ class LemonPlayer(
     }
 
     private fun notifyPlayerOfRankUpdate(
-        player: Player, primaryGrant: Grant?, subGrant: Grant?
+        player: Player, primaryGrant: Grant?
     )
     {
         val messenger = { grant: Grant, prefix: String, suffix: String ->
@@ -517,11 +525,6 @@ class LemonPlayer(
         if (primaryGrant != null)
         {
             messenger(primaryGrant, "You've been granted the", " rank")
-        }
-
-        if (subGrant != null)
-        {
-            messenger(subGrant, "You've been granted a sub-rank of", "")
         }
     }
 
@@ -674,7 +677,6 @@ class LemonPlayer(
                 if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
-    // TODO: asdf
     fun customColor() = ""
 
     fun getSetting(id: String): Boolean

@@ -1,5 +1,6 @@
 package gg.scala.lemon.util
 
+import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.flavor.service.Configure
@@ -278,7 +279,8 @@ object QuickAccess
     fun server(uniqueId: UUID): CompletableFuture<GameServer?>
     {
         return CompletableFuture.supplyAsync {
-            ServerContainer.allServers<GameServer>()
+            ServerContainer
+                .allServers<GameServer>()
                 .firstOrNull {
                     // TODO: implement proper fix in commons
                     it.getMetadataValue<List<String>>(
@@ -289,6 +291,29 @@ object QuickAccess
                 }
         }
     }
+
+    @JvmStatic
+    fun lookupPlayersMatchingUsername(query: String) =
+        CompletableFuture.supplyAsync {
+            ServerContainer
+                .allServers<GameServer>()
+                .mapNotNull {
+                    // TODO: implement proper fix in commons
+                    it.id to it
+                        .getMetadataValue<List<String>>(
+                            "server", "online-list"
+                        )!!
+                        .mapNotNull { uniqueId ->
+                            ScalaStoreUuidCache
+                                .username(
+                                    UUID.fromString(uniqueId)
+                                )
+                        }
+                        .filter { match ->
+                            match.lowercase().contains(query.lowercase())
+                        }
+                }
+        }
 
     @JvmStatic
     fun online(uniqueId: UUID): CompletableFuture<Boolean>

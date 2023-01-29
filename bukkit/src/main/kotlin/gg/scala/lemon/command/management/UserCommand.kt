@@ -39,6 +39,36 @@ object UserCommand : ScalaCommand()
     }
 
     @AssignPermission
+    @Subcommand("lookup")
+    @Description("Lookup players matching a specified username.")
+    @CommandCompletion("@players")
+    fun onPlayerLookup(sender: CommandSender, query: String): CompletableFuture<Void>
+    {
+        sender.sendMessage("${CC.GREEN}Finding players on network matching '$query'...")
+
+        return QuickAccess
+            .lookupPlayersMatchingUsername(query)
+            .thenAccept {
+                if (it.isEmpty())
+                {
+                    throw ConditionFailedException("No players matching \"$query\" are on the network.")
+                }
+
+                sender.sendMessage("${CC.D_GRAY}[${CC.WHITE}Matching ${CC.GRAY}$query${CC.D_GRAY}]")
+
+                it.forEach { (k, v) ->
+                    sender.sendMessage(" ${CC.WHITE}$k:")
+
+                    v.forEach { username ->
+                        sender.sendMessage("  ${CC.WHITE}- $username")
+                    }
+                }
+
+                sender.sendMessage("${CC.D_GRAY}- ${it.size} player(s) online")
+            }
+    }
+
+    @AssignPermission
     @Subcommand("disguise")
     @CommandCompletion("@players @ranks")
     @Description("Set a player's display rank.")
