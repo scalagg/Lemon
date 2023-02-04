@@ -23,7 +23,7 @@ import java.util.UUID
 @Service
 object ChatMessageFilterHandler
 {
-    private val phraseFilters = mutableListOf<MessagePhraseFilter>()
+    val phraseFilters = mutableListOf<MessagePhraseFilter>()
     private val messageFilters = mutableListOf<ChatMessageFilter>()
 
     @Configure
