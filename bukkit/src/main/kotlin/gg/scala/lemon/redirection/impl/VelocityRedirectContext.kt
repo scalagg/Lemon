@@ -6,6 +6,7 @@ import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bungee.BungeeUtil
+import net.evilblock.cubed.util.nms.MinecraftReflection
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -57,8 +58,7 @@ object VelocityRedirectContext : PlayerRedirect<Player>, PlayerRedirectHandler
             // polling the TPS on this thread won't be
             // a problem for us since it's not bukkit's
             // main thread (which at the time would be pretty weird)
-            val ticksPerSecond = Lemon.instance
-                .serverStatisticProvider.ticksPerSecond()
+            val ticksPerSecond = MinecraftReflection.getTPS()
 
             PlayerRedirectionResponse(
                 ticksPerSecond >= 18.50,
