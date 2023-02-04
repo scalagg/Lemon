@@ -49,7 +49,7 @@ object LemonConstants {
     @JvmStatic
     val LOBBY: Boolean
         get() {
-            return Lemon.instance.settings.group.equals("hub", true)
+            return Lemon.instance.settings.group.contains("hub", true)
         }
 
     @JvmStatic
