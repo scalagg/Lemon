@@ -71,8 +71,18 @@ open class PlayerRedirectSystem<T>(
                 // asynchronously, so we can
                 // join the future
                 val processed = handler
-                    .process(message).join()
-                    .wrap(message.uniqueId)
+                    .process(message)
+                    .exceptionally {
+                        it.printStackTrace()
+                        return@exceptionally null
+                    }
+                    .join()
+                    ?.wrap(message.uniqueId)
+                    ?: PlayerRedirectMessageResponse(
+                        message.uniqueId, "",
+                        false,
+                        "an issue occurring on the target server", true
+                    )
 
                 if (processed.allowed)
                 {
