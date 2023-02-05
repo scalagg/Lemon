@@ -22,12 +22,6 @@ class SettingsConfigProcessor
     @Comment("Shall console be able to view chat messages?")
     val consoleChat = false
 
-    @Comment("Should we log important data to files?")
-    val logDataToFile = false
-
-    @Comment("Should we enable our disguise system on this server?")
-    val disguiseEnabled = false
-
     val blacklistedCommands = listOf(
         "ver", "icanhasbukkit"
     )

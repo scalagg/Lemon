@@ -22,13 +22,6 @@ import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.command.customizer.LemonCommandCustomizer
-import gg.scala.lemon.disguise.DisguiseProvider
-import gg.scala.lemon.disguise.command.DisguiseAdminCommand
-import gg.scala.lemon.disguise.command.DisguiseCheckCommand
-import gg.scala.lemon.disguise.command.DisguiseCommand
-import gg.scala.lemon.disguise.command.DisguiseManualCommand
-import gg.scala.lemon.disguise.information.DisguiseInfoProvider
-import gg.scala.lemon.disguise.update.DisguiseListener
 import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
@@ -165,21 +158,6 @@ class Lemon : ExtendedScalaPlugin()
             }ms"
         )
     }
-
-    @ManualRegister
-    fun manualRegister(
-        commandManager: ScalaCommandManager
-    )
-    {
-        if (settings.disguiseEnabled)
-        {
-            commandManager.registerCommand(DisguiseAdminCommand)
-            commandManager.registerCommand(DisguiseCheckCommand)
-            commandManager.registerCommand(DisguiseCommand)
-            commandManager.registerCommand(DisguiseManualCommand)
-        }
-    }
-
     private fun configureQol()
     {
         val initialization = System.currentTimeMillis()
@@ -190,19 +168,6 @@ class Lemon : ExtendedScalaPlugin()
         )
 
         NametagHandler.registerProvider(DefaultNametagProvider)
-
-        if (settings.disguiseEnabled)
-        {
-            flavor {
-                inject(DisguiseInfoProvider)
-                inject(DisguiseProvider)
-            }
-
-            server.pluginManager
-                .registerEvents(DisguiseListener, this)
-
-            logger.info("Loaded disguise resources.")
-        }
 
         Events.subscribe(PlayerInteractAtEntityEvent::class.java)
             .filter { it.rightClicked is Player && it.rightClicked.hasMetadata("frozen") }
