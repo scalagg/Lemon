@@ -33,126 +33,115 @@ import java.util.concurrent.ForkJoinPool
 object PunishmentHandler
 {
     private fun fetchPunishments(
-        filter: Bson, test: (Punishment) -> Boolean
+        filter: Bson,
+        test: ((Punishment) -> Boolean)? = null
     ): CompletableFuture<List<Punishment>>
     {
         val controller = DataStoreObjectControllerCache.findNotNull<Punishment>()
 
-        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Punishment>, CompletableFuture<List<Punishment>>>(
-            DataStoreStorageType.MONGO
-        ) {
-            return@useLayerWithReturn this.loadAllWithFilter(filter).thenApply {
-                val mutableList = mutableListOf<Punishment>()
+        return controller
+            .useLayerWithReturn<MongoDataStoreStorageLayer<Punishment>, CompletableFuture<List<Punishment>>>(
+                DataStoreStorageType.MONGO
+            ) {
+                return@useLayerWithReturn this
+                    .loadAllWithFilter(filter)
+                    .thenApply {
+                        if (test == null)
+                            return@thenApply it.values.toMutableList()
 
-                it.forEach { entry ->
-                    if (test.invoke(entry.value)) {
-                        mutableList.add(entry.value)
+                        val mutableList = mutableListOf<Punishment>()
+
+                        it.forEach { entry ->
+                            if (test.invoke(entry.value))
+                            {
+                                mutableList.add(entry.value)
+                            }
+                        }
+
+                        return@thenApply mutableList
                     }
-                }
-
-                return@thenApply mutableList
             }
-        }
     }
 
     fun fetchPunishmentsForTargetOfIntensity(
         uuid: UUID,
         intensity: PunishmentCategoryIntensity
-    ): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
-            Filters.eq("target", uuid.toString())
-        ) {
-            it.isIntensity(intensity)
-        }
+    ) = fetchPunishments(
+        Filters.eq("target", uuid.toString())
+    ) {
+        it.isIntensity(intensity)
     }
 
     fun fetchPunishmentsByExecutorOfIntensity(
         uuid: UUID,
         intensity: PunishmentCategoryIntensity
-    ): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
-            Filters.eq("addedBy", uuid.toString())
-        ) {
-            it.isIntensity(intensity)
-        }
+    ) = fetchPunishments(
+        Filters.eq("addedBy", uuid.toString())
+    ) {
+        it.isIntensity(intensity)
     }
 
     fun fetchPunishmentsForTargetOfCategory(
         uuid: UUID,
         category: PunishmentCategory
-    ): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
-            Filters.eq("target", uuid.toString())
-        ) {
-            it.category == category
-        }
-    }
+    ) = fetchPunishments(
+        Filters.and(
+            Filters.eq("target", uuid.toString()),
+            Filters.eq("category", category.name)
+        )
+    )
 
     fun fetchPunishmentsForTargetOfCategoryAndActive(
         uuid: UUID,
         category: PunishmentCategory
-    ): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
-            Filters.eq("target", uuid.toString())
-        ) {
-            it.category == category && it.isActive
-        }
+    ) = fetchPunishments(
+        Filters.and(
+            Filters.eq("target", uuid.toString()),
+            Filters.eq("category", category.name)
+        )
+    ) {
+        it.isActive
     }
 
     fun fetchPunishmentsByExecutorOfCategory(
         uuid: UUID,
         category: PunishmentCategory
-    ): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
-            Filters.eq("addedBy", uuid.toString())
-        ) {
-            it.category == category
-        }
-    }
+    ) = fetchPunishments(
+        Filters.and(
+            Filters.eq("addedBy", uuid.toString()),
+            Filters.eq("category", category.name)
+        )
+    )
 
     fun fetchPunishmentsRemovedByOfCategory(
         uuid: UUID,
         category: PunishmentCategory
-    ): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
-            Filters.eq("removedBy", uuid.toString())
-        ) {
-            it.category == category
-        }
-    }
+    ) = fetchPunishments(
+        Filters.and(
+            Filters.eq("removedBy", uuid.toString()),
+            Filters.eq("category", category.name)
+        )
+    )
 
-    fun fetchPunishmentsRemovedBy(uuid: UUID): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
+    fun fetchPunishmentsRemovedBy(uuid: UUID) =
+        fetchPunishments(
             Filters.eq("removedBy", uuid.toString())
-        ) {
-            true
-        }
-    }
+        )
 
-    fun fetchAllPunishmentsForTarget(uuid: UUID): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
+    fun fetchAllPunishmentsForTarget(uuid: UUID) =
+        fetchPunishments(
             Filters.eq("target", uuid.toString())
-        ) { true }
-    }
+        )
 
-    fun fetchAllPunishmentsByExecutor(uuid: UUID): CompletableFuture<List<Punishment>>
-    {
-        return fetchPunishments(
+    fun fetchAllPunishmentsByExecutor(uuid: UUID) =
+        fetchPunishments(
             Filters.eq("addedBy", uuid.toString())
-        ) { true }
-    }
+        )
 
     fun fetchExactPunishmentById(uuid: UUID): CompletableFuture<Punishment?>
     {
-        return DataStoreObjectControllerCache.findNotNull<Punishment>()
+        return DataStoreObjectControllerCache
+            .findNotNull<Punishment>()
             .load(uuid, DataStoreStorageType.MONGO)
     }
 
