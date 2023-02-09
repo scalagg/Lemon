@@ -21,57 +21,71 @@ import java.util.concurrent.CompletableFuture
  */
 object GrantHandler
 {
-    private fun fetchGrants(filter: Bson, test: (Grant) -> Boolean): CompletableFuture<List<Grant>>
+    private fun fetchGrants(
+        filter: Bson, test: ((Grant) -> Boolean)? = null
+    ): CompletableFuture<List<Grant>>
     {
         val controller = DataStoreObjectControllerCache.findNotNull<Grant>()
 
-        return controller.useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(
-            DataStoreStorageType.MONGO
-        ) {
-            return@useLayerWithReturn this.loadAllWithFilter(filter).thenApply {
-                val mutableList = mutableListOf<Grant>()
+        return controller
+            .useLayerWithReturn<MongoDataStoreStorageLayer<Grant>, CompletableFuture<List<Grant>>>(
+                DataStoreStorageType.MONGO
+            ) {
+                return@useLayerWithReturn this
+                    .loadAllWithFilter(filter)
+                    .thenApply {
+                        if (test == null)
+                            return@thenApply it.values.toList()
 
-                it.forEach { entry ->
-                    if (test.invoke(entry.value))
-                    {
-                        mutableList.add(entry.value)
+                        val mutableList = mutableListOf<Grant>()
+
+                        it.forEach { entry ->
+                            if (test.invoke(entry.value))
+                            {
+                                mutableList.add(entry.value)
+                            }
+                        }
+
+                        return@thenApply mutableList
                     }
-                }
-
-                return@thenApply mutableList
             }
-        }
     }
 
     fun fetchGrantsByExecutor(uuid: UUID): CompletableFuture<List<Grant>>
     {
         return fetchGrants(
             Filters.eq("addedBy", uuid.toString())
-        ) { true }
+        )
     }
 
     fun fetchGrantsFor(uuid: UUID?): CompletableFuture<List<Grant>>
     {
         return fetchGrants(
             Filters.eq("target", uuid.toString())
-        ) { true }
+        )
     }
 
-    fun registerGrant(grant: Grant)
-    {
-        grant.save().whenComplete { _, u ->
-            u?.printStackTrace()
+    fun registerGrant(grant: Grant) = grant
+        .save()
+        .exceptionally {
+            it.printStackTrace()
+            return@exceptionally null
         }
-    }
 
     fun invalidateAllGrantsBy(uuid: UUID, sender: CommandSender): CompletableFuture<Void>
     {
-        return fetchGrantsByExecutor(uuid).thenApply { handle(uuid, sender, it); return@thenApply null }
+        return fetchGrantsByExecutor(uuid)
+            .thenAccept {
+                handle(uuid, sender, it)
+            }
     }
 
     fun invalidateAllGrantsFor(uuid: UUID, sender: CommandSender): CompletableFuture<Void>
     {
-        return fetchGrantsFor(uuid).thenApply { handle(uuid, sender, it); return@thenApply null }
+        return fetchGrantsFor(uuid)
+            .thenAccept {
+                handle(uuid, sender, it)
+            }
     }
 
     fun handle(uuid: UUID, sender: CommandSender, list: List<Grant>)
@@ -107,7 +121,8 @@ object GrantHandler
 
     fun fetchExactGrantById(uuid: UUID): CompletableFuture<Grant?>
     {
-        return DataStoreObjectControllerCache.findNotNull<Grant>()
+        return DataStoreObjectControllerCache
+            .findNotNull<Grant>()
             .load(uuid, DataStoreStorageType.MONGO)
     }
 
