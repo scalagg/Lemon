@@ -6,7 +6,6 @@ import gg.scala.lemon.player.enums.HistoryViewType
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.CubedCacheUtil
-import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC

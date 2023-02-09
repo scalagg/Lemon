@@ -14,41 +14,35 @@ class LanguageConfigProcessor
     val tempBanMessage =
         "${CC.RED}You are banned from Scala for %s.\n" +
                 "${CC.RED}You were banned for: ${CC.GRAY}%s (#%s)\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
-                "${CC.GOLD}You may also not purchase an unban for this type of ban."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n"
 
     @Coloured
     val permBanMessage =
         "${CC.RED}You are permanently banned from Scala\n" +
                 "${CC.RED}You were banned for: ${CC.GRAY}%s (#%s)\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
-                "${CC.GOLD}You may also not purchase an unban for this type of ban."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n"
 
     @Coloured
     val blacklistMessage =
         "${CC.RED}You are blacklisted from Scala\n" +
-                "${CC.GRAY}You may not appeal this type of punishment.\n" +
-                "${CC.GOLD}You may also not purchase an unban for this type of ban."
+                "${CC.GRAY}You may not appeal this type of punishment.\n"
 
     @Coloured
     val banRelationTemporaryMessage =
         "${CC.RED}Your IP is temporarily banned from Scala\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
-                "${CC.GOLD}You may also not purchase an unban for this type of ban."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n"
 
     @Coloured
     val banRelationPermanentMessage =
         "${CC.RED}Your IP is permanently banned from Scala\n" +
                 "${CC.RED}Your ban is in relation to the account: ${CC.GRAY}%s\n" +
-                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n" +
-                "${CC.GOLD}You may also not purchase an unban for this type of ban."
+                "${CC.GRAY}If you feel this ban is unjustified, create a ticket at www.scala.gg.\n"
 
     @Coloured
     val blacklistRelationMessage =
         "${CC.RED}Your IP is permanently blacklisted from Scala\n" +
-                "${CC.RED}Your blacklist is in relation to the account: ${CC.GRAY}%s\n" +
-                "${CC.GRAY}You may also not purchase an unban for this type of ban."
+                "${CC.RED}Your blacklist is in relation to the account: ${CC.GRAY}%s\n"
 
     @Coloured
     @Comment(
@@ -73,6 +67,9 @@ class LanguageConfigProcessor
         ${CC.B_RED}You've been warned!
         ${CC.RED}Reason: ${CC.WHITE}%s
     """.trimIndent()
+
+    @Coloured
+    val cooldownDenyMessageAddition = "Purchase ${CC.GREEN}Plus${CC.RED} rank or higher to bypass this!"
 
     @Coloured
     var playerDataLoad =

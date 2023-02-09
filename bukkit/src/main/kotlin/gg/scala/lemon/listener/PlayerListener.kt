@@ -355,7 +355,7 @@ object PlayerListener : Listener
             CommandCooldown::class.java
         )!!
 
-        if (!CooldownHandler.notifyAndContinue(CommandCooldown::class.java, player))
+        if (!CooldownHandler.notifyAndContinue(CommandCooldown::class.java, player, "performing a command again"))
         {
             event.isCancelled = true
             return

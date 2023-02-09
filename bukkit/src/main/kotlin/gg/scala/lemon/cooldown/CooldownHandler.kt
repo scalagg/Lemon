@@ -2,6 +2,7 @@ package gg.scala.lemon.cooldown
 
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.cooldown.type.PlayerCooldown
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
@@ -49,13 +50,24 @@ object CooldownHandler
 
     fun <T> notifyAndContinue(clazz: Class<T>, player: Player): Boolean
     {
+        return notifyAndContinue(clazz, player, "")
+    }
+
+    fun <T> notifyAndContinue(
+        clazz: Class<T>, player: Player, action: String
+    ): Boolean
+    {
         val cooldown = cooldowns[clazz] ?: return true
 
         return if (cooldown.isActive(player)) {
             val formatted = cooldown.getRemainingFormatted(player)
 
             player.sendMessage(
-                "${CC.RED}You're on ${cooldown.id()} cooldown, please wait $formatted."
+                "${CC.RED}Please wait $formatted before ${
+                    if (action == "") cooldown.id() else action
+                } again! ${
+                    Lemon.instance.languageConfig.cooldownDenyMessageAddition 
+                }"
             )
 
             false
