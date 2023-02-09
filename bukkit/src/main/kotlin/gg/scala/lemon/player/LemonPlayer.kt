@@ -699,7 +699,7 @@ class LemonPlayer(
             {
                 "in relation to a ${
                     punishment.category.inf
-                }."
+                } player."
             } else
             {
                 "${punishment.category.inf}."
