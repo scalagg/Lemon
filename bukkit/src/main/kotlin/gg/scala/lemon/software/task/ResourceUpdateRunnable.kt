@@ -24,7 +24,8 @@ object ResourceUpdateRunnable : Runnable
                 it.checkForGrantUpdate()
             }
 
-            PunishmentHandler.fetchAllPunishmentsForTarget(player.uniqueId)
+            PunishmentHandler
+                .fetchAllPunishmentsForTarget(player.uniqueId)
                 .thenAccept {
                     it.forEach { punishment ->
                         QuickAccess.attemptExpiration(punishment)

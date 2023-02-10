@@ -20,7 +20,8 @@ object RankHandler
     @Configure
     fun configure()
     {
-        DataStoreObjectControllerCache.findNotNull<Rank>()
+        DataStoreObjectControllerCache
+            .findNotNull<Rank>()
             .loadAll(DataStoreStorageType.MONGO)
             .thenAccept { entries ->
                 entries.forEach {
@@ -67,7 +68,10 @@ object RankHandler
 
     fun getDefaultRank(): Rank
     {
-        return findRank("Default") ?: createDefaultRank()
+        return findRank("Default")
+            ?: throw IllegalStateException(
+                "No default rank found, early call?"
+            )
     }
 
     fun getSortedRankString(): String
