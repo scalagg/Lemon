@@ -2,6 +2,7 @@ package gg.scala.lemon.player.rank
 
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.common.Savable
+import gg.scala.commons.annotations.Model
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
@@ -14,10 +15,8 @@ import net.evilblock.cubed.util.CC
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class Rank
-
-@JvmOverloads
-constructor(
+@Model
+class Rank(
     val uuid: UUID = UUID.randomUUID(),
     var name: String
 ) : Savable, IDataStoreObject

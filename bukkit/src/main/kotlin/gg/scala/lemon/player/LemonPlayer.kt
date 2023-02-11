@@ -1,6 +1,7 @@
 package gg.scala.lemon.player
 
 import gg.scala.common.Savable
+import gg.scala.commons.annotations.Model
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.channel.ChatChannelService
@@ -48,6 +49,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.logging.Level
 
+@Model
 class LemonPlayer(
     var uniqueId: UUID,
 

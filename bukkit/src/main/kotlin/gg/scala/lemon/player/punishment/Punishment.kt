@@ -1,6 +1,7 @@
 package gg.scala.lemon.player.punishment
 
 import gg.scala.common.Savable
+import gg.scala.commons.annotations.Model
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.util.other.Expirable
@@ -10,6 +11,7 @@ import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+@Model
 class Punishment(
     val uuid: UUID,
     val target: UUID,

@@ -3,8 +3,7 @@ package gg.scala.lemon.player.grant
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.common.Savable
 import gg.scala.commons.agnostic.sync.ServerSync
-import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.DataStoreOrchestrator
+import gg.scala.commons.annotations.Model
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -13,10 +12,10 @@ import gg.scala.lemon.util.other.Expirable
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
-import net.evilblock.cubed.util.bukkit.Tasks
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+@Model
 class Grant(
     val uuid: UUID,
     var target: UUID,

@@ -3,6 +3,7 @@ package gg.scala.lemon.cooldown
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.cooldown.type.PlayerCooldown
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
@@ -26,11 +27,15 @@ object CooldownHandler
     @Configure
     fun configure()
     {
-        Events.subscribe(PlayerQuitEvent::class.java).handler {
-            cooldowns.values.forEach { cooldown ->
-                cooldown.reset(it.player)
+        Events
+            .subscribe(PlayerQuitEvent::class.java)
+            .handler {
+                cooldowns.values.forEach { cooldown ->
+                    cooldown.reset(it.player)
+                }
             }
-        }
+
+        register(CommandCooldown)
     }
 
     fun register(vararg cooldown: PlayerCooldown)
@@ -59,14 +64,15 @@ object CooldownHandler
     {
         val cooldown = cooldowns[clazz] ?: return true
 
-        return if (cooldown.isActive(player)) {
+        return if (cooldown.isActive(player))
+        {
             val formatted = cooldown.getRemainingFormatted(player)
 
             player.sendMessage(
                 "${CC.RED}Please wait $formatted before ${
                     if (action == "") cooldown.id() else action
                 } again! ${
-                    Lemon.instance.languageConfig.cooldownDenyMessageAddition 
+                    Lemon.instance.languageConfig.cooldownDenyMessageAddition
                 }"
             )
 
