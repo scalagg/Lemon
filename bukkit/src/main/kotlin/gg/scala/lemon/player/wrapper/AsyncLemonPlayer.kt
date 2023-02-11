@@ -161,7 +161,7 @@ data class AsyncLemonPlayer(
 
             val poppedFirstArg = context?.popFirstArg()
 
-            var actualUniqueId = ctx@{
+            val actualUniqueId = ctx@{
                 if (uniqueId != null)
                     // fallback to true for faster lookups when searching for alt accounts
                     return@ctx uniqueId to true
