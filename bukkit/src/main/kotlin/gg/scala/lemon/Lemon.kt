@@ -22,7 +22,6 @@ import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.command.customizer.LemonCommandCustomizer
-import gg.scala.lemon.handler.DataStoreOrchestrator
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -139,10 +138,6 @@ class Lemon : ExtendedScalaPlugin()
                 LemonPlayer::class.java,
                 LemonPlayerTypeAdapter
             )
-        }
-
-        this.flavor {
-            this.inject(DataStoreOrchestrator)
         }
 
         this.configureHandlers()
