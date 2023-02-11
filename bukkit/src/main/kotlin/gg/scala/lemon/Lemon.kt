@@ -153,6 +153,7 @@ class Lemon : ExtendedScalaPlugin()
             }ms"
         )
     }
+
     private fun configureQol()
     {
         val initialization = System.currentTimeMillis()

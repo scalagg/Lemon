@@ -3,14 +3,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.20"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
     compileOnly "com.github.mkotb:ConfigAPI:e1c8df3f13"
 
-    compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
+    compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.8.0"
     implementation project(":common")
 
-    kapt "gg.scala.commons:bukkit:3.1.1"
-    compileOnly "gg.scala.commons:bukkit:3.1.1"
+    kapt "gg.scala.commons:bukkit:3.1.2"
+    compileOnly "gg.scala.commons:bukkit:3.1.2"
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
     compileOnly "me.clip:placeholderapi:2.11.2"
