@@ -6,6 +6,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
+import gg.scala.lemon.player.punishment.event.PlayerPunishEvent
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.attemptRemoval
 import gg.scala.lemon.util.QuickAccess.fetchColoredName
@@ -342,6 +343,11 @@ object PunishmentHandler
                         "uniqueId" to uuid.toString(),
                         "reason" to punishment.addedReason
                     ).publish()
+                }
+            }.thenRun {
+                Tasks.sync {
+                    PlayerPunishEvent(punishment.target, punishment)
+                        .callEvent()
                 }
             }
         }
