@@ -30,7 +30,7 @@ class GrantRankContextMenu(
 ) : PaginatedMenu() {
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Granting ${Constants.DOUBLE_ARROW_RIGHT} $colored${CC.D_GRAY} ${Constants.DOUBLE_ARROW_RIGHT} Rank"
+        return "Granting for $colored${CC.D_GRAY}..."
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
