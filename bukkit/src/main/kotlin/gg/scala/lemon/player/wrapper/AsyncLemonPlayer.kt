@@ -30,6 +30,8 @@ data class AsyncLemonPlayer(
     val future: (Pair<UUID, Boolean>) -> CompletableFuture<List<LemonPlayer>>
 )
 {
+    var autoAccountSelectionOnMultiple = false
+
     fun computeNow() = future(uniqueIdCompute())
 
     fun validatePlayers(
@@ -79,6 +81,14 @@ data class AsyncLemonPlayer(
                         }
 
                     val bestChoice = sortedByLastLogin.first()
+
+                    if (
+                        autoAccountSelectionOnMultiple ||
+                        !sender.hasPermission("lemon.account-selection-allowed-on-command-exec")
+                        )
+                    {
+                        return@thenAcceptAsync lambda.invoke(bestChoice)
+                    }
 
                     if (sender is Player)
                     {
