@@ -1,20 +1,17 @@
 package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
-import gg.scala.lemon.menu.modmode.InspectionMenu
+import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
-import me.lucko.helper.Events
 import org.bson.conversions.Bson
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -73,6 +70,19 @@ object PlayerHandler
             ) {
                 this.loadAllWithFilter(filter)
             }
+
+    fun updateAccountUsernamesWithUsername(uniqueId: UUID) =
+        fetchPlayerAccountsFiltered(
+            Filters.and(
+                Filters.eq("name", ScalaStoreUuidCache.username(uniqueId)),
+                Filters.ne("uniqueId", uniqueId.toString())
+            )
+        ).thenAcceptAsync {
+            it.values.forEach { player ->
+                // new username is automatically grabbed
+                player.save().join()
+            }
+        }!!
 
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>>
     {

@@ -89,6 +89,14 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
                 )
             )
 
+            val accountUsername = jsonObject
+                .get("name").asString
+
+            if (player.name != accountUsername)
+            {
+                player.nameChangeDetected = true
+            }
+
             player.timestamp =
                 jsonObject
                     .get("timestamp")

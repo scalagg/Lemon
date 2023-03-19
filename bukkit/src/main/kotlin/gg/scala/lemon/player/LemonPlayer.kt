@@ -62,6 +62,8 @@ class LemonPlayer(
     @Timestamp
     var timestamp = 0L
 
+    var nameChangeDetected = false
+
     override val identifier: UUID
         get() = uniqueId
 
@@ -827,6 +829,14 @@ class LemonPlayer(
             )
         }.thenComposeAsync {
             checkForIpRelative()
+        }.thenComposeAsync {
+            if (this.nameChangeDetected)
+            {
+                return@thenComposeAsync CompletableFuture
+                    .completedFuture(null)
+            }
+
+            PlayerHandler.updateAccountUsernamesWithUsername(uniqueId)
         }
     }
 
