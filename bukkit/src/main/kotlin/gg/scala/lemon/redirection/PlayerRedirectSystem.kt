@@ -5,6 +5,7 @@ import gg.scala.aware.conversation.ConversationFactoryBuilder
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.redirection.expectation.PlayerRedirectExpectationEvent
+import gg.scala.lemon.throwAnyExceptions
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
@@ -72,10 +73,7 @@ open class PlayerRedirectSystem<T>(
                 // join the future
                 val processed = handler
                     .process(message)
-                    .exceptionally {
-                        it.printStackTrace()
-                        return@exceptionally null
-                    }
+                    .throwAnyExceptions()
                     .join()
                     ?.wrap(message.uniqueId)
                     ?: PlayerRedirectMessageResponse(

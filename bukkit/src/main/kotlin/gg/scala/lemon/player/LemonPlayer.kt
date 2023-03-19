@@ -25,6 +25,7 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.KICK
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.MUTE
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.throwAnyExceptions
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.GrantRecalculationUtil
 import gg.scala.lemon.util.QuickAccess
@@ -305,115 +306,113 @@ class LemonPlayer(
                 }
         }
 
-        return GrantHandler.fetchGrantsFor(uniqueId).thenAccept { grants ->
-            if (grants == null || grants.isEmpty())
-            {
+        return GrantHandler
+            .fetchGrantsFor(uniqueId)
+            .thenAccept { grants ->
+                if (grants == null || grants.isEmpty())
+                {
+                    if (activeGrant != null)
+                    {
+                        if (LemonConstants.DEBUG)
+                        {
+                            Lemon.instance.logger.info("Skipping entity grant update for $name as their active grant is not-null.")
+                        }
+                    } else
+                    {
+                        setupAutomaticGrant(grants)
+                    }
+
+                    return@thenAccept
+                }
+
+                var shouldNotifyPlayer = autoNotify
+                val previousRank = fetchPreviousRank(grants)
+
+                grants.forEach { grant ->
+                    if (!grant.isRemoved && grant.hasExpired)
+                    {
+                        grant.removedReason = "Expired"
+                        grant.removedAt = System.currentTimeMillis()
+                        grant.removedOn = Lemon.instance.settings.id
+
+                        grant.save()
+                    }
+                }
+
+                run {
+                    val oldGrant = this.activeGrant
+
+                    this.activeGrant = GrantRecalculationUtil
+                        .getProminentGrant(grants)
+
+                    // This should never happen, so we will
+                    // revert the grant back to the old grant.
+                    if (this.activeGrant == null && oldGrant != null)
+                    {
+                        this.activeGrant = oldGrant
+                        return@thenAccept
+                    }
+                }
+
+                var shouldRecalculatePermissions = forceRecalculatePermissions
+
+                if (
+                    previousRank != null && activeGrant != null &&
+                    previousRank != activeGrant!!.getRank().uuid
+                )
+                {
+                    shouldRecalculatePermissions = true
+                    shouldNotifyPlayer = true
+                }
+
+                var subGrant: Grant? = null
+
                 if (activeGrant != null)
                 {
-                    if (LemonConstants.DEBUG)
+                    subGrant = GrantRecalculationUtil
+                        .getProminentSubGrant(
+                            activeGrant!!, grants
+                        )
+
+                    if (
+                        subGrant != null && this.activeSubGrant?.uuid != subGrant.uuid &&
+                        subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid
+                    )
                     {
-                        Lemon.instance.logger.info("Skipping entity grant update for $name as their active grant is not-null.")
+                        shouldNotifyPlayer = true
+                        shouldRecalculatePermissions = true
                     }
-                } else
+                }
+
+                if (shouldNotifyPlayer && !connecting)
+                {
+                    bukkitPlayer?.ifPresent {
+                        notifyPlayerOfRankUpdate(
+                            it, this.activeGrant!!
+                        )
+
+                        RankChangeEvent(
+                            it, previousRank, activeGrant!!.rankId
+                        ).dispatch()
+                    }
+                }
+
+                if (subGrant != null)
+                {
+                    this.activeSubGrant = subGrant
+                }
+
+                if (activeGrant == null)
                 {
                     setupAutomaticGrant(grants)
                 }
 
-                return@thenAccept
-            }
-
-            var shouldNotifyPlayer = autoNotify
-            val previousRank = fetchPreviousRank(grants)
-
-            grants.forEach { grant ->
-                if (!grant.isRemoved && grant.hasExpired)
+                if (shouldRecalculatePermissions)
                 {
-                    grant.removedReason = "Expired"
-                    grant.removedAt = System.currentTimeMillis()
-                    grant.removedOn = Lemon.instance.settings.id
-
-                    grant.save()
+                    handlePermissionApplication(grants, shouldCalculateNow)
                 }
             }
-
-            run {
-                val oldGrant = this.activeGrant
-
-                this.activeGrant = GrantRecalculationUtil
-                    .getProminentGrant(grants)
-
-                // This should never happen, so we will
-                // revert the grant back to the old grant.
-                if (this.activeGrant == null && oldGrant != null)
-                {
-                    this.activeGrant = oldGrant
-                    return@thenAccept
-                }
-            }
-
-            var shouldRecalculatePermissions = forceRecalculatePermissions
-
-            if (
-                previousRank != null && activeGrant != null &&
-                previousRank != activeGrant!!.getRank().uuid
-            )
-            {
-                shouldRecalculatePermissions = true
-                shouldNotifyPlayer = true
-            }
-
-            var subGrant: Grant? = null
-
-            if (activeGrant != null)
-            {
-                subGrant = GrantRecalculationUtil
-                    .getProminentSubGrant(
-                        activeGrant!!, grants
-                    )
-
-                if (
-                    subGrant != null && this.activeSubGrant?.uuid != subGrant.uuid &&
-                    subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid
-                )
-                {
-                    shouldNotifyPlayer = true
-                    shouldRecalculatePermissions = true
-                }
-            }
-
-            if (shouldNotifyPlayer && !connecting)
-            {
-                bukkitPlayer?.ifPresent {
-                    notifyPlayerOfRankUpdate(
-                        it, this.activeGrant!!
-                    )
-
-                    RankChangeEvent(
-                        it, previousRank, activeGrant!!.rankId
-                    ).dispatch()
-                }
-            }
-
-            if (subGrant != null)
-            {
-                this.activeSubGrant = subGrant
-            }
-
-            if (activeGrant == null)
-            {
-                setupAutomaticGrant(grants)
-            }
-
-            if (shouldRecalculatePermissions)
-            {
-                handlePermissionApplication(grants, shouldCalculateNow)
-            }
-        }.exceptionally {
-            Lemon.instance.logger.log(
-                Level.WARNING, "Grant update", it
-            )
-            return@exceptionally null
-        }
+            .throwAnyExceptions()
     }
 
     private fun checkForIpRelative(): CompletableFuture<Void>

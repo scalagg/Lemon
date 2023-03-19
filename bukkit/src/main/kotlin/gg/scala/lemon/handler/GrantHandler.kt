@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
+import gg.scala.lemon.throwAnyExceptions
 import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.senderUuid
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -66,11 +67,7 @@ object GrantHandler
     }
 
     fun registerGrant(grant: Grant) = grant
-        .save()
-        .exceptionally {
-            it.printStackTrace()
-            return@exceptionally null
-        }
+        .save().throwAnyExceptions()
 
     fun invalidateAllGrantsBy(uuid: UUID, sender: CommandSender): CompletableFuture<Void>
     {

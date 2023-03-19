@@ -19,6 +19,7 @@ import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandCompletion
 import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.annotation.Syntax
+import gg.scala.lemon.throwAnyExceptions
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
@@ -104,10 +105,7 @@ object GrantsCommand : ScalaCommand()
                     uuid, type, grants, colored
                 ).openMenu(player)
             }
-            .exceptionally {
-                it.printStackTrace()
-                return@exceptionally null
-            }
+            .throwAnyExceptions()
     }
 
     @Syntax("<player>")

@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
+import gg.scala.lemon.throwAnyExceptions
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
@@ -131,10 +132,7 @@ object PlayerHandler
 
                 return@thenApplyAsync it.second.values.toList()
             }
-            .exceptionally {
-                it.printStackTrace()
-                return@exceptionally listOf<LemonPlayer>()
-            }
+            .throwAnyExceptions(listOf())
     }
 
     fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer>
