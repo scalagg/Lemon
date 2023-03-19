@@ -830,13 +830,15 @@ class LemonPlayer(
         }.thenComposeAsync {
             checkForIpRelative()
         }.thenComposeAsync {
-            if (this.nameChangeDetected)
+            if (!this.nameChangeDetected)
             {
                 return@thenComposeAsync CompletableFuture
                     .completedFuture(null)
             }
 
-            PlayerHandler.updateAccountUsernamesWithUsername(uniqueId)
+            save().thenComposeAsync {
+                PlayerHandler.updateAccountUsernamesWithUsername(uniqueId)
+            }
         }
     }
 

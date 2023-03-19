@@ -95,6 +95,7 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             if (player.name != accountUsername)
             {
                 player.nameChangeDetected = true
+                println("name change detected: $accountUsername -> ${player.name}")
             }
 
             player.timestamp =

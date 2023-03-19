@@ -77,11 +77,15 @@ object PlayerHandler
                 Filters.eq("name", ScalaStoreUuidCache.username(uniqueId)),
                 Filters.ne("uniqueId", uniqueId.toString())
             )
-        ).thenAcceptAsync {
-            it.values.forEach { player ->
-                // new username is automatically grabbed
-                player.save().join()
-            }
+        ).thenComposeAsync {
+            CompletableFuture.allOf(
+                *it.values
+                    .map { player ->
+                        // new username is automatically grabbed
+                        player.save()
+                    }
+                    .toTypedArray()
+            )
         }!!
 
     fun fetchAlternateAccountsFor(uuid: UUID): CompletableFuture<List<LemonPlayer>>
