@@ -53,25 +53,22 @@ object PlayerListener : Listener
     {
         val hostAddress = event.address.hostAddress ?: ""
 
+        fun createNewAccount() =
+            LemonPlayer(
+                uniqueId = event.uniqueId,
+                ipAddress = hostAddress,
+                firstLogin = true
+            )
+
         if (plugin.settings.dummyServer)
         {
-            this.playerController.localCache()[event.uniqueId] =
-                LemonPlayer(
-                    uniqueId = event.uniqueId,
-                    ipAddress = hostAddress,
-                    firstLogin = true
-                )
+            this.playerController.localCache()[event.uniqueId] = createNewAccount()
             return
         }
 
         val lemonPlayer = this.playerController
-            .loadOptimalCopy(event.uniqueId) {
-                LemonPlayer(
-                    uniqueId = event.uniqueId,
-                    ipAddress = hostAddress,
-                    firstLogin = true
-                )
-            }.join()
+            .loadOptimalCopy(event.uniqueId, ::createNewAccount)
+            .join()
 
         lemonPlayer.ipAddress = hostAddress
 

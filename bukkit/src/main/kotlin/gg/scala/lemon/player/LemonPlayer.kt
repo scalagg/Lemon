@@ -866,6 +866,11 @@ class LemonPlayer(
 
     fun completeFirstLogin(): CompletableFuture<Void>
     {
+        // making sure other account entries are up-to-date with their usernames to prevent
+        // an issue similar to my account
+        // (with its name history being wiped & servers having two GrowlyX account profiles for me)
+        this.nameChangeDetected = true
+
         updateOrAddMetadata(
             "first-connection",
             Metadata("${System.currentTimeMillis()}")

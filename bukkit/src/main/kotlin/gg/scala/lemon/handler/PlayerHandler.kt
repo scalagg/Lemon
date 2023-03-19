@@ -78,6 +78,10 @@ object PlayerHandler
                 Filters.ne("uniqueId", uniqueId.toString())
             )
         ).thenComposeAsync {
+            if (it.isEmpty())
+                return@thenComposeAsync CompletableFuture
+                    .completedFuture(null)
+
             CompletableFuture.allOf(
                 *it.values
                     .map { player ->
