@@ -911,16 +911,6 @@ class LemonPlayer(
         metadata.remove(id)
     }
 
-    fun removeMap()
-    {
-        bukkitPlayer?.inventory?.contents?.forEachIndexed { index, itemStack ->
-            if (itemStack != null && itemStack.type == Material.MAP)
-            {
-                bukkitPlayer?.inventory?.setItem(index, ItemStack(Material.AIR))
-            }
-        }
-    }
-
     fun performConnectionTasks()
     {
         handleOnConnection
