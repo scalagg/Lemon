@@ -39,6 +39,10 @@ object RedisHandler
         val server = message
             .retrieve<String>("server")
 
+        val senderIsStaff = message
+            .retrieveNullable<Boolean>("staff-member")
+            ?: false
+
         val channel = ChatChannelService
             .find(
                 message.retrieve("channel")
@@ -49,6 +53,20 @@ object RedisHandler
         {
             if (!channel.permissionLambda.invoke(other))
                 continue
+
+            val lemonTarget = PlayerHandler.find(other.uniqueId)
+                ?: continue
+
+            if (
+                channel.composite().identifier() == "default" &&
+                !senderIsStaff
+            )
+            {
+                if (lemonTarget.getSetting("global-chat-disabled"))
+                {
+                    continue
+                }
+            }
 
             channel.sendToPlayer(
                 other, channel.composite()

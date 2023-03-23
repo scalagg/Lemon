@@ -22,6 +22,9 @@ class SettingsConfigProcessor
     @Comment("Shall console be able to view chat messages?")
     val consoleChat = false
 
+    val defaultChatGsd = false
+    val defaultChatGsdGroupId = ""
+
     val blacklistedCommands = listOf(
         "ver", "icanhasbukkit"
     )

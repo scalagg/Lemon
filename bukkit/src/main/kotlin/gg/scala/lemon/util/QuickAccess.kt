@@ -149,7 +149,9 @@ object QuickAccess
             "rank" to sender.activeGrant!!
                 .getRank().uuid.toString(),
             "server" to Lemon.instance
-                .settings.id
+                .settings.id,
+            "staff-member" to sender
+                .hasPermission("scstaff.staff-member")
         ).publish()
     }
 

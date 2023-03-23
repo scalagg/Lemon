@@ -12,6 +12,9 @@ open class ChatChannel(
 )
 {
     var distributed = false
+    var distributionGroupScoped = false
+    var distributionGroup = ""
+
     var monitored = false
 
     var prefix = false
@@ -61,6 +64,12 @@ open class ChatChannel(
     {
         return apply { distributed = true }
     }
+
+    fun groupScopedDistribution(group: String) =
+        apply {
+            distributionGroupScoped = true
+            distributionGroup = group
+        }
 
     fun allowOnlyIf(
         lambda: (Player) -> Boolean

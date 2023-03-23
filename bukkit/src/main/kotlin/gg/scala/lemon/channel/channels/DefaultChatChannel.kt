@@ -1,8 +1,9 @@
 package gg.scala.lemon.channel.channels
 
+import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
 import gg.scala.lemon.channel.ChatChannelService
@@ -30,6 +31,9 @@ import java.util.*
 @Service
 object DefaultChatChannel : ChatChannelComposite
 {
+    @Inject
+    lateinit var plugin: Lemon
+
     private val colonComponent =
         Component.text(": ")
             .color(NamedTextColor.WHITE)
@@ -42,6 +46,15 @@ object DefaultChatChannel : ChatChannelComposite
             .import(this)
             .compose()
             .monitor()
+            .apply {
+                if (plugin.settings.defaultChatGsd)
+                {
+                    distribute()
+                    groupScopedDistribution(
+                        plugin.settings.defaultChatGsdGroupId
+                    )
+                }
+            }
 
         ChatChannelService
             .registerDefault(channel)
