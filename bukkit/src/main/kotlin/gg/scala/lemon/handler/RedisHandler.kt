@@ -40,7 +40,8 @@ object RedisHandler
             .retrieve<String>("server")
 
         val senderIsStaff = message
-            .retrieveNullable<Boolean>("staff-member")
+            .retrieveNullable<String>("staff-member")
+            ?.toBoolean()
             ?: false
 
         val channel = ChatChannelService
