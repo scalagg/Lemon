@@ -49,6 +49,14 @@ object RedisHandler
             )
             ?: return
 
+        if (channel.distributionGroupScoped)
+        {
+            if (channel.distributionGroup !in ServerSync.getLocalGameServer().groups)
+            {
+                return
+            }
+        }
+
         for (other in Bukkit.getOnlinePlayers())
         {
             if (!channel.permissionLambda.invoke(other))
