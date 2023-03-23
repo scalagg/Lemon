@@ -16,7 +16,7 @@ interface ChatChannelComposite
 
     fun format(
         sender: UUID,
-        receiver: Player,
+        receiver: Player?,
         message: String,
         server: String,
         rank: Rank

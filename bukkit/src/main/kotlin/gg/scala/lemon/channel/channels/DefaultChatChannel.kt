@@ -90,7 +90,7 @@ object DefaultChatChannel : ChatChannelComposite
 
     override fun format(
         sender: UUID,
-        receiver: Player,
+        receiver: Player?,
         message: String,
         server: String,
         rank: Rank
@@ -108,10 +108,17 @@ object DefaultChatChannel : ChatChannelComposite
 
         val colored = applyColors(
             bukkitPlayer, message
-        ).replace(
-            receiver.name,
-            "${CC.YELLOW}${receiver.name}${CC.RESET}"
-        )
+        ).let {
+            if (receiver != null)
+            {
+                return@let it.replace(
+                    receiver.name,
+                    "${CC.YELLOW}${receiver.name}${CC.RESET}"
+                )
+            }
+
+            return@let it
+        }
 
         val strippedPrefix = ChatColor
             .stripColor(rank.prefix)

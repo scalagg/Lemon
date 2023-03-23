@@ -1,5 +1,6 @@
 package gg.scala.lemon.channel
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.entity.Player
 
@@ -44,6 +45,17 @@ open class ChatChannel(
             .audiences.player(player)
 
         audience.sendMessage(textComponent)
+    }
+
+    fun sendToPlayerComponent(
+        player: Player,
+        component: Component
+    )
+    {
+        val audience = ChatChannelService
+            .audiences.player(player)
+
+        audience.sendMessage(component)
     }
 
     fun useComposite(

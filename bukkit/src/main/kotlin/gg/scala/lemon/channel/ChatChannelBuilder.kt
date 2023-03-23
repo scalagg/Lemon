@@ -22,7 +22,7 @@ class ChatChannelBuilder
     }
 
     private lateinit var identifier: String
-    private lateinit var formatter: (UUID, Player, String, String, Rank) -> TextComponent
+    private lateinit var formatter: (UUID, Player?, String, String, Rank) -> TextComponent
 
     private var composite: ChatChannelComposite? = null
 
@@ -45,7 +45,7 @@ class ChatChannelBuilder
     }
 
     fun format(
-        lambda: (UUID, Player, String, String, Rank) -> TextComponent
+        lambda: (UUID, Player?, String, String, Rank) -> TextComponent
     ): ChatChannelBuilder
     {
         return apply {
@@ -66,7 +66,7 @@ class ChatChannelBuilder
 
             override fun format(
                 sender: UUID,
-                receiver: Player,
+                receiver: Player?,
                 message: String,
                 server: String,
                 rank: Rank

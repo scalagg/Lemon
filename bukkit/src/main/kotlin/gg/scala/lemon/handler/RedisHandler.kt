@@ -12,9 +12,12 @@ import gg.scala.lemon.util.QuickAccess.broadcast
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks.sync
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
@@ -26,18 +29,10 @@ object RedisHandler
         message: AwareMessage
     )
     {
-        val content = message
-            .retrieve<String>("message")
-
-        val sender = message
-            .retrieve<UUID>("sender")
-
-        val rank = RankHandler.findRank(
-            message.retrieve<UUID>("rank")
-        ) ?: RankHandler.getDefaultRank()
-
-        val server = message
-            .retrieve<String>("server")
+        val content = GsonComponentSerializer.gson()
+            .deserialize(
+                message.retrieve("message")
+            )
 
         val senderIsStaff = message
             .retrieveNullable<String>("staff-member")
@@ -63,7 +58,8 @@ object RedisHandler
             if (!channel.permissionLambda.invoke(other))
                 continue
 
-            val lemonTarget = PlayerHandler.find(other.uniqueId)
+            val lemonTarget = PlayerHandler
+                .find(other.uniqueId)
                 ?: continue
 
             if (
@@ -77,13 +73,7 @@ object RedisHandler
                 }
             }
 
-            channel.sendToPlayer(
-                other, channel.composite()
-                    .format(
-                        sender, other, content,
-                        server, rank
-                    )
-            )
+            channel.sendToPlayerComponent(other, content)
         }
     }
 

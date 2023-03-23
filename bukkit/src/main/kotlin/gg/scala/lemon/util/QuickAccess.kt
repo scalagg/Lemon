@@ -7,6 +7,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
+import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.handler.GrantHandler
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
@@ -23,6 +24,7 @@ import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.visibility.VisibilityHandler
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
@@ -141,17 +143,26 @@ object QuickAccess
         sender: LemonPlayer
     )
     {
+        val channel = ChatChannelService
+            .find(channelId)
+            ?: return
+
+        val rank = sender.activeGrant!!.getRank()
+
         RedisHandler.buildMessage(
             "channel-message",
             "channel" to channelId,
-            "message" to message,
+            "message" to GsonComponentSerializer.gson().serialize(channel.composite()
+                .format(
+                    sender.uniqueId,
+                    null, message,
+                    Lemon.instance.settings.id,
+                    rank
+                )),
             "sender" to sender.uniqueId,
-            "rank" to sender.activeGrant!!
-                .getRank().uuid.toString(),
-            "server" to Lemon.instance
-                .settings.id,
             "staff-member" to sender
                 .hasPermission("scstaff.staff-member")
+                .toString(),
         ).publish()
     }
 
