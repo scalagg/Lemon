@@ -376,7 +376,8 @@ class LemonPlayer(
 
                     if (
                         subGrant != null && this.activeSubGrant?.uuid != subGrant.uuid &&
-                        subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid
+                        subGrant.getRank().uuid != RankHandler.getDefaultRank().uuid &&
+                        subGrant.getRank().uuid != activeGrant!!.getRank().uuid
                     )
                     {
                         shouldNotifyPlayer = true
@@ -388,7 +389,7 @@ class LemonPlayer(
                 {
                     bukkitPlayer?.ifPresent {
                         notifyPlayerOfRankUpdate(
-                            it, this.activeGrant!!
+                            it, this.activeGrant!!, subGrant, previousRank
                         )
 
                         RankChangeEvent(
@@ -503,7 +504,8 @@ class LemonPlayer(
     }
 
     private fun notifyPlayerOfRankUpdate(
-        player: Player, primaryGrant: Grant?
+        player: Player, primaryGrant: Grant?, subGrant: Grant?,
+        prevPrimaryGrant: UUID?
     )
     {
         val messenger = { grant: Grant, prefix: String, suffix: String ->
@@ -514,16 +516,22 @@ class LemonPlayer(
             if (!grant.isPermanent)
             {
                 player.sendMessage(
-                    "${CC.GREEN}This rank will expire in: ${CC.WHITE}${
-                        DateUtil.formatDateDiff(grant.expireDate.time)
-                    }"
+                    "${CC.GREEN}This rank will expire in: ${CC.WHITE}${grant.durationString}"
                 )
             }
         }
 
-        if (primaryGrant != null)
+        if (
+            primaryGrant != null &&
+            (prevPrimaryGrant == null || prevPrimaryGrant != primaryGrant.getRank().uuid)
+        )
         {
             messenger(primaryGrant, "You've been granted the", " rank")
+        }
+
+        if (subGrant != null)
+        {
+            messenger(subGrant, "You've been granted a sub-rank of", "")
         }
     }
 

@@ -1,7 +1,6 @@
 package gg.scala.lemon.handler
 
-import com.mongodb.client.model.Filters
-import gg.scala.aware.thread.AwareThreadContext
+import com.mongodb.client.model.Filters.eq
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.throwAnyExceptions
@@ -22,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  */
 object GrantHandler
 {
-    private fun fetchGrants(
+    private fun loadGrantsFilteredBy(
         filter: Bson, test: ((Grant) -> Boolean)? = null
     ): CompletableFuture<List<Grant>>
     {
@@ -54,15 +53,15 @@ object GrantHandler
 
     fun fetchGrantsByExecutor(uuid: UUID): CompletableFuture<List<Grant>>
     {
-        return fetchGrants(
-            Filters.eq("addedBy", uuid.toString())
+        return loadGrantsFilteredBy(
+            eq("addedBy", uuid.toString())
         )
     }
 
     fun fetchGrantsFor(uuid: UUID?): CompletableFuture<List<Grant>>
     {
-        return fetchGrants(
-            Filters.eq("target", uuid.toString())
+        return loadGrantsFilteredBy(
+            eq("target", uuid.toString())
         )
     }
 
@@ -126,11 +125,6 @@ object GrantHandler
     fun handleGrant(sender: CommandSender, grant: Grant)
     {
         grant.save().thenRunAsync {
-            RedisHandler.buildMessage(
-                "reload-player",
-                "uniqueId" to grant.target.toString()
-            ).publish(AwareThreadContext.SYNC)
-
             sender.sendMessage(
                 arrayOf(
                     "${CC.SEC}You've granted ${fetchColoredName(grant.target)}${CC.SEC} the ${
@@ -141,7 +135,9 @@ object GrantHandler
                             separator = "${CC.SEC}, ${CC.PRI}"
                         )
                     }${CC.SEC}.",
-                    "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}."
+                    "${CC.SEC}This grant will ${grant.fancyDurationString}${CC.SEC}${
+                        if (!grant.isPermanent) "${CC.GRAY} (on ${grant.expirationString})${CC.SEC}" else ""
+                    }."
                 )
             )
         }
