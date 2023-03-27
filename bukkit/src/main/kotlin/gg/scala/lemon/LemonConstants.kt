@@ -26,6 +26,9 @@ object LemonConstants {
     val STRING_MUTABLE_LIST: Type = object : TypeToken<MutableList<String>>() {}.type
 
     @JvmStatic
+    val STRING_MUTABLE_SET: Type = object : TypeToken<MutableSet<String>>() {}.type
+
+    @JvmStatic
     val UUID_MUTABLE_LIST: Type = object : TypeToken<MutableList<UUID>>() {}.type
 
     @JvmStatic

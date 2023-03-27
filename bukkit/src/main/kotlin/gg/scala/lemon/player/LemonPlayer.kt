@@ -73,7 +73,7 @@ class LemonPlayer(
 
     var previousIpAddress: String? = null
 
-    var pastIpAddresses = mutableListOf<String>()
+    var pastIpAddresses = mutableSetOf<String>()
     var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments =

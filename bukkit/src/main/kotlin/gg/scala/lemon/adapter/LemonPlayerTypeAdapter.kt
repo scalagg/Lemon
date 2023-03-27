@@ -131,14 +131,15 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
                     Serializers.gson
                         .fromJson(
                             pastIpAddresses,
-                            LemonConstants.STRING_MUTABLE_LIST
-                        ) as MutableList<String>
+                            LemonConstants.STRING_MUTABLE_SET
+                        ) as MutableSet<String>
                 }.getOrNull()
                 ?: (Serializers.gson
                     .fromJson(
                         pastIpAddresses,
                         LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
-                    ) as MutableMap<String, Long>).keys.toMutableList()
+                    ) as MutableMap<String, Long>)
+                    .keys.toMutableSet()
 
             player.pastLogins =
                 Serializers.gson.fromJson(
