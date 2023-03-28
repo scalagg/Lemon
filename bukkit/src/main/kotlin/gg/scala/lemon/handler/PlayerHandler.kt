@@ -137,7 +137,7 @@ object PlayerHandler
 
     fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer>
     {
-        var currentList = Bukkit.getOnlinePlayers()
+        val currentList = Bukkit.getOnlinePlayers()
             .mapNotNull {
                 findPlayer(it.uniqueId).orElse(null)
             }.sortedBy {
