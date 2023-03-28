@@ -1,5 +1,6 @@
 package gg.scala.lemon.command.management.invalidation
 
+import com.mongodb.client.model.Filters
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.punishment.Punishment
@@ -28,26 +29,22 @@ object InvalidatePunishmentRangeCommand : ScalaCommand()
     fun onInvalidate(
         sender: ConsoleCommandSender,
         min: Long, max: Long,
-        @Optional category: PunishmentCategory?
+        category: PunishmentCategory
     )
     {
         sender.sendMessage("${CC.GOLD}Now fetching punishments...")
 
         DataStoreObjectControllerCache.findNotNull<Punishment>()
-            .loadAll(DataStoreStorageType.MONGO)
+            .mongo()
+            .loadAllWithFilter(
+                Filters.and(
+                    Filters.eq("category", category.name)
+                )
+            )
             .thenAcceptAsync { punishments ->
                 var invalidated = 0
 
                 punishments
-                    .filter {
-                        if (category == null)
-                        {
-                            true
-                        } else
-                        {
-                            it.value.category == category
-                        }
-                    }
                     .filter { it.value.addedAt in (min + 1) until max }
                     .forEach {
                         QuickAccess.attemptRemoval(

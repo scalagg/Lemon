@@ -1,5 +1,8 @@
 package gg.scala.lemon.command.management
 
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.ne
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.handler.RankHandler
@@ -722,7 +725,13 @@ object RankCommand : ScalaCommand()
 
         return DataStoreObjectControllerCache
             .findNotNull<Grant>()
-            .loadAll(DataStoreStorageType.MONGO)
+            .mongo()
+            .loadAllWithFilter(
+                Filters.and(
+                    eq("rankId", rank.uuid.toString()),
+                    ne("removedAt", rank.uuid.toString())
+                )
+            )
             .thenAccept {
                 val rankScoped = it.values
                     .filter { grant ->
