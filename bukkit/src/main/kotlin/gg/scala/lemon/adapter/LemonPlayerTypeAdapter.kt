@@ -62,8 +62,8 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
             Serializers.gson.toJsonTree(player.pastIpAddresses)
         )
         jsonObject.add(
-            "pastLogins",
-            Serializers.gson.toJsonTree(player.pastLogins)
+            "sessions",
+            Serializers.gson.toJsonTree(player.pastLogins).toString()
         )
         jsonObject.add(
             "specific-permissions",
@@ -141,11 +141,19 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
                     ) as MutableMap<String, Long>)
                     .keys.toMutableSet()
 
-            player.pastLogins =
+            player.pastLogins = if (jsonObject.get("pastLogins") != null)
+            {
                 Serializers.gson.fromJson(
                     jsonObject.get("pastLogins"),
                     LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
                 )
+            } else
+            {
+                Serializers.gson.fromJson(
+                    jsonObject.get("sessions").asString,
+                    LemonConstants.STRING_LONG_MUTABLE_MAP_TYPE
+                )
+            }
 
             player.assignedPermissions = Serializers.gson
                 .fromJson(
