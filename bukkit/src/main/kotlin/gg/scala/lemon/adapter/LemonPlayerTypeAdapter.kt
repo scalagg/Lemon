@@ -63,7 +63,11 @@ object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<Le
         )
         jsonObject.add(
             "sessions",
-            Serializers.gson.toJsonTree(player.pastLogins).toString()
+            JsonPrimitive(
+                Serializers.gson
+                    .toJsonTree(player.pastLogins)
+                    .toString()
+            )
         )
         jsonObject.add(
             "specific-permissions",
