@@ -2,6 +2,8 @@ package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
 import gg.scala.cache.uuid.ScalaStoreUuidCache
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.throwAnyExceptions
@@ -18,6 +20,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
+@Service
 object PlayerHandler
 {
     val inventory = mutableMapOf<Int, ItemStack>()
@@ -26,6 +29,18 @@ object PlayerHandler
         get() = DataStoreObjectControllerCache
             .findNotNull<LemonPlayer>()
             .localCache()
+
+    @Configure
+    fun configure()
+    {
+        // We handle names through our UUID cache
+        // programmatically, so we have to create
+        // indexes for it manually
+        DataStoreObjectControllerCache
+            .findNotNull<LemonPlayer>()
+            .mongo()
+            .createIndexesFor("name")
+    }
 
     fun find(uuid: UUID): LemonPlayer?
     {

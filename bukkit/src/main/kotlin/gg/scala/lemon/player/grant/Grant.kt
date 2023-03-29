@@ -10,6 +10,7 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.other.Expirable
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.controller.annotations.Indexed
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.*
@@ -18,8 +19,10 @@ import java.util.concurrent.CompletableFuture
 @Model
 class Grant(
     val uuid: UUID,
+    @Indexed
     var target: UUID,
     var rankId: UUID,
+    @Indexed
     var addedBy: UUID?,
     addedAt: Long,
     var addedOn: String,
@@ -34,6 +37,7 @@ class Grant(
 
     var removedReason: String? = null
     var removedOn: String? = null
+    @Indexed
     var removedBy: UUID? = null
     var removedAt: Long = -1
 

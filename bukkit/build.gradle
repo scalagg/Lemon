@@ -19,7 +19,7 @@ dependencies {
 
     compileOnly "gg.scala.spigot:server:1.1.0"
 
-    compileOnly "gg.scala.store:spigot:0.1.6"
+    compileOnly "gg.scala.store:spigot:0.1.7"
     compileOnly "gg.scala.cloudsync:spigot:1.0.1"
 
     compileOnly "com.github.LunarClient:BukkitAPI:1.0.1"

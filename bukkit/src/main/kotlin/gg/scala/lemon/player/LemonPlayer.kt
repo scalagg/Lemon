@@ -34,6 +34,7 @@ import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.lemon.util.VaultUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.controller.annotations.Indexed
 import gg.scala.store.controller.annotations.Timestamp
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -52,8 +53,10 @@ import java.util.logging.Level
 
 @Model
 class LemonPlayer(
+    @Indexed
     var uniqueId: UUID,
 
+    @Indexed
     @JvmField
     var ipAddress: String? = null,
     var firstLogin: Boolean = false
