@@ -147,7 +147,8 @@ object QuickAccess
             .find(channelId)
             ?: return
 
-        val rank = sender.activeGrant!!.getRank()
+        val rank = sender.activeGrant?.getRank()
+            ?: return
 
         RedisHandler.buildMessage(
             "channel-message",
