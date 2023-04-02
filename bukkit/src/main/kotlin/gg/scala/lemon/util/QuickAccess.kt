@@ -152,6 +152,7 @@ object QuickAccess
         RedisHandler.buildMessage(
             "channel-message",
             "channel" to channelId,
+            "channel-scope" to channel.distributionGroup,
             "message" to GsonComponentSerializer.gson().serialize(channel.composite()
                 .format(
                     sender.uniqueId,
