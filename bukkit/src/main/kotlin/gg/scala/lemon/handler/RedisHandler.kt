@@ -41,7 +41,7 @@ object RedisHandler
 
         val channelScope = message
             .retrieveNullable<String>("channel-scope")
-            ?: return
+            ?: ""
 
         val channel = ChatChannelService
             .find(
@@ -52,6 +52,12 @@ object RedisHandler
         if (channel.distributionGroupScoped)
         {
             if (channelScope !in ServerSync.getLocalGameServer().groups)
+            {
+                return
+            }
+        } else
+        {
+            if (channelScope != "")
             {
                 return
             }
