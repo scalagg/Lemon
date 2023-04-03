@@ -9,8 +9,8 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.8.0"
     implementation project(":common")
 
-    kapt "gg.scala.commons:bukkit:3.1.4"
-    compileOnly "gg.scala.commons:bukkit:3.1.4"
+    kapt "gg.scala.commons:bukkit:3.1.5"
+    compileOnly "gg.scala.commons:bukkit:3.1.5"
 
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
     compileOnly "me.clip:placeholderapi:2.11.2"

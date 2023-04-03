@@ -19,6 +19,7 @@ import gg.scala.lemon.player.rank.Rank
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.network.Server
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.gson
 import net.evilblock.cubed.util.CC
@@ -36,14 +37,9 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author GrowlyX, puugz
  */
-@Service
 object QuickAccess
 {
-    private val connection by lazy {
-        Lemon.instance.aware.internal().connect()
-    }
-
-    fun kvConnection() = connection
+    private val connection = ScalaCommonsSpigot.instance.kvConnection
 
     @JvmStatic
     fun UUID.username(): String =
@@ -52,12 +48,6 @@ object QuickAccess
     @JvmStatic
     fun String.uniqueId(): UUID =
         CubedCacheUtil.fetchUuid(this)!!
-
-    @Configure
-    fun configure()
-    {
-        this.connection
-    }
 
     @JvmStatic
     fun getLastOnline(player: UUID): CompletableFuture<Long?>
