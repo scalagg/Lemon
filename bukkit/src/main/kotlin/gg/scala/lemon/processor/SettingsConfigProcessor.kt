@@ -25,6 +25,8 @@ class SettingsConfigProcessor
     val defaultChatGsd = false
     val defaultChatGsdGroupId = ""
 
+    val tablistSortingEnabled = true
+
     val blacklistedCommands = listOf(
         "ver", "icanhasbukkit"
     )

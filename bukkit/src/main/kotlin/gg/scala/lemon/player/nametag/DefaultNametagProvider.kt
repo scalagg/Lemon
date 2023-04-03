@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.nametag
 
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
@@ -19,7 +20,7 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             ?: return null
 
         val rank = lemonPlayer.disguiseRank() ?: realRank(toRefresh)
-        val thing2 = TeamBasedSortStrategy.teamMappings[rank.uuid]
+        val sortMapping = TeamBasedSortStrategy.teamMappings[rank.uuid]
 
         return createNametag(
             if (minequest()) "${
@@ -28,21 +29,15 @@ object DefaultNametagProvider : NametagProvider("default", 10)
                 if (minequest() && rank.name == "Platinum") "" else rank.color
             }" else rank.color,
             "",
-            if (thing2 != null && minequest())
-                thing2 + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
-            else thing2 ?: "z"
-//            if (minequest())
-//            {
-//                "${CC.WHITE}${
-//                    DefaultChatChannel.serializer
-//                        .serialize(
-//                            DefaultChatChannel
-//                                .chatTagProvider
-//                                .invoke(toRefresh)
-//                        )
-//                        .removeSuffix(" ")
-//                }"
-//            } else ""
+            if (Lemon.instance.settings.tablistSortingEnabled)
+            {
+                if (sortMapping != null && minequest())
+                    sortMapping + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
+                else sortMapping ?: "z"
+            } else
+            {
+                "§0§9§9${sortMapping ?: "z"}"
+            }
         )
     }
 }
