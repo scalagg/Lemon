@@ -23,9 +23,8 @@ object EnvironmentCommand : ScalaCommand()
     }
 
     @AssignPermission
-    @Syntax("<group> [boolean]")
-    @Subcommand("whitelist-all-group")
-    @Description("Whitelist/un-whitelist all servers in a particular group.")
+    @Subcommand("whitelist-scoped")
+    @Description("Whitelist all servers in a group.")
     fun onFetchAll(sender: CommandSender, @Single group: String, boolean: Boolean)
     {
         sender.sendMessage("${CC.SEC}You've set the whitelist to ${CC.WHITE}$boolean${CC.SEC} on all servers in the group ${CC.PRI}$group${CC.SEC}.")
@@ -34,6 +33,42 @@ object EnvironmentCommand : ScalaCommand()
             "mass-whitelist",
             "group" to group,
             "setting" to boolean.toString(),
+            "issuer" to QuickAccess.nameOrConsole(sender)
+        ).publish()
+    }
+
+    @AssignPermission
+    @Subcommand("shutdown-scoped")
+    @Description("Shutdown all servers in a group.")
+    fun onShutdownScoped(
+        sender: CommandSender,
+        @Single group: String,
+        @Single time: String
+    )
+    {
+        sender.sendMessage("${CC.SEC}You've called a shutdown on all servers in the group ${CC.PRI}$group${CC.SEC}.")
+
+        RedisHandler.buildMessage(
+            "mass-reboot",
+            "group" to group,
+            "time" to time,
+            "issuer" to QuickAccess.nameOrConsole(sender)
+        ).publish()
+    }
+
+    @AssignPermission
+    @Subcommand("shutdown-scoped-cancel")
+    @Description("Cancel a shutdown on all servers in a group.")
+    fun onShutdownCancelScoped(
+        sender: CommandSender,
+        @Single group: String
+    )
+    {
+        sender.sendMessage("${CC.SEC}You've called a shutdown cancel on all servers in the group ${CC.PRI}$group${CC.SEC}.")
+
+        RedisHandler.buildMessage(
+            "mass-reboot-cancel",
+            "group" to group,
             "issuer" to QuickAccess.nameOrConsole(sender)
         ).publish()
     }

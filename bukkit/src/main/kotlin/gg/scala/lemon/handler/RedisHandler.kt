@@ -130,8 +130,57 @@ object RedisHandler
                     {
                         "${CC.RED}disabled"
                     }
-                }${CC.D_AQUA} externally.",
+                }${CC.D_AQUA} on this server group.",
                 "lemon.security.notifications"
+            )
+        }
+    }
+
+    @Subscribe("mass-reboot")
+    fun onMassReboot(message: AwareMessage)
+    {
+        val group = message
+            .retrieve<String>("group")
+
+        val time = message
+            .retrieve<String>("time")
+
+        val groups = ServerSync
+            .getLocalGameServer().groups
+
+        if (group.lowercase() in groups)
+        {
+            broadcast(
+                "${CC.AQUA}[S] ${CC.D_AQUA}A reboot was called.",
+                "lemon.security.notifications"
+            )
+
+            Bukkit.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "shutdown initiate $time"
+            )
+        }
+    }
+
+    @Subscribe("mass-reboot-cancel")
+    fun onMassRebootCancel(message: AwareMessage)
+    {
+        val group = message
+            .retrieve<String>("group")
+
+        val groups = ServerSync
+            .getLocalGameServer().groups
+
+        if (group.lowercase() in groups)
+        {
+            broadcast(
+                "${CC.AQUA}[S] ${CC.D_AQUA}A reboot cancel was called.",
+                "lemon.security.notifications"
+            )
+
+            Bukkit.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                "shutdown cancel"
             )
         }
     }
