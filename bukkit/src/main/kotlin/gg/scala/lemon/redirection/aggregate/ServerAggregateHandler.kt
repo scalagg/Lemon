@@ -16,7 +16,7 @@ abstract class ServerAggregateHandler(
     private val redirectSystem: PlayerRedirectSystem<Player>
 ) : Runnable
 {
-   val servers = CopyOnWriteArrayList<GameServer>()
+    var servers = listOf<GameServer>()
 
     abstract fun group(): String
     abstract fun findBestChoice(player: Player): GameServer?
@@ -66,7 +66,6 @@ abstract class ServerAggregateHandler(
             .getServersInGroup(this.group())
             .filterIsInstance<GameServer>()
 
-        this.servers.clear()
-        this.servers.addAll(instances)
+        this.servers = instances
     }
 }

@@ -20,6 +20,9 @@ class LeastTrafficServerAggregateHandler(
     override fun findBestChoice(player: Player): GameServer?
     {
         return servers
+            .filter {
+                it.getWhitelisted() == false
+            }
             .minByOrNull {
                 it.getPlayersCount() ?: Int.MAX_VALUE // we don't want to send the player to a broken server >-<
             }
