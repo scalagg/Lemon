@@ -43,6 +43,8 @@ object QuickAccess
         Lemon.instance.aware.internal().connect()
     }
 
+    fun kvConnection() = connection
+
     @JvmStatic
     fun UUID.username(): String =
         CubedCacheUtil.fetchName(this)!!
