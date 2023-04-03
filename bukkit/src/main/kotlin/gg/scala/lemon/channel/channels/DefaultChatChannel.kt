@@ -1,5 +1,6 @@
 package gg.scala.lemon.channel.channels
 
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -16,6 +17,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -181,6 +183,31 @@ object DefaultChatChannel : ChatChannelComposite
                     }
                 )
             )
+            .let {
+                return@let if (plugin.settings.defaultChatGsd)
+                {
+                    it
+                        .hoverEvent(
+                            HoverEvent.showText(
+                                Component
+                                    .text(bukkitPlayer.name, NamedTextColor.GREEN)
+                                    .append(Component.newline())
+                                    .append(
+                                        Component.text(
+                                            "Playing on " + ServerSync.getLocalGameServer().id,
+                                            NamedTextColor.GRAY
+                                        )
+                                    )
+                            )
+                        )
+                        .clickEvent(
+                            ClickEvent.suggestCommand("/switchlobby")
+                        )
+                } else
+                {
+                    it
+                }
+            }
     }
 
     private fun applyColors(
