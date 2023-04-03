@@ -12,6 +12,7 @@ import gg.scala.lemon.channel.ChatChannelCheckService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
+import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -30,6 +31,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 @Listeners
@@ -81,6 +83,30 @@ object PlayerListener : Listener
         }
 
         lemonPlayer.completePostLoad().join()
+    }
+
+    @EventHandler
+    fun onPlayerLogin(
+        event: PlayerLoginEvent
+    )
+    {
+        val lemonPlayer = PlayerHandler
+            .find(event.player.uniqueId)
+            ?: return
+
+        if (event.result == PlayerLoginEvent.Result.KICK_FULL)
+        {
+            val staffMember = lemonPlayer
+                .hasPermission(
+                    "scstaff.staff-member",
+                    checkType = PermissionCheck.COMPOUNDED
+                )
+
+            if (staffMember)
+            {
+                event.allow()
+            }
+        }
     }
 
     var defaultChannelProtection = { event: AsyncPlayerChatEvent -> }
