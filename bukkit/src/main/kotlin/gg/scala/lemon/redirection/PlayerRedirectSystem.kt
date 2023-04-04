@@ -4,6 +4,7 @@ import gg.scala.aware.conversation.ConversationContinuation
 import gg.scala.aware.conversation.ConversationFactoryBuilder
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.redirection.expectation.PlayerJoinWithExpectationEvent
 import gg.scala.lemon.redirection.expectation.PlayerRedirectExpectationEvent
 import gg.scala.lemon.throwAnyExceptions
 import me.lucko.helper.Events
@@ -14,6 +15,7 @@ import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import org.bukkit.Bukkit
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -142,6 +144,15 @@ open class PlayerRedirectSystem<T>(
         this.conversation.distribute(message)
     }
 
+    fun redirect(t: T, server: String, params: Map<String, String>)
+    {
+        val message = PlayerRedirectMessage(
+            this.assistant.retrieve(t), server, params
+        )
+
+        this.conversation.distribute(message)
+    }
+
     fun configure()
     {
         INSTANCE = this
@@ -151,7 +162,8 @@ open class PlayerRedirectSystem<T>(
             .toCompletableFuture()
             .join()
 
-        Events.subscribe(AsyncPlayerPreLoginEvent::class.java)
+        Events
+            .subscribe(AsyncPlayerPreLoginEvent::class.java)
             .filter { ensureJoinRedirection }
             .handler {
                 val response = expected[it.uniqueId]
@@ -165,6 +177,24 @@ open class PlayerRedirectSystem<T>(
                             ${response?.allowedMessage ?: "No redirection attempt"}
                         """.trimIndent()
                     )
+                }
+            }
+            .bindWith(Lemon.instance)
+
+        Events
+            .subscribe(PlayerJoinEvent::class.java)
+            .handler {
+                val response = expected[it.player.uniqueId]
+
+                if (response != null)
+                {
+                    val expectation =
+                        PlayerJoinWithExpectationEvent(
+                            it.player.uniqueId, response
+                        )
+
+                    Bukkit.getPluginManager()
+                        .callEvent(expectation)
                 }
             }
             .bindWith(Lemon.instance)
