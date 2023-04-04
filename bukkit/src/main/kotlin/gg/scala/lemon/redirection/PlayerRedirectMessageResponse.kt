@@ -12,5 +12,6 @@ class PlayerRedirectMessageResponse(
     val server: String,
     val allowed: Boolean,
     val allowedMessage: String,
-    val empty: Boolean = false
+    val empty: Boolean = false,
+    val parameters: Map<String, String> = mapOf()
 ) : ConversationMessageResponse(conversationUuid)

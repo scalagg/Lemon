@@ -13,12 +13,13 @@ class PlayerRedirectionResponse(
 )
 {
     internal fun wrap(
-        conversationId: UUID
+        conversationId: UUID, parameters: Map<String, String>
     ): PlayerRedirectMessageResponse
     {
         return PlayerRedirectMessageResponse(
             conversationId, Lemon.instance.settings.id,
-            allowed, allowedMessage
+            allowed, allowedMessage,
+            parameters = parameters
         )
     }
 }

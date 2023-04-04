@@ -77,7 +77,7 @@ open class PlayerRedirectSystem<T>(
                     .process(message)
                     .throwAnyExceptions()
                     .join()
-                    ?.wrap(message.uniqueId)
+                    ?.wrap(message.uniqueId, message.parameters)
                     ?: PlayerRedirectMessageResponse(
                         message.uniqueId, "",
                         false,
