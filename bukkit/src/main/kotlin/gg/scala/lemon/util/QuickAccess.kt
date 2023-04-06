@@ -16,6 +16,7 @@ import gg.scala.lemon.minequest
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.tropic
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.ScalaCommonsSpigot
@@ -235,7 +236,7 @@ object QuickAccess
                         .getColoredName(
                             rank = lemonPlayer.disguiseRank() ?: realRank(it),
                             customColor = false,
-                            prefixIncluded = minequest()
+                            prefixIncluded = minequest() || tropic()
                         )
 
                     NametagHandler.reloadPlayer(it)
