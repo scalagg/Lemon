@@ -335,6 +335,7 @@ object QuickAccess
     @JvmStatic
     fun isSilent(reason: String?) = reason
         ?.contains("-s", ignoreCase = true)
+        ?: false
 
     @JvmStatic
     fun parseReason(
