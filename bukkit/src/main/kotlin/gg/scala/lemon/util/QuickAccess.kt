@@ -3,8 +3,6 @@ package gg.scala.lemon.util
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
-import gg.scala.flavor.service.Configure
-import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
 import gg.scala.lemon.channel.ChatChannelService
@@ -335,7 +333,8 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun isSilent(reason: String?) = reason?.endsWith("-s", true) == true || reason?.startsWith("-s", true) ?: false
+    fun isSilent(reason: String?) = reason
+        ?.contains("-s", ignoreCase = true)
 
     @JvmStatic
     fun parseReason(
@@ -343,20 +342,15 @@ object QuickAccess
         fallback: String = "Unfair Advantage"
     ): String
     {
-        var preParsedReason = reason ?: fallback
-        preParsedReason = preParsedReason.removePrefix("-s ")
-        preParsedReason = preParsedReason.removeSuffix(" -s")
+        val reasonOrFallback = reason ?: fallback
 
-        preParsedReason = preParsedReason.removePrefix("-S ")
-        preParsedReason = preParsedReason.removeSuffix(" -S")
-
-        preParsedReason = preParsedReason.removePrefix("-S")
-        preParsedReason = preParsedReason.removeSuffix("-S")
-
-        preParsedReason = preParsedReason.removePrefix("-s")
-        preParsedReason = preParsedReason.removeSuffix("-s")
-
-        return preParsedReason.ifBlank { fallback }
+        return reasonOrFallback
+            .replace(
+                "-s", "",
+                ignoreCase = true
+            )
+            .trim()
+            .ifBlank { fallback }
     }
 
     @JvmStatic
