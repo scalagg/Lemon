@@ -338,6 +338,7 @@ class LemonPlayer(
                         grant.removedAt = System.currentTimeMillis()
                         grant.removedOn = Lemon.instance.settings.id
 
+                        println("please")
                         grant.save()
                     }
                 }
