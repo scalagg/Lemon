@@ -79,4 +79,24 @@ object CooldownHandler
             false
         } else true
     }
+
+    fun <T> notifyAndContinueNoBypass(
+        clazz: Class<T>, player: Player, action: String
+    ): Boolean
+    {
+        val cooldown = cooldowns[clazz] ?: return true
+
+        return if (cooldown.isActive(player))
+        {
+            val formatted = cooldown.getRemainingFormatted(player)
+
+            player.sendMessage(
+                "${CC.RED}Please wait $formatted before ${
+                    if (action == "") cooldown.id() else action
+                } again!"
+            )
+
+            false
+        } else true
+    }
 }
