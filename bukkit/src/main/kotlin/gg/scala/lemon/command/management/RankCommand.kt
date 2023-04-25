@@ -482,7 +482,7 @@ object RankCommand : ScalaCommand()
 
             if (child != null)
             {
-                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${rank.getColoredName()}")
+                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${child.getColoredName()}")
             }
         }
     }
