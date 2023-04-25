@@ -39,7 +39,7 @@ class GrantReasonContextMenu(
     }
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Reason for $colored${CC.D_GRAY}..."
+        return "Reason for $colored${CC.D_GRAY}"
     }
 
     override fun getGlobalButtons(player: Player): Map<Int, Button> {

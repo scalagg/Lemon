@@ -105,5 +105,5 @@ class ScopeSelectionMenu(
     }
 
     override fun getPrePaginatedTitle(player: Player) =
-        "Scope selection for $colored${CC.D_GRAY}..."
+        "Scope selection for $colored${CC.D_GRAY}"
 }

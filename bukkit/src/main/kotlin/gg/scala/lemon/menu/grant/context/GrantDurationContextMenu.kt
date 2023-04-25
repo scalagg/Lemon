@@ -45,7 +45,7 @@ class GrantDurationContextMenu(
     }
 
     override fun getPrePaginatedTitle(player: Player): String {
-        return "Duration for $colored${CC.D_GRAY}..."
+        return "Duration for $colored${CC.D_GRAY}"
     }
 
     override fun getGlobalButtons(player: Player): Map<Int, Button> {
