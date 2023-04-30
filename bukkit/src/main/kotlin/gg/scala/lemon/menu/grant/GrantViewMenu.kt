@@ -150,20 +150,27 @@ class GrantViewMenu(
             lines.add("${CC.GRAY}Rank: ${CC.WHITE}${grant.getRank().getColoredName()}")
             lines.add("${CC.GRAY}Duration: ${CC.WHITE + grant.durationString}")
 
-            if (grant.isActive)
+            if (grant.isActive && !grant.isPermanent)
             {
-                lines.add("${CC.GRAY}Expire Date: ${CC.WHITE + grant.expirationString}")
+                lines.add("")
+                lines.add("${CC.GRAY}Expires In: ${CC.WHITE + grant.fancyDurationFromNowStringRaw}")
+                lines.add("${CC.GRAY}Expires On: ${CC.WHITE + grant.expirationString}")
             }
 
             lines.add("")
             lines.add("${CC.GRAY}Scopes:")
 
             grant.scopes.forEach {
-                lines.add("${CC.GRAY} - ${CC.RESET}$it")
+                lines.add("${CC.GRAY} - ${CC.GREEN}$it")
             }
 
             lines.add("")
-            lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
+
+            if (player.hasPermission("lemon.history.grant.view-issuer"))
+            {
+                lines.add("${CC.GRAY}Issued By: ${CC.WHITE}$addedBy")
+            }
+
             lines.add("${CC.GRAY}Issued On: ${CC.WHITE}${grant.addedOn}")
 
             lines.addAll(
@@ -182,7 +189,12 @@ class GrantViewMenu(
                 }
 
                 lines.add("")
-                lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
+
+                if (player.hasPermission("lemon.history.grant.view-issuer"))
+                {
+                    lines.add("${CC.GRAY}Removed By: ${CC.RED}$removedBy")
+                }
+
                 lines.add("${CC.GRAY}Removed On: ${CC.RED}${grant.removedOn}")
 
                 lines.addAll(
@@ -202,7 +214,7 @@ class GrantViewMenu(
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (grant.hasExpired) 8 else if (!grant.isRemoved) if (grant.isCustomScope()) 13 else 5 else 14).toShort())
+                .data((if (grant.hasExpired) 7 else if (!grant.isRemoved) if (grant.isCustomScope()) 1 else if (grant.isPermanent) 13 else 5 else 14).toShort())
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)}")
                 .addToLore(lines).build()
         }

@@ -135,9 +135,11 @@ class PunishmentDetailedViewMenu(
             {
                 lines.add("${CC.GRAY}Duration: ${CC.WHITE + punishment.durationString}")
             }
-            if (punishment.isActive)
+            if (punishment.isActive && !punishment.isPermanent)
             {
-                lines.add("${CC.GRAY}Expire Date: ${CC.WHITE + punishment.expirationString}")
+                lines.add("")
+                lines.add("${CC.GRAY}Expires In: ${CC.WHITE + punishment.fancyDurationFromNowStringRaw}")
+                lines.add("${CC.GRAY}Expires On: ${CC.WHITE + punishment.expirationString}")
             }
 
             lines.add("")
@@ -206,7 +208,7 @@ class PunishmentDetailedViewMenu(
             }
 
             return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (punishment.hasExpired) 8 else if (!punishment.isRemoved) 5 else 14).toShort())
+                .data((if (punishment.hasExpired) 7 else if (!punishment.isRemoved) if (punishment.isPermanent) 13 else 5 else 14).toShort())
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)}")
                 .addToLore(lines)
                 .build()

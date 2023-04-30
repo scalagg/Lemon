@@ -31,7 +31,7 @@ open class Expirable(
     val durationString: String
         get() = if (isPermanent)
         {
-            "Permanent"
+            "Forever"
         } else
         {
             DurationFormatUtils.formatDurationWords(

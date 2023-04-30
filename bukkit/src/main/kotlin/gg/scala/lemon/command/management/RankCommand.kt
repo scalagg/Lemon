@@ -13,7 +13,6 @@ import gg.scala.lemon.util.QuickAccess.replaceEmpty
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
-import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
@@ -442,6 +441,19 @@ object RankCommand : ScalaCommand()
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} visibility to ${CC.WHITE}${rank.visible}${CC.SEC}.")
+        }
+    }
+
+    @AssignPermission
+    @Subcommand("meta grantable")
+    @CommandCompletion("@ranks")
+    @Description("Edit a rank's grantability.")
+    fun onMetaGrantable(sender: CommandSender, rank: Rank, grantability: Boolean)
+    {
+        rank.grantable = grantability
+
+        rank.saveAndPushUpdatesGlobally().thenAccept {
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} grantability to ${CC.WHITE}${rank.grantable}${CC.SEC}.")
         }
     }
 

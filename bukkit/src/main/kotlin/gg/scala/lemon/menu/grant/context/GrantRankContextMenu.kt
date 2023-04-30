@@ -1,22 +1,18 @@
 package gg.scala.lemon.menu.grant.context
 
-import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.menu.grant.context.scope.ScopeSelectionMenu
-import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ColorUtil
-import net.evilblock.cubed.util.bukkit.Constants
-import net.evilblock.cubed.util.text.TextSplitter
+import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.ClickType
-import org.bukkit.inventory.InventoryView
 import java.util.*
 
 /**
@@ -33,93 +29,87 @@ class GrantRankContextMenu(
         return "Granting for $colored${CC.D_GRAY}"
     }
 
+    override fun getMaxItemsPerPage(player: Player) = 27
+
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return mutableMapOf<Int, Button>().also {
+            val lemonPlayer = PlayerHandler
+                .findPlayer(player)
+                .orElse(null)
+
             RankHandler.sorted.forEach { rank ->
-                it[it.size] = RankButton(rank)
-            }
-        }
-    }
+                val canUseForGrant = lemonPlayer != null &&
+                        lemonPlayer.activeGrant!!.getRank().weight >= rank.weight &&
+                        rank.grantable()
 
-    private inner class RankButton(
-        private val rank: Rank
-    ) : Button() {
-
-        override fun getName(player: Player): String {
-            return rank.getColoredName()
-        }
-
-        override fun getMaterial(player: Player): XMaterial {
-            return XMaterial.WHITE_WOOL
-        }
-
-        override fun getDamageValue(player: Player): Byte {
-            return ColorUtil.CHAT_COLOR_TO_WOOL_DATA[
-                    ChatColor.getByChar(rank.color[1]) ?: ChatColor.WHITE
-            ]?.toByte() ?: 1
-        }
-
-        override fun getDescription(player: Player): List<String> {
-            return mutableListOf<String>().also {
-                val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
-                it.add("${CC.WHITE}Priority: ${CC.YELLOW}${rank.weight}")
-                it.add("${CC.WHITE}Prefix: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.prefix)}")
-                it.add("${CC.WHITE}Suffix: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.suffix)}")
-                it.add("${CC.WHITE}Visible: ${CC.YELLOW}${rank.visible}")
-                it.add("")
-
-                if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
-                    it.addAll(
-                        TextSplitter.split(
-                            text = "${CC.GREEN}Left-click to grant the ${rank.getColoredName()}${CC.GREEN} rank.",
-                            linePrefix = CC.GREEN
-                        )
-                    )
-
-                    if (
-                        rank.scopes().isNotEmpty() &&
+                val scopeSelectionActive = rank.scopes().isNotEmpty() &&
                         player.hasPermission("lemon.command.grant.scopeselection")
+
+                it[it.size] = ItemBuilder
+                    .of(
+                        if (canUseForGrant) Material.WOOL else Material.COAL_BLOCK
                     )
-                    {
-                        it.addAll(
-                            TextSplitter.split(
-                                text = "${CC.GREEN}Right-click to grant with scope selection.",
-                                linePrefix = CC.GREEN
-                            )
-                        )
+                    .data(
+                        (if (canUseForGrant) ColorUtil.CHAT_COLOR_TO_WOOL_DATA[
+                            ChatColor.getByChar(rank.color[1]) ?: ChatColor.WHITE
+                        ]?.toByte() ?: 1 else 0).toShort()
+                    )
+                    .name(rank.getColoredName())
+                    .addToLore(
+                        "${CC.GRAY}Name: ${CC.WHITE}${rank.name}",
+                        "${CC.GRAY}Weight: ${CC.WHITE}${
+                            Numbers.format(rank.weight)
+                        }",
+                        "",
+                        "${CC.GREEN}Metadata:",
+                        "${CC.GRAY}Display Name: ${
+                            if (rank.displayName == null) "${CC.RED}None" else "${CC.WHITE}${rank.displayName}"
+                        }",
+                        "${CC.GRAY}Prefix: ${CC.WHITE}${
+                            QuickAccess.replaceEmpty(rank.prefix)
+                        }",
+                        "${CC.GRAY}Suffix: ${CC.WHITE}${
+                            QuickAccess.replaceEmpty(rank.suffix)
+                        }",
+                        "",
+                        "${CC.GRAY}Visible: ${
+                            if (rank.visible) "${CC.GREEN}Yes" else "${CC.RED}No"
+                        }",
+                        "${CC.GRAY}Grantable: ${
+                            if (rank.grantable()) "${CC.GREEN}Yes" else "${CC.RED}No"
+                        }",
+                        ""
+                    )
+                    .apply {
+                        if (canUseForGrant)
+                        {
+                            addToLore("${CC.GREEN}${
+                                if (scopeSelectionActive) "Left-click" else "Click"
+                            } to grant this rank!")
+
+                            if (scopeSelectionActive)
+                            {
+                                addToLore("${CC.GOLD}Right-click to select scopes.")
+                            }
+                        } else
+                        {
+                            addToLore("${CC.RED}You cannot grant this rank.")
+                        }
                     }
-                } else {
-                    it.addAll(
-                        TextSplitter.split(
-                            text = "You do not have permission to grant the ${rank.getColoredName()}${CC.RED} rank.",
-                            linePrefix = CC.RED
-                        )
-                    )
-                }
-            }
-        }
+                    .toButton { _, type ->
+                        if (canUseForGrant) {
+                            if (type!!.isRightClick)
+                            {
+                                if (scopeSelectionActive)
+                                {
+                                    ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
+                                    return@toButton
+                                }
+                            }
 
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            val lemonPlayer = PlayerHandler.findPlayer(player).orElse(null)
-
-            if (lemonPlayer != null && lemonPlayer.activeGrant!!.getRank().weight >= rank.weight) {
-                if (clickType.isRightClick)
-                {
-                    if (
-                        rank.scopes().isNotEmpty() &&
-                        player.hasPermission("lemon.command.grant.scopeselection")
-                    )
-                    {
-                        ScopeSelectionMenu(uuid, name, colored, rank).openMenu(player)
+                            GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
+                        }
                     }
-
-                    return
-                }
-
-                GrantDurationContextMenu(uuid, name, rank, colored).openMenu(player)
-            } else {
-                player.sendMessage("${CC.RED}You do not have permission to grant the ${rank.getColoredName()}${CC.RED} rank.")
             }
         }
     }

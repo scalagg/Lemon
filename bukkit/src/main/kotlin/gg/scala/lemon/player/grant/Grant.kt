@@ -104,7 +104,8 @@ class Grant(
 
     fun canRemove(lemonPlayer: LemonPlayer): Boolean
     {
-        return lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !isRemoved && !isAutoGrant()
+        return lemonPlayer.activeGrant!!.getRank().weight >= getRank().weight && !isRemoved && !isAutoGrant() &&
+                lemonPlayer.hasPermission("lemon.history.grant.remove")
     }
 
     fun isAutoGrant(): Boolean

@@ -31,6 +31,7 @@ class Rank(
     var color: String = CC.GRAY
 
     var visible = true
+    var grantable: Boolean? = true
 
     var displayName: String? = null
 
@@ -41,6 +42,7 @@ class Rank(
         mutableListOf()
 
     fun scopes() = serverScopes!!
+    fun grantable() = grantable!!
 
     /**
      * Validates all [Rank]'s
