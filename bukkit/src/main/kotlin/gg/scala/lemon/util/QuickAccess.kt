@@ -234,7 +234,7 @@ object QuickAccess
                         .getColoredName(
                             rank = lemonPlayer.disguiseRank() ?: realRank(it),
                             customColor = false,
-                            prefixIncluded = minequest() || tropic()
+                            prefixIncluded = minequest() || tropic() || glade()
                         )
 
                     NametagHandler.reloadPlayer(it)

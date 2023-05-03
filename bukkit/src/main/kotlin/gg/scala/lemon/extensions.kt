@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture
  */
 fun minequest() = Lemon.instance.lemonWebData.serverName == "Minequest"
 fun tropic() = Lemon.instance.lemonWebData.serverName == "Tropic"
+fun glade() = Lemon.instance.lemonWebData.serverName == "Glade"
 
 fun config() = Lemon.instance.config<SettingsConfigProcessor>()
 
