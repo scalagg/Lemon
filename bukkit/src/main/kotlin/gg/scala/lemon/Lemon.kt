@@ -6,12 +6,9 @@ import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.commons.acf.BukkitCommandExecutionContext
 import gg.scala.commons.acf.ConditionFailedException
-import gg.scala.commons.annotations.commands.ManualRegister
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizers
 import gg.scala.commons.annotations.container.ContainerEnable
-import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.config.annotations.ContainerConfig
 import gg.scala.commons.core.plugin.Plugin
 import gg.scala.commons.core.plugin.PluginAuthor

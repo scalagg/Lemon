@@ -2,6 +2,8 @@ package gg.scala.lemon.command.customizer
 
 import gg.scala.commons.acf.BukkitCommandCompletionContext
 import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.InvalidCommandArgument
+import gg.scala.commons.acf.MinecraftMessageKeys
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.lemon.channel.ChatChannel
@@ -106,6 +108,23 @@ object LemonCommandCustomizer
 
         commandManager.commandContexts.registerContext(LemonPlayer::class.java) {
             val firstArgument = it.popFirstArg()
+            val matches = Bukkit.getServer().matchPlayer(firstArgument)
+
+            if (matches.size > 1)
+            {
+                val allMatches = matches
+                    .joinToString(", ") { player ->
+                        player.name
+                    }
+
+                throw InvalidCommandArgument(
+                    MinecraftMessageKeys.MULTIPLE_PLAYERS_MATCH,
+                    false,
+                    "{search}", firstArgument,
+                    "{all}", allMatches
+                )
+            }
+
             val lemonPlayerOptional = PlayerHandler.findPlayer(firstArgument)
 
             if (!lemonPlayerOptional.isPresent)
@@ -113,8 +132,7 @@ object LemonCommandCustomizer
                 throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
             }
 
-            val lemonPlayer = lemonPlayerOptional.orElse(null)
-                ?: throw ConditionFailedException("No player matching ${CC.YELLOW}$firstArgument${CC.RED} could be found.")
+            val lemonPlayer = lemonPlayerOptional.get()
 
             if (it.player != null)
             {

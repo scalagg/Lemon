@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters
 import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.commons.acf.BukkitCommandExecutionContext
 import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.InvalidCommandArgument
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -164,7 +165,7 @@ data class AsyncLemonPlayer(
 
             if (uniqueId == null && context == null)
             {
-                throw IllegalArgumentException(
+                throw InvalidCommandArgument(
                     "Both BukkitCommandExecutionContext and uniqueId is null. There is no way of deriving a player attribute."
                 )
             }
