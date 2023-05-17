@@ -1,10 +1,8 @@
 package gg.scala.lemon.player.nametag
 
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
-import gg.scala.lemon.player.sorter.TeamBasedSortStrategy
 import gg.scala.lemon.util.QuickAccess.realRank
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
@@ -20,7 +18,6 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             ?: return null
 
         val rank = lemonPlayer.disguiseRank() ?: realRank(toRefresh)
-        val sortMapping = TeamBasedSortStrategy.teamMappings[rank.uuid]
 
         return createNametag(
             if (minequest()) "${
@@ -28,16 +25,7 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             }${
                 if (minequest() && rank.name == "Platinum") "" else rank.color
             }" else rank.color,
-            "",
-            if (Lemon.instance.settings.tablistSortingEnabled)
-            {
-                if (sortMapping != null && minequest())
-                    sortMapping + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
-                else sortMapping ?: "z"
-            } else
-            {
-                "§0§9§9${sortMapping ?: "z"}"
-            }
+            ""
         )
     }
 }

@@ -329,6 +329,7 @@ class LemonPlayer(
                 }
 
                 var shouldNotifyPlayer = autoNotify
+                var shouldNotifyPlayerOfSubGrant = false
                 val previousRank = fetchPreviousRank(grants)
 
                 grants.forEach { grant ->
@@ -383,7 +384,7 @@ class LemonPlayer(
                         subGrant.getRank().uuid != activeGrant!!.getRank().uuid
                     )
                     {
-                        shouldNotifyPlayer = true
+                        shouldNotifyPlayerOfSubGrant = true
                         shouldRecalculatePermissions = true
                     }
                 }
@@ -392,7 +393,7 @@ class LemonPlayer(
                 {
                     bukkitPlayer?.ifPresent {
                         notifyPlayerOfRankUpdate(
-                            it, this.activeGrant!!, subGrant, previousRank
+                            it, this.activeGrant!!, subGrant, previousRank, shouldNotifyPlayerOfSubGrant
                         )
 
                         RankChangeEvent(
@@ -508,7 +509,8 @@ class LemonPlayer(
 
     private fun notifyPlayerOfRankUpdate(
         player: Player, primaryGrant: Grant?, subGrant: Grant?,
-        prevPrimaryGrant: UUID?
+        prevPrimaryGrant: UUID?,
+        notifyPlayerOfSubGrant: Boolean
     )
     {
         val messenger = { grant: Grant, prefix: String, suffix: String ->
@@ -532,7 +534,7 @@ class LemonPlayer(
             messenger(primaryGrant, "You've been granted the", " rank")
         }
 
-        if (subGrant != null)
+        if (subGrant != null && notifyPlayerOfSubGrant)
         {
             messenger(subGrant, "You've been granted a sub-rank of", "")
         }
