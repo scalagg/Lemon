@@ -29,15 +29,12 @@ object DefaultNametagProvider : NametagProvider("default", 10)
                 if (minequest() && rank.name == "Platinum") "" else rank.color
             }" else rank.color,
             "",
-            if (Lemon.instance.settings.tablistSortingEnabled)
+            "§0§9§9" + if (Lemon.instance.settings.tablistSortingEnabled)
             {
                 if (sortMapping != null && minequest())
                     sortMapping + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
                 else sortMapping ?: "z"
-            } else
-            {
-                "§0§9§9${sortMapping ?: "z"}"
-            }
+            } else ""
         )
     }
 }

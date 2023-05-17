@@ -21,7 +21,7 @@ object SortedRankCache : Runnable
             .filter { it.value.visible }
             .sortedByDescending { it.value.weight }
             .forEachIndexed { index, entry ->
-                teamMappings[entry.key] = (index + 100).toString()
+                teamMappings[entry.key] = (index).toString()
             }
     }
 }
