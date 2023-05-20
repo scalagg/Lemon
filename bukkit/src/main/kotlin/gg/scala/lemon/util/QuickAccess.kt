@@ -134,25 +134,29 @@ object QuickAccess
             .find(channelId)
             ?: return
 
-        val rank = sender.activeGrant?.getRank()
-            ?: return
+        val rank = if (!channel.distributionAllowFakeRanks)
+            originalRank(sender.bukkitPlayer) else realRank(sender.bukkitPlayer)
 
-        RedisHandler.buildMessage(
-            "channel-message",
-            "channel" to channelId,
-            "channel-scope" to channel.distributionGroup,
-            "message" to GsonComponentSerializer.gson().serialize(channel.composite()
-                .format(
-                    sender.uniqueId,
-                    null, message,
-                    Lemon.instance.settings.id,
-                    rank
-                )),
-            "sender" to sender.uniqueId,
-            "staff-member" to sender
-                .hasPermission("scstaff.staff-member")
-                .toString(),
-        ).publish()
+        RedisHandler
+            .buildMessage(
+                "channel-message",
+                "channel" to channelId,
+                "channel-scope" to channel.distributionGroup,
+                "message" to GsonComponentSerializer.gson().serialize(
+                    channel.composite()
+                        .format(
+                            sender.uniqueId,
+                            null, message,
+                            Lemon.instance.settings.id,
+                            rank
+                        )
+                ),
+                "sender" to sender.uniqueId,
+                "staff-member" to sender
+                    .hasPermission("scstaff.staff-member")
+                    .toString(),
+            )
+            .publish()
     }
 
     @JvmStatic

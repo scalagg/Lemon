@@ -13,6 +13,7 @@ open class ChatChannel(
 )
 {
     var distributed = false
+    var distributionAllowFakeRanks = false
     var distributionGroupScoped = false
     var distributionGroup = ""
 
