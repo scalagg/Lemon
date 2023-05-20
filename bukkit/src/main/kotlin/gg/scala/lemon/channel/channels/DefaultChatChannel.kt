@@ -113,6 +113,9 @@ object DefaultChatChannel : ChatChannelComposite
         ).let {
             if (receiver != null)
             {
+                if (receiver.hasMetadata("disguised"))
+                    return@let it
+
                 return@let it.replace(
                     receiver.name,
                     "${CC.YELLOW}${receiver.name}${CC.RESET}"
