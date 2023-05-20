@@ -52,6 +52,8 @@ object DefaultChatChannel : ChatChannelComposite
                 if (plugin.settings.defaultChatGsd)
                 {
                     distribute()
+                    distributionAllowFakeRanks = true
+
                     groupScopedDistribution(
                         plugin.settings.defaultChatGsdGroupId
                     )
