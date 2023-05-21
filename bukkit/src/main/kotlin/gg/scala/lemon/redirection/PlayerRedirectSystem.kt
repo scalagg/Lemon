@@ -67,7 +67,8 @@ open class PlayerRedirectSystem<T>(
 
                 if (serverId != message.server)
                     return@response PlayerRedirectMessageResponse(
-                        message.uniqueId, "", false, "", true
+                        message.uniqueId, "", false, "", true,
+                        parameters = message.parameters
                     )
 
                 // this is already handled
@@ -166,15 +167,21 @@ open class PlayerRedirectSystem<T>(
             .subscribe(AsyncPlayerPreLoginEvent::class.java)
             .filter { ensureJoinRedirection }
             .handler {
-                val response = expected[it.uniqueId]
+                val response = expected.keys
+                    .firstOrNull { entry ->
+                        entry.equals(it.uniqueId)
+                    }
+                    ?: return@handler
 
-                if (response == null || !response.allowed)
+                val expectation = expected[response]!!
+
+                if (!expectation.allowed)
                 {
                     it.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
                         """
                             ${CC.RED}Sorry, we're unable to process your login:
-                            ${response?.allowedMessage ?: "No redirection attempt"}
+                            ${expectation.allowedMessage}
                         """.trimIndent()
                     )
                 }
@@ -184,13 +191,17 @@ open class PlayerRedirectSystem<T>(
         Events
             .subscribe(PlayerJoinEvent::class.java)
             .handler {
-                val response = expected[it.player.uniqueId]
+                val response = expected.keys
+                    .firstOrNull { entry ->
+                        entry.equals(it.player.uniqueId)
+                    }
 
                 if (response != null)
                 {
                     val expectation =
                         PlayerJoinWithExpectationEvent(
-                            it.player.uniqueId, response
+                            it.player.uniqueId,
+                            expected[response]!!
                         )
 
                     Bukkit.getPluginManager()
