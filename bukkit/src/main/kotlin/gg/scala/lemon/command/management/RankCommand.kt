@@ -23,6 +23,7 @@ import gg.scala.lemon.scope.ServerScope
 import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
+import net.evilblock.cubed.util.bukkit.Constants
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -322,16 +323,6 @@ object RankCommand : ScalaCommand()
             throw ConditionFailedException("A rank with the name matching ${CC.YELLOW}$name${CC.RED} already exists.")
         }
 
-        if (name.length < 3)
-        {
-            throw ConditionFailedException("${CC.YELLOW}$name${CC.RED} must be at least 3 characters long.")
-        }
-
-        if (name.length > 16)
-        {
-            throw ConditionFailedException("${CC.YELLOW}$name${CC.RED} must be at most 16 characters long.")
-        }
-
         val rank = Rank(UUID.randomUUID(), name)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
@@ -471,10 +462,10 @@ object RankCommand : ScalaCommand()
     }
 
     @AssignPermission
-    @Subcommand("child list")
+    @Subcommand("child tree")
     @CommandCompletion("@ranks")
-    @Description("View all available children.")
-    fun onChildList(sender: CommandSender, rank: Rank)
+    @Description("View all rank children in tree form.")
+    fun onChildTree(sender: CommandSender, rank: Rank)
     {
         if (rank.children.isEmpty())
         {
@@ -483,20 +474,49 @@ object RankCommand : ScalaCommand()
 
         sender.sendMessage(
             arrayOf(
-                "${CC.B_PRI}${rank.name}'s Children:",
-                "${CC.SEC}${rank.children.size}${CC.GRAY} children found.",
-                ""
+                "${CC.PRI}${CC.STRIKE_THROUGH}-----------------------------------",
+                "${CC.WHITE}Children ranks of ${rank.getColoredName()}${CC.WHITE}:",
             )
         )
 
-        rank.children.forEach {
-            val child = RankHandler.findRank(it)
+        for (childId in rank.children)
+        {
+            val child = RankHandler.findRank(childId)
+                ?: continue
 
-            if (child != null)
+            sender.sendMessage(child.getColoredName())
+
+            fun recursiveChildSearch(
+                childRank: Rank, node: Int = 0
+            )
             {
-                sender.sendMessage("${CC.GRAY} - ${CC.WHITE}${child.getColoredName()}")
+                if (childRank.children.isEmpty())
+                {
+                    return
+                }
+
+                childRank.children
+                    .mapNotNull { RankHandler.findRank(it) }
+                    .sortedBy { it.children.size }
+                    .forEach { nodeRank ->
+                        sender.sendMessage(
+                            "${"  ".repeat(node)}${CC.GRAY}${
+                                Constants.THIN_VERTICAL_LINE
+                            } ${
+                                nodeRank.getColoredName()
+                            }"
+                        )
+
+                        recursiveChildSearch(
+                            nodeRank, node = node + 1
+                        )
+                    }
             }
+
+            recursiveChildSearch(child)
         }
+
+        sender.sendMessage("${CC.PRI}${CC.STRIKE_THROUGH}-----------------------------------")
     }
 
     @AssignPermission
