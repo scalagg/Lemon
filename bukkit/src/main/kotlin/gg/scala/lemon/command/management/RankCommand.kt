@@ -227,7 +227,7 @@ object RankCommand : ScalaCommand()
 
     @AssignPermission
     @CommandCompletion("@ranks")
-    @Subcommand("view|info|information")
+    @Subcommand("view")
     @Description("View information for a certain rank.")
     fun onInfo(sender: CommandSender, rank: Rank)
     {
@@ -487,7 +487,7 @@ object RankCommand : ScalaCommand()
             sender.sendMessage(child.getColoredName())
 
             fun recursiveChildSearch(
-                childRank: Rank, node: Int = 0
+                childRank: Rank, node: Int = 1
             )
             {
                 if (childRank.children.isEmpty())
@@ -568,15 +568,37 @@ object RankCommand : ScalaCommand()
 
         sender.sendMessage(
             arrayOf(
-                "${CC.B_PRI}${rank.name}'s Permissions:",
-                "${CC.SEC}${rank.permissions.size}${CC.GRAY} permissions found.",
-                ""
+                "${CC.PRI}${CC.STRIKE_THROUGH}-----------------------------------",
+                "${CC.WHITE}Permission nodes of ${rank.getColoredName()}${CC.WHITE}:",
+                "Spigot nodes:"
             )
         )
 
-        rank.permissions.forEach {
-            sender.sendMessage("${CC.GRAY} - ${CC.WHITE}$it")
-        }
+        rank.permissions
+            .filter { !it.startsWith("%") }
+            .forEach {
+                sender.sendMessage(" ${CC.GRAY}${Constants.THIN_VERTICAL_LINE}${CC.WHITE} $it")
+            }
+
+        sender.sendMessage(
+            "Proxy nodes:",
+        )
+
+        rank.permissions
+            .filter { it.startsWith("%") }
+            .forEach {
+                sender.sendMessage(" ${CC.GRAY}${Constants.THIN_VERTICAL_LINE}${CC.WHITE} ${it.removePrefix("%")}")
+            }
+
+        sender.sendMessage(
+            "Blacklisted nodes:",
+        )
+
+        rank.permissions
+            .filter { it.startsWith("*") }
+            .forEach {
+                sender.sendMessage(" ${CC.GRAY}${Constants.THIN_VERTICAL_LINE}${CC.WHITE} ${it.removePrefix("*")}")
+            }
     }
 
     @AssignPermission
@@ -730,7 +752,7 @@ object RankCommand : ScalaCommand()
 
     @AssignPermission
     @CommandCompletion("@ranks")
-    @Subcommand("tools clear-scopes")
+    @Subcommand("scope clear")
     @Description("Clear all scopes for a ranks.")
     fun onToolsClearPermissions(player: Player, rank: Rank)
     {
