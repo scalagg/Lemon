@@ -479,43 +479,34 @@ object RankCommand : ScalaCommand()
             )
         )
 
-        for (childId in rank.children)
+        fun recursiveChildSearch(
+            childRank: Rank, node: Int = 1
+        )
         {
-            val child = RankHandler.findRank(childId)
-                ?: continue
-
-            sender.sendMessage(child.getColoredName())
-
-            fun recursiveChildSearch(
-                childRank: Rank, node: Int = 1
-            )
+            if (childRank.children.isEmpty())
             {
-                if (childRank.children.isEmpty())
-                {
-                    return
-                }
-
-                childRank.children
-                    .mapNotNull { RankHandler.findRank(it) }
-                    .sortedBy { it.children.size }
-                    .forEach { nodeRank ->
-                        sender.sendMessage(
-                            "${"  ".repeat(node)}${CC.GRAY}${
-                                Constants.THIN_VERTICAL_LINE
-                            } ${
-                                nodeRank.getColoredName()
-                            }"
-                        )
-
-                        recursiveChildSearch(
-                            nodeRank, node = node + 1
-                        )
-                    }
+                return
             }
 
-            recursiveChildSearch(child)
+            childRank.children
+                .mapNotNull { RankHandler.findRank(it) }
+                .sortedBy { it.children.size }
+                .forEach { nodeRank ->
+                    sender.sendMessage(
+                        "${"  ".repeat(node)}${CC.GRAY}${
+                            Constants.THIN_VERTICAL_LINE
+                        } ${
+                            nodeRank.getColoredName()
+                        }"
+                    )
+
+                    recursiveChildSearch(
+                        nodeRank, node = node + 1
+                    )
+                }
         }
 
+        recursiveChildSearch(rank)
         sender.sendMessage("${CC.PRI}${CC.STRIKE_THROUGH}-----------------------------------")
     }
 
