@@ -590,6 +590,10 @@ object RankCommand : ScalaCommand()
             .forEach {
                 sender.sendMessage(" ${CC.GRAY}${Constants.THIN_VERTICAL_LINE}${CC.WHITE} ${it.removePrefix("*")}")
             }
+
+        sender.sendMessage(
+            "${CC.PRI}${CC.STRIKE_THROUGH}-----------------------------------"
+        )
     }
 
     @AssignPermission
