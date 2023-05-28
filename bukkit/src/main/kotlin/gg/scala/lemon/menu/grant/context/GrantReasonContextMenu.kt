@@ -82,7 +82,7 @@ class GrantReasonContextMenu(
     override fun getAllPagesButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also {
             reasons.forEach { reason ->
-                it[it.size] = ItemBuilder(XMaterial.PAPER)
+                it[it.size] = ItemBuilder(woolColors.random())
                     .name(reason)
                     .toButton { _, _ ->
                         finalizeGrant(player, reason)

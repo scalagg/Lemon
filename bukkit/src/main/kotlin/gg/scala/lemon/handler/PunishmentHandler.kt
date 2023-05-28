@@ -11,7 +11,6 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.attemptRemoval
 import gg.scala.lemon.util.QuickAccess.fetchColoredName
 import gg.scala.lemon.util.QuickAccess.fetchIpAddress
-import gg.scala.lemon.util.QuickAccess.nameOrConsole
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer

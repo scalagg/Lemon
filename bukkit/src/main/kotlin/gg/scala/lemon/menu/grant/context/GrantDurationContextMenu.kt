@@ -22,6 +22,9 @@ import java.util.*
  * @author GrowlyX
  * @since 9/23/2021
  */
+val woolColors = XMaterial.values()
+    .filter { it.name.contains("WOOL") }
+
 class GrantDurationContextMenu(
     private val uuid: UUID,
     private val name: String,
@@ -128,9 +131,7 @@ class GrantDurationContextMenu(
             return "${CC.WHITE}$identifier"
         }
 
-        override fun getMaterial(player: Player): XMaterial {
-            return XMaterial.PAPER
-        }
+        override fun getMaterial(player: Player) = woolColors.random()
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
             GrantReasonContextMenu(uuid, name, rank, duration, colored, scopes).openMenu(player)
