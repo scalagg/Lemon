@@ -30,32 +30,22 @@ object HotbarPresetHandler
     @Configure
     fun configure()
     {
-        Events.subscribe(PlayerInteractEvent::class.java)
+        Events
+            .subscribe(PlayerInteractEvent::class.java)
             .filter { it.action.name.contains("RIGHT") }
             .filter { it.item != null }
+            .filter { ItemUtils.itemTagHasKey(it.item, "invokerc") }
             .handler { event ->
-                var matchingEntry: HotbarPresetEntry? = null
+                val extractedItemTag = ItemUtils
+                    .readItemTagKey(
+                        event.item,
+                        "invokerc"
+                    )
 
-                trackedHotbars.forEach { tracked ->
-                    val first = tracked.value.entries
-                        .values.firstOrNull {
-                            val stack = it.buildItemStack(player = event.player) ?: return@firstOrNull false
-
-                            return@firstOrNull ItemUtils.isSimilar(event.item, stack)
-                        }
-                        ?: return@forEach
-
-                    matchingEntry = first
-                }
-
-                if (matchingEntry == null)
-                {
-                    return@handler
-                }
-
-                matchingEntry!!.onRightClick(
-                    player = event.player
-                )
+                HotbarEntryStore[extractedItemTag]
+                    ?.onRightClick(
+                        player = event.player
+                    )
             }
     }
 

@@ -2,7 +2,9 @@ package gg.scala.lemon.hotbar
 
 import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import gg.scala.lemon.hotbar.entry.impl.defaults.NoHotbarPresetEntry
+import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.entity.Player
+import java.util.UUID
 
 /**
  * @author GrowlyX
@@ -20,6 +22,7 @@ class HotbarPreset
 
     init
     {
+
         for (slot in HOTBAR_RANGE)
         {
             entries[slot] = NoHotbarPresetEntry
@@ -32,14 +35,26 @@ class HotbarPreset
             throw IndexOutOfBoundsException("Slot out of hotbar range")
 
         entries.replace(int, entry)
+        HotbarEntryStore[entry.uniqueId().toString()] = entry
     }
 
     fun applyToPlayer(player: Player)
     {
         for (entry in entries)
         {
+            val finalized = entry.value
+                .finalizedItemStack(player)
+                ?: continue
+
+            val finalizedAndTagged = ItemUtils
+                .addToItemTag(
+                    finalized,
+                    "invokerc",
+                    entry.value.uniqueId().toString()
+                )
+
             player.inventory.setItem(
-                entry.key, entry.value.finalizedItemStack(player)
+                entry.key, finalizedAndTagged
             )
         }
 
