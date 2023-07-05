@@ -6,6 +6,7 @@ import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.entity.Player
+import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
 /**
@@ -32,7 +33,7 @@ object HotbarPresetHandler
     {
         Events
             .subscribe(PlayerInteractEvent::class.java)
-            .filter { it.action.name.contains("RIGHT") }
+            .filter { it.action == Action.RIGHT_CLICK_AIR }
             .filter { it.item != null }
             .filter { ItemUtils.itemTagHasKey(it.item, "invokerc") }
             .handler { event ->
@@ -42,10 +43,12 @@ object HotbarPresetHandler
                         "invokerc"
                     )
 
-                HotbarEntryStore
-                    .entries
-                    .firstOrNull { it == extractedItemTag }
-                    ?.value?.onRightClick(
+                val substring = extractedItemTag
+                    .toString()
+                    .removeSurrounding("\"")
+
+                HotbarEntryStore[substring]
+                    ?.onRightClick(
                         player = event.player
                     )
             }
