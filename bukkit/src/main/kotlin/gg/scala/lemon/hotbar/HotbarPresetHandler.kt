@@ -42,8 +42,10 @@ object HotbarPresetHandler
                         "invokerc"
                     )
 
-                HotbarEntryStore[extractedItemTag]
-                    ?.onRightClick(
+                HotbarEntryStore
+                    .entries
+                    .firstOrNull { it == extractedItemTag }
+                    ?.value?.onRightClick(
                         player = event.player
                     )
             }
