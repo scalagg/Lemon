@@ -44,7 +44,12 @@ class HotbarPreset
         {
             val finalized = entry.value
                 .finalizedItemStack(player)
-                ?: continue
+
+            if (finalized == null)
+            {
+                player.inventory.setItem(entry.key, null)
+                continue
+            }
 
             val finalizedAndTagged = ItemUtils
                 .addToItemTag(
