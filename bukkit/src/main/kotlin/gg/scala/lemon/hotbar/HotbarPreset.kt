@@ -51,12 +51,14 @@ class HotbarPreset
                 continue
             }
 
-            val finalizedAndTagged = ItemUtils
-                .addToItemTag(
-                    finalized,
-                    "invokerc",
-                    entry.value.uniqueId().toString()
-                )
+            val finalizedAndTagged = runCatching {
+                ItemUtils
+                    .addToItemTag(
+                        finalized,
+                        "invokerc",
+                        entry.value.uniqueId().toString()
+                    )
+            }.getOrNull()
 
             player.inventory.setItem(
                 entry.key, finalizedAndTagged
