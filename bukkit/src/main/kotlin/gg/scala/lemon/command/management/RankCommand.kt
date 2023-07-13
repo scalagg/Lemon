@@ -29,6 +29,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.ArrayList
 
 /**
  * @author GrowlyX
@@ -348,14 +349,21 @@ object RankCommand : ScalaCommand()
         val newRank = rank
             .copy(
                 uuid = UUID.randomUUID(),
-                name = name
+                name = name,
+                displayName = null,
+                children = ArrayList(
+                    rank.children.toMutableList()
+                        .apply {
+                            add(rank.uuid)
+                        }
+                )
             )
 
         newRank
             .saveAndPushUpdatesGlobally()
             .thenAccept {
                 sender.sendMessage(
-                    "${CC.SEC}You've created the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank by cloning it from the existing ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank."
+                    "${CC.SEC}You've created the ${CC.PRI}${newRank.getColoredName()}${CC.SEC} rank by cloning it from the existing ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank."
                 )
             }
     }

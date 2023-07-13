@@ -18,28 +18,27 @@ import java.util.concurrent.CompletableFuture
 @Model
 data class Rank(
     val uuid: UUID = UUID.randomUUID(),
-    var name: String
+    var name: String,
+    var weight: Int = 0,
+
+    var prefix: String = CC.GRAY,
+    var suffix: String = CC.RESET,
+    var color: String = CC.GRAY,
+
+    var visible: Boolean = true,
+    var grantable: Boolean? = true,
+
+    var displayName: String? = null,
+
+    val children: ArrayList<UUID> = ArrayList<UUID>(),
+    val permissions: ArrayList<String> = ArrayList<String>(),
+
+    var serverScopes: MutableList<ServerScope>? =
+        mutableListOf()
 ) : Savable, IDataStoreObject
 {
     override val identifier: UUID
         get() = uuid
-
-    var weight: Int = 0
-
-    var prefix: String = CC.GRAY
-    var suffix: String = CC.RESET
-    var color: String = CC.GRAY
-
-    var visible = true
-    var grantable: Boolean? = true
-
-    var displayName: String? = null
-
-    val children = ArrayList<UUID>()
-    val permissions = ArrayList<String>()
-
-    var serverScopes: MutableList<ServerScope>? =
-        mutableListOf()
 
     fun scopes() = serverScopes!!
     fun grantable() = grantable!!
