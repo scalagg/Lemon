@@ -331,6 +331,36 @@ object RankCommand : ScalaCommand()
     }
 
     @AssignPermission
+    @Subcommand("clone")
+    @CommandCompletion("@ranks")
+    @Description("Create a new rank by cloning an existing one.")
+    fun onClone(sender: CommandSender, rank: Rank, @Single name: String)
+    {
+        val existing = RankHandler.findRank(name)
+
+        if (existing != null)
+        {
+            throw ConditionFailedException(
+                "A rank with the name matching ${CC.YELLOW}$name${CC.RED} already exists."
+            )
+        }
+
+        val newRank = rank
+            .copy(
+                uuid = UUID.randomUUID(),
+                name = name
+            )
+
+        newRank
+            .saveAndPushUpdatesGlobally()
+            .thenAccept {
+                sender.sendMessage(
+                    "${CC.SEC}You've created the ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank by cloning it from the existing ${CC.PRI}${rank.getColoredName()}${CC.SEC} rank."
+                )
+            }
+    }
+
+    @AssignPermission
     @Subcommand("delete")
     @CommandCompletion("@ranks")
     @Description("Delete an existing rank.")

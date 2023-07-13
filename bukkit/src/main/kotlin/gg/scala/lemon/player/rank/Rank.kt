@@ -16,7 +16,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Model
-class Rank(
+data class Rank(
     val uuid: UUID = UUID.randomUUID(),
     var name: String
 ) : Savable, IDataStoreObject
