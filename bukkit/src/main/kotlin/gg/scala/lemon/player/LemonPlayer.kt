@@ -49,6 +49,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.logging.Level
 
 @Model
@@ -105,7 +106,7 @@ class LemonPlayer(
     val bukkitPlayer: Player?
         get() = Bukkit.getPlayer(uniqueId)
 
-    val cachedAlternateAccounts = mutableListOf<UUID>()
+    val cachedAlternateAccounts = CopyOnWriteArrayList<UUID>()
 
     init
     {
