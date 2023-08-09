@@ -585,6 +585,18 @@ object RankCommand : ScalaCommand()
     }
 
     @AssignPermission
+    @Subcommand("permission clear")
+    @CommandCompletion("@ranks")
+    @Description("Clear all permissions for a rank.")
+    fun onPermissionClear(sender: CommandSender, rank: Rank)
+    {
+        rank.permissions.clear()
+        rank.saveAndPushUpdatesGlobally().thenRun {
+            sender.sendMessage("${CC.SEC}You've cleared all permissions associated with the rank ${CC.PRI}${rank.getColoredName()}${CC.SEC}.")
+        }
+    }
+
+    @AssignPermission
     @Subcommand("permission list")
     @CommandCompletion("@ranks")
     @Description("View all permissions for a rank.")
