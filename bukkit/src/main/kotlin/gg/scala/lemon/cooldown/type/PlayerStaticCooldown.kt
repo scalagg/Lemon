@@ -38,7 +38,7 @@ abstract class PlayerStaticCooldown(
         if (shouldNotify)
         {
             tasks[t.uniqueId] = Bukkit.getScheduler().runTaskLater(
-                Lemon.instance, CooldownNotificationTask(t.uniqueId), duration / 20L
+                Lemon.instance, CooldownNotificationTask(t.uniqueId), duration / 1000L * 20L
             )
         }
     }
