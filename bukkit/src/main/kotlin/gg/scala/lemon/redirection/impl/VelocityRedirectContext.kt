@@ -19,9 +19,12 @@ object VelocityRedirectContext : PlayerRedirect<Player>, PlayerRedirectHandler
 {
     override fun redirect(player: Player, server: PlayerRedirectMessage)
     {
-        player.sendMessage(
-            "${CC.SEC}Joining ${CC.PRI}${server.server}${CC.SEC}..."
-        )
+        if (!Lemon.instance.settings.noNotifyRedirection)
+        {
+            player.sendMessage(
+                "${CC.SEC}Joining ${CC.PRI}${server.server}${CC.SEC}..."
+            )
+        }
 
         BungeeUtil.sendToServer(player, server.server)
     }

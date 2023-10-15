@@ -19,6 +19,8 @@ class SettingsConfigProcessor
     val serverPasswordSupplier = "127.0.0.1"
     val serverPasswordHttps = false
 
+    val noNotifyRedirection = false
+
     @Comment("Shall console be able to view chat messages?")
     val consoleChat = false
 
