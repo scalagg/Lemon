@@ -34,6 +34,8 @@ object RedisHandler
                 message.retrieve("message")
             )
 
+        val sender = message.retrieve<UUID>("sender")
+
         val senderIsStaff = message
             .retrieveNullable<String>("staff-member")
             ?.toBoolean()
@@ -71,6 +73,13 @@ object RedisHandler
             val lemonTarget = PlayerHandler
                 .find(other.uniqueId)
                 ?: continue
+
+            if (
+                !channel
+                    .displayToPlayer
+                    .invoke(sender, other)
+            )
+                continue
 
             if (
                 channel.composite().identifier() == "default" &&

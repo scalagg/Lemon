@@ -3,6 +3,7 @@ package gg.scala.lemon.channel
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.entity.Player
+import java.util.UUID
 
 /**
  * @author GrowlyX
@@ -23,7 +24,7 @@ open class ChatChannel(
     var prefixCharacter = ' '
 
     var permissionLambda = { _: Player -> true }
-    var displayToPlayer = { _: Player, _: Player -> true }
+    var displayToPlayer = { _: UUID, _: Player -> true }
 
     var override = false
     var overrideLambda = { _: Player -> true }
@@ -94,7 +95,7 @@ open class ChatChannel(
     }
 
     fun displayToPlayer(
-        lambda: (Player, Player) -> Boolean
+        lambda: (UUID, Player) -> Boolean
     ): ChatChannel
     {
         return apply {

@@ -250,7 +250,7 @@ object PlayerListener : Listener
                 if (
                     !channelMatch
                         .displayToPlayer
-                        .invoke(player, target)
+                        .invoke(player.uniqueId, target)
                 )
                     continue
 
