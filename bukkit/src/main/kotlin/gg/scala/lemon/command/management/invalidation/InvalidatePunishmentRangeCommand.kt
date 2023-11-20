@@ -38,22 +38,26 @@ object InvalidatePunishmentRangeCommand : ScalaCommand()
             .mongo()
             .loadAllWithFilter(
                 Filters.and(
-                    Filters.eq("category", category.name)
+                    Filters.eq("category", category.name),
+                    Filters.gte("addedAt", min + 1),
+                    Filters.lte("addedAt", max)
                 )
             )
             .thenAcceptAsync { punishments ->
                 var invalidated = 0
 
                 punishments
-                    .filter { it.value.addedAt in (min + 1) until max }
                     .forEach {
                         QuickAccess.attemptRemoval(
                             punishment = it.value,
                             reason = "Manual Invalidation"
-                        ); invalidated++
+                        ); 
+                        invalidated++
                     }
 
-                sender.sendMessage("${CC.SEC}Invalidated ${CC.PRI}${invalidated}${CC.SEC} punishments globally.")
+                sender.sendMessage(
+                    "${CC.SEC}Invalidated ${CC.PRI}${invalidated}${CC.SEC} punishments globally."
+                )
             }
     }
 
