@@ -9,7 +9,7 @@ import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
-import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
 import java.util.*
 
 /**
@@ -19,10 +19,9 @@ import java.util.*
 @AutoRegister
 object InvalidateGrantCommand : ScalaCommand()
 {
-    @Syntax("<type> [player]")
     @CommandAlias("invalidategrants")
     @CommandPermission("lemon.command.invalidategrants")
-    fun onInvalidate(sender: CommandSender, invalidationType: InvalidationType, uuid: UUID)
+    fun onInvalidate(sender: ConsoleCommandSender, invalidationType: InvalidationType, uuid: UUID)
     {
         val completableFuture = if (invalidationType == InvalidationType.ISSUED)
         {
