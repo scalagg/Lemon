@@ -23,8 +23,8 @@ abstract class ServerAggregateHandler(
 
     @JvmOverloads
     fun redirect(
-        vararg player: Player,
-        metadata: Map<String, String> = mapOf()
+        metadata: (Player) -> Map<String, String> = { mapOf() },
+        vararg player: Player
     )
     {
         val bestChoice = findBestChoice(player.first())
@@ -39,7 +39,7 @@ abstract class ServerAggregateHandler(
         for (other in player)
         {
             redirectSystem.redirect(
-                other, bestChoice.id, metadata
+                other, bestChoice.id, metadata(other)
             )
         }
     }
