@@ -33,8 +33,11 @@ object HotbarPresetHandler
     {
         Events
             .subscribe(PlayerInteractEvent::class.java)
-            .filter { it.action == Action.RIGHT_CLICK_AIR }
-            .filter { it.item != null }
+            .filter {
+                it.action == Action.RIGHT_CLICK_AIR ||
+                    it.action == Action.RIGHT_CLICK_BLOCK
+            }
+            .filter { it.hasItem() }
             .filter { ItemUtils.itemTagHasKey(it.item, "invokerc") }
             .handler { event ->
                 val extractedItemTag = ItemUtils
