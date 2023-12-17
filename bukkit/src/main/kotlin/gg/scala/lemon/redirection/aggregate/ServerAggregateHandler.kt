@@ -21,7 +21,11 @@ abstract class ServerAggregateHandler(
     abstract fun group(): String
     abstract fun findBestChoice(player: Player): GameServer?
 
-    fun redirect(vararg player: Player)
+    @JvmOverloads
+    fun redirect(
+        vararg player: Player,
+        metadata: Map<String, String> = mapOf()
+    )
     {
         val bestChoice = findBestChoice(player.first())
             ?: return kotlin.run {
@@ -35,12 +39,16 @@ abstract class ServerAggregateHandler(
         for (other in player)
         {
             redirectSystem.redirect(
-                other, bestChoice.id
+                other, bestChoice.id, metadata
             )
         }
     }
 
-    fun redirect(player: Player)
+    @JvmOverloads
+    fun redirect(
+        player: Player,
+        metadata: Map<String, String> = mapOf()
+    )
     {
         val bestChoice = findBestChoice(player)
             ?: return player.sendMessage(
@@ -48,7 +56,7 @@ abstract class ServerAggregateHandler(
             )
 
         redirectSystem.redirect(
-            player, bestChoice.id
+            player, bestChoice.id, metadata
         )
     }
 
