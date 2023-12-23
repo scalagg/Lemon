@@ -36,7 +36,7 @@ object DefaultNametagProvider : NametagProvider("default", 10)
                 else sortMapping ?: "z"
             } else
             {
-                "§0§9§9${sortMapping ?: "z"}"
+                Lemon.instance.settings.tabWeight
             }
         )
     }

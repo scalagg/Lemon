@@ -26,6 +26,7 @@ class SettingsConfigProcessor
 
     val defaultChatGsd = false
     val defaultChatGsdGroupId = ""
+    val tabWeight = "§9§9§9§9"
 
     val tablistSortingEnabled = true
 

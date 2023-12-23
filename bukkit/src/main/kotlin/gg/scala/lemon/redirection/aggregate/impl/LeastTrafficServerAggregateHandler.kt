@@ -1,5 +1,6 @@
 package gg.scala.lemon.redirection.aggregate.impl
 
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.lemon.redirection.PlayerRedirectSystem
 import gg.scala.lemon.redirection.aggregate.ServerAggregateHandler
@@ -21,7 +22,7 @@ class LeastTrafficServerAggregateHandler(
     {
         return servers
             .filter {
-                it.getWhitelisted() == false
+                it.getWhitelisted() == ServerSync.getLocalGameServer().getWhitelisted()
             }
             .minByOrNull {
                 it.getPlayersCount() ?: Int.MAX_VALUE // we don't want to send the player to a broken server >-<
