@@ -70,6 +70,7 @@ abstract class PlayerStaticCooldown(
             if (bukkitPlayer != null)
             {
                 onExpiration.invoke(bukkitPlayer)
+                tasks.remove(uniqueId)
             }
         }
     }
