@@ -165,8 +165,7 @@ object PlayerHandler
         }
 
         return currentList.filter {
-            !it.bukkitPlayer!!.hasMetadata("vanished") &&
-                    !it.bukkitPlayer!!.hasMetadata("mod-mode")
+            !it.bukkitPlayer!!.hasMetadata("vanished")
         }
     }
 
