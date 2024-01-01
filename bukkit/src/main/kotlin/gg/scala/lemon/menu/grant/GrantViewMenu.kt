@@ -153,7 +153,7 @@ class GrantViewMenu(
             if (grant.isActive && !grant.isPermanent)
             {
                 lines.add("")
-                lines.add("${CC.GRAY}Expires In: ${CC.WHITE + grant.fancyDurationFromNowStringRaw}")
+                lines.add("${CC.GRAY}Expires In: ${CC.WHITE + grant.durationFromNowStringRaw}")
                 lines.add("${CC.GRAY}Expires On: ${CC.WHITE + grant.expirationString}")
             }
 

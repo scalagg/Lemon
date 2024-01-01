@@ -138,7 +138,7 @@ class PunishmentDetailedViewMenu(
             if (punishment.isActive && !punishment.isPermanent)
             {
                 lines.add("")
-                lines.add("${CC.GRAY}Expires In: ${CC.WHITE + punishment.fancyDurationFromNowStringRaw}")
+                lines.add("${CC.GRAY}Expires In: ${CC.WHITE + punishment.durationFromNowStringRaw}")
                 lines.add("${CC.GRAY}Expires On: ${CC.WHITE + punishment.expirationString}")
             }
 
