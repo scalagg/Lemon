@@ -1,3 +1,0 @@
-rootProject.name = 'lemon'
-include 'bukkit'
-include 'common'
