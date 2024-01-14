@@ -5,6 +5,8 @@ import gg.scala.aware.message.AwareMessage
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelService
+import gg.scala.lemon.command.ListCommand
+import gg.scala.lemon.listener.PlayerListener
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.software.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
@@ -70,10 +72,6 @@ object RedisHandler
             if (!channel.permissionLambda.invoke(other))
                 continue
 
-            val lemonTarget = PlayerHandler
-                .find(other.uniqueId)
-                ?: continue
-
             if (
                 !channel
                     .displayToPlayer
@@ -86,7 +84,7 @@ object RedisHandler
                 !senderIsStaff
             )
             {
-                if (lemonTarget.getSetting("global-chat-disabled"))
+                if (!PlayerListener.defaultChannelProtection3.invoke(other))
                 {
                     continue
                 }
