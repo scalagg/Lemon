@@ -5,6 +5,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author GrowlyX
@@ -14,7 +15,7 @@ abstract class PlayerStaticCooldown(
     id: String, private val duration: Long
 ) : PlayerCooldown(id)
 {
-    val tasks = mutableMapOf<UUID, BukkitTask>()
+    val tasks = ConcurrentHashMap<UUID, BukkitTask>()
 
     var shouldNotify = false
     var onExpiration: (Player) -> Unit = {}
