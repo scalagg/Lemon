@@ -35,14 +35,13 @@ object HistoryCommand : ScalaCommand()
     fun onHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
         return uuid.validatePlayers(player, true) {
-            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
-
-            if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.punishments.other"))
+            if (!player.uniqueId.equals(it.uniqueId) && !player.hasPermission("lemon.command.history.punishments.other"))
             {
                 player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
                 return@validatePlayers
             }
 
+            val name = CubedCacheUtil.fetchName(it.uniqueId)!!
             val colored = QuickAccess.coloredNameOrNull(name, true)
 
             if (colored == null)
@@ -66,7 +65,7 @@ object HistoryCommand : ScalaCommand()
         return uuid.validatePlayers(player, true) {
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
 
-            if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.punishments.other"))
+            if (!player.uniqueId.equals(it.uniqueId) && !player.hasPermission("lemon.command.staffhistory.punishments.other"))
             {
                 player.sendMessage(LemonConstants.NO_PERMISSION_SUB)
                 return@validatePlayers
