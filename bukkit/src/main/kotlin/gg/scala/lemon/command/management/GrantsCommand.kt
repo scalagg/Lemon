@@ -42,12 +42,12 @@ object GrantsCommand : ScalaCommand()
         uuid: AsyncLemonPlayer
     ): CompletableFuture<Void>
     {
-        if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.history.grants.other"))
-        {
-            throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
-        }
-
         return uuid.validatePlayers(player, true) {
+            if (!player.uniqueId.equals(it.uniqueId) && !player.hasPermission("lemon.command.history.grants.other"))
+            {
+                throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
+            }
+
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
             val colored = coloredNameOrNull(name, true)
 
@@ -114,12 +114,12 @@ object GrantsCommand : ScalaCommand()
     @CommandPermission("lemon.command.staffhistory.grants")
     fun onStaffHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
-        if (!player.uniqueId.equals(uuid) && !player.hasPermission("lemon.command.staffhistory.grants.other"))
-        {
-            throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
-        }
-
         return uuid.validatePlayers(player, true) {
+            if (!player.uniqueId.equals(it.uniqueId) && !player.hasPermission("lemon.command.staffhistory.grants.other"))
+            {
+                throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
+            }
+
             val name = CubedCacheUtil.fetchName(it.uniqueId)!!
             val colored = coloredNameOrNull(name, true)
 
