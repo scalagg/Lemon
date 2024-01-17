@@ -25,6 +25,7 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.TimeUnit
 
 /**
  * @author GrowlyX
@@ -202,9 +203,9 @@ object PunishmentHandler
 
         if (category != PunishmentCategory.BLACKLIST && category != PunishmentCategory.KICK)
         {
-            if (duration == Long.MAX_VALUE && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent"))
+            if (duration > TimeUnit.DAYS.toMillis(90L) && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent"))
             {
-                issuer.sendMessage("${CC.RED}You do not have permission to issue permanent ${category.name.lowercase()}s!")
+                issuer.sendMessage("${CC.RED}You do not have permission to issue ${category.name.lowercase()} durations greater than 3mo!")
                 return
             }
         }

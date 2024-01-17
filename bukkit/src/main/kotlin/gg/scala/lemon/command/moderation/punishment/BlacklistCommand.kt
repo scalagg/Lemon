@@ -45,7 +45,7 @@ object BlacklistCommand : ScalaCommand()
 
     @Syntax("<player> [-s] [reason] [-s]")
     @CommandAlias("reblacklist|rbl")
-    @CommandPermission("lemon.command.blacklist")
+    @CommandPermission("lemon.command.reblacklist")
     @CommandCompletion("@players Unfair Advantage")
     fun onReBlacklist(
         sender: CommandSender,

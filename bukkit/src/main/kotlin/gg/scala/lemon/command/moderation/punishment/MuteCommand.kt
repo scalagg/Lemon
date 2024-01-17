@@ -48,7 +48,7 @@ object MuteCommand : ScalaCommand()
     }
 
     @CommandAlias("remute|rm")
-    @CommandPermission("lemon.command.mute")
+    @CommandPermission("lemon.command.remute")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Spamming")
     fun onReMute(

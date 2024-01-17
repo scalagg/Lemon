@@ -42,7 +42,7 @@ object BanCommand : ScalaCommand()
     }
 
     @CommandAlias("reban|rb")
-    @CommandPermission("lemon.command.ban")
+    @CommandPermission("lemon.command.reban")
     @Syntax("<player> <duration> [-s] [reason] [-s]")
     @CommandCompletion("@players 1d|1w|1mo|3mo|6mo|1y|perm|permanent Unfair Advantage")
     fun onReBan(
