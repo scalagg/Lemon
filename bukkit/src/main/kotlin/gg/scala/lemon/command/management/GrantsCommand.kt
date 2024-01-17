@@ -43,7 +43,7 @@ object GrantsCommand : ScalaCommand()
     ): CompletableFuture<Void>
     {
         return uuid.validatePlayers(player, true) {
-            if (!player.uniqueId.equals(it.uniqueId) && !player.hasPermission("lemon.command.history.grants.other"))
+            if (it.uniqueId != player.uniqueId && !player.hasPermission("lemon.command.history.grants.other"))
             {
                 throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
             }
@@ -115,7 +115,7 @@ object GrantsCommand : ScalaCommand()
     fun onStaffHistory(player: Player, uuid: AsyncLemonPlayer): CompletableFuture<Void>
     {
         return uuid.validatePlayers(player, true) {
-            if (!player.uniqueId.equals(it.uniqueId) && !player.hasPermission("lemon.command.staffhistory.grants.other"))
+            if (it.uniqueId != player.uniqueId && !player.hasPermission("lemon.command.staffhistory.grants.other"))
             {
                 throw ConditionFailedException(LemonConstants.NO_PERMISSION_SUB)
             }
