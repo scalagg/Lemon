@@ -28,6 +28,7 @@ import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
+import me.lucko.helper.event.filter.EventFilters
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.util.CC
@@ -169,8 +170,20 @@ class Lemon : ExtendedScalaPlugin()
             }
 
         Events.subscribe(PlayerMoveEvent::class.java)
-            .filter { EventUtils.hasPlayerMoved(it) && it.player.hasMetadata("frozen") }
-            .handler { it.player.teleport(it.from) }
+            .filter {
+                EventFilters
+                    .ignoreSameBlockAndY<PlayerMoveEvent>()
+                    .test(it) &&
+                    it.player.hasMetadata("frozen")
+            }
+            .handler {
+                it.player.teleport(
+                    it.from.clone().apply {
+                        x = x.toInt() + 0.5
+                        z = z.toInt() + 0.5
+                    }
+                )
+            }
 
         this.serverStatisticProvider =
             DefaultServerStatisticProvider
