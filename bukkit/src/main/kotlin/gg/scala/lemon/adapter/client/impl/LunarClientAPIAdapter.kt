@@ -86,21 +86,21 @@ class LunarClientAPIAdapter : PlayerClientAdapter
         LunarClientAPI.getInstance().disableAllStaffModules(player)
     }
 
-    override fun updateNametag(player: Player, tagLines: List<String>)
-    {
-        Bukkit.getOnlinePlayers().forEach {
-            LunarClientAPI.getInstance()
-                .overrideNametag(player, tagLines, it)
-        }
-    }
+//    override fun updateNametag(player: Player, tagLines: List<String>)
+//    {
+//        Bukkit.getOnlinePlayers().forEach {
+//            LunarClientAPI.getInstance()
+//                .overrideNametag(player, tagLines, it)
+//        }
+//    }
 
-    override fun resetNametag(player: Player)
-    {
-        Bukkit.getOnlinePlayers().forEach {
-            LunarClientAPI.getInstance()
-                .resetNametag(player, it)
-        }
-    }
+//    override fun resetNametag(player: Player)
+//    {
+//        Bukkit.getOnlinePlayers().forEach {
+//            LunarClientAPI.getInstance()
+//                .resetNametag(player, it)
+//        }
+//    }
 
     override fun sendTitle(player: Player, title: String, subtitle: String)
     {

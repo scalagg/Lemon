@@ -16,7 +16,7 @@ import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.store.controller.DataStoreObjectControllerCache
-import net.evilblock.cubed.nametag.NametagHandler
+//import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.visibility.VisibilityHandler
 import net.kyori.adventure.key.Key
@@ -345,7 +345,7 @@ object PlayerListener : Listener
         lemonPlayer.performConnectionTasks()
 
         VisibilityHandler.updateToAll(event.player)
-        NametagHandler.reloadPlayer(event.player)
+//        NametagHandler.reloadPlayer(event.player)
     }
 
     private fun updatePlayerRecord()

@@ -22,14 +22,14 @@ import gg.scala.lemon.command.customizer.LemonCommandCustomizer
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
-import gg.scala.lemon.player.nametag.DefaultNametagProvider
+//import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import gg.scala.validate.ScalaValidateData
 import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.event.filter.EventFilters
-import net.evilblock.cubed.nametag.NametagHandler
+//import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.EventUtils
@@ -161,7 +161,7 @@ class Lemon : ExtendedScalaPlugin()
             toCCColorFormat(lemonWebData.secondary)
         )
 
-        NametagHandler.registerProvider(DefaultNametagProvider)
+//        NametagHandler.registerProvider(DefaultNametagProvider)
 
         Events.subscribe(PlayerInteractAtEntityEvent::class.java)
             .filter { it.rightClicked is Player && it.rightClicked.hasMetadata("frozen") }
