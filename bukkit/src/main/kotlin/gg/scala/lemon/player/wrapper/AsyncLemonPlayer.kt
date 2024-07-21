@@ -9,6 +9,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
@@ -34,6 +35,7 @@ data class AsyncLemonPlayer(
 )
 {
     var autoAccountSelectionOnMultiple = false
+    var allowOffline = false
 
     fun computeNow() = future(uniqueIdCompute())
 
@@ -152,26 +154,14 @@ data class AsyncLemonPlayer(
                     return@thenAcceptAsync
                 }
 
-                if (sender is Player)
+                if (sender is Player && !allowOffline)
                 {
-                    val lemonPlayer = PlayerHandler.find(sender.uniqueId)
-                    if (lemonPlayer != null)
+                    val first = it.second.first()
+                    if (!QuickAccess.canInteractWith(sender, first.uniqueId))
                     {
-                        val first = it.second.first()
-                        val power = lemonPlayer.activeGrant?.getRank()?.weight ?: 0
-                        val targetPower = ScalaCommonsSpigot.instance.kvConnection.sync()
-                            .hget(
-                                "vanish:${first.uniqueId}",
-                                "power"
-                            )
-                            ?.toIntOrNull()
-
-                        if (targetPower != null && power < targetPower)
-                        {
-                            throw ConditionFailedException(
-                                "The player ${CC.YELLOW}${first.name}${CC.RED} is not logged onto the network."
-                            )
-                        }
+                        throw ConditionFailedException(
+                            "The player ${CC.YELLOW}${first.name}${CC.RED} is not logged onto the network."
+                        )
                     }
                 }
 

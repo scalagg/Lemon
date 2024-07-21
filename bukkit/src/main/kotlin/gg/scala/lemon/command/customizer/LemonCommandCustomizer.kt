@@ -8,6 +8,7 @@ import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.lemon.channel.ChatChannel
 import gg.scala.lemon.channel.ChatChannelService
+import gg.scala.lemon.command.annotations.AllowOffline
 import gg.scala.lemon.command.annotations.NoManualSelection
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
@@ -87,12 +88,13 @@ object LemonCommandCustomizer
 
         commandManager.commandContexts
             .registerContext(AsyncLemonPlayer::class.java) {
-                val noManualSelection = it
-                    .hasAnnotation(NoManualSelection::class.java)
+                val noManualSelection = it.hasAnnotation(NoManualSelection::class.java)
+                val allowOffline = it.hasAnnotation(AllowOffline::class.java)
 
                 AsyncLemonPlayer.of(uniqueId = null, context = it)
                     .apply {
                         this.autoAccountSelectionOnMultiple = noManualSelection
+                        this.allowOffline = allowOffline
                     }
             }
 

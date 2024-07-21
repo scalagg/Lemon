@@ -1,5 +1,6 @@
 package gg.scala.lemon.feature
 
+import com.comphenix.packetwrapper.WrapperPlayClientTabComplete
 import com.comphenix.protocol.PacketType
 import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.service.Configure
