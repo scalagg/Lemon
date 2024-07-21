@@ -218,6 +218,22 @@ object QuickAccess
     }
 
     @JvmStatic
+    fun canInteractWith(player: Player, target: UUID): Boolean
+    {
+        val lemonPlayer = PlayerHandler.find(target)
+        val power = lemonPlayer?.activeGrant?.getRank()?.weight ?: 0
+
+        val targetPower = ScalaCommonsSpigot.instance.kvConnection.sync()
+            .hget(
+                "vanish:$target",
+                "power"
+            )
+            ?.toIntOrNull()
+
+        return targetPower == null || power >= targetPower
+    }
+
+    @JvmStatic
     fun coloredName(player: Player, ignoreMinequest: Boolean = false): String?
     {
         return coloredName(player.uniqueId, ignoreMinequest = ignoreMinequest)
