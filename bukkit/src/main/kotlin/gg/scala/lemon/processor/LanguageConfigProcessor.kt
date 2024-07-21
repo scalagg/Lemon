@@ -50,10 +50,12 @@ class LanguageConfigProcessor
         " - Tense: \"You've been/You're currently\"",
         " - Reason",
         " - Expiration: \"not expire/expire in <date>\"",
+        " - Punish ID: Punishment ID",
     )
     val muteMessage = """
         ${CC.RED}%s muted for: ${CC.WHITE}%s
         ${CC.RED}This punishment will %s.
+        ${CC.GRAY}Your punishment ID is %s.
     """.trimIndent()
 
     @Coloured

@@ -40,6 +40,7 @@ import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import net.evilblock.cubed.util.time.DateUtil
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -268,7 +269,8 @@ class LemonPlayer(
                 .format(
                     if (current) "You've been" else "You're currently",
                     punishment.addedReason,
-                    punishment.fancyDurationFromNowStringRaw
+                    punishment.fancyDurationFromNowStringRaw,
+                    SplitUtil.splitUuid(punishment.uuid)
                 )
 
             BAN -> if (punishment.isPermanent)

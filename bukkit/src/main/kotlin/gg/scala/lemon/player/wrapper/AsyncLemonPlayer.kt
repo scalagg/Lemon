@@ -13,6 +13,7 @@ import gg.scala.lemon.util.SplitUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
@@ -21,6 +22,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.locks.Condition
 
 /**
  * @author GrowlyX
@@ -148,6 +150,29 @@ data class AsyncLemonPlayer(
                     }
 
                     return@thenAcceptAsync
+                }
+
+                if (sender is Player)
+                {
+                    val lemonPlayer = PlayerHandler.find(sender.uniqueId)
+                    if (lemonPlayer != null)
+                    {
+                        val first = it.second.first()
+                        val power = lemonPlayer.activeGrant?.getRank()?.weight ?: 0
+                        val targetPower = ScalaCommonsSpigot.instance.kvConnection.sync()
+                            .hget(
+                                "vanish:${first.uniqueId}",
+                                "power"
+                            )
+                            ?.toIntOrNull()
+
+                        if (targetPower != null && power < targetPower)
+                        {
+                            throw ConditionFailedException(
+                                "The player ${CC.YELLOW}${first.name}${CC.RED} is not logged onto the network."
+                            )
+                        }
+                    }
                 }
 
                 lambda.invoke(it.second[0])
