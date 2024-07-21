@@ -1,5 +1,6 @@
 package gg.scala.lemon.cooldown
 
+import net.evilblock.cubed.util.time.TimeUtil
 import org.apache.commons.lang.time.DurationFormatUtils
 
 /**
@@ -35,9 +36,19 @@ abstract class Cooldown<T>
 
     fun getRemainingFormatted(t: T): String
     {
-        return DurationFormatUtils.formatDurationWords(
-            fetchRemaining(t), true, true
-        )
+        return formatMilliseconds(fetchRemaining(t))
+    }
+
+    private fun formatMilliseconds(ms: Long): String
+    {
+        val seconds = ms / 1000.0
+        return when
+        {
+            seconds < 1 -> "%.1fs".format(seconds)
+            seconds < 60 -> "${seconds.toInt()}s"
+            seconds < 3600 -> "${(seconds / 60).toInt()}m"
+            else -> "${(seconds / 3600).toInt()}h"
+        }
     }
 
     fun fetchRemaining(t: T): Long
