@@ -234,6 +234,17 @@ object QuickAccess
     }
 
     @JvmStatic
+    fun getFakeIdentity(player: Player): UUID?
+    {
+        return ScalaCommonsSpigot.instance.kvConnection.sync()
+            .hget(
+                "disguise:disguised-player",
+                player.uniqueId.toString()
+            )
+            ?.let(UUID::fromString)
+    }
+
+    @JvmStatic
     fun coloredName(player: Player, ignoreMinequest: Boolean = false): String?
     {
         return coloredName(player.uniqueId, ignoreMinequest = ignoreMinequest)

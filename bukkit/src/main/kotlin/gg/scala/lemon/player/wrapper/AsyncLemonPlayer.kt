@@ -34,6 +34,7 @@ data class AsyncLemonPlayer(
     val future: (Pair<UUID, Boolean>) -> CompletableFuture<List<LemonPlayer>>
 )
 {
+    var permitMockIdentity = false
     var autoAccountSelectionOnMultiple = false
     var allowOffline = false
 
@@ -58,6 +59,8 @@ data class AsyncLemonPlayer(
             .thenAcceptAsync {
                 if (it.second.isEmpty())
                 {
+
+
                     val username = CubedCacheUtil
                         .fetchName(it.first.first)
 

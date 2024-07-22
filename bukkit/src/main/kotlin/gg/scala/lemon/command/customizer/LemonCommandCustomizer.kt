@@ -10,6 +10,7 @@ import gg.scala.lemon.channel.ChatChannel
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.command.annotations.AllowOffline
 import gg.scala.lemon.command.annotations.NoManualSelection
+import gg.scala.lemon.command.annotations.PermitMockIdentity
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -90,10 +91,12 @@ object LemonCommandCustomizer
             .registerContext(AsyncLemonPlayer::class.java) {
                 val noManualSelection = it.hasAnnotation(NoManualSelection::class.java)
                 val allowOffline = it.hasAnnotation(AllowOffline::class.java)
+                val mockID = it.hasAnnotation(PermitMockIdentity::class.java)
 
                 AsyncLemonPlayer.of(uniqueId = null, context = it)
                     .apply {
                         this.autoAccountSelectionOnMultiple = noManualSelection
+                        this.permitMockIdentity = mockID
                         this.allowOffline = allowOffline
                     }
             }
