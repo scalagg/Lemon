@@ -29,6 +29,7 @@ class SettingsConfigProcessor
     val tabWeight = "§9§9§9§9"
 
     val tablistSortingEnabled = true
+    val prefixInNametags = true
 
     val blacklistedCommands = listOf(
         "ver", "icanhasbukkit"

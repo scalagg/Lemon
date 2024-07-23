@@ -24,22 +24,28 @@ object DefaultNametagProvider : NametagProvider("default", 10)
         val sortMapping = SortedRankCache.teamMappings[rank.uuid]
 
         return createNametag(
-            /*if (minequest()) "${
-                if (ChatColor.stripColor(rank.prefix).isEmpty()) "" else ExtHookIns.playerRankPrefix(toRefresh, rank, lemonPlayer)
-            }${
-                if (minequest() && rank.name == "Platinum") "" else rank.color
-            }" else rank.color*/QuickAccess.replaceEmptyNullable(rank.prefix)?.let { "$it${rank.color} " } ?: rank.color,
+            if (Lemon.instance.settings.prefixInNametags)
+            {
+                QuickAccess.replaceEmptyNullable(rank.prefix)
+                    ?.let { "$it${rank.color} " }
+                    ?: rank.color
+            } else
+            {
+                if (minequest()) "${
+                    if (ChatColor.stripColor(rank.prefix).isEmpty()) "" else ExtHookIns.playerRankPrefix(toRefresh, rank, lemonPlayer)
+                }${
+                    if (minequest() && rank.name == "Platinum") "" else rank.color
+                }" else rank.color
+            },
             "",
             if (Lemon.instance.settings.tablistSortingEnabled)
             {
-                "§${
-                    if (sortMapping != null && minequest())
-                        sortMapping + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
-                    else sortMapping ?: "z"
-                }"
+                (if (sortMapping != null && minequest())
+                    sortMapping + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
+                else sortMapping ?: "z").toCharArray().joinToString { "§$it" }
             } else
             {
-                Lemon.instance.settings.tabWeight
+                ""
             }
         )
     }
