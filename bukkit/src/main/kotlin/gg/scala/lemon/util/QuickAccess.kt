@@ -258,13 +258,6 @@ object QuickAccess
                 .ifPresent { lemonPlayer ->
                     it.displayName = lemonPlayer.getColoredName()
 
-                    it.playerListName = lemonPlayer
-                        .getColoredName(
-                            rank = lemonPlayer.disguiseRank() ?: realRank(it),
-                            customColor = false,
-                            prefixIncluded = true
-                        )
-
                     NametagHandler.reloadPlayer(it)
                     VisibilityHandler.update(it)
 
