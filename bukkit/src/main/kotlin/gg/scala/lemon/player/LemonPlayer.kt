@@ -32,7 +32,6 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.originalRank
 import gg.scala.lemon.util.QuickAccess.realRank
 import gg.scala.lemon.util.SplitUtil
-import gg.scala.lemon.util.VaultUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.controller.annotations.Indexed
 import gg.scala.store.controller.annotations.Timestamp
@@ -40,18 +39,13 @@ import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
-import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
-import net.evilblock.cubed.util.time.DateUtil
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.bukkit.permissions.PermissionAttachment
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.logging.Level
 
 @Model
 class LemonPlayer(
@@ -554,10 +548,6 @@ class LemonPlayer(
                     .setPermission(
                         it, !it.startsWith("*")
                     )
-
-                VaultUtil.usePermissions { permission ->
-                    permission.playerAdd(player, it)
-                }
             }
         }
 

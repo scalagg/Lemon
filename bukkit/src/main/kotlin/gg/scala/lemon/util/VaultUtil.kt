@@ -1,7 +1,6 @@
 package gg.scala.lemon.util
 
 import net.evilblock.cubed.util.hook.VaultHook
-import net.milkbowl.vault.permission.Permission
 
 /**
  * @author GrowlyX
