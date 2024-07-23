@@ -262,7 +262,7 @@ object QuickAccess
                         .getColoredName(
                             rank = lemonPlayer.disguiseRank() ?: realRank(it),
                             customColor = false,
-                            prefixIncluded = minequest() || tropic() || glade()
+                            prefixIncluded = true
                         )
 
                     NametagHandler.reloadPlayer(it)
@@ -297,6 +297,21 @@ object QuickAccess
         if (empty)
         {
             return "${CC.RED}None"
+        }
+
+        return string
+    }
+
+    @JvmStatic
+    fun replaceEmptyNullable(string: String): String?
+    {
+        val empty = ChatColor
+            .stripColor(string)
+            .isBlank()
+
+        if (empty)
+        {
+            return null
         }
 
         return string
