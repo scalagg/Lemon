@@ -21,7 +21,30 @@ object SortedRankCache : Runnable
             .filter { it.value.visible }
             .sortedByDescending { it.value.weight }
             .forEachIndexed { index, entry ->
-                teamMappings[entry.key] = (index).toString()
+                teamMappings[entry.key] = getNameFromInput(index)
             }
     }
+
+    /**
+     * This is a special method to sort nametags in
+     * the tablist. It takes a priority and converts
+     * it to an alphabetic representation to force a
+     * specific sort.
+     *
+     * @param input the sort priority
+     * @return the team name
+     */
+    private fun getNameFromInput(input: Int): String
+    {
+        if (input < 0) return "Z"
+        val letter = ((input / 5) + 65).toChar()
+        val repeat = input % 5 + 1
+        val builder = StringBuilder()
+        for (i in 0 until repeat)
+        {
+            builder.append(letter)
+        }
+        return builder.toString()
+    }
+
 }

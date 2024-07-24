@@ -42,10 +42,10 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             {
                 (if (sortMapping != null && minequest())
                     sortMapping + ExtHookIns.playerRankColorType(toRefresh, rank, lemonPlayer)
-                else sortMapping ?: "z").toCharArray().joinToString { "§$it" }
+                else sortMapping ?: "z")
             } else
             {
-                ""
+                "§z§z§z"
             }
         )
     }
