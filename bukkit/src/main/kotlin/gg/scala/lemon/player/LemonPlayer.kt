@@ -789,6 +789,9 @@ class LemonPlayer(
             .save(this, DataStoreStorageType.MONGO)
     }
 
+    private var localSessionCache = listOf<Session>()
+    fun sessions() = localSessionCache
+
     fun persistSession()
     {
         localSession?.apply {
@@ -844,6 +847,12 @@ class LemonPlayer(
             )
         }.thenComposeAsync {
             checkForIpRelative()
+        }.thenComposeAsync {
+            localSessionCache = SessionService
+                .loadSessions(uniqueId)
+                .values.toList()
+
+            CompletableFuture.completedFuture(null)
         }.thenComposeAsync {
             if (!this.nameChangeDetected)
             {
