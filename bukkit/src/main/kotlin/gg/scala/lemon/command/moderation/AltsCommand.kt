@@ -10,6 +10,8 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
+import gg.scala.lemon.sessions.Session
+import gg.scala.lemon.sessions.SessionService
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.lemon.util.QuickAccess.online
 import net.evilblock.cubed.util.CC
@@ -139,7 +141,7 @@ object AltsCommand : ScalaCommand()
 
     private fun addIpInfoToList(lemonPlayer: LemonPlayer, hoverList: MutableList<String>)
     {
-        hoverList.add(" ${CC.SEC}Logins: ${CC.WHITE}${lemonPlayer.pastLogins.size}")
+        val sessions = SessionService.loadSessions(lemonPlayer.uniqueId)
         hoverList.add(
             " ${CC.SEC}First Login: ${CC.WHITE}${
                 TimeUtil.formatIntoFullCalendarString(
@@ -155,10 +157,8 @@ object AltsCommand : ScalaCommand()
             }"
         )
 
-        val completePlaytime = lemonPlayer
-            .pastLogins.values.sum()
-        val completePlaytimeSessions = lemonPlayer
-            .pastLogins.size
+        val completePlaytime = sessions.values.sumOf(Session::length)
+        val completePlaytimeSessions = sessions.size
 
         hoverList.add("")
         hoverList.add(" ${CC.SEC}Total sessions: ${CC.WHITE}$completePlaytimeSessions")

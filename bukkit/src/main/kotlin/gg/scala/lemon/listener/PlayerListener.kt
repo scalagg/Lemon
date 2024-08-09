@@ -14,6 +14,7 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
+import gg.scala.lemon.sessions.SessionService
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
@@ -456,7 +457,10 @@ object PlayerListener : Listener
         val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
-            PlayerHandler.players.remove(it.uniqueId)?.save()
+            PlayerHandler.players.remove(it.uniqueId)?.apply {
+                persistSession()
+                save()
+            }
         }
     }
 }

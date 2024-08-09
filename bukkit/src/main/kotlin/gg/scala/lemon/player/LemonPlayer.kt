@@ -25,6 +25,8 @@ import gg.scala.lemon.player.punishment.category.PunishmentCategory.KICK
 import gg.scala.lemon.player.punishment.category.PunishmentCategory.MUTE
 import gg.scala.lemon.player.punishment.category.PunishmentCategoryIntensity
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.sessions.Session
+import gg.scala.lemon.sessions.SessionService
 import gg.scala.lemon.throwAnyExceptions
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.GrantRecalculationUtil
@@ -73,7 +75,6 @@ class LemonPlayer(
     var previousIpAddress: String? = null
 
     var pastIpAddresses = mutableSetOf<String>()
-    var pastLogins = mutableMapOf<String, Long>()
 
     val activePunishments =
         mutableMapOf<PunishmentCategory, Punishment?>()
@@ -788,6 +789,14 @@ class LemonPlayer(
             .save(this, DataStoreStorageType.MONGO)
     }
 
+    fun persistSession()
+    {
+        localSession?.apply {
+            updateLength()
+            save()
+        }
+    }
+
     private fun finalizeMetaData()
     {
         updateOrAddMetadata(
@@ -810,8 +819,6 @@ class LemonPlayer(
             pastIpAddresses.add(it)
         }
 
-        pastLogins[System.currentTimeMillis().toString()] = System.currentTimeMillis() - classInit
-
         activeGrant?.let {
             updateOrAddMetadata(
                 "last-calculated-rank", Metadata(it.getRank().uuid.toString())
@@ -819,8 +826,11 @@ class LemonPlayer(
         }
     }
 
+    private var localSession: Session? = null
+
     fun completePostLoad(): CompletableFuture<Void>
     {
+        localSession = SessionService.createLocal(this)
         handleOnConnection.add {
             checkChannelPermission(it)
         }
