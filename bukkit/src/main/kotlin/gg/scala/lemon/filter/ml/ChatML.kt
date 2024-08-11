@@ -80,8 +80,6 @@ object ChatMLService : Thread()
 
                     response.body?.string()?.let {
                         Serializers.gson.fromJson(it, Prediction::class.java)
-                    }?.apply {
-                        println(this)
                     } ?: throw IOException("Invalid response")
                 }
             }
