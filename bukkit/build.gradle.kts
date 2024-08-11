@@ -9,6 +9,8 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
     compileOnly("com.github.LunarClient:BukkitAPI:1.0.1")
+
+    implementation("io.github.resilience4j:resilience4j-circuitbreaker:2.2.0")
 }
 
 kapt {

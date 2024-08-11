@@ -3,17 +3,24 @@ package gg.scala.lemon.filter
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
+import gg.scala.lemon.filter.ml.ChatMLMessage
+import gg.scala.lemon.filter.ml.ChatMLService
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.minequest
+import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.isSilent
+import gg.scala.lemon.util.QuickAccess.parseReason
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.time.Duration
 import java.util.UUID
 
 /**
@@ -134,6 +141,7 @@ object ChatMessageFilterHandler
             )
 
             if (reportToStaff)
+            {
                 Bukkit.getOnlinePlayers()
                     .mapNotNull { PlayerHandler.findPlayer(it).orElse(null) }
                     .filter { it.hasPermission("scstaff.staff-member") }
@@ -141,6 +149,27 @@ object ChatMessageFilterHandler
                     .forEach {
                         fancyMessage.sendToPlayer(it.bukkitPlayer!!)
                     }
+            }
+        }
+
+        if (!player.hasPermission("lemon.filter.machinelearning.chat-bypass"))
+        {
+            val playerUniqueId = player.uniqueId
+            ChatMLService.submit(ChatMLMessage(message) {
+                if (it < 80.0)
+                {
+                    return@ChatMLMessage
+                }
+
+                handlePunishmentForTargetPlayerGlobally(
+                    issuer = Bukkit.getConsoleSender(),
+                    uuid = playerUniqueId,
+                    category = PunishmentCategory.MUTE,
+                    duration = Duration.ofDays(1L).toMillis(),
+                    reason = "ChatML AutoMute (${"%.2f".format(it.toFloat())})",
+                    silent = true
+                )
+            })
         }
 
         return !shouldAllowMessage
