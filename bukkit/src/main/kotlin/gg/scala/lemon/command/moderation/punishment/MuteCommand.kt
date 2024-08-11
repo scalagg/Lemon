@@ -85,7 +85,7 @@ object MuteCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.MUTE,
                 reason = parseReason(reason, fallback = "Appealed"),
-                silent = iif (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
             )
         }
     }
