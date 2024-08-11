@@ -1,10 +1,12 @@
 package gg.scala.lemon.filter
 
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.ml.ChatMLMessage
 import gg.scala.lemon.filter.ml.ChatMLService
+import gg.scala.lemon.filter.ml.IncubatorChatML
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
@@ -16,6 +18,8 @@ import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.isSilent
 import gg.scala.lemon.util.QuickAccess.parseReason
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
@@ -36,6 +40,8 @@ object ChatMessageFilterHandler
     @Configure
     fun configure()
     {
+        ChatMLService.configure()
+
         phraseFilters.add(RegexPhraseFilter)
 //        messageFilters.add(RepetitiveMessageFilter)
 
@@ -154,21 +160,23 @@ object ChatMessageFilterHandler
 
         if (!player.hasPermission("lemon.filter.machinelearning.chat-bypass"))
         {
-            val playerUniqueId = player.uniqueId
             ChatMLService.submit(ChatMLMessage(message) {
-                if (it < 80.0)
-                {
-                    return@ChatMLMessage
-                }
-
-                handlePunishmentForTargetPlayerGlobally(
-                    issuer = Bukkit.getConsoleSender(),
-                    uuid = playerUniqueId,
-                    category = PunishmentCategory.MUTE,
-                    duration = Duration.ofDays(1L).toMillis(),
-                    reason = "ChatML AutoMute (${"%.2f".format(it.toFloat())})",
-                    silent = true
-                )
+                DataStoreObjectControllerCache
+                    .findNotNull<IncubatorChatML>()
+                    .save(
+                        IncubatorChatML(UUID.randomUUID(), message, it),
+                        DataStoreStorageType.MONGO
+                    )
+                    .thenAccept { _ ->
+                        ChatMLService.webhookClient?.send(
+                            """
+                                **ChatML Prediction:**
+                                $message
+                                
+                                *(prediction: $it)*
+                            """.trimIndent()
+                        )
+                    }
             })
         }
 

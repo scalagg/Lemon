@@ -1,19 +1,15 @@
 package gg.scala.lemon.filter.ml
 
-import gg.scala.flavor.service.Configure
-import gg.scala.flavor.service.Service
+import club.minnced.discord.webhook.WebhookClientBuilder
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry
 import net.evilblock.cubed.serializers.Serializers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.apache.http.client.methods.HttpPost
+import java.io.File
 import java.io.IOException
-import java.net.URL
-import java.net.http.HttpRequest
 import java.time.Duration
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -22,13 +18,30 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 8/10/2024
  */
-@Service
 object ChatMLService : Thread()
 {
-    private val queue = LinkedBlockingQueue<ChatMLMessage>()
-    private val client = OkHttpClient.Builder().build()
+    val queue = LinkedBlockingQueue<ChatMLMessage>()
+    val client = OkHttpClient.Builder().build()
+    val webhookURL = with(File("/opt/data/discord.webhook")) {
+        if (exists())
+        {
+            return@with readText()
+        }
 
-    @Configure
+        return@with null
+    }
+
+    val webhookClient = with(webhookURL) {
+        if (this != null)
+        {
+            return@with WebhookClientBuilder(this)
+                .setWait(true)
+                .build()
+        }
+
+        return@with null
+    }
+
     fun configure()
     {
         start()
@@ -59,20 +72,23 @@ object ChatMLService : Thread()
                 .build()
 
             val supplier = mlCircuitBreaker.decorateSupplier {
-                val response = client.newCall(request).execute()
-                if (!response.isSuccessful)
-                {
-                    throw IOException("Failed to get response")
-                }
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful)
+                    {
+                        throw IOException("Failed to get response")
+                    }
 
-                response.body?.string()?.let {
-                    Serializers.gson.fromJson(it, Prediction::class.java)
-                } ?: throw IOException("Invalid response")
+                    response.body?.string()?.let {
+                        Serializers.gson.fromJson(it, Prediction::class.java)
+                    }?.apply {
+                        println(this)
+                    } ?: throw IOException("Invalid response")
+                }
             }
 
             kotlin.runCatching {
                 val response = supplier.get()
-                nextNode.callback(response.predictionPercentage)
+                nextNode.callback(response.prediction)
             }
         }
     }
@@ -90,4 +106,4 @@ val mlCircuitBreaker = mlCircuitBreakerRegistry.circuitBreaker("ml")
 
 data class ChatMLMessage(val message: String, val callback: (Double) -> Unit)
 
-data class Prediction(val predictionPercentage: Double)
+data class Prediction(val prediction: Double)
