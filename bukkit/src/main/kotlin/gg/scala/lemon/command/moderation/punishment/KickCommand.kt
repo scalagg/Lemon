@@ -42,7 +42,7 @@ object KickCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.KICK, duration = 1L,
                 reason = QuickAccess.parseReason(reason, fallback = "Camping"),
-                silent = QuickAccess.isSilent(reason),
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) QuickAccess.isSilent(reason) else true,
             )
         }
     }

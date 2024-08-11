@@ -170,10 +170,10 @@ object ChatMessageFilterHandler
                     .thenAccept { _ ->
                         ChatMLService.webhookClient?.send(
                             """
-                                **ChatML Prediction:**
+                                Prediction: `$it`
+                                ```
                                 $message
-                                
-                                *(prediction: $it)*
+                                ```
                             """.trimIndent()
                         )
                     }

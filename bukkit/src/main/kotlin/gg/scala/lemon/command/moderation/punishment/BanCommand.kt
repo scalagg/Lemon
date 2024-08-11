@@ -36,7 +36,7 @@ object BanCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BAN,
                 duration = durationFinal, reason = parseReason(reason),
-                silent = isSilent(reason)
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true
             )
         }
     }
@@ -57,7 +57,8 @@ object BanCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BAN,
                 duration = durationFinal, reason = parseReason(reason),
-                silent = isSilent(reason), rePunishing = true
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
+                rePunishing = true
             )
         }
     }
@@ -76,7 +77,7 @@ object BanCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BAN,
                 reason = parseReason(reason, fallback = "Appealed"),
-                silent = isSilent(reason),
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
             )
         }
     }
