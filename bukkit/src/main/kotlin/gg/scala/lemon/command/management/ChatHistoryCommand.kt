@@ -84,6 +84,8 @@ object ChatHistoryCommand : ScalaCommand()
                 "/chathistory ${it.name} ${(page ?: 1) + 1}"
             )
 
+        player.sendMessage("")
+        toolbar.sendToPlayer(player.bukkit())
         player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${"-".repeat(45)}")
     }
 
