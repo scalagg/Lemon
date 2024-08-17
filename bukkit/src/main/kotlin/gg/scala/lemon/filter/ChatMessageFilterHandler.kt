@@ -1,30 +1,23 @@
 package gg.scala.lemon.filter
 
-import club.minnced.discord.webhook.send.WebhookEmbedBuilder
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.ml.ChatMLMessage
 import gg.scala.lemon.filter.ml.ChatMLService
-import gg.scala.lemon.filter.ml.IncubatorChatML
+import gg.scala.lemon.filter.ml.IncubatorChatMLV2
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.minequest
-import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
-import gg.scala.lemon.util.QuickAccess.isSilent
-import gg.scala.lemon.util.QuickAccess.parseReason
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.time.Duration
 import java.util.UUID
 
 /**
@@ -162,15 +155,16 @@ object ChatMessageFilterHandler
         {
             ChatMLService.submit(ChatMLMessage(message) {
                 DataStoreObjectControllerCache
-                    .findNotNull<IncubatorChatML>()
+                    .findNotNull<IncubatorChatMLV2>()
                     .save(
-                        IncubatorChatML(UUID.randomUUID(), message, it),
+                        IncubatorChatMLV2(UUID.randomUUID(), player.uniqueId, message, it),
                         DataStoreStorageType.MONGO
                     )
                     .thenAccept { _ ->
                         ChatMLService.webhookClient?.send(
                             """
-                                Prediction: `$it`
+                                Prediction: `$it` (V2)
+                                Sent by: ${player.uniqueId}
                                 ```
                                 $message
                                 ```

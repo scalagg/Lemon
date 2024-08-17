@@ -62,7 +62,7 @@ object QuickAccess
     fun broadcast(message: String, permission: String = "")
     {
         Bukkit.getOnlinePlayers()
-            .filter { permission != "" && it.hasPermission(permission) }
+            .filter { permission == "" || it.hasPermission(permission) }
             .forEach {
                 it.sendMessage(message)
             }
