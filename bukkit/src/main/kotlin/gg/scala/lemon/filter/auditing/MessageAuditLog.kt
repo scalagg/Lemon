@@ -1,4 +1,4 @@
-package gg.scala.lemon.filter.ml
+package gg.scala.lemon.filter.auditing
 
 import gg.scala.commons.annotations.Model
 import gg.scala.store.controller.annotations.Indexed
@@ -10,10 +10,9 @@ import java.util.*
  * @since 8/10/2024
  */
 @Model
-class IncubatorChatMLV2(
-    override val identifier: UUID,
+class MessageAuditLog(
     @Indexed val playerID: UUID,
     val message: String,
-    val prediction: Double,
-    @Indexed val timestamp: Long
+    override val identifier: UUID = UUID.randomUUID(),
+    @Indexed val timestamp: BsonTimestamp = BsonTimestamp(System.currentTimeMillis())
 ) : IDataStoreObject

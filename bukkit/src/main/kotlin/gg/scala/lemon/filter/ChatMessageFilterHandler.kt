@@ -4,7 +4,8 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.filter.ml.ChatMLMessage
 import gg.scala.lemon.filter.ml.ChatMLService
-import gg.scala.lemon.filter.ml.IncubatorChatMLV2
+import gg.scala.lemon.filter.auditing.MessageAuditLog
+import gg.scala.lemon.filter.ml.IncubatorChatML
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
@@ -155,9 +156,9 @@ object ChatMessageFilterHandler
         {
             ChatMLService.submit(ChatMLMessage(message) {
                 DataStoreObjectControllerCache
-                    .findNotNull<IncubatorChatMLV2>()
+                    .findNotNull<IncubatorChatML>()
                     .save(
-                        IncubatorChatMLV2(UUID.randomUUID(), player.uniqueId, message, it),
+                        IncubatorChatML(message, it),
                         DataStoreStorageType.MONGO
                     )
                     .thenAccept { _ ->
@@ -172,6 +173,13 @@ object ChatMessageFilterHandler
                         )
                     }
             })
+
+            DataStoreObjectControllerCache
+                .findNotNull<MessageAuditLog>()
+                .save(
+                    MessageAuditLog(player.uniqueId, message),
+                    DataStoreStorageType.MONGO
+                )
         }
 
         return !shouldAllowMessage

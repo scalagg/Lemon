@@ -3,13 +3,12 @@ package gg.scala.lemon.command.management
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Sorts
 import gg.scala.commons.acf.ConditionFailedException
-import gg.scala.commons.acf.annotation.CommandAlias
-import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
-import gg.scala.lemon.filter.ml.IncubatorChatMLV2
+import gg.scala.lemon.filter.auditing.MessageAuditLog
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.util.CC
@@ -26,6 +25,8 @@ import java.util.*
 @AutoRegister
 object ChatHistoryCommand : ScalaCommand()
 {
+    @Syntax("<player>")
+    @CommandCompletion("@players")
     @CommandAlias("chathistory|ch")
     @CommandPermission("lemon.command.chathistory")
     fun chatHistory(
@@ -54,13 +55,13 @@ object ChatHistoryCommand : ScalaCommand()
         )
 
         chatHistory.values.forEach { history ->
-            val ago = System.currentTimeMillis() - history.timestamp
+            val ago = System.currentTimeMillis() - history.timestamp.value
             val timestamp = if (ago >= Duration.ofDays(1L).toMillis())
             {
-                TimeUtil.formatIntoCalendarString(Date(history.timestamp))
+                TimeUtil.formatIntoCalendarString(history.timestamp.toDate())
             } else
             {
-                "${TimeUtil.formatIntoAbbreviatedString(ago.toInt())} ago"
+                "${TimeUtil.formatIntoAbbreviatedString(ago.toInt() / 1000)} ago"
             }
 
             player.sendMessage("${CC.GRAY}$timestamp${CC.WHITE}: ${history.message}")
@@ -86,8 +87,8 @@ object ChatHistoryCommand : ScalaCommand()
         player.sendMessage("${CC.GRAY}${CC.STRIKE_THROUGH}${"-".repeat(45)}")
     }
 
-    fun preLoadChatHistory(playerID: UUID, pageSize: Int = 5, pageNumber: Int = 1) = DataStoreObjectControllerCache
-        .findNotNull<IncubatorChatMLV2>()
+    fun preLoadChatHistory(playerID: UUID, pageNumber: Int = 1, pageSize: Int = 5) = DataStoreObjectControllerCache
+        .findNotNull<MessageAuditLog>()
         .mongo()
         .loadFilteredSync {
             filter(Filters.eq("playerID", playerID.toString()))

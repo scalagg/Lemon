@@ -19,6 +19,8 @@ import gg.scala.lemon.adapter.client.PlayerClientAdapter
 import gg.scala.lemon.adapter.statistic.ServerStatisticProvider
 import gg.scala.lemon.adapter.statistic.impl.DefaultServerStatisticProvider
 import gg.scala.lemon.command.customizer.LemonCommandCustomizer
+import gg.scala.lemon.filter.auditing.BsonTimestamp
+import gg.scala.lemon.filter.auditing.BsonTimestampSerializer
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
@@ -30,9 +32,9 @@ import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.event.filter.EventFilters
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.EventUtils
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -96,6 +98,13 @@ class Lemon : ExtendedScalaPlugin()
     {
         instance = this
         logger.info("Attempting to load Lemon using provided id.")
+
+        Serializers.create {
+            registerTypeAdapter(
+                BsonTimestamp::class.java,
+                BsonTimestampSerializer
+            )
+        }
 
         validatePlatformInformation()
         runAfterDataValidation()
