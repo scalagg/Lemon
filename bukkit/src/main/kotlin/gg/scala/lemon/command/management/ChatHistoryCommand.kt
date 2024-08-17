@@ -34,7 +34,7 @@ object ChatHistoryCommand : ScalaCommand()
         target: AsyncLemonPlayer,
         @Optional page: Int?
     ) = target.validatePlayers(player.bukkit(), false) {
-        if ((page ?: 1) < 0)
+        if ((page ?: 1) < 1)
         {
             throw ConditionFailedException(
                 "This player has no chat history on Page #${page ?: 1}!"
