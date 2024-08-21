@@ -6,6 +6,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import net.evilblock.cubed.util.bukkit.prompt.NumberPrompt
+import net.evilblock.cubed.util.text.TextSplitter
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
@@ -57,11 +58,14 @@ class ChatMLEditMenu : Menu("Chat ML")
             .of(Material.WATCH)
             .name("${CC.YELLOW}API Endpoint:")
             .addToLore(
-                cachedConfigModel.apiEndpoint
+                "${CC.WHITE}${cachedConfigModel.apiEndpoint}"
             )
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
+
+                player.sendMessage("${CC.YELLOW}For reference, this is the current endpoint:")
+                player.sendMessage(cachedConfigModel.apiEndpoint)
 
                 InputPrompt()
                     .withText("Enter an API endpoint")
@@ -76,12 +80,19 @@ class ChatMLEditMenu : Menu("Chat ML")
         13 to ItemBuilder
             .of(Material.MAP)
             .name("${CC.YELLOW}Generative AI Prompt:")
-            .addToLore(
-                cachedConfigModel.generativeAIPrompt
+            .setLore(
+                TextSplitter.split(
+                    cachedConfigModel.generativeAIPrompt,
+                    CC.WHITE,
+                    " "
+                )
             )
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
+
+                player.sendMessage("${CC.YELLOW}For reference, this is the current prompt:")
+                player.sendMessage(cachedConfigModel.generativeAIPrompt)
 
                 InputPrompt()
                     .withText("Enter a generative AI prompt")
