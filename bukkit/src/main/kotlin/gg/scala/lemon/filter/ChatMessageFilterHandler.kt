@@ -10,7 +10,9 @@ import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.minequest
+import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -19,6 +21,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.time.Duration
 import java.util.UUID
 
 /**
@@ -162,6 +165,16 @@ object ChatMessageFilterHandler
                         DataStoreStorageType.MONGO
                     )
                     .thenAccept { _ ->
+                        if (it > 90) {
+                            handlePunishmentForTargetPlayerGlobally(
+                                issuer = Bukkit.getConsoleSender(),
+                                uuid = player.uniqueId,
+                                category = PunishmentCategory.MUTE,
+                                duration = Duration.ofDays(1L).toMillis(),
+                                reason = "ChatML AutoMute (${"%.2f".format(it.toFloat())})",
+                                silent = true
+                            )
+                        }
                         ChatMLService.webhookClient?.send(
                             """
                                 Prediction: `$it` (V2)
