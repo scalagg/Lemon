@@ -165,7 +165,7 @@ object ChatMessageFilterHandler
                         DataStoreStorageType.MONGO
                     )
                     .thenAccept { _ ->
-                        if (it > 90) {
+                        if (it >= 90) {
                             handlePunishmentForTargetPlayerGlobally(
                                 issuer = Bukkit.getConsoleSender(),
                                 uuid = player.uniqueId,
@@ -175,9 +175,10 @@ object ChatMessageFilterHandler
                                 silent = true
                             )
                         }
+
                         ChatMLService.webhookClient?.send(
                             """
-                                Prediction: `$it` (V2)
+                                Prediction: `$it` (V3)
                                 Sent by: ${player.uniqueId}
                                 ```
                                 $message

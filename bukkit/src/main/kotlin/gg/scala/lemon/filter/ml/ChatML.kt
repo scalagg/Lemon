@@ -8,16 +8,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.apache.commons.lang.mutable.Mutable
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.time.Duration
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
@@ -29,8 +23,6 @@ object ChatMLService : Thread()
 {
     val queue = LinkedBlockingQueue<ChatMLMessage>()
     val client = OkHttpClient.Builder().build()
-    // val client = HttpClient.newBuilder().build()
-    val url = "https://generativelanguage.googleapis.com/v1beta"
     val webhookURL = with(File("/opt/data/discord.webhook")) {
         if (exists())
         {
@@ -40,7 +32,8 @@ object ChatMLService : Thread()
         return@with null
     }
     val keys = with(File("/opt/data/gemini.tokens")) {
-        if (exists()) {
+        if (exists())
+        {
             return@with readLines()
         }
 
@@ -58,7 +51,7 @@ object ChatMLService : Thread()
         return@with null
     }
 
-    val testedKeys = mutableMapOf<String, Long>()
+    val testedTokens = mutableMapOf<String, Long>()
 
     fun configure()
     {
@@ -77,42 +70,65 @@ object ChatMLService : Thread()
             val nextNode = queue.poll(1L, TimeUnit.SECONDS)
                 ?: continue
 
-            testedKeys.values.removeIf { System.currentTimeMillis() - 60000 > it }
+            testedTokens.values.removeIf { System.currentTimeMillis() - 60000 > it }
 
-            val key = getKey(testedKeys) ?: return
-
-            val promp = "Rate this text toxicity from 0-100, output only the number: $nextNode"
+            val apiToken = getKey(testedTokens) ?: return
+            val prompt = "Rate this text toxicity from 0-100, output only the number: $nextNode"
 
             val request = Request.Builder()
-                .url("$url/models/gemini-1.5-flash:generateContent?key=$key")
+                .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiToken")
                 .method(
                     "POST",
-                    Serializers.gson
-                        .toJson("{\"contents\":[{\"parts\":[{\"text\":'$nextNode'}]}],\"safetySettings\":[{\"category\":\"HARM_CATEGORY_SEXUALLY_EXPLICIT\",\"threshold\":\"BLOCK_NONE\"},{\"category\":\"HARM_CATEGORY_DANGEROUS_CONTENT\",\"threshold\":\"BLOCK_NONE\"},{\"category\":\"HARM_CATEGORY_HARASSMENT\",\"threshold\":\"BLOCK_NONE\"}]}")
+                    """
+                        {
+                          "contents": [
+                            {
+                              "parts": [
+                                {
+                                  "text": "$prompt"
+                                }
+                              ]
+                            }
+                          ],
+                          "safetySettings": [
+                            {
+                              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                              "threshold": "BLOCK_NONE"
+                            },
+                            {
+                              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                              "threshold": "BLOCK_NONE"
+                            },
+                            {
+                              "category": "HARM_CATEGORY_HARASSMENT",
+                              "threshold": "BLOCK_NONE"
+                            }
+                          ]
+                        }
+                    """.trimIndent()
                         .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
                 )
                 .build()
 
             val supplier = mlCircuitBreaker.decorateSupplier {
                 client.newCall(request).execute().use { response ->
+                    println("Successful: ${response.isSuccessful}")
                     if (!response.isSuccessful)
                     {
-                        testedKeys[key] = System.currentTimeMillis()
+                        testedTokens[apiToken] = System.currentTimeMillis()
                         throw IOException("Failed to get response")
                     }
 
-                    response.body?.string()?.let {
-                        val obj = JSONObject(it)
-
-                        var str = obj.getJSONArray("candidates").getJSONObject(0).getJSONArray("parts").getJSONObject(0).getString("text")
-
-                        try {
-                            str = str.replace(" ", "").replace("\n", "")
-                            Prediction(str.toInt() + 0.0)
-                        } catch (e: Exception) {
-                            throw IOException("Invalid response: $str")
+                    val geminiResponse = response.body?.string()
+                        ?.let {
+                            Serializers.gson.fromJson(it, GeminiResponse::class.java)
                         }
-                    } ?: throw IOException("Invalid response")
+                        ?: return@use Prediction(0.0)
+
+                    val prediction = extractFirstNumber(geminiResponse)
+
+                    println("Response Prediction: $prediction")
+                    Prediction(prediction?.toDouble() ?: 0.0)
                 }
             }
 
@@ -123,7 +139,17 @@ object ChatMLService : Thread()
         }
     }
 
-    fun getKey(tested: MutableMap<String, Long>) : String? {
+    private fun extractFirstNumber(jsonResponse: GeminiResponse): Int? {
+        val regex = "\\d+".toRegex()
+        val firstCandidate = jsonResponse.candidates.firstOrNull()
+        val firstPartText = firstCandidate?.content?.parts?.firstOrNull()?.text
+        return firstPartText?.let {
+            regex.find(it)?.value?.toIntOrNull()
+        }
+    }
+
+    fun getKey(tested: MutableMap<String, Long>): String?
+    {
         if (keys == null) return null
         return keys.firstOrNull { !tested.contains(it) }
     }
