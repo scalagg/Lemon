@@ -8,7 +8,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.time.Duration
@@ -72,8 +71,10 @@ object ChatMLService : Thread()
 
             testedTokens.values.removeIf { System.currentTimeMillis() - 60000 > it }
 
+            val config = ChatMLDataSync.cached()
             val apiToken = getKey(testedTokens) ?: return
-            val prompt = "Rate this text toxicity from 0-100, output only the number: $nextNode"
+            val prompt = config.generativeAIPrompt.format(nextNode)
+
             val geminiRequest = GeminiRequest(
                 contents = listOf(
                     GeminiRequestContent(parts = listOf(Part(prompt)))
@@ -86,7 +87,7 @@ object ChatMLService : Thread()
             )
 
             val request = Request.Builder()
-                .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiToken")
+                .url(config.apiEndpoint.format(apiToken))
                 .method(
                     "POST",
                     Serializers.gson
@@ -106,6 +107,7 @@ object ChatMLService : Thread()
                     }
 
                     val geminiResponse = response.body?.string()
+                        ?.apply { println(this) }
                         ?.let {
                             Serializers.gson.fromJson(it, GeminiResponse::class.java)
                         }

@@ -5,6 +5,8 @@ import gg.scala.flavor.service.Service
 import gg.scala.lemon.filter.ml.ChatMLMessage
 import gg.scala.lemon.filter.ml.ChatMLService
 import gg.scala.lemon.filter.auditing.MessageAuditLog
+import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
+import gg.scala.lemon.filter.ml.ChatMLDataSync
 import gg.scala.lemon.filter.ml.IncubatorChatML
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
@@ -40,7 +42,7 @@ object ChatMessageFilterHandler
         ChatMLService.configure()
 
         phraseFilters.add(RegexPhraseFilter)
-//        messageFilters.add(RepetitiveMessageFilter)
+        messageFilters.add(RepetitiveMessageFilter)
 
         if (minequest())
         {
@@ -155,7 +157,7 @@ object ChatMessageFilterHandler
             }
         }
 
-        if (!player.hasPermission("lemon.filter.machinelearning.chat-bypass"))
+        if (!player.hasPermission("lemon.filter.machinelearning.chat-bypass") && ChatMLDataSync.cached().enabled)
         {
             ChatMLService.submit(ChatMLMessage(message) {
                 DataStoreObjectControllerCache
@@ -165,7 +167,8 @@ object ChatMessageFilterHandler
                         DataStoreStorageType.MONGO
                     )
                     .thenAccept { _ ->
-                        if (it >= 90) {
+                        val config = ChatMLDataSync.cached()
+                        if (it >= config.muteThreshold) {
                             handlePunishmentForTargetPlayerGlobally(
                                 issuer = Bukkit.getConsoleSender(),
                                 uuid = player.uniqueId,
