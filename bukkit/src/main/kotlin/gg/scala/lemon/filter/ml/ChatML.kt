@@ -81,6 +81,8 @@ object ChatMLService : Thread()
 
             val key = getKey(testedKeys) ?: return
 
+            val promp = "Rate this text toxicity from 0-100, output only the number: $nextNode"
+
             val request = Request.Builder()
                 .url("$url/models/gemini-1.5-flash:generateContent?key=$key")
                 .method(
