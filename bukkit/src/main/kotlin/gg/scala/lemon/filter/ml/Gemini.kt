@@ -35,3 +35,17 @@ data class UsageMetadata(
     val candidatesTokenCount: Int,
     val totalTokenCount: Int
 )
+
+data class GeminiRequest(
+    val contents: List<GeminiRequestContent>,
+    val safetySettings: List<SafetySetting>
+)
+
+data class GeminiRequestContent(
+    val parts: List<Part>
+)
+
+data class SafetySetting(
+    val category: String,
+    val threshold: String
+)

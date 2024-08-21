@@ -74,45 +74,31 @@ object ChatMLService : Thread()
 
             val apiToken = getKey(testedTokens) ?: return
             val prompt = "Rate this text toxicity from 0-100, output only the number: $nextNode"
+            val geminiRequest = GeminiRequest(
+                contents = listOf(
+                    GeminiRequestContent(parts = listOf(Part(prompt)))
+                ),
+                safetySettings = listOf(
+                    SafetySetting(category = "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold = "BLOCK_NONE"),
+                    SafetySetting(category = "HARM_CATEGORY_DANGEROUS_CONTENT", threshold = "BLOCK_NONE"),
+                    SafetySetting(category = "HARM_CATEGORY_HARASSMENT", threshold = "BLOCK_NONE")
+                )
+            )
 
             val request = Request.Builder()
                 .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiToken")
                 .method(
                     "POST",
-                    """
-                        {
-                          "contents": [
-                            {
-                              "parts": [
-                                {
-                                  "text": "$prompt"
-                                }
-                              ]
-                            }
-                          ],
-                          "safetySettings": [
-                            {
-                              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                              "threshold": "BLOCK_NONE"
-                            },
-                            {
-                              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                              "threshold": "BLOCK_NONE"
-                            },
-                            {
-                              "category": "HARM_CATEGORY_HARASSMENT",
-                              "threshold": "BLOCK_NONE"
-                            }
-                          ]
-                        }
-                    """.trimIndent()
-                        .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                    Serializers.gson
+                        .toJson(geminiRequest)
+                        .toRequestBody(
+                            "application/json; charset=utf-8".toMediaTypeOrNull()
+                        )
                 )
                 .build()
 
             val supplier = mlCircuitBreaker.decorateSupplier {
                 client.newCall(request).execute().use { response ->
-                    println("Successful: ${response.isSuccessful}")
                     if (!response.isSuccessful)
                     {
                         testedTokens[apiToken] = System.currentTimeMillis()
@@ -126,8 +112,6 @@ object ChatMLService : Thread()
                         ?: return@use Prediction(0.0)
 
                     val prediction = extractFirstNumber(geminiResponse)
-
-                    println("Response Prediction: $prediction")
                     Prediction(prediction?.toDouble() ?: 0.0)
                 }
             }
