@@ -1,4 +1,4 @@
-package gg.scala.lemon.filter.auditing
+package gg.scala.lemon.serialization
 
 import com.google.gson.*
 import java.lang.reflect.Type

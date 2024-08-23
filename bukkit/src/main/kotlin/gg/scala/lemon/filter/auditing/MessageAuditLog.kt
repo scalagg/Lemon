@@ -1,6 +1,7 @@
 package gg.scala.lemon.filter.auditing
 
 import gg.scala.commons.annotations.Model
+import gg.scala.lemon.serialization.BsonTimestamp
 import gg.scala.store.controller.annotations.Indexed
 import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*

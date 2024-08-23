@@ -1,4 +1,4 @@
-package gg.scala.lemon.filter.auditing
+package gg.scala.lemon.serialization
 
 import java.util.Date
 

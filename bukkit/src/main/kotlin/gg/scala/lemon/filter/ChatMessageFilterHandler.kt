@@ -1,13 +1,13 @@
 package gg.scala.lemon.filter
 
+import com.mongodb.client.model.IndexOptions
+import com.mongodb.client.model.Sorts
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.lemon.filter.ml.ChatMLMessage
-import gg.scala.lemon.filter.ml.ChatMLService
+import gg.scala.lemon.command.management.ChatHistoryCommand
 import gg.scala.lemon.filter.auditing.MessageAuditLog
 import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
-import gg.scala.lemon.filter.ml.ChatMLDataSync
-import gg.scala.lemon.filter.ml.IncubatorChatML
+import gg.scala.lemon.filter.ml.*
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
 import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
@@ -25,6 +25,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.time.Duration
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 /**
  * @author GrowlyX
@@ -157,6 +158,19 @@ object ChatMessageFilterHandler
             }
         }
 
+        val collection = DataStoreObjectControllerCache
+            .findNotNull<ChatMLPunishmentAudit>()
+            .mongo()
+            .connection
+            .getAppliedResource()
+            .getCollection("ChatMLPunishmentAudit")
+
+        collection.createIndex(
+            Sorts.ascending("timestamp"),
+            IndexOptions()
+                .expireAfter(3, TimeUnit.DAYS)
+        )
+
         if (!player.hasPermission("lemon.filter.machinelearning.chat-bypass") && ChatMLDataSync.cached().enabled)
         {
             ChatMLService.submit(ChatMLMessage(message) {
@@ -169,6 +183,15 @@ object ChatMessageFilterHandler
                     .thenAccept { _ ->
                         val config = ChatMLDataSync.cached()
                         if (it >= config.muteThreshold) {
+                            DataStoreObjectControllerCache.findNotNull<ChatMLPunishmentAudit>()
+                                .save(ChatMLPunishmentAudit(
+                                    target = player.uniqueId,
+                                    chatContext = ChatHistoryCommand
+                                        .preLoadChatHistory(player.uniqueId)
+                                        .map { chat -> chat.value.message },
+                                    prediction = it
+                                ), DataStoreStorageType.MONGO)
+
                             handlePunishmentForTargetPlayerGlobally(
                                 issuer = Bukkit.getConsoleSender(),
                                 uuid = player.uniqueId,
