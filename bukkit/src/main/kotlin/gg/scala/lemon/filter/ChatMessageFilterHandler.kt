@@ -188,7 +188,8 @@ object ChatMessageFilterHandler
                                     target = player.uniqueId,
                                     chatContext = ChatHistoryCommand
                                         .preLoadChatHistory(player.uniqueId)
-                                        .map { chat -> chat.value.message },
+                                        .values
+                                        .toList(),
                                     prediction = it
                                 ), DataStoreStorageType.MONGO)
 

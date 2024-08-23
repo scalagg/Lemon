@@ -3,6 +3,7 @@ package gg.scala.lemon.filter.ml
 import gg.scala.common.Savable
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.Model
+import gg.scala.lemon.filter.auditing.MessageAuditLog
 import gg.scala.lemon.serialization.BsonDateTime
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.controller.annotations.Indexed
@@ -21,7 +22,7 @@ data class ChatMLPunishmentAudit(
     @Indexed
     val fromServer: String = ServerSync.getLocalGameServer().id,
     val prediction: Double,
-    val chatContext: List<String>,
+    val chatContext: List<MessageAuditLog>,
     val timestamp: BsonDateTime = BsonDateTime(System.currentTimeMillis()),
     override val identifier: UUID = UUID.randomUUID()
 ) : IDataStoreObject, Savable

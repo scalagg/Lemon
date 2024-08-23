@@ -41,6 +41,7 @@ object RankHandler
                     createDefaultRank()
                 }
             }
+            .join()
     }
 
     val sorted: List<Rank>

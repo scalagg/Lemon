@@ -4,8 +4,10 @@ import gg.scala.lemon.util.QuickAccess.username
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import java.time.Duration
 
 /**
  * @author GrowlyX
@@ -28,14 +30,25 @@ class ChatMLPunishmentAuditReviewMenu(private val entries: List<ChatMLPunishment
                     "${CC.GRAY}Context:"
                 )
                 .apply {
-                    addToLore(*it.chatContext.map { chat -> "${CC.WHITE}$chat" }.toTypedArray())
+                    it.chatContext.forEach { history ->
+                        val ago = System.currentTimeMillis() - history.timestamp.value
+                        val timestamp = if (ago >= Duration.ofDays(1L).toMillis())
+                        {
+                            TimeUtil.formatIntoCalendarString(history.timestamp.toDate())
+                        } else
+                        {
+                            "${TimeUtil.formatIntoAbbreviatedString(ago.toInt() / 1000)} ago"
+                        }
+
+                        addToLore("${CC.D_GRAY}$timestamp${CC.WHITE}: ${history.message}")
+                    }
                 }
                 .addToLore(
                     "",
                     "${CC.GREEN}Click to unmute!"
                 )
                 .toButton { _, _ ->
-                    player.performCommand("/unmute ${it.target} ChatML False Prediction -s")
+                    player.performCommand("unmute ${it.target} ChatML False Prediction -s")
                 }
         }
         .withIndex()
