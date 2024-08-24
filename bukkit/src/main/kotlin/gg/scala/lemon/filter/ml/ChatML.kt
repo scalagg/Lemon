@@ -87,6 +87,7 @@ object ChatMLService : Thread()
                 )
             )
 
+
             val request = Request.Builder()
                 .url(config.apiEndpoint.format(apiToken))
                 .method(
