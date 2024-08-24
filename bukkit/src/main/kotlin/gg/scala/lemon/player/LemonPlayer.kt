@@ -431,7 +431,10 @@ class LemonPlayer(
 
                 lemonPlayers.forEach {
                     val lastIpAddress = ipAddress
-                    val targetLastIpAddress = it.ipAddress
+                    val targetLastIpAddress = it.getMetadata("last-ip-address")
+                        ?.asString()
+                        ?: it.ipAddress
+
                     val matchingIpInfo = lastIpAddress == targetLastIpAddress
 
                     if (matchingIpInfo)

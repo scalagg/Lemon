@@ -20,7 +20,7 @@ enum class PunishmentCategory(
     companion object
     {
         @JvmStatic
-        val VALUES = values()
+        val VALUES = entries.toTypedArray()
 
         @JvmStatic
         val PERSISTENT = listOf(MUTE, BAN, BLACKLIST)
@@ -29,7 +29,7 @@ enum class PunishmentCategory(
         val VALUES_2 = listOf(KICK, MUTE, BAN, BLACKLIST)
 
         @JvmStatic
-        val IP_REL = listOf(BLACKLIST)
+        val IP_REL = listOf(BAN, BLACKLIST)
 
         @JvmStatic
         val WEIGHTED_DENIED = listOf(IP_RELATIVE, BLACKLIST, BAN)
