@@ -27,13 +27,13 @@ object CooldownHandler
     @Configure
     fun configure()
     {
-        Events
-            .subscribe(PlayerQuitEvent::class.java)
-            .handler {
-                cooldowns.values.forEach { cooldown ->
-                    cooldown.reset(it.player)
-                }
-            }
+//        Events
+//            .subscribe(PlayerQuitEvent::class.java)
+//            .handler {
+//                cooldowns.values.forEach { cooldown ->
+//                    cooldown.reset(it.player)
+//                }
+//            }
 
         register(CommandCooldown)
     }

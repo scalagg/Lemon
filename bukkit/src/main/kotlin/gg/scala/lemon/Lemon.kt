@@ -178,27 +178,27 @@ class Lemon : ExtendedScalaPlugin()
 
         NametagHandler.registerProvider(DefaultNametagProvider)
 
-        Events.subscribe(PlayerInteractAtEntityEvent::class.java)
-            .filter { it.rightClicked is Player && it.rightClicked.hasMetadata("frozen") }
-            .handler {
-                it.player.sendMessage("${CC.RED}You cannot hurt players who are frozen!"); it.isCancelled = true
-            }
+//        Events.subscribe(PlayerInteractAtEntityEvent::class.java)
+//            .filter { it.rightClicked is Player && it.rightClicked.hasMetadata("frozen") }
+//            .handler {
+//                it.player.sendMessage("${CC.RED}You cannot hurt players who are frozen!"); it.isCancelled = true
+//            }
 
-        Events.subscribe(PlayerMoveEvent::class.java)
-            .filter {
-                EventFilters
-                    .ignoreSameBlockAndY<PlayerMoveEvent>()
-                    .test(it) &&
-                    it.player.hasMetadata("frozen")
-            }
-            .handler {
-                it.player.teleport(
-                    it.from.clone().apply {
-                        x = x.toInt() + 0.5
-                        z = z.toInt() + 0.5
-                    }
-                )
-            }
+//        Events.subscribe(PlayerMoveEvent::class.java)
+//            .filter {
+//                EventFilters
+//                    .ignoreSameBlockAndY<PlayerMoveEvent>()
+//                    .test(it) &&
+//                    it.player.hasMetadata("frozen")
+//            }
+//            .handler {
+//                it.player.teleport(
+//                    it.from.clone().apply {
+//                        x = x.toInt() + 0.5
+//                        z = z.toInt() + 0.5
+//                    }
+//                )
+//            }
 
         this.serverStatisticProvider =
             DefaultServerStatisticProvider

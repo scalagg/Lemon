@@ -20,10 +20,10 @@ object RepetitiveMessageFilter : ChatMessageFilter
 
     override fun loadResources()
     {
-        Events.subscribe(PlayerQuitEvent::class.java)
-            .handler {
-                lastMessages.remove(it.player.uniqueId)
-            }
+//        Events.subscribe(PlayerQuitEvent::class.java)
+//            .handler {
+//                lastMessages.remove(it.player.uniqueId)
+//            }
     }
 
     override fun formDescription(player: Player) =

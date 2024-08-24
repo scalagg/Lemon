@@ -46,10 +46,10 @@ object PlayerListener : Listener
             .findNotNull<LemonPlayer>()
     }
 
-    @EventHandler(
+/*    @EventHandler(
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true
-    )
+    )*/
     fun onPlayerPreLoginHigh(
         event: AsyncPlayerPreLoginEvent
     )
@@ -86,7 +86,7 @@ object PlayerListener : Listener
         lemonPlayer.completePostLoad().join()
     }
 
-    @EventHandler
+//    @EventHandler
     fun onPlayerLogin(
         event: PlayerLoginEvent
     )
@@ -114,10 +114,10 @@ object PlayerListener : Listener
     var defaultChannelProtection2 = { event: AsyncPlayerChatEvent -> }
     var defaultChannelProtection3 = { player: Player -> true }
 
-    @EventHandler(
-        priority = EventPriority.MONITOR,
-        ignoreCancelled = true
-    )
+//    @EventHandler(
+//        priority = EventPriority.MONITOR,
+//        ignoreCancelled = true
+//    )
     fun onPlayerChat(event: AsyncPlayerChatEvent)
     {
         val player = event.player
@@ -327,9 +327,9 @@ object PlayerListener : Listener
         }
     }
 
-    @EventHandler(
-        priority = EventPriority.HIGHEST
-    )
+//    @EventHandler(
+//        priority = EventPriority.HIGHEST
+//    )
     fun onPlayerJoin(event: PlayerJoinEvent)
     {
         val lemonPlayer = PlayerHandler
@@ -369,7 +369,7 @@ object PlayerListener : Listener
     @JvmStatic
     val BLACKLISTED_SYNTAX = "\\\$\\{*\\}".toRegex()
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+//    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent)
     {
         val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null) ?: return
@@ -426,10 +426,10 @@ object PlayerListener : Listener
         }
     }
 
-    @EventHandler(
-        priority = EventPriority.HIGHEST,
-        ignoreCancelled = true
-    )
+//    @EventHandler(
+//        priority = EventPriority.HIGHEST,
+//        ignoreCancelled = true
+//    )
     fun onPlayerQuit(event: PlayerQuitEvent)
     {
         event.quitMessage = null
