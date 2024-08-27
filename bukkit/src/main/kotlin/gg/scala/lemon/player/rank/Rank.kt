@@ -7,6 +7,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.internal.ExtHookIns
+import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import gg.scala.lemon.scope.ServerScope
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
@@ -62,7 +63,7 @@ data class Rank(
     ): String
     {
         if (
-            Lemon.instance.lemonWebData.serverName == "Minequest" &&
+            NetworkMetadataDataSync.serverName() == "Minequest" &&
             !ignoreMinequest
         )
         {

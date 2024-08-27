@@ -1,6 +1,7 @@
 package gg.scala.lemon.processor
 
 import gg.scala.commons.agnostic.sync.ServerSync
+import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import xyz.mkotb.configapi.comment.Comment
 
 class SettingsConfigProcessor
@@ -26,17 +27,17 @@ class SettingsConfigProcessor
 
     val defaultChatGsd = false
     val defaultChatGsdGroupId = ""
-    val tabWeight = "§9§9§9§9"
 
-    val tablistSortingEnabled = true
-    val prefixInNametags = true
+    val tablistSortingEnabled: Boolean
+        get() = NetworkMetadataDataSync.cached().properties()
+            .tablistSortingEnabled
 
-    val blacklistedCommands = listOf(
-        "ver", "icanhasbukkit"
-    )
+    val prefixInNametags: Boolean
+        get() = NetworkMetadataDataSync.cached().properties()
+            .rankPrefixInNametags
 
-    val blacklistedPhraseRegex = listOf(
-        "(n|i){1,32}((g{2,32}|q){1,32}|[gq]{2,32})[e3ra]{1,32}",
-        "\\\$\\{*\\}"
-    )
+    val blacklistedCommands: List<String>
+        get() = NetworkMetadataDataSync.cached().properties()
+            .forbiddenCommands
+            .toList()
 }

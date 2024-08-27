@@ -10,7 +10,6 @@ import gg.scala.lemon.filter.impl.RepetitiveMessageFilter
 import gg.scala.lemon.filter.ml.*
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import gg.scala.lemon.filter.phrase.impl.MinequestInvalidCharFilter
-import gg.scala.lemon.filter.phrase.impl.RegexPhraseFilter
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler.handlePunishmentForTargetPlayerGlobally
 import gg.scala.lemon.minequest
@@ -41,8 +40,6 @@ object ChatMessageFilterHandler
     fun configure()
     {
         ChatMLService.configure()
-
-        phraseFilters.add(RegexPhraseFilter)
         messageFilters.add(RepetitiveMessageFilter)
 
         if (minequest())

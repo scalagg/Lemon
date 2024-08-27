@@ -1,0 +1,22 @@
+package gg.scala.common.metadata
+
+import org.bukkit.ChatColor
+
+/**
+ * @author GrowlyX
+ * @since 8/27/2024
+ */
+class NetworkMetadata(
+    var serverName: String = "",
+    var primary: String = ChatColor.GOLD.name,
+    var secondary: String = ChatColor.YELLOW.name,
+    var discord: String = "",
+    var twitter: String = "",
+    var domain: String = "",
+    var store: String = "",
+    var properties: NetworkProperties? = null,
+    var initialSaveComplete: Boolean = false
+)
+{
+    fun properties() = properties ?: NetworkProperties()
+}

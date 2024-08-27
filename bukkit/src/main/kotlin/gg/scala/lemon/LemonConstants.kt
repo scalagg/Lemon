@@ -1,6 +1,7 @@
 package gg.scala.lemon
 
 import com.google.gson.reflect.TypeToken
+import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import gg.scala.lemon.player.metadata.Metadata
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
@@ -32,16 +33,20 @@ object LemonConstants {
     val UUID_MUTABLE_LIST: Type = object : TypeToken<MutableList<UUID>>() {}.type
 
     @JvmStatic
-    val SERVER_NAME = Lemon.instance.lemonWebData.serverName
+    val SERVER_NAME: String
+        get() = NetworkMetadataDataSync.serverName()
 
     @JvmStatic
-    val DISCORD_LINK = Lemon.instance.lemonWebData.discord
+    val DISCORD_LINK: String
+        get() = NetworkMetadataDataSync.cached().discord
 
     @JvmStatic
-    val WEB_LINK = Lemon.instance.lemonWebData.domain
+    val WEB_LINK: String
+        get() = NetworkMetadataDataSync.cached().domain
 
     @JvmStatic
-    val STORE_LINK = Lemon.instance.lemonWebData.store
+    val STORE_LINK: String
+        get() = NetworkMetadataDataSync.cached().store
 
     @JvmStatic
     val CONSOLE: String

@@ -29,15 +29,12 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
 import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
-import gg.scala.validate.ScalaValidateData
-import gg.scala.validate.ScalaValidateUtil
 import me.lucko.helper.Events
 import me.lucko.helper.event.filter.EventFilters
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers.create
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.uuid.UUIDUtil
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerMoveEvent
@@ -81,7 +78,6 @@ class Lemon : ExtendedScalaPlugin()
     val languageConfig: LanguageConfigProcessor
         get() = config()
 
-    lateinit var lemonWebData: ScalaValidateData
     lateinit var serverStatisticProvider: ServerStatisticProvider
 
     val clientAdapters = mutableListOf<PlayerClientAdapter>()
@@ -112,35 +108,7 @@ class Lemon : ExtendedScalaPlugin()
             )
         }
 
-        validatePlatformInformation()
         runAfterDataValidation()
-    }
-
-    private fun validatePlatformInformation()
-    {
-        val webData = ScalaValidateUtil.fetchServerData(
-            settings.serverPassword,
-            settings.serverPasswordHttps,
-            settings.serverPasswordSupplier
-        )
-
-        if (webData == null)
-        {
-            logger.severe(
-                "Something went wrong during data validation, shutting down... ${
-                    "(No information was returned, or \"No result was found.\" was returned.)"
-                }"
-            )
-            server.pluginManager.disablePlugin(this)
-
-            return
-        }
-
-        lemonWebData = webData
-
-        logger.info(
-            "Loading Lemon with ${lemonWebData.serverName}'s information."
-        )
     }
 
     private fun runAfterDataValidation()
@@ -159,23 +127,11 @@ class Lemon : ExtendedScalaPlugin()
             .default<LemonCommandCustomizer>()
 
         this.configureQol()
-
-        this.logger.info(
-            "Finished Lemon resource initialization in ${
-                System.currentTimeMillis() - this.initialization
-            }ms"
-        )
     }
 
     private fun configureQol()
     {
         val initialization = System.currentTimeMillis()
-
-        CC.setup(
-            toCCColorFormat(lemonWebData.primary),
-            toCCColorFormat(lemonWebData.secondary)
-        )
-
         NametagHandler.registerProvider(DefaultNametagProvider)
 
         Events.subscribe(PlayerInteractAtEntityEvent::class.java)
@@ -208,11 +164,6 @@ class Lemon : ExtendedScalaPlugin()
                 System.currentTimeMillis() - initialization
             }ms."
         )
-    }
-
-    private fun toCCColorFormat(string: String): String
-    {
-        return ChatColor.valueOf(string).toString()
     }
 
     private fun configureHandlers()

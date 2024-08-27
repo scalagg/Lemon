@@ -12,7 +12,6 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.adapter.client.PlayerClientAdapter
-import gg.scala.lemon.config
 import gg.scala.lemon.minequest
 import me.lucko.helper.Events
 import org.bukkit.Bukkit

@@ -1,4 +1,4 @@
-package gg.scala.validate
+package gg.scala.common.metadata
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -10,7 +10,7 @@ import java.util.*
  * @author GrowlyX
  * @since 8/26/2021
  */
-object ScalaValidateUtil
+object LegacyRESTMetadataProvider
 {
     @JvmStatic
     private val GSON: Gson = GsonBuilder()
@@ -23,7 +23,7 @@ object ScalaValidateUtil
      * [id] - The server-specific identifier
      */
     @JvmStatic
-    fun fetchServerData(id: String, https: Boolean, supplier: String): ScalaValidateData?
+    fun fetchServerData(id: String, https: Boolean, supplier: String): NetworkMetadata?
     {
         return try
         {
@@ -34,12 +34,13 @@ object ScalaValidateUtil
             ).openStream().reader().readLines().first().let {
                 GSON.fromJson(
                     it,
-                    ScalaValidateData::class.java
+                    NetworkMetadata::class.java
                 )
             }
         } catch (exception: Exception)
         {
-            exception.printStackTrace(); null
+            exception.printStackTrace()
+            null
         }
     }
 }
