@@ -15,8 +15,8 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 8/27/2024
  */
-fun NetworkMetadata.edit(name: String, supplier: () -> Set<String>, update: NetworkMetadata.(Set<String>) -> Unit) = ItemBuilder
-    .of(Material.BOOK)
+fun NetworkMetadata.edit(name: String, supplier: () -> Set<String>, material: Material = Material.BOOK, update: NetworkMetadata.(Set<String>) -> Unit) = ItemBuilder
+    .of(material)
     .name("${CC.YELLOW}$name")
     .setLore(supplier())
     .addToLore(

@@ -202,6 +202,14 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                 Button.playSuccess(player)
                 NetworkMetadataEditMenu().openMenu(player)
             },
+        20 to cachedConfigModel.edit(
+            "Forbidden Commands",
+            cachedConfigModel.properties()::forbiddenCommands,
+            Material.WATCH
+        ) {
+            cachedConfigModel.properties().forbiddenCommands =
+                it.toMutableSet()
+        },
         28 to cachedConfigModel.edit(
             "Temp. Ban Message",
             cachedConfigModel.language()::banMessageTemporary
