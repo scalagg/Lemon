@@ -2,11 +2,13 @@ package gg.scala.lemon.handler
 
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.message.AwareMessage
+import gg.scala.common.metadata.localize
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.command.ListCommand
 import gg.scala.lemon.listener.PlayerListener
+import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.software.task.ResourceUpdateRunnable
 import gg.scala.lemon.util.QuickAccess
@@ -305,10 +307,13 @@ object RedisHandler
         sync {
             Bukkit.getPlayer(targetUuid)
                 ?.kickPlayer(
-                    Lemon.instance.languageConfig.kickMessage
-                        .format(
-                            Lemon.instance.settings.id, reason
+                    NetworkMetadataDataSync.metadata().language()
+                        .kickMessage
+                        .localize(
+                            "serverName" to NetworkMetadataDataSync.serverName(),
+                            "reason" to reason
                         )
+                        .joinToString("\n")
                 )
         }
     }
