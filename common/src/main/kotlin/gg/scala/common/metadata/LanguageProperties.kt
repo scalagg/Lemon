@@ -8,13 +8,13 @@ import net.evilblock.cubed.util.Color
  */
 data class LanguageProperties(
     var banMessageTemporary: Set<String> = setOf(
-        "&e&l(S)&e You are banned from {serverName} &e&l(S)",
-        "&cYou were banned for &f{duration}&c: &7%{reason} (#{id})",
+        "&e&l(S)&e You are banned from {serverName} for {duration} &e&l(S)",
+        "&cYou were banned for: &7{reason} (#{id})",
         "&7Join {discord} to appeal!"
     ),
     var banMessagePermanent: Set<String> = setOf(
         "&e&l(S)&e You are banned from {serverName} &e&l(S)",
-        "&cYou were banned for: &7%{reason} (#{id})",
+        "&cYou were banned for: &7{reason} (#{id})",
         "&7Join {discord} to appeal!"
     ),
     var blacklistMessage: Set<String> = setOf(
