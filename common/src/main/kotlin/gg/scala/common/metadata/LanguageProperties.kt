@@ -1,5 +1,7 @@
 package gg.scala.common.metadata
 
+import net.evilblock.cubed.util.Color
+
 /**
  * @author GrowlyX
  * @since 8/27/2024
@@ -51,5 +53,5 @@ data class LanguageProperties(
 fun Set<String>.localize(vararg replacements: Pair<String, String>) = map {
     var localized = it
     replacements.forEach { localization -> localized = localized.replace("{${localization.first}}", localization.second) }
-    localized
+    Color.translate(localized)
 }.toSet()
