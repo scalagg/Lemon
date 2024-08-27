@@ -204,7 +204,11 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             },
         20 to cachedConfigModel.edit(
             "Forbidden Commands",
-            cachedConfigModel.properties()::forbiddenCommands,
+            {
+                cachedConfigModel.properties().forbiddenCommands
+                    .map { "${CC.WHITE} - $it" }
+                    .toSet()
+            },
             Material.WATCH
         ) {
             cachedConfigModel.properties().forbiddenCommands =
