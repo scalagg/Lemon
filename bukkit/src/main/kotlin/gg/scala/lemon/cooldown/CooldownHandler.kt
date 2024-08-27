@@ -5,6 +5,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.cooldown.type.PlayerCooldown
+import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -72,7 +73,7 @@ object CooldownHandler
                 "${CC.RED}Please wait $formatted before ${
                     if (action == "") cooldown.id() else action
                 } again! ${
-                    Lemon.instance.languageConfig.cooldownDenyMessageAddition
+                    NetworkMetadataDataSync.metadata().language().cooldownDenyMessageAddition
                 }"
             )
 

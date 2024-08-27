@@ -1,6 +1,7 @@
 package gg.scala.lemon.player
 
 import gg.scala.common.Savable
+import gg.scala.common.metadata.localize
 import gg.scala.commons.annotations.Model
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.LemonConstants
@@ -11,6 +12,7 @@ import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.PunishmentHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.internal.ExtHookIns
+import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.event.impl.RankChangeEvent
@@ -115,7 +117,7 @@ class LemonPlayer(
     fun canInteract(player: LemonPlayer): Boolean
     {
         return !player.bukkitPlayer!!.hasMetadata("vanished") ||
-                this.activeGrant!!.getRank().weight >= player.activeGrant!!.getRank().weight
+            this.activeGrant!!.getRank().weight >= player.activeGrant!!.getRank().weight
     }
 
     fun disguiseRank() = this.disguiseRankUniqueId
@@ -180,13 +182,13 @@ class LemonPlayer(
                             {
                                 PunishmentCategoryIntensity.MEDIUM -> Tasks.sync {
                                     bukkitPlayer?.ifPresent { player ->
-                                        player.kickPlayer(message)
+                                        player.kickPlayer(message.joinToString("\n"))
                                     }
                                 }
 
                                 PunishmentCategoryIntensity.LIGHT -> bukkitPlayer
                                     ?.ifPresent { player ->
-                                        player.sendMessage(message)
+                                        message.forEach(player::sendMessage)
                                     }
                             }
                         }
@@ -203,9 +205,8 @@ class LemonPlayer(
                         if (punishmentInCategory != null)
                         {
                             val message = getPunishmentMessage(punishmentInCategory)
-
                             lazyHandleOnConnection
-                                .add { it.sendMessage(message) }
+                                .add { message.forEach(it::sendMessage) }
 
                             return@thenAccept
                         }
@@ -221,73 +222,70 @@ class LemonPlayer(
 
     fun getIpRelMessage(
         coloredName: String, punishment: Punishment
-    ): String
+    ): Set<String>
     {
-        if (punishment.category == BLACKLIST)
+        val defaultReplacements = punishment.getDefaultReplacements() + arrayOf(
+            "relationUser" to coloredName
+        )
+
+        return if (punishment.category == BLACKLIST)
         {
-            return String.format(
-                Lemon.instance.languageConfig.blacklistRelationMessage,
-                coloredName,
-            )
+            NetworkMetadataDataSync.metadata().language()
+                .blacklistRelationMessage
+                .localize(*defaultReplacements)
         } else
         {
-            return if (punishment.isPermanent)
-            {
-                String.format(
-                    Lemon.instance.languageConfig.banRelationPermanentMessage,
-                    coloredName, coloredName
-                )
-            } else
-            {
-                String.format(
-                    Lemon.instance.languageConfig.banRelationTemporaryMessage,
-                    coloredName, coloredName
-                )
-            }
+            NetworkMetadataDataSync.metadata().language()
+                .banRelationMessage
+                .localize(*defaultReplacements)
         }
     }
 
-    fun getPunishmentMessage(
-        punishment: Punishment,
-        current: Boolean = true
-    ): String
+    fun Punishment.getDefaultReplacements() = arrayOf(
+        "serverName" to NetworkMetadataDataSync.serverName(),
+        "discord" to NetworkMetadataDataSync.metadata().discord,
+        "store" to NetworkMetadataDataSync.metadata().store,
+        "twitter" to NetworkMetadataDataSync.metadata().twitter,
+        "reason" to addedReason,
+        "duration" to durationString,
+        "id" to SplitUtil.splitUuid(uuid),
+        "durationExplanation" to fancyDurationFromNowStringRaw
+    )
+
+    fun getPunishmentMessage(punishment: Punishment, current: Boolean = true): Set<String>
     {
+        val defaultReplacements = punishment.getDefaultReplacements() + arrayOf(
+            "action" to (if (current) "You've been" else "You're currently")
+        )
+
         return when (punishment.category)
         {
-            KICK -> Lemon.instance.languageConfig.kickMessage
-                .format(
-                    Lemon.instance.settings.id,
-                    punishment.addedReason
-                )
+            KICK -> NetworkMetadataDataSync.metadata().language()
+                .kickMessage
+                .localize(*defaultReplacements)
 
-            MUTE -> Lemon.instance.languageConfig.muteMessage
-                .format(
-                    if (current) "You've been" else "You're currently",
-                    punishment.addedReason,
-                    punishment.fancyDurationFromNowStringRaw,
-                    SplitUtil.splitUuid(punishment.uuid)
-                )
+            MUTE -> NetworkMetadataDataSync.metadata().language()
+                .muteMessage
+                .localize(*defaultReplacements)
 
             BAN -> if (punishment.isPermanent)
             {
-                String.format(
-                    Lemon.instance.languageConfig.permBanMessage,
-                    punishment.addedReason,
-                    SplitUtil.splitUuid(punishment.uuid)
-                )
+                NetworkMetadataDataSync.metadata().language()
+                    .banMessagePermanent
+                    .localize(*defaultReplacements)
             } else
             {
-                String.format(
-                    Lemon.instance.languageConfig.tempBanMessage,
-                    punishment.durationString,
-                    punishment.addedReason,
-                    SplitUtil.splitUuid(punishment.uuid)
-                )
+                NetworkMetadataDataSync.metadata().language()
+                    .banMessageTemporary
+                    .localize(*defaultReplacements)
             }
 
-            BLACKLIST -> Lemon.instance.languageConfig.blacklistMessage
+            BLACKLIST -> NetworkMetadataDataSync.metadata().language()
+                .blacklistMessage
+                .localize(*defaultReplacements)
+
             // already pre-handled
-            IP_RELATIVE -> ""
+            IP_RELATIVE -> setOf()
         }
     }
 
@@ -457,7 +455,7 @@ class LemonPlayer(
 
                 if (ipRelPunishment != null)
                 {
-                    lazyHandleOnConnection.add {
+                    lazyHandleOnConnection.add { player ->
                         CompletableFuture
                             .supplyAsync {
                                 QuickAccess.fetchColoredName(ipRelPunishment.target)
@@ -467,7 +465,7 @@ class LemonPlayer(
                                     coloredName, ipRelPunishment
                                 )
 
-                                it.sendMessage(message)
+                                message.forEach(player::sendMessage)
                             }
                     }
                 }
@@ -660,7 +658,7 @@ class LemonPlayer(
 
         return (if (prefixIncluded) if (ChatColor.stripColor(rank.prefix).isEmpty())
             "" else "${rank.prefix} " else "") + rank.color + (if (customColor) customColor() else "") +
-                if (bukkitPlayer != null) bukkitPlayer.name else name
+            if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
     fun getOriginalColoredName(
@@ -683,7 +681,7 @@ class LemonPlayer(
         }
 
         return rank.color + customColor() +
-                if (bukkitPlayer != null) bukkitPlayer.name else name
+            if (bukkitPlayer != null) bukkitPlayer.name else name
     }
 
     fun customColor() = ""

@@ -1,6 +1,7 @@
 package gg.scala.lemon.metadata
 
 import com.cryptomorin.xseries.XMaterial
+import gg.scala.lemon.metadata.language.edit
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -23,7 +24,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
         placeholder = true
     }
 
-    override fun size(buttons: Map<Int, Button>) = 36
+    override fun size(buttons: Map<Int, Button>) = 54
     override fun getButtons(player: Player) = mapOf(
         10 to ItemBuilder
             .of(Material.WOOL)
@@ -200,6 +201,78 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
 
                 Button.playSuccess(player)
                 NetworkMetadataEditMenu().openMenu(player)
-            }
+            },
+        28 to cachedConfigModel.edit(
+            "Temp. Ban Message",
+            cachedConfigModel.language()::banMessageTemporary
+        ) {
+            cachedConfigModel.language().banMessageTemporary = it
+        },
+        29 to cachedConfigModel.edit(
+            "Perm. Ban Message",
+            cachedConfigModel.language()::banMessagePermanent
+        ) {
+            cachedConfigModel.language().banMessagePermanent = it
+        },
+        30 to cachedConfigModel.edit(
+            "Blacklist Message",
+            cachedConfigModel.language()::blacklistMessage
+        ) {
+            cachedConfigModel.language().blacklistMessage = it
+        },
+        31 to cachedConfigModel.edit(
+            "Ban Relation Message",
+            cachedConfigModel.language()::banRelationMessage
+        ) {
+            cachedConfigModel.language().banRelationMessage = it
+        },
+        32 to cachedConfigModel.edit(
+            "Blacklist Relation Message",
+            cachedConfigModel.language()::blacklistRelationMessage
+        ) {
+            cachedConfigModel.language().blacklistRelationMessage = it
+        },
+        33 to cachedConfigModel.edit(
+            "Mute In-Game Message",
+            cachedConfigModel.language()::muteMessage
+        ) {
+            cachedConfigModel.language().muteMessage = it
+        },
+        34 to cachedConfigModel.edit(
+            "Warning In-Game Message",
+            cachedConfigModel.language()::warnMessage
+        ) {
+            cachedConfigModel.language().warnMessage = it
+        },
+        37 to cachedConfigModel.edit(
+            "Kick Message",
+            cachedConfigModel.language()::kickMessage
+        ) {
+            cachedConfigModel.language().kickMessage = it
+        },
+        38 to ItemBuilder
+            .of(Material.SIGN)
+            .name("${CC.YELLOW}Cooldown Addition Message")
+            .addToLore(
+                cachedConfigModel.language().cooldownDenyMessageAddition,
+                "",
+                "${CC.GRAY}Click to edit..."
+            )
+            .toButton { _, _ ->
+                player.closeInventory()
+                Button.playNeutral(player)
+
+                InputPrompt()
+                    .withText("Enter a new message")
+                    .acceptInput { _, addition ->
+                        cachedConfigModel.language().cooldownDenyMessageAddition = addition
+                        NetworkMetadataDataSync.sync(cachedConfigModel)
+
+                        Button.playSuccess(player)
+                        player.sendMessage("${CC.GREEN}Updated Cooldown Addition to $addition!")
+                        NetworkMetadataEditMenu().openMenu(player)
+                    }
+                    .start(player)
+            },
     )
 }

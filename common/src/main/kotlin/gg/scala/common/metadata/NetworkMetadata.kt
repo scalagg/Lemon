@@ -15,8 +15,17 @@ class NetworkMetadata(
     var domain: String = "",
     var store: String = "",
     var properties: NetworkProperties? = null,
+    var language: LanguageProperties? = null,
     var initialSaveComplete: Boolean = false
 )
 {
-    fun properties() = properties ?: NetworkProperties()
+    fun language() = language ?: let {
+        language = LanguageProperties()
+        return@let language!!
+    }
+
+    fun properties() = properties ?: let {
+        properties = NetworkProperties()
+        return@let properties!!
+    }
 }

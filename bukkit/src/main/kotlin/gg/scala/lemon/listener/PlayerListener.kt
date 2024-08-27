@@ -137,7 +137,13 @@ object PlayerListener : Listener
 
         if (mutePunishment != null)
         {
-            cancel(event, lemonPlayer.getPunishmentMessage(mutePunishment, false))
+            event.isCancelled = true
+
+            lemonPlayer
+                .getPunishmentMessage(mutePunishment, false)
+                .forEach {
+                    player.sendMessage(it)
+                }
             return
         }
 
@@ -335,7 +341,10 @@ object PlayerListener : Listener
         val lemonPlayer = PlayerHandler
             .find(event.player.uniqueId)
             ?: return event.player.kickPlayer(
-                plugin.languageConfig.playerDataLoad
+                """
+                    ${CC.RED}Sorry, we were unable to load your data.
+                    ${CC.GRAY}Contact an administrator as soon as possible.
+                """.trimIndent()
             )
 
         event.player.removeMetadata("frozen", plugin)

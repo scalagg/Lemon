@@ -49,10 +49,7 @@ object LemonConstants {
         get() = NetworkMetadataDataSync.cached().store
 
     @JvmStatic
-    val CONSOLE: String
-        get() {
-            return Lemon.instance.languageConfig.consoleName
-        }
+    val CONSOLE = "${CC.B_RED}Console"
 
     @JvmStatic
     val LOBBY: Boolean

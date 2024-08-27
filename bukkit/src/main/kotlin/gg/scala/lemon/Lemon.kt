@@ -27,7 +27,6 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.nametag.DefaultNametagProvider
-import gg.scala.lemon.processor.LanguageConfigProcessor
 import gg.scala.lemon.processor.SettingsConfigProcessor
 import me.lucko.helper.Events
 import me.lucko.helper.event.filter.EventFilters
@@ -60,10 +59,6 @@ import java.util.*
     value = "settings",
     model = SettingsConfigProcessor::class
 )
-@ContainerConfig(
-    value = "language",
-    model = LanguageConfigProcessor::class
-)
 class Lemon : ExtendedScalaPlugin()
 {
     companion object
@@ -73,9 +68,6 @@ class Lemon : ExtendedScalaPlugin()
     }
 
     val settings: SettingsConfigProcessor
-        get() = config()
-
-    val languageConfig: LanguageConfigProcessor
         get() = config()
 
     lateinit var serverStatisticProvider: ServerStatisticProvider
