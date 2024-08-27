@@ -95,7 +95,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         12 to ItemBuilder
-            .of(XMaterial.CYAN_DYE)
+            .of(XMaterial.BLUE_DYE)
             .name("${CC.YELLOW}Discord: ${CC.WHITE}${cachedConfigModel.discord}")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
@@ -135,7 +135,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         14 to ItemBuilder
-            .of(Material.RAW_FISH)
+            .of(XMaterial.CYAN_DYE)
             .name("${CC.YELLOW}Twitter: ${CC.WHITE}${cachedConfigModel.twitter}")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
