@@ -1,5 +1,6 @@
 package gg.scala.lemon.metadata
 
+import com.cryptomorin.xseries.XMaterial
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 8/21/2024
  */
-class NetworkMetadataEditMenu : Menu("Editing network meta...")
+class NetworkMetadataEditMenu : Menu("Editing network metadata...")
 {
     private val cachedConfigModel = NetworkMetadataDataSync.cached()
     init
@@ -25,34 +26,16 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
     override fun size(buttons: Map<Int, Button>) = 36
     override fun getButtons(player: Player) = mapOf(
         10 to ItemBuilder
-            .of(Material.PAPER)
-            .name("${CC.YELLOW}Discord: ${CC.WHITE}${cachedConfigModel.discord}")
-            .toButton { _, _ ->
-                player.closeInventory()
-                Button.playNeutral(player)
-
-                InputPrompt()
-                    .withText("Enter a Discord link")
-                    .acceptInput { _, discordLink ->
-                        cachedConfigModel.discord = discordLink
-                        NetworkMetadataDataSync.sync(cachedConfigModel)
-
-                        Button.playSuccess(player)
-                        player.sendMessage("${CC.GREEN}Updated Discord link to $discordLink!")
-                        NetworkMetadataEditMenu().openMenu(player)
-                    }
-                    .start(player)
-            },
-        11 to ItemBuilder
             .of(Material.WOOL)
             .data(
                 ColorUtil
-                .toWoolData(ChatColor.valueOf(cachedConfigModel.primary))
-                .toShort()
+                    .toWoolData(ChatColor.valueOf(cachedConfigModel.primary))
+                    .toShort()
             )
             .name("${CC.YELLOW}Primary: ${
                 ChatColor.valueOf(cachedConfigModel.primary)
             }${cachedConfigModel.primary}")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
@@ -76,7 +59,7 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
                     }
                     .start(player)
             },
-        12 to ItemBuilder
+        11 to ItemBuilder
             .of(Material.WOOL)
             .data(
                 ColorUtil
@@ -86,6 +69,7 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
             .name("${CC.YELLOW}Secondary: ${
                 ChatColor.valueOf(cachedConfigModel.secondary)
             }${cachedConfigModel.secondary}")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
@@ -109,9 +93,30 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
                     }
                     .start(player)
             },
+        12 to ItemBuilder
+            .of(XMaterial.CYAN_DYE)
+            .name("${CC.YELLOW}Discord: ${CC.WHITE}${cachedConfigModel.discord}")
+            .addToLore("${CC.GRAY}Click to edit...")
+            .toButton { _, _ ->
+                player.closeInventory()
+                Button.playNeutral(player)
+
+                InputPrompt()
+                    .withText("Enter a Discord link")
+                    .acceptInput { _, discordLink ->
+                        cachedConfigModel.discord = discordLink
+                        NetworkMetadataDataSync.sync(cachedConfigModel)
+
+                        Button.playSuccess(player)
+                        player.sendMessage("${CC.GREEN}Updated Discord link to $discordLink!")
+                        NetworkMetadataEditMenu().openMenu(player)
+                    }
+                    .start(player)
+            },
         13 to ItemBuilder
             .of(Material.PAPER)
             .name("${CC.YELLOW}Server Name: ${CC.WHITE}${cachedConfigModel.serverName}")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
@@ -129,8 +134,9 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
                     .start(player)
             },
         14 to ItemBuilder
-            .of(Material.PAPER)
+            .of(Material.RAW_FISH)
             .name("${CC.YELLOW}Twitter: ${CC.WHITE}${cachedConfigModel.twitter}")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
@@ -148,8 +154,9 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
                     .start(player)
             },
         15 to ItemBuilder
-            .of(Material.PAPER)
+            .of(Material.GOLD_INGOT)
             .name("${CC.YELLOW}Store: ${CC.WHITE}${cachedConfigModel.store}")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
                 Button.playNeutral(player)
@@ -166,11 +173,12 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
                     }
                     .start(player)
             },
-        19 to ItemBuilder
-            .of(Material.PAPER)
+        16 to ItemBuilder
+            .of(Material.NAME_TAG)
             .name("${CC.YELLOW}Rank Prefix in Name Tags: ${CC.WHITE}${
                 if (cachedConfigModel.properties().rankPrefixInNametags) "${CC.GREEN}Yes" else "${CC.RED}NO"
             }")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 cachedConfigModel.properties().rankPrefixInNametags =
                     !cachedConfigModel.properties().rankPrefixInNametags
@@ -179,11 +187,12 @@ class NetworkMetadataEditMenu : Menu("Editing network meta...")
                 Button.playSuccess(player)
                 NetworkMetadataEditMenu().openMenu(player)
             },
-        20 to ItemBuilder
-            .of(Material.PAPER)
+        19 to ItemBuilder
+            .of(Material.ENDER_PORTAL_FRAME)
             .name("${CC.YELLOW}Tab List Sorting: ${CC.WHITE}${
                 if (cachedConfigModel.properties().tablistSortingEnabled) "${CC.GREEN}Yes" else "${CC.RED}NO"
             }")
+            .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 cachedConfigModel.properties().tablistSortingEnabled =
                     !cachedConfigModel.properties().tablistSortingEnabled

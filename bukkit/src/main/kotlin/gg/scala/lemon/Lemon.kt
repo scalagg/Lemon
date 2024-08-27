@@ -90,10 +90,14 @@ class Lemon : ExtendedScalaPlugin()
             .build()
     }
 
+    init
+    {
+        instance = this
+    }
+
     @ContainerEnable
     fun containerEnable()
     {
-        instance = this
         logger.info("Attempting to load Lemon using provided id.")
 
         create {

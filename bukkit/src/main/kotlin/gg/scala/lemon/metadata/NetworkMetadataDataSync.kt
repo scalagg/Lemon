@@ -5,6 +5,7 @@ import gg.scala.common.metadata.NetworkMetadata
 import gg.scala.common.metadata.NetworkProperties
 import gg.scala.commons.persist.datasync.DataSyncKeys
 import gg.scala.commons.persist.datasync.DataSyncService
+import gg.scala.commons.persist.datasync.DataSyncSource
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
@@ -27,15 +28,13 @@ object NetworkMetadataDataSync : DataSyncService<NetworkMetadata>()
         override fun sync() = Key.key("network", "metasync")
     }
 
-    @Inject
-    lateinit var plugin: Lemon
-
     override fun keys() = NetworkMetadataKeys
     override fun type() = NetworkMetadata::class.java
 
     override fun postReload()
     {
         val cachedModel = cached()
+        val plugin = Lemon.instance
         if (!cachedModel.initialSaveComplete)
         {
             val metadata = LegacyRESTMetadataProvider.fetchServerData(
@@ -82,6 +81,8 @@ object NetworkMetadataDataSync : DataSyncService<NetworkMetadata>()
 
     @JvmStatic
     fun serverName() = cached().serverName
+
+    override fun locatedIn() = DataSyncSource.Mongo
 
     private fun String.toChatColor() = ChatColor.valueOf(this).toString()
 }
