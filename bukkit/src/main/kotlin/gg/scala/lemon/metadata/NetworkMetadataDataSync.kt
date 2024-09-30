@@ -64,7 +64,12 @@ object NetworkMetadataDataSync : DataSyncService<NetworkMetadata>()
                 sync(cachedModel)
             } else
             {
-                plugin.logger.info("Failed to grab data...")
+                plugin.logger.info("Failed to grab data... persisting current model")
+
+                cachedModel.apply {
+                    initialSaveComplete = true
+                }
+                sync(cachedModel)
             }
         }
 
