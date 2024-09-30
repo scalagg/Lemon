@@ -52,7 +52,6 @@ import java.util.*
 
 @PluginDependency("spark", soft = true)
 @PluginDependency("LunarClient-API", soft = true)
-@PluginDependency("PlaceholderAPI", soft = true)
 @PluginDependency("cloudsync", soft = true)
 
 @ContainerConfig(
