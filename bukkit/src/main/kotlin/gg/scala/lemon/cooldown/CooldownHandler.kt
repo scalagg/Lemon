@@ -8,6 +8,7 @@ import gg.scala.lemon.cooldown.type.PlayerCooldown
 import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 
@@ -70,11 +71,13 @@ object CooldownHandler
             val formatted = cooldown.getRemainingFormatted(player)
 
             player.sendMessage(
-                "${CC.RED}Please wait $formatted before ${
-                    if (action == "") cooldown.id() else action
-                } again! ${
-                    NetworkMetadataDataSync.metadata().language().cooldownDenyMessageAddition
-                }"
+                Color.translate(
+                    "${CC.RED}Please wait $formatted before ${
+                        if (action == "") cooldown.id() else action
+                    } again! ${
+                        NetworkMetadataDataSync.metadata().language().cooldownDenyMessageAddition
+                    }"
+                )
             )
 
             false
