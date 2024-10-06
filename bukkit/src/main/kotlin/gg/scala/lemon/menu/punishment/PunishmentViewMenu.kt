@@ -59,7 +59,10 @@ class PunishmentViewMenu(
                     punishment.category == it && punishment.isActive
                 }.size
 
-                buttons[index] = ItemBuilder(XMaterial.WHITE_WOOL)
+                buttons[index] = ItemBuilder(
+                    if (totalAmount == 0) XMaterial.BARRIER else (if (active >= 1 && viewType == HistoryViewType.TARGET_HIST)
+                        XMaterial.LIME_WOOL else XMaterial.RED_WOOL)
+                )
                     .name(
                         "${CC.B_GREEN}${
                             when (viewType)
@@ -69,9 +72,8 @@ class PunishmentViewMenu(
                             }
                         }${it.fancyVersion + "s"}"
                     )
-                    .data(if (active >= 1 && viewType == HistoryViewType.TARGET_HIST) 5 else 14)
                     .amount(
-                        if (totalAmount >= 64) 64 else totalAmount
+                        if (totalAmount == 0) 1 else (if (totalAmount >= 64) 64 else totalAmount)
                     )
                     .addToLore(
                         "${CC.WHITE}Viewing statistics for this",
