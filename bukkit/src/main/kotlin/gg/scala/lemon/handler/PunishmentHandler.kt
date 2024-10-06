@@ -2,6 +2,7 @@ package gg.scala.lemon.handler
 
 import com.mongodb.client.model.Filters
 import gg.scala.aware.thread.AwareThreadContext
+import gg.scala.commons.event.impl.ConfigWatchEvent
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.punishment.Punishment
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
@@ -20,6 +21,7 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bson.conversions.Bson
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
@@ -346,8 +348,7 @@ object PunishmentHandler
                 }
             }.thenRun {
                 Tasks.sync {
-                    PlayerPunishEvent(punishment.target, punishment)
-                        .callEvent()
+                    Bukkit.getPluginManager().callEvent(PlayerPunishEvent(punishment.target, punishment))
                 }
             }
         }
