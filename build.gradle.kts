@@ -54,6 +54,11 @@ subprojects {
 
     tasks {
         withType<ShadowJar> {
+            dependencies {
+                exclude(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
+                exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
+            }
+
             archiveClassifier.set("")
             exclude(
                 "**/*.kotlin_metadata",

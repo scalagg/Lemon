@@ -1,4 +1,5 @@
 dependencies {
+    compileOnly(kotlin("stdlib"))
     kapt("gg.scala.commons:bukkit:3.4.3")
     api(project(":common"))
 
