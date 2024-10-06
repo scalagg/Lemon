@@ -179,8 +179,6 @@ data class AsyncLemonPlayer(
             uniqueId: UUID?, context: BukkitCommandExecutionContext? = null
         ): AsyncLemonPlayer
         {
-            val online = Bukkit.getPlayer(uniqueId)
-
             if (uniqueId == null && context == null)
             {
                 throw InvalidCommandArgument(
@@ -188,6 +186,7 @@ data class AsyncLemonPlayer(
                 )
             }
 
+            val online = Bukkit.getPlayer(uniqueId)
             val poppedFirstArg = context?.popFirstArg()
 
             val actualUniqueId = ctx@{
