@@ -27,7 +27,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
     override fun size(buttons: Map<Int, Button>) = 54
     override fun getButtons(player: Player) = mapOf(
         10 to ItemBuilder
-            .of(Material.WOOL)
+            .of(XMaterial.WHITE_WOOL)
             .data(
                 ColorUtil
                     .toWoolData(ChatColor.valueOf(cachedConfigModel.primary))
@@ -61,7 +61,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         11 to ItemBuilder
-            .of(Material.WOOL)
+            .of(XMaterial.WHITE_WOOL)
             .data(
                 ColorUtil
                     .toWoolData(ChatColor.valueOf(cachedConfigModel.secondary))
@@ -115,7 +115,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         13 to ItemBuilder
-            .of(Material.PAPER)
+            .of(XMaterial.PAPER)
             .name("${CC.YELLOW}Server Name: ${CC.WHITE}${cachedConfigModel.serverName}")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
@@ -155,7 +155,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         15 to ItemBuilder
-            .of(Material.GOLD_INGOT)
+            .of(XMaterial.GOLD_INGOT)
             .name("${CC.YELLOW}Store: ${CC.WHITE}${cachedConfigModel.store}")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
@@ -175,7 +175,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         16 to ItemBuilder
-            .of(Material.NAME_TAG)
+            .of(XMaterial.NAME_TAG)
             .name("${CC.YELLOW}Rank Prefix in Name Tags: ${CC.WHITE}${
                 if (cachedConfigModel.properties().rankPrefixInNametags) "${CC.GREEN}Yes" else "${CC.RED}NO"
             }")
@@ -189,7 +189,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                 NetworkMetadataEditMenu().openMenu(player)
             },
         19 to ItemBuilder
-            .of(Material.ENDER_PORTAL_FRAME)
+            .of(XMaterial.END_PORTAL_FRAME)
             .name("${CC.YELLOW}Tab List Sorting: ${CC.WHITE}${
                 if (cachedConfigModel.properties().tablistSortingEnabled) "${CC.GREEN}Yes" else "${CC.RED}NO"
             }")
@@ -263,7 +263,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             cachedConfigModel.language().kickMessage = it
         },
         38 to ItemBuilder
-            .of(Material.SIGN)
+            .of(XMaterial.OAK_WALL_SIGN)
             .name("${CC.YELLOW}Cooldown Addition Message")
             .addToLore(
                 cachedConfigModel.language().cooldownDenyMessageAddition,

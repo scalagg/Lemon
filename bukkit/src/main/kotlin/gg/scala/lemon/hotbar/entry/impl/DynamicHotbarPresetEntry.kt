@@ -1,5 +1,6 @@
 package gg.scala.lemon.hotbar.entry.impl
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import org.bukkit.Material
 import org.bukkit.entity.Player

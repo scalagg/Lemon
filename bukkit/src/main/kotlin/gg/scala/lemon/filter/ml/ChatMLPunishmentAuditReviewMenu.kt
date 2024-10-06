@@ -1,5 +1,6 @@
 package gg.scala.lemon.filter.ml
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.lemon.util.QuickAccess.username
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -18,7 +19,7 @@ class ChatMLPunishmentAuditReviewMenu(private val entries: List<ChatMLPunishment
     override fun getAllPagesButtons(player: Player) = entries
         .map {
             ItemBuilder
-                .of(Material.MAP)
+                .of(XMaterial.MAP)
                 .name("${CC.GREEN}${it.target.username()}")
                 .addToLore(
                     "${CC.GRAY}Server:",

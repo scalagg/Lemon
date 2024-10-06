@@ -1,5 +1,6 @@
 package gg.scala.lemon.menu.grant.context.scope
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
@@ -85,10 +86,7 @@ class ScopeSelectionMenu(
             .map(ServerScope::group)
             .forEach {
                 buttons[buttons.size] = ItemBuilder
-                    .of(Material.WOOL)
-                    .data(
-                        if (chosen.contains(it)) 5 else 0
-                    )
+                    .of(if (chosen.contains(it)) XMaterial.LIGHT_GRAY_WOOL else XMaterial.LIME_WOOL)
                     .name("${CC.WHITE}$it")
                     .toButton { _, _ ->
                         if (chosen.contains(it))
