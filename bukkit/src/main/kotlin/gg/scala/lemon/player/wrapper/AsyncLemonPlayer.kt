@@ -93,7 +93,7 @@ data class AsyncLemonPlayer(
                     if (
                         autoAccountSelectionOnMultiple ||
                         !sender.hasPermission("lemon.account-selection-allowed-on-command-exec")
-                        )
+                    )
                     {
                         return@thenAcceptAsync lambda.invoke(bestChoice)
                     }
@@ -179,6 +179,8 @@ data class AsyncLemonPlayer(
             uniqueId: UUID?, context: BukkitCommandExecutionContext? = null
         ): AsyncLemonPlayer
         {
+            val online = if (uniqueId == null) null else Bukkit.getPlayer(uniqueId)
+
             if (uniqueId == null && context == null)
             {
                 throw InvalidCommandArgument(
@@ -186,12 +188,11 @@ data class AsyncLemonPlayer(
                 )
             }
 
-            val online = Bukkit.getPlayer(uniqueId)
             val poppedFirstArg = context?.popFirstArg()
 
             val actualUniqueId = ctx@{
                 if (uniqueId != null)
-                    // fallback to true for faster lookups when searching for alt accounts
+                // fallback to true for faster lookups when searching for alt accounts
                     return@ctx uniqueId to true
 
                 // context must not be null at this point, so, poppedFirstArg shouldn't either
