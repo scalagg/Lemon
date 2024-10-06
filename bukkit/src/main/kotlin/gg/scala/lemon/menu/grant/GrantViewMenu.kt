@@ -213,8 +213,9 @@ class GrantViewMenu(
                 lines.add(if (grant.canRemove(lemonPlayer)) "${CC.YELLOW}Click to remove this grant!" else "${CC.RED}You can't remove this grant.")
             }
 
-            return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (grant.hasExpired) 7 else if (!grant.isRemoved) if (grant.isCustomScope()) 1 else if (grant.isPermanent) 5 else 13 else 14).toShort())
+            return ItemBuilder(
+                if (grant.hasExpired) XMaterial.GRAY_WOOL else if (!grant.isRemoved) if (grant.isCustomScope()) XMaterial.ORANGE_WOOL else if (grant.isPermanent) XMaterial.LIME_WOOL else XMaterial.GREEN_WOOL else XMaterial.RED_WOOL
+            )
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(grant.uuid)}")
                 .addToLore(lines).build()
         }

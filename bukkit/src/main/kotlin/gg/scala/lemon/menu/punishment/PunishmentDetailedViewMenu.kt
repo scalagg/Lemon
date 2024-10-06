@@ -207,8 +207,9 @@ class PunishmentDetailedViewMenu(
                 }
             }
 
-            return ItemBuilder(XMaterial.WHITE_WOOL)
-                .data((if (punishment.hasExpired) 7 else if (!punishment.isRemoved) if (punishment.isPermanent) 5 else 13 else 14).toShort())
+            return ItemBuilder(
+                if (punishment.hasExpired) XMaterial.GRAY_WOOL else if (!punishment.isRemoved) if (punishment.isPermanent) XMaterial.LIME_WOOL else XMaterial.GREEN_WOOL else XMaterial.RED_WOOL
+            )
                 .name("$statusLore ${CC.D_GRAY}#${SplitUtil.splitUuid(punishment.uuid)}")
                 .addToLore(lines)
                 .build()
