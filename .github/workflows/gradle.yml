@@ -1,0 +1,24 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:      
+      - name: Push via Gitracker
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        uses: snowypy/Gitracker@master
