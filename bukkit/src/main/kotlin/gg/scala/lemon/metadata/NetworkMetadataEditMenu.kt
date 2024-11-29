@@ -134,6 +134,26 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     }
                     .start(player)
             },
+        22 to ItemBuilder
+            .of(XMaterial.OAK_SIGN)
+            .name("${CC.YELLOW}Server Domain: ${CC.WHITE}${cachedConfigModel.domain}")
+            .addToLore("${CC.GRAY}Click to edit...")
+            .toButton { _, _ ->
+                player.closeInventory()
+                Button.playNeutral(player)
+
+                InputPrompt()
+                    .withText("Enter a Server Domain")
+                    .acceptInput { _, domain ->
+                        cachedConfigModel.domain = domain
+                        NetworkMetadataDataSync.sync(cachedConfigModel)
+
+                        Button.playSuccess(player)
+                        player.sendMessage("${CC.GREEN}Updated Server Domain to $domain!")
+                        NetworkMetadataEditMenu().openMenu(player)
+                    }
+                    .start(player)
+            },
         14 to ItemBuilder
             .of(XMaterial.CYAN_DYE)
             .name("${CC.YELLOW}Twitter: ${CC.WHITE}${cachedConfigModel.twitter}")
@@ -263,7 +283,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             cachedConfigModel.language().kickMessage = it
         },
         38 to ItemBuilder
-            .of(XMaterial.OAK_WALL_SIGN)
+            .of(XMaterial.REPEATER)
             .name("${CC.YELLOW}Cooldown Addition Message")
             .addToLore(
                 cachedConfigModel.language().cooldownDenyMessageAddition,
