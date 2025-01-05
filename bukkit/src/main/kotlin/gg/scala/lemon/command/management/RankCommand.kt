@@ -18,6 +18,8 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AssignPermission
+import gg.scala.commons.issuer.ScalaPlayer
+import gg.scala.lemon.menu.rank.RankManagementMenu
 import gg.scala.lemon.player.grant.Grant
 import gg.scala.lemon.scope.ServerScope
 import gg.scala.lemon.util.CubedCacheUtil
@@ -62,6 +64,15 @@ object RankCommand : ScalaCommand()
         RankPaginatedResult.display(
             sender, rankList, page ?: 1, "rank list %s"
         )
+    }
+
+    @AssignPermission
+    @Subcommand("manage|editor")
+    @Description("Manage all the ranks from a sleek GUI.")
+    fun onRankManage(
+        sender: ScalaPlayer
+    ) = RankManagementMenu().openMenu(sender.bukkit()).apply {
+        sender.sendMessage("${CC.D_GRAY}Viewing all ranks...")
     }
 
     @AssignPermission
@@ -228,7 +239,7 @@ object RankCommand : ScalaCommand()
 
     @AssignPermission
     @CommandCompletion("@ranks")
-    @Subcommand("view")
+    @Subcommand("view|info")
     @Description("View information for a certain rank.")
     fun onInfo(sender: CommandSender, rank: Rank)
     {
