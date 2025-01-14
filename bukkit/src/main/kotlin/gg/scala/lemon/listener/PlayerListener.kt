@@ -407,7 +407,7 @@ object PlayerListener : Listener
             commandCoolDown.addOrOverride(player)
         }
 
-        if (!command.startsWith("/discord", true))
+        if (!command.startsWith("/register", true) || !command.startsWith("/website", true))
         {
             lemonPlayer.declinePunishedAction {
                 cancel(event, "${CC.RED}You cannot perform commands while being $it")
