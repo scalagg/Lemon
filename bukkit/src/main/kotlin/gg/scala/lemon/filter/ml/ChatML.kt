@@ -22,32 +22,13 @@ object ChatMLService : Thread()
 {
     val queue = LinkedBlockingQueue<ChatMLMessage>()
     val client = OkHttpClient.Builder().build()
-    val webhookURL = with(File("/opt/data/discord.webhook")) {
-        if (exists())
-        {
-            return@with readText()
-        }
-
-        return@with null
-    }
-    val keys = with(File("/opt/data/gemini.tokens")) {
-        if (exists())
-        {
-            return@with readLines()
-        }
-
-        return@with null
-    }
+    val webhookURL = ChatMLDataSync.cached().webHook
+    val keys = ChatMLDataSync.cached().apiKeys
 
     val webhookClient = with(webhookURL) {
-        if (this != null)
-        {
-            return@with WebhookClientBuilder(this)
-                .setWait(true)
-                .build()
-        }
-
-        return@with null
+        return@with WebhookClientBuilder(this)
+            .setWait(true)
+            .build()
     }
 
     val testedTokens = mutableMapOf<String, Long>()
@@ -137,7 +118,6 @@ object ChatMLService : Thread()
 
     fun getKey(tested: MutableMap<String, Long>): String?
     {
-        if (keys == null) return null
         return keys.firstOrNull { !tested.contains(it) }
     }
 }

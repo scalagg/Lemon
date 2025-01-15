@@ -3,6 +3,7 @@ package gg.scala.lemon.filter.ml
 import com.cryptomorin.xseries.XMaterial
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
+import net.evilblock.cubed.menu.menus.TextEditorMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
@@ -100,6 +101,64 @@ class ChatMLEditMenu : Menu("Chat ML")
                     .acceptInput { _, text ->
                         Button.playNeutral(player)
                         cachedConfigModel.generativeAIPrompt = text
+                        ChatMLDataSync.sync(cachedConfigModel)
+                        openMenu(player)
+                    }
+                    .start(player)
+            },
+        14 to ItemBuilder
+            .of(XMaterial.WRITABLE_BOOK)
+            .name("${CC.YELLOW}API Keys:")
+            .setLore(
+                listOf(
+                    "${CC.WHITE}Current API Keys:",
+                    ""
+                ) +
+                cachedConfigModel.apiKeys.map { "${CC.WHITE}- $it" }
+            )
+            .toButton { _, _ ->
+                with(
+                    object : TextEditorMenu(cachedConfigModel.apiKeys)
+                    {
+                        override fun getPrePaginatedTitle(player: Player) =
+                            "Editing: ChatML API Keys"
+
+                        override fun onClose(player: Player)
+                        {
+
+                        }
+
+                        override fun onSave(player: Player, list: List<String>)
+                        {
+                            cachedConfigModel.apiKeys.clear()
+                            cachedConfigModel.apiKeys.addAll(list)
+
+                            ChatMLDataSync.sync(cachedConfigModel)
+                            player.sendMessage("${CC.GREEN}Saved API Keys!")
+                        }
+                    }
+                ) {
+                    openMenu(player)
+                }
+            },
+        15 to ItemBuilder
+            .of(XMaterial.LAPIS_LAZULI)
+            .name("${CC.YELLOW}Discord Web Hook:")
+            .addToLore(
+                "${CC.WHITE}${cachedConfigModel.webHook}"
+            )
+            .toButton { _, _ ->
+                player.closeInventory()
+                Button.playNeutral(player)
+
+                player.sendMessage("${CC.YELLOW}For reference, this is the current Discord web hook:")
+                player.sendMessage(cachedConfigModel.webHook)
+
+                InputPrompt()
+                    .withText("Enter a new Discord Webhook")
+                    .acceptInput { _, text ->
+                        Button.playNeutral(player)
+                        cachedConfigModel.webHook = text
                         ChatMLDataSync.sync(cachedConfigModel)
                         openMenu(player)
                     }
