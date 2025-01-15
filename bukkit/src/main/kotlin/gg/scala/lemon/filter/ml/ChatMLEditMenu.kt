@@ -158,7 +158,7 @@ class ChatMLEditMenu : Menu("Chat ML")
                     .withText("Enter a new Discord Webhook")
                     .acceptInput { _, text ->
                         Button.playNeutral(player)
-                        cachedConfigModel.webHook = text
+                        cachedConfigModel.webHook = "https://discord.com/api/webhooks/$text"
                         ChatMLDataSync.sync(cachedConfigModel)
                         openMenu(player)
                     }
