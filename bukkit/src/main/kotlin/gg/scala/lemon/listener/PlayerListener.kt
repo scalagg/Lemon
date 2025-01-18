@@ -4,17 +4,16 @@ import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.channel.ChatChannelCheckService
 import gg.scala.lemon.channel.ChatChannelService
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.impl.CommandCooldown
 import gg.scala.lemon.filter.ChatMessageFilterHandler
-import gg.scala.lemon.channel.ChatChannelCheckService
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.enums.PermissionCheck
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
-import gg.scala.lemon.sessions.SessionService
 import gg.scala.lemon.util.QuickAccess.sendChannelMessage
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import net.evilblock.cubed.nametag.NametagHandler
@@ -27,13 +26,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.AsyncPlayerChatEvent
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent
-import org.bukkit.event.player.PlayerCommandPreprocessEvent
-import org.bukkit.event.player.PlayerEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerLoginEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.*
 
 @Listeners
 object PlayerListener : Listener
@@ -395,6 +388,7 @@ object PlayerListener : Listener
         }
 
         val command = event.message.split(" ")[0].lowercase()
+        val whitelistedCommand = command.startsWith("/website") || command.startsWith("/register")
 
         if (event.message.matches(BLACKLISTED_SYNTAX))
         {
@@ -407,7 +401,7 @@ object PlayerListener : Listener
             commandCoolDown.addOrOverride(player)
         }
 
-        if (!command.startsWith("/register", true) || !command.startsWith("/website", true))
+        if (!whitelistedCommand)
         {
             lemonPlayer.declinePunishedAction {
                 cancel(event, "${CC.RED}You cannot perform commands while being $it")
