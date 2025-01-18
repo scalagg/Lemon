@@ -183,7 +183,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                 Button.playNeutral(player)
 
                 InputPrompt()
-                    .withText("Enter a Twitter")
+                    .withText("Enter a Store")
                     .acceptInput { _, twitter ->
                         cachedConfigModel.store = twitter
                         NetworkMetadataDataSync.sync(cachedConfigModel)
@@ -226,7 +226,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             "Forbidden Commands",
             {
                 cachedConfigModel.properties().forbiddenCommands
-                    .map { "${CC.WHITE} - $it" }
+                    .map { it }
                     .toSet()
             },
             Material.WATCH

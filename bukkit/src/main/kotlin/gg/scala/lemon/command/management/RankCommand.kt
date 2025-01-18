@@ -408,8 +408,13 @@ object RankCommand : ScalaCommand()
     @Subcommand("meta prefix")
     @CommandCompletion("@ranks")
     @Description("Edit a rank's prefix.")
-    fun onMetaPrefix(sender: CommandSender, rank: Rank, prefix: String)
-    {
+    fun onMetaPrefix(sender: CommandSender, rank: Rank, prefix: String) {
+        val maxLength = 16
+        if (prefix.length > maxLength) {
+            sender.sendMessage("${CC.RED}The prefix is too long. Please ensure it is no more than $maxLength characters.")
+            return
+        }
+
         rank.prefix = Color.translate(prefix)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
