@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture
 @AutoRegister
 object BlacklistCommand : ScalaCommand()
 {
-    @Syntax("<player> [-s] [reason] [-s]")
+    @Syntax("<player> [reason] [-a]")
     @CommandAlias("blacklist|bl")
     @CommandPermission("lemon.command.blacklist")
     @CommandCompletion("@players Unfair Advantage")
@@ -43,7 +43,7 @@ object BlacklistCommand : ScalaCommand()
         }
     }
 
-    @Syntax("<player> [-s] [reason] [-s]")
+    @Syntax("<player> [reason] [-a]")
     @CommandAlias("reblacklist|rbl")
     @CommandPermission("lemon.command.reblacklist")
     @CommandCompletion("@players Unfair Advantage")
@@ -65,7 +65,7 @@ object BlacklistCommand : ScalaCommand()
     }
 
     @CommandAlias("unblacklist|ubl")
-    @Syntax("<player> [-s] [reason] [-s]")
+    @Syntax("<player> [reason] [-a]")
     @CommandCompletion("@players Appealed")
     @CommandPermission("lemon.command.blacklist.remove")
     fun onUnBlacklist(

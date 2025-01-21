@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture
 object KickCommand : ScalaCommand()
 {
     @CommandAlias("kick|k")
-    @Syntax("<player> [-s] [reason] [-s]")
+    @Syntax("<player> [reason] [-a]")
     @CommandPermission("lemon.command.kick")
     @CommandCompletion("@players Camping")
     fun onKick(

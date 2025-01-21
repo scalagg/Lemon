@@ -49,7 +49,7 @@ class ChatMLPunishmentAuditReviewMenu(private val entries: List<ChatMLPunishment
                     "${CC.GREEN}Click to unmute!"
                 )
                 .toButton { _, _ ->
-                    player.performCommand("unmute ${it.target} ChatML False Prediction -s")
+                    player.performCommand("unmute ${it.target} ChatML False Prediction")
                 }
         }
         .withIndex()
