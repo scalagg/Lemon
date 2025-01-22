@@ -38,7 +38,7 @@ object BlacklistCommand : ScalaCommand()
                 category = PunishmentCategory.BLACKLIST,
                 duration = Long.MAX_VALUE,
                 reason = parseReason(reason),
-                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else false,
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
             )
         }
     }
@@ -58,7 +58,7 @@ object BlacklistCommand : ScalaCommand()
                 category = PunishmentCategory.BLACKLIST,
                 duration = Long.MAX_VALUE,
                 reason = parseReason(reason),
-                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else false,
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
                 rePunishing = true
             )
         }
@@ -79,7 +79,7 @@ object BlacklistCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.BLACKLIST,
                 reason = parseReason(reason, fallback = "Appealed"),
-                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else false
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true
             )
         }
     }

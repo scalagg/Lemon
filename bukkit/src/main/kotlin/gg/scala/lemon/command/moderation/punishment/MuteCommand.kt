@@ -42,7 +42,7 @@ object MuteCommand : ScalaCommand()
                 category = PunishmentCategory.MUTE,
                 duration = durationFinal,
                 reason = parseReason(reason, fallback = "Spamming"),
-                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else false,
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
             )
         }
     }
@@ -64,7 +64,7 @@ object MuteCommand : ScalaCommand()
                 category = PunishmentCategory.MUTE,
                 duration = durationFinal,
                 reason = parseReason(reason, fallback = "Spamming"),
-                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else false,
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
                 rePunishing = true
             )
         }
@@ -85,7 +85,7 @@ object MuteCommand : ScalaCommand()
                 issuer = sender, uuid = it.uniqueId,
                 category = PunishmentCategory.MUTE,
                 reason = parseReason(reason, fallback = "Appealed"),
-                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else false,
+                silent = if (sender.hasPermission("lemon.punishments.optional-silent")) isSilent(reason) else true,
             )
         }
     }
