@@ -199,14 +199,14 @@ object DefaultChatChannel : ChatChannelComposite
                                     .append(Component.newline())
                                     .append(
                                         Component.text(
-                                            "Playing on " + ServerSync.getLocalGameServer().id,
+                                            "Click to view their profile.",
                                             NamedTextColor.GRAY
                                         )
                                     )
                             )
                         )
                         .clickEvent(
-                            ClickEvent.suggestCommand("/switchlobby")
+                            ClickEvent.suggestCommand("/profile ${bukkitPlayer.name}")
                         )
                 } else
                 {
