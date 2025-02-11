@@ -6,6 +6,7 @@ import gg.scala.lemon.menu.rank.attribute.children.ChildrenSelectionMenu
 import gg.scala.lemon.menu.rank.attribute.scope.ScopePretextMenu
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.CallbackInputPrompt
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -53,11 +54,17 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                 )
                 .toButton { _, _ ->
                     CallbackInputPrompt("${CC.GREEN}Enter the new name you want this rank to have:") { input ->
+                        if (input.equals("stop", true) || input.equals("cancel", true))
+                        {
+                            player.sendMessage("${CC.RED}You've cancelled the rank rename modification.")
+                            return@CallbackInputPrompt
+                        }
+
                         rank.name = input
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
-                    }
+                    }.start(player)
                 },
 
             10 to ItemBuilder.of(XMaterial.OAK_SIGN)
@@ -68,11 +75,17 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                 )
                 .toButton { _, _ ->
                     CallbackInputPrompt("${CC.GREEN}Enter the new display name you want this rank to have:") { input ->
+                        if (input.equals("stop", true) || input.equals("cancel", true))
+                        {
+                            player.sendMessage("${CC.RED}You've cancelled the rank display name modification.")
+                            return@CallbackInputPrompt
+                        }
+
                         rank.displayName = input
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the display name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
-                    }
+                    }.start(player)
                 },
 
             11 to ItemBuilder.of(XMaterial.ANVIL)
@@ -84,6 +97,12 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                 .toButton { _, _ ->
                     CallbackInputPrompt("${CC.GREEN}Enter the new weight you want this rank to have:") { input ->
                         val weight: Int
+
+                        if (input.equals("stop", true) || input.equals("cancel", true))
+                        {
+                            player.sendMessage("${CC.RED}You've cancelled the rank weight modification.")
+                            return@CallbackInputPrompt
+                        }
 
                         try
                         {
@@ -104,11 +123,17 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
             12 to ItemBuilder.of(XMaterial.EMERALD)
                 .name("${CC.GREEN}Prefix")
                 .addToLore(
-                    "${CC.GRAY}Currently: ${CC.WHITE}${rank.prefix}",
+                    "${CC.GRAY}Currently: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.prefix)}",
                     "${CC.GRAY}Left-Click to change the prefix of this rank!"
                 )
                 .toButton { _, _ ->
                     CallbackInputPrompt("${CC.GREEN}Enter the new prefix you want this rank to have:") { input ->
+                        if (input.equals("stop", true) || input.equals("cancel", true))
+                        {
+                            player.sendMessage("${CC.RED}You've cancelled the rank prefix modification.")
+                            return@CallbackInputPrompt
+                        }
+
                         rank.prefix = input
                         rank.saveAndPushUpdatesGlobally()
 
@@ -119,11 +144,17 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
             13 to ItemBuilder.of(XMaterial.DIAMOND)
                 .name("${CC.GREEN}Suffix")
                 .addToLore(
-                    "${CC.GRAY}Currently: ${CC.WHITE}${rank.suffix.ifEmpty { "${CC.RED}None" }}",
+                    "${CC.GRAY}Currently: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.suffix)}",
                     "${CC.GRAY}Left-Click to change the suffix of this rank!"
                 )
                 .toButton { _, _ ->
                     CallbackInputPrompt("${CC.GREEN}Enter the new suffix you want this rank to have:") { input ->
+                        if (input.equals("stop", true) || input.equals("cancel", true))
+                        {
+                            player.sendMessage("${CC.RED}You've cancelled the rank prefix modification.")
+                            return@CallbackInputPrompt
+                        }
+
                         rank.suffix = input
                         rank.saveAndPushUpdatesGlobally()
 
