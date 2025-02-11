@@ -1,6 +1,7 @@
 package gg.scala.lemon.menu.rank.attribute.scope
 
 import com.cryptomorin.xseries.XMaterial
+import gg.scala.lemon.menu.rank.attribute.RankAttributeEditorMenu
 import gg.scala.lemon.menu.rank.attribute.scope.group.ScopeGroupSpecificSelectionMenu
 import gg.scala.lemon.menu.rank.attribute.scope.server.ScopeServerSpecificPretextMenu
 import gg.scala.lemon.player.rank.Rank
@@ -8,6 +9,7 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
 /**
@@ -25,6 +27,15 @@ class ScopePretextMenu(val rank: Rank): Menu()
     }
 
     override fun getTitle(player: Player): String = "Select an Option"
+
+    override fun onClose(player: Player, manualClose: Boolean)
+    {
+        if (manualClose) {
+            Tasks.sync {
+                RankAttributeEditorMenu(rank).openMenu(player)
+            }
+        }
+    }
 
     override fun getButtons(player: Player): Map<Int, Button>
     {

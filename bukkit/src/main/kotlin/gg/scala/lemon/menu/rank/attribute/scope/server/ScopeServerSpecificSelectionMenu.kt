@@ -4,12 +4,14 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
 import gg.scala.lemon.menu.rank.attribute.RankAttributeEditorMenu
+import gg.scala.lemon.menu.rank.attribute.scope.ScopePretextMenu
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.scope.ServerScope
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
@@ -32,6 +34,15 @@ class ScopeServerSpecificSelectionMenu(val rank: Rank, val group: String) : Menu
     override fun size(buttons: Map<Int, Button>): Int = 36
 
     override fun getTitle(player: Player): String = "Editing Scopes..."
+
+    override fun onClose(player: Player, manualClose: Boolean)
+    {
+        if (manualClose) {
+            Tasks.sync {
+                ScopePretextMenu(rank).openMenu(player)
+            }
+        }
+    }
 
     override fun getButtons(player: Player): Map<Int, Button>
     {
@@ -60,7 +71,7 @@ class ScopeServerSpecificSelectionMenu(val rank: Rank, val group: String) : Menu
         buttons[32] = ItemBuilder.of(XMaterial.ARROW)
             .name("${CC.RED}Go Back")
             .toButton { _, _ ->
-                RankAttributeEditorMenu(rank).openMenu(player)
+                ScopePretextMenu(rank).openMenu(player)
             }
 
         return buttons

@@ -3,11 +3,14 @@ package gg.scala.lemon.menu.rank.attribute.scope.server
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
+import gg.scala.lemon.menu.rank.attribute.RankAttributeEditorMenu
+import gg.scala.lemon.menu.rank.attribute.scope.ScopePretextMenu
 import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.entity.Player
 
 /**
@@ -29,6 +32,15 @@ class ScopeServerSpecificPretextMenu(val rank: Rank): PaginatedMenu()
                     .toButton { _, _ ->
                         ScopeServerSpecificSelectionMenu(rank, group).openMenu(player)
                     }
+            }
+        }
+    }
+
+    override fun onClose(player: Player, manualClose: Boolean)
+    {
+        if (manualClose) {
+            Tasks.sync {
+                ScopePretextMenu(rank).openMenu(player)
             }
         }
     }

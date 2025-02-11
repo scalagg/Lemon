@@ -10,6 +10,7 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.entity.Player
 
@@ -32,13 +33,31 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
 
     override fun size(buttons: Map<Int, Button>): Int = 36
 
+    override fun onClose(player: Player, manualClose: Boolean)
+    {
+        if (manualClose) {
+            Tasks.sync {
+                RankManagementMenu().openMenu(player)
+            }
+        }
+    }
+
     override fun getButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf(
-            4 to ItemBuilder.of(XMaterial.ARROW)
-                .name("${CC.RED}Navigate Back")
+            4 to ItemBuilder.of(XMaterial.NAME_TAG)
+                .name("${CC.RED}Rename Rank")
+                .addToLore(
+                    "${CC.GRAY}Currently: ${CC.WHITE}${"${CC.WHITE}${rank.name}"}",
+                    "${CC.GRAY}Left-Click to change the name of this rank!"
+                )
                 .toButton { _, _ ->
-                    RankManagementMenu().openMenu(player)
+                    CallbackInputPrompt("${CC.GREEN}Enter the new name you want this rank to have:") { input ->
+                        rank.name = input
+                        rank.saveAndPushUpdatesGlobally()
+
+                        player.sendMessage("${CC.GREEN}You have changed the name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
+                    }
                 },
 
             10 to ItemBuilder.of(XMaterial.OAK_SIGN)
@@ -154,6 +173,12 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                 )
                 .toButton { _, _ ->
                     ChildrenSelectionMenu(rank).openMenu(player)
+                },
+
+            35 to ItemBuilder.of(XMaterial.ARROW)
+                .name("${CC.RED}Navigate Back")
+                .toButton { _, _ ->
+                    RankManagementMenu().openMenu(player)
                 }
         )
     }
