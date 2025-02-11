@@ -59,8 +59,10 @@ class ChildrenSelectionMenu(val rank: Rank) : PaginatedMenu()
 
     override fun onClose(player: Player, manualClose: Boolean)
     {
-        Tasks.sync {
-            RankAttributeEditorMenu(rank).openMenu(player)
+        if (manualClose) {
+            Tasks.sync {
+                RankAttributeEditorMenu(rank).openMenu(player)
+            }
         }
     }
 

@@ -28,6 +28,8 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
         updateAfterClick = true
     }
 
+    override fun getTitle(player: Player): String = "Editing ${rank.getColoredName()}${CC.D_GRAY}..."
+
     override fun size(buttons: Map<Int, Button>): Int = 36
 
     override fun getButtons(player: Player): Map<Int, Button>
@@ -77,7 +79,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the display name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
-                    }
+                    }.start(player)
                 },
 
             12 to ItemBuilder.of(XMaterial.EMERALD)
@@ -92,7 +94,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the prefix of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
-                    }
+                    }.start(player)
                 },
 
             13 to ItemBuilder.of(XMaterial.DIAMOND)
@@ -107,7 +109,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the prefix of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
-                    }
+                    }.start(player)
                 },
 
             14 to ItemBuilder.of(XMaterial.GLASS)
