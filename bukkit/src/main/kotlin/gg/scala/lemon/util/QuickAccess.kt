@@ -251,7 +251,7 @@ object QuickAccess
     }
 
     @JvmStatic
-    fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true)
+    fun reloadPlayer(uuid: UUID, recalculateGrants: Boolean = true, updateVisibility: Boolean = true)
     {
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it)
@@ -259,7 +259,11 @@ object QuickAccess
                     it.displayName = lemonPlayer.getColoredName()
 
                     NametagHandler.reloadPlayer(it)
-                    VisibilityHandler.update(it)
+
+                    if (updateVisibility)
+                    {
+                        VisibilityHandler.update(it)
+                    }
 
                     if (recalculateGrants)
                     {
