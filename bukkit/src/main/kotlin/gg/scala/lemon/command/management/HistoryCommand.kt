@@ -88,7 +88,7 @@ object HistoryCommand : ScalaCommand()
     private fun handleHistoryMenu(player: Player, uuid: UUID, colored: String, original: String, type: HistoryViewType)
     {
         player.sendMessage(
-            "${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC}${
+            "${CC.SEC}Viewing ${CC.PRI}$colored${CC.SEC}'s${
                 if (type == HistoryViewType.STAFF_HIST)
                 {
                     " staff"

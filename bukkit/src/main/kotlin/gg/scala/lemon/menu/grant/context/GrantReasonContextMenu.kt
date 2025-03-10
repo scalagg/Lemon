@@ -97,7 +97,7 @@ class GrantReasonContextMenu(
         ConfirmMenu(
             "Grant ${Constants.DOUBLE_ARROW_RIGHT} $name ${Constants.DOUBLE_ARROW_RIGHT} Confirm",
             listOf(
-                "${CC.WHITE}Set $colored's${CC.WHITE} rank to:",
+                "${CC.WHITE}Set $colored${CC.WHITE}'s rank to:",
                 "${CC.WHITE}${rank.getColoredName()}"
             ),
             true

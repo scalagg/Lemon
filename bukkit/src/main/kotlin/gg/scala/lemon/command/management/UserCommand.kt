@@ -81,7 +81,7 @@ object UserCommand : ScalaCommand()
         target.disguiseRankUniqueId = rank.uuid
         QuickAccess.reloadPlayer(target.uniqueId, false)
 
-        sender.sendMessage("${CC.GREEN}You've set ${target.getColoredName(ignoreMinequest = true)}'s${CC.GREEN} disguise rank to ${rank.getColoredName()}${CC.GREEN}.")
+        sender.sendMessage("${CC.GREEN}You've set ${target.getColoredName(ignoreMinequest = true)}${CC.GREEN}'s disguise rank to ${rank.getColoredName()}${CC.GREEN}.")
     }
 
     @AssignPermission
@@ -170,7 +170,7 @@ object UserCommand : ScalaCommand()
             it.assignedPermissions += node.lowercase()
             it.save().join()
 
-            sender.sendMessage("${CC.SEC}You have assigned the permission node ${CC.WHITE}$node${CC.SEC} to ${CC.GREEN}${it.name}'s${CC.SEC} profile.")
+            sender.sendMessage("${CC.SEC}You have assigned the permission node ${CC.WHITE}$node${CC.SEC} to ${CC.GREEN}${it.name}${CC.SEC}'s profile.")
         }
     }
 
@@ -197,7 +197,7 @@ object UserCommand : ScalaCommand()
             it.assignedPermissions -= node.lowercase()
             it.save().join()
 
-            sender.sendMessage("${CC.SEC}You have removed the permission node ${CC.WHITE}$node${CC.SEC} from ${CC.GREEN}${it.name}'s${CC.SEC} profile.")
+            sender.sendMessage("${CC.SEC}You have removed the permission node ${CC.WHITE}$node${CC.SEC} from ${CC.GREEN}${it.name}${CC.SEC}'s profile.")
         }
     }
 }

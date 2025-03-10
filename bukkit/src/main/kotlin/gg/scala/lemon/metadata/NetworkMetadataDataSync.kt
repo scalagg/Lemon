@@ -57,6 +57,9 @@ object NetworkMetadataDataSync : DataSyncService<NetworkMetadata>()
                     properties = NetworkProperties(
                         forbiddenCommands = config()
                             .blacklistedCommands
+                            .toMutableSet(),
+                        allowedCommandsWhenBanned = config()
+                            .allowedCommandsWhenBanned
                             .toMutableSet()
                     )
                     initialSaveComplete = true

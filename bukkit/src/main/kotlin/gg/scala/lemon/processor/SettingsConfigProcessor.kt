@@ -40,4 +40,9 @@ class SettingsConfigProcessor
         get() = NetworkMetadataDataSync.cached().properties()
             .forbiddenCommands
             .toList()
+
+    val allowedCommandsWhenBanned: List<String>
+        get() = NetworkMetadataDataSync.cached().properties()
+            .allowedCommandsWhenBanned
+            .toList()
 }

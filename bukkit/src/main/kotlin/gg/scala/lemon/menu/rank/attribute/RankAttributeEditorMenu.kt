@@ -10,9 +10,11 @@ import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.math.Numbers
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 
 /**
@@ -60,7 +62,9 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.name = input
+                        rank.name = ChatColor.stripColor(
+                            Color.translate(input)
+                        )
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
@@ -81,7 +85,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.displayName = input
+                        rank.displayName = Color.translate(input)
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the display name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
@@ -134,7 +138,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.prefix = input
+                        rank.prefix = Color.translate(input)
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the prefix of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
@@ -142,23 +146,23 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                 },
 
             13 to ItemBuilder.of(XMaterial.DIAMOND)
-                .name("${CC.GREEN}Suffix")
+                .name("${CC.GREEN}Color")
                 .addToLore(
-                    "${CC.GRAY}Currently: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.suffix)}",
-                    "${CC.GRAY}Left-Click to change the suffix of this rank!"
+                    "${CC.GRAY}Currently: ${CC.WHITE}${QuickAccess.replaceEmpty(rank.color)}this",
+                    "${CC.GRAY}Left-Click to change the color of this rank!"
                 )
                 .toButton { _, _ ->
-                    CallbackInputPrompt("${CC.GREEN}Enter the new suffix you want this rank to have:") { input ->
+                    CallbackInputPrompt("${CC.GREEN}Enter the new color you want this rank to have:") { input ->
                         if (input.equals("stop", true) || input.equals("cancel", true))
                         {
                             player.sendMessage("${CC.RED}You've cancelled the rank prefix modification.")
                             return@CallbackInputPrompt
                         }
 
-                        rank.suffix = input
+                        rank.color = Color.translate(input)
                         rank.saveAndPushUpdatesGlobally()
 
-                        player.sendMessage("${CC.GREEN}You have changed the prefix of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
+                        player.sendMessage("${CC.GREEN}You have changed the color of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
                     }.start(player)
                 },
 

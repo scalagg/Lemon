@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
 fun NetworkMetadata.edit(name: String, supplier: () -> Set<String>, material: Material = Material.BOOK, update: NetworkMetadata.(Set<String>) -> Unit) = ItemBuilder
     .of(material)
     .name("${CC.YELLOW}$name")
-    .setLore(supplier())
+    .setLore(listOf("${CC.WHITE}${supplier()}"))
     .addToLore(
         "",
         "${CC.GREEN}Click to edit..."

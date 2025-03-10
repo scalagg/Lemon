@@ -106,14 +106,14 @@ object AltsCommand : ScalaCommand()
                             }
 
                         hoverList.add("${CC.PRI}${CC.STRIKE_THROUGH}--------------------------")
-                        hoverList.add("${target.getOriginalColoredName(ignoreMinequest = true)}'s ${CC.SEC}Current IP Info:")
+                        hoverList.add("${target.getOriginalColoredName(ignoreMinequest = true)}${CC.SEC}'s Current IP Info:")
 
                         addIpInfoToList(target, hoverList)
 
                         if (matchingIpInfo)
                         {
                             hoverList.add("")
-                            hoverList.add("$colored's ${CC.SEC}Matching IP Info:")
+                            hoverList.add("$colored${CC.SEC}'s Matching IP Info:")
 
                             addIpInfoToList(lemonPlayer, hoverList)
                         }
@@ -126,7 +126,7 @@ object AltsCommand : ScalaCommand()
                     }
 
                     sender.sendMessage("${CC.GRAY}[${CC.GREEN}Online${CC.GRAY}, Offline, ${CC.I_WHITE}Muted${CC.GRAY}, ${CC.RED}Ban${CC.GRAY}, ${CC.D_RED}Blacklist${CC.GRAY}]")
-                    sender.sendMessage("${target.getOriginalColoredName(ignoreMinequest = true)}'s${CC.SEC} other accounts ${CC.GRAY}(x${it.size})${CC.SEC}:")
+                    sender.sendMessage("${target.getOriginalColoredName(ignoreMinequest = true)}${CC.SEC}'s other accounts ${CC.GRAY}(x${it.size})${CC.SEC}:")
 
                     val lastComponent = finalMessage.components[finalMessage.components.size - 1]
 

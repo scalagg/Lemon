@@ -74,7 +74,7 @@ object GrantsCommand : ScalaCommand()
     )
     {
         player.sendMessage(
-            "${CC.SEC}Viewing ${CC.PRI}$colored's${CC.SEC} ${
+            "${CC.SEC}Viewing ${CC.PRI}$colored${CC.SEC}'s ${
                 if (type == HistoryViewType.STAFF_HIST)
                 {
                     "issued grants"

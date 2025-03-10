@@ -234,6 +234,18 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             cachedConfigModel.properties().forbiddenCommands =
                 it.toMutableSet()
         },
+        21 to cachedConfigModel.edit(
+            "Allowed Commands When Banned",
+            {
+                cachedConfigModel.properties().allowedCommandsWhenBanned
+                    .map { it }
+                    .toSet()
+            },
+            Material.BARRIER
+        ) {
+            cachedConfigModel.properties().allowedCommandsWhenBanned =
+                it.toMutableSet()
+        },
         28 to cachedConfigModel.edit(
             "Temp. Ban Message",
             cachedConfigModel.language()::banMessageTemporary

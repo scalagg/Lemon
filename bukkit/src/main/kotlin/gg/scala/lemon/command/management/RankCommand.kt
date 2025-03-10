@@ -413,7 +413,7 @@ object RankCommand : ScalaCommand()
         rank.prefix = Color.translate(prefix)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} prefix to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s prefix to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
         }
     }
 
@@ -426,7 +426,7 @@ object RankCommand : ScalaCommand()
         rank.displayName = Color.translate(display)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} display name to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s display name to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
         }
     }
 
@@ -441,7 +441,7 @@ object RankCommand : ScalaCommand()
         )
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} name to ${CC.WHITE}${rank.name}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s name to ${CC.WHITE}${rank.name}${CC.SEC}.")
         }
     }
 
@@ -454,7 +454,7 @@ object RankCommand : ScalaCommand()
         rank.suffix = Color.translate(suffix)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} suffix to ${CC.WHITE}${rank.suffix}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s suffix to ${CC.WHITE}${rank.suffix}${CC.SEC}.")
         }
     }
 
@@ -467,7 +467,7 @@ object RankCommand : ScalaCommand()
         rank.color = Color.translate(color)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} color to ${CC.WHITE}${rank.color}this${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s color to ${CC.WHITE}${rank.color}this${CC.SEC}.")
         }
     }
 
@@ -480,7 +480,7 @@ object RankCommand : ScalaCommand()
         rank.visible = visibility
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} visibility to ${CC.WHITE}${rank.visible}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s visibility to ${CC.WHITE}${rank.visible}${CC.SEC}.")
         }
     }
 
@@ -493,7 +493,7 @@ object RankCommand : ScalaCommand()
         rank.grantable = grantability
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} grantability to ${CC.WHITE}${rank.grantable}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s grantability to ${CC.WHITE}${rank.grantable}${CC.SEC}.")
         }
     }
 
@@ -506,7 +506,7 @@ object RankCommand : ScalaCommand()
         rank.weight = weight
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
-            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}'s${CC.SEC} weight to ${CC.WHITE}${rank.weight}${CC.SEC}.")
+            sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s weight to ${CC.WHITE}${rank.weight}${CC.SEC}.")
         }
     }
 
@@ -802,7 +802,7 @@ object RankCommand : ScalaCommand()
             it.value.permissions.clear()
             it.value.saveAndPushUpdatesGlobally()
 
-            player.sendMessage("${CC.GREEN}Cleared ${it.value.getColoredName()}'s ${CC.GREEN}permissions.")
+            player.sendMessage("${CC.GREEN}Cleared ${it.value.getColoredName()}${CC.GREEN}'s permissions.")
         }
     }
 

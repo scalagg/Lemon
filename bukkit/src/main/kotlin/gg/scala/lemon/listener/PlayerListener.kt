@@ -29,8 +29,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.*
 
 @Listeners
-object PlayerListener : Listener
-{
+object PlayerListener : Listener {
     @Inject
     lateinit var plugin: Lemon
 
@@ -45,8 +44,7 @@ object PlayerListener : Listener
     )
     fun onPlayerPreLoginHigh(
         event: AsyncPlayerPreLoginEvent
-    )
-    {
+    ) {
         val hostAddress = event.address.hostAddress ?: ""
 
         fun createNewAccount() =
@@ -56,8 +54,7 @@ object PlayerListener : Listener
                 firstLogin = true
             )
 
-        if (plugin.settings.dummyServer)
-        {
+        if (plugin.settings.dummyServer) {
             this.playerController.localCache()[event.uniqueId] = createNewAccount()
             return
         }
@@ -70,8 +67,7 @@ object PlayerListener : Listener
 
         // We're assuming the data object has
         // never been saved if there is no metadata attached to it.
-        if (lemonPlayer.metadata.isEmpty())
-        {
+        if (lemonPlayer.metadata.isEmpty()) {
             lemonPlayer.completeFirstLogin().join()
             return
         }
@@ -82,22 +78,19 @@ object PlayerListener : Listener
     @EventHandler
     fun onPlayerLogin(
         event: PlayerLoginEvent
-    )
-    {
+    ) {
         val lemonPlayer = PlayerHandler
             .find(event.player.uniqueId)
             ?: return
 
-        if (event.result == PlayerLoginEvent.Result.KICK_FULL)
-        {
+        if (event.result == PlayerLoginEvent.Result.KICK_FULL) {
             val staffMember = lemonPlayer
                 .hasPermission(
                     "scstaff.staff-member",
                     checkType = PermissionCheck.COMPOUNDED
                 )
 
-            if (staffMember)
-            {
+            if (staffMember) {
                 event.allow()
             }
         }
@@ -111,8 +104,7 @@ object PlayerListener : Listener
         priority = EventPriority.MONITOR,
         ignoreCancelled = true
     )
-    fun onPlayerChat(event: AsyncPlayerChatEvent)
-    {
+    fun onPlayerChat(event: AsyncPlayerChatEvent) {
         val player = event.player
 
         val lemonPlayer = PlayerHandler
@@ -128,8 +120,7 @@ object PlayerListener : Listener
         val mutePunishment = lemonPlayer
             .findApplicablePunishment(PunishmentCategory.MUTE)
 
-        if (mutePunishment != null)
-        {
+        if (mutePunishment != null) {
             event.isCancelled = true
 
             lemonPlayer
@@ -140,8 +131,7 @@ object PlayerListener : Listener
             return
         }
 
-        if (event.message.contains("\${"))
-        {
+        if (event.message.contains("\${")) {
             cancel(event, "${CC.RED}You're not allowed to use this syntax.")
             return
         }
@@ -151,10 +141,8 @@ object PlayerListener : Listener
 
         val composite = channelMatch.composite()
 
-        if (composite.identifier() == "default")
-        {
-            if (lemonPlayer.getSetting("global-chat-disabled"))
-            {
+        if (composite.identifier() == "default") {
+            if (lemonPlayer.getSetting("global-chat-disabled")) {
                 cancel(event, "${CC.RED}You have chat disabled, please re-enable it to continue talking.")
                 return
             }
@@ -162,18 +150,15 @@ object PlayerListener : Listener
             this.defaultChannelProtection.invoke(event)
             this.defaultChannelProtection2.invoke(event)
 
-            if (event.isCancelled)
-            {
+            if (event.isCancelled) {
                 return
             }
         }
 
-        for (chatCheck in ChatChannelCheckService.chatChecks)
-        {
+        for (chatCheck in ChatChannelCheckService.chatChecks) {
             val result = chatCheck.invoke(event)
 
-            if (result.second)
-            {
+            if (result.second) {
                 cancel(event, result.first)
                 return
             }
@@ -184,21 +169,17 @@ object PlayerListener : Listener
 
         val preFormatted = channelMatch.preFormat(event.message)
 
-        if (channelMatch.monitored)
-        {
+        if (channelMatch.monitored) {
             val result = ChatMessageFilterHandler
                 .handleMessageFilter(
                     player, event.message,
                     !player.hasPermission("lemon.filter.bypass")
                 )
 
-            if (result)
-            {
-                if (player.hasPermission("lemon.filter.bypass"))
-                {
+            if (result) {
+                if (player.hasPermission("lemon.filter.bypass")) {
                     player.sendMessage("${CC.RED}That message would've been filtered!")
-                } else
-                {
+                } else {
                     val formatted = channelMatch
                         .composite().format(
                             player.uniqueId, player, preFormatted,
@@ -206,11 +187,9 @@ object PlayerListener : Listener
                             if (
                                 !channelMatch.usesRealRank &&
                                 (player.hasMetadata("disguised") || lemonPlayer.disguiseRank() != null)
-                            )
-                            {
+                            ) {
                                 lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
-                            } else
-                            {
+                            } else {
                                 lemonPlayer.activeGrant!!.getRank()
                             }
                         )
@@ -230,16 +209,13 @@ object PlayerListener : Listener
 
         event.isCancelled = true
 
-        if (channelMatch.distributed)
-        {
+        if (channelMatch.distributed) {
             sendChannelMessage(
                 channelMatch.composite().identifier(),
                 preFormatted, lemonPlayer
             )
-        } else
-        {
-            for (target in Bukkit.getOnlinePlayers())
-            {
+        } else {
+            for (target in Bukkit.getOnlinePlayers()) {
                 if (
                     !channelMatch
                         .permissionLambda
@@ -257,15 +233,12 @@ object PlayerListener : Listener
                 val lemonTarget = PlayerHandler
                     .find(target.uniqueId)
 
-                if (lemonTarget != null)
-                {
+                if (lemonTarget != null) {
                     if (
                         channelMatch.composite().identifier() == "default" &&
                         !player.hasPermission("scstaff.staff-member")
-                    )
-                    {
-                        if (lemonTarget.getSetting("global-chat-disabled"))
-                        {
+                    ) {
+                        if (lemonTarget.getSetting("global-chat-disabled")) {
                             continue
                         }
                     }
@@ -273,14 +246,12 @@ object PlayerListener : Listener
                     if (
                         lemonTarget.ignoring.contains(player.uniqueId) &&
                         !player.hasPermission("scstaff.staff-member")
-                    )
-                    {
+                    ) {
                         continue
                     }
                 }
 
-                if (!defaultChannelProtection3.invoke(target))
-                {
+                if (!defaultChannelProtection3.invoke(target)) {
                     continue
                 }
 
@@ -292,19 +263,16 @@ object PlayerListener : Listener
                             if (
                                 !channelMatch.usesRealRank &&
                                 (player.hasMetadata("disguised") || lemonPlayer.disguiseRank() != null)
-                            )
-                            {
+                            ) {
                                 lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
-                            } else
-                            {
+                            } else {
                                 lemonPlayer.activeGrant!!.getRank()
                             }
                         )
                 )
             }
 
-            if (plugin.settings.consoleChat)
-            {
+            if (plugin.settings.consoleChat) {
                 ChatChannelService.audiences.console().sendMessage(
                     channelMatch
                         .composite().format(
@@ -313,11 +281,9 @@ object PlayerListener : Listener
                             if (
                                 !channelMatch.usesRealRank &&
                                 (player.hasMetadata("disguised") || lemonPlayer.disguiseRank() != null)
-                            )
-                            {
+                            ) {
                                 lemonPlayer.disguiseRank() ?: RankHandler.getDefaultRank()
-                            } else
-                            {
+                            } else {
                                 lemonPlayer.activeGrant!!.getRank()
                             }
                         )
@@ -329,8 +295,7 @@ object PlayerListener : Listener
     @EventHandler(
         priority = EventPriority.HIGHEST
     )
-    fun onPlayerJoin(event: PlayerJoinEvent)
-    {
+    fun onPlayerJoin(event: PlayerJoinEvent) {
         val lemonPlayer = PlayerHandler
             .find(event.player.uniqueId)
             ?: return event.player.kickPlayer(
@@ -351,8 +316,7 @@ object PlayerListener : Listener
         NametagHandler.reloadPlayer(event.player)
     }
 
-    private fun updatePlayerRecord()
-    {
+    private fun updatePlayerRecord() {
         val highestPlayerCount = ServerSync.getLocalGameServer()
             .getMetadataValue<Int?>(
                 "lemon", "highest-player-count"
@@ -360,8 +324,7 @@ object PlayerListener : Listener
 
         val currentPlayerCount = Bukkit.getOnlinePlayers().size
 
-        if (highestPlayerCount == null || currentPlayerCount > highestPlayerCount.toInt())
-        {
+        if (highestPlayerCount == null || currentPlayerCount > highestPlayerCount.toInt()) {
             ServerSync.getLocalGameServer().setMetadata(
                 Key.key("lemon", "highest-player-count"), currentPlayerCount
             )
@@ -372,8 +335,7 @@ object PlayerListener : Listener
     val BLACKLISTED_SYNTAX = "\\\$\\{*\\}".toRegex()
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onCommand(event: PlayerCommandPreprocessEvent)
-    {
+    fun onCommand(event: PlayerCommandPreprocessEvent) {
         val lemonPlayer = PlayerHandler.findPlayer(event.player).orElse(null) ?: return
         val player = event.player
 
@@ -381,8 +343,7 @@ object PlayerListener : Listener
             CommandCooldown::class.java
         )!!
 
-        if (!CooldownHandler.notifyAndContinue(CommandCooldown::class.java, player, "performing a command again"))
-        {
+        if (!CooldownHandler.notifyAndContinue(CommandCooldown::class.java, player, "performing a command again")) {
             event.isCancelled = true
             return
         }
@@ -390,38 +351,34 @@ object PlayerListener : Listener
         val command = event.message.split(" ")[0].lowercase()
         val whitelistedCommand = command.startsWith("/website") || command.startsWith("/register")
 
-        if (event.message.matches(BLACKLISTED_SYNTAX))
-        {
+        if (event.message.matches(BLACKLISTED_SYNTAX)) {
             cancel(event, "${CC.RED}You cannot use this syntax in commands!")
             return
         }
 
-        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass"))
-        {
+        if (!lemonPlayer.hasPermission("lemon.cooldown.command.bypass")) {
             commandCoolDown.addOrOverride(player)
         }
 
-        if (!whitelistedCommand)
-        {
-            lemonPlayer.declinePunishedAction {
-                cancel(event, "${CC.RED}You cannot perform commands while being $it")
+        plugin.settings.allowedCommandsWhenBanned.forEach { allowedCMD ->
+            if (command == "/$allowedCMD") {
+                lemonPlayer.declinePunishedAction {
+                    cancel(event, "${CC.RED}You cannot perform commands while being $it")
+                }
             }
         }
 
         if (event.isCancelled)
             return
 
-        if (command.contains(":") && !player.isOp)
-        {
+        if (command.contains(":") && !player.isOp) {
             cancel(event, "${CC.RED}You're not allowed to use this syntax.")
             return
         }
 
-        if (!lemonPlayer.hasPermission("lemon.command-blacklist.bypass"))
-        {
+        if (!lemonPlayer.hasPermission("lemon.command-blacklist.bypass")) {
             plugin.settings.blacklistedCommands.forEach {
-                if (command == "/$it")
-                {
+                if (command == "/$it") {
                     cancel(event, "${CC.RED}You're not allowed to perform this command.")
                     return
                 }
@@ -433,30 +390,26 @@ object PlayerListener : Listener
         priority = EventPriority.HIGHEST,
         ignoreCancelled = true
     )
-    fun onPlayerQuit(event: PlayerQuitEvent)
-    {
+    fun onPlayerQuit(event: PlayerQuitEvent) {
         event.quitMessage = null
         handleDisconnection(event.player)
     }
 
     private fun cancel(
         event: Cancellable, player: Player, message: String
-    )
-    {
+    ) {
         player.sendMessage("${CC.RED}$message")
         event.isCancelled = true
     }
 
-    private fun cancel(event: PlayerEvent, message: String)
-    {
+    private fun cancel(event: PlayerEvent, message: String) {
         event.player.sendMessage("${CC.RED}$message")
 
         if (event is Cancellable)
             event.isCancelled = true
     }
 
-    private fun handleDisconnection(player: Player)
-    {
+    private fun handleDisconnection(player: Player) {
         val lemonPlayer = PlayerHandler.findPlayer(player)
 
         lemonPlayer.ifPresent {
