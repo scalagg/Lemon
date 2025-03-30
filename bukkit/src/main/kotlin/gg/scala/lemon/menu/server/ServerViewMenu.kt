@@ -33,8 +33,7 @@ class ServerViewMenu : Menu() {
                     "${CC.GRAY}Groups: ${ChatColor.WHITE}${server.groups.joinToString(", ")}",
                     "",
                     "${CC.YELLOW}Click to Join"
-                )
-                .data(3).toButton { _, _ ->
+                ).toButton { _, _ ->
                     player.closeInventory()
                     player.performCommand("server ${server.id}")
                 }
