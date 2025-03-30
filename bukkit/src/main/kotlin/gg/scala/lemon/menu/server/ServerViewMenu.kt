@@ -31,10 +31,10 @@ class ServerViewMenu : Menu() {
                     "${CC.GRAY}Region: ${CC.WHITE}${server.region}",
                     "${CC.GRAY}Groups: ${CC.WHITE}${server.groups.joinToString(", ")}",
                     "",
-                    "${CC.GRAY}Players: ${CC.WHITE}${server.getMetadata("server", "online")} | ${server.getMetadata("server", "online-max")}",
-                    "${CC.GRAY}TPS: ${CC.WHITE}${server.getMetadata("server", "tps")}",
-                    "${CC.GRAY}Host: ${CC.WHITE}${server.getMetadata("server", "host")} | ${server.getMetadata("server", "port")}",
-                    "${CC.GRAY}Whitelisted: ${CC.WHITE}${server.getMetadata("server", "whitelisted")}",
+                    "${CC.GRAY}Players: ${CC.WHITE}${server.getMetadataValue<Int>("server", "online")} | ${server.getMetadataValue<Int>("server", "online-max")}",
+                    "${CC.GRAY}TPS: ${CC.WHITE}${server.getMetadataValue<Int>("server", "tps")}",
+                    "${CC.GRAY}Host: ${CC.WHITE}${server.getMetadataValue<Int>("server", "host")} | ${server.getMetadataValue<Int>("server", "port")}",
+                    "${CC.GRAY}Whitelisted: ${CC.WHITE}${server.getMetadataValue<String>("server", "whitelisted")}",
                     "",
 
                     "${CC.YELLOW}Click to Join"
