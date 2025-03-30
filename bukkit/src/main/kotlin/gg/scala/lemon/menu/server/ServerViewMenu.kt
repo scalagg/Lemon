@@ -1,9 +1,9 @@
 package gg.scala.lemon.menu.server
 
 import com.cryptomorin.xseries.XMaterial
-import gg.scala.commons.agnostic.sync.server.AbstractServer
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
+import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -26,11 +26,15 @@ class ServerViewMenu : Menu() {
         return "Live Servers"
     }
 
+    override fun getMinSize(): Int {
+        return 27
+    }
+
     override fun getButtons(player: Player): Map<Int, Button> {
         val buttons = hashMapOf<Int, Button>()
 
         ServerContainer.allServers().forEach { (id, server) ->
-            buttons[buttons.size + 1] = ServerButton(server as GameServer)
+            buttons[buttons.size] = ServerButton(server as GameServer)
         }
         return buttons
     }
@@ -51,6 +55,9 @@ class ServerViewMenu : Menu() {
                 )
                 .build()
         }
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) = player.closeInventory()
+
+        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
+            VelocityRedirectSystem.redirect(player, server.id)
+        }
     }
 }
