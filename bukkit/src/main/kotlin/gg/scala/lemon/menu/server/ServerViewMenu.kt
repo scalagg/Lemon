@@ -30,11 +30,11 @@ class ServerViewMenu : Menu() {
                 .addToLore(
                     "${CC.GRAY}Region: ${CC.WHITE}${server.region}",
                     "${CC.GRAY}Groups: ${CC.WHITE}${server.groups.joinToString(", ")}",
-                    "",
-                    "${CC.GRAY}Players: ${CC.WHITE}${server.getMetadataValue<Int>("server", "online")} | ${server.getMetadataValue<Int>("server", "online-max")}",
-                    "${CC.GRAY}TPS: ${CC.WHITE}${server.getMetadataValue<Int>("server", "tps")}",
-                    "${CC.GRAY}Host: ${CC.WHITE}${server.getMetadataValue<Int>("server", "host")} | ${server.getMetadataValue<Int>("server", "port")}",
-                    "${CC.GRAY}Whitelisted: ${CC.WHITE}${server.getMetadataValue<String>("server", "whitelisted")}",
+                    "",//wtf
+                    "${CC.GRAY}Players: ${CC.WHITE}${server.getMetadataValue<Int>("server", "online")?.toInt()} | ${server.getMetadataValue<Int>("server", "online-max")?.toInt()}",
+                    "${CC.GRAY}TPS: ${CC.WHITE}${server.getMetadataValue<Int>("server", "tps")?.toInt()}",
+                    "${CC.GRAY}Host: ${CC.WHITE}${server.getMetadataValue<Int>("server", "host")?.toInt()} | ${server.getMetadataValue<Int>("server", "port")?.toInt()}",
+                    "${CC.GRAY}Whitelisted: ${CC.WHITE}${server.getMetadataValue<String>("server", "whitelisted").toString()}",
                     "",
 
                     "${CC.YELLOW}Click to Join"
