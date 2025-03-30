@@ -6,7 +6,6 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 /**
@@ -27,11 +26,17 @@ class ServerViewMenu : Menu() {
 
         ServerContainer.allServers().forEach { (id, server) ->
             buttons[buttons.size + 1] = ItemBuilder(XMaterial.EMERALD_BLOCK)
-                .name("${CC.GREEN}Server: ${ChatColor.WHITE}${server.id}")
+                .name("${CC.GREEN}Server: ${CC.WHITE}${server.id}")
                 .addToLore(
-                    "${CC.GRAY}Region: ${ChatColor.WHITE}${server.region}",
-                    "${CC.GRAY}Groups: ${ChatColor.WHITE}${server.groups.joinToString(", ")}",
+                    "${CC.GRAY}Region: ${CC.WHITE}${server.region}",
+                    "${CC.GRAY}Groups: ${CC.WHITE}${server.groups.joinToString(", ")}",
                     "",
+                    "${CC.GRAY}Players: ${CC.WHITE}${server.getMetadata("server", "online")} | ${server.getMetadata("server", "online-max")}",
+                    "${CC.GRAY}TPS: ${CC.WHITE}${server.getMetadata("server", "tps")}",
+                    "${CC.GRAY}Host: ${CC.WHITE}${server.getMetadata("server", "host")} | ${server.getMetadata("server", "port")}",
+                    "${CC.GRAY}Whitelisted: ${CC.WHITE}${server.getMetadata("server", "whitelisted")}",
+                    "",
+
                     "${CC.YELLOW}Click to Join"
                 ).toButton { _, _ ->
                     player.closeInventory()
