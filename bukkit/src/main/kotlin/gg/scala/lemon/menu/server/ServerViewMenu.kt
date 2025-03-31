@@ -3,61 +3,72 @@ package gg.scala.lemon.menu.server
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.commons.agnostic.sync.server.ServerContainer
 import gg.scala.commons.agnostic.sync.server.impl.GameServer
+import gg.scala.lemon.menu.punishment.PunishmentDetailedViewMenu
 import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import net.evilblock.cubed.menu.Button
-import net.evilblock.cubed.menu.Menu
+import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.inventory.InventoryView
-import org.bukkit.inventory.ItemStack
 
 /**
- * Created by ScoreBoardAPI devscoreboardapi@gmail.com on 3/30/2025.
+ * @author Topu
+ * @date 3/31/2025
  */
-class ServerViewMenu : Menu() {
+class ServerViewMenu : PaginatedMenu() {
 
     init {
         autoUpdate = true
+        placeholdBorders = true
     }
 
-    override fun getTitle(player: Player): String {
-        return "Live Servers"
-    }
+    override fun getPrePaginatedTitle(player: Player) = "Servers"
 
-    override fun getMinSize(): Int {
-        return 27
-    }
+    override fun getMaxItemsPerPage(player: Player) = PunishmentDetailedViewMenu.SLOTS.size - 1
+    override fun getAllPagesButtonSlots() = PunishmentDetailedViewMenu.SLOTS
 
-    override fun getButtons(player: Player): Map<Int, Button> {
-        val buttons = hashMapOf<Int, Button>()
+    override fun size(buttons: Map<Int, Button>) = 36
 
-        ServerContainer.allServers().forEach { (id, server) ->
-            buttons[buttons.size] = ServerButton(server as GameServer)
+    override fun getAllPagesButtons(player: Player): Map<Int, Button> {
+        val buttons = mutableMapOf<Int, Button>()
+
+        ServerContainer.allServers().forEach { (_, server) ->
+            val gameServer = server as GameServer
+            buttons[buttons.size] = ItemBuilder.of(XMaterial.EMERALD_BLOCK)
+                .name("${CC.GREEN}${gameServer.id}")
+                .addToLore(
+                    "",
+                    "${CC.GRAY}Region: ${CC.WHITE}${gameServer.region}",
+                    "${CC.GRAY}Groups: ${CC.WHITE}${gameServer.groups.joinToString(", ")}",
+                    "${CC.GRAY}Software: ${CC.WHITE}${gameServer.getSoftware() ?: "Unknown"}",
+                    "",
+                    "${CC.GREEN}Performance:",
+                    "${CC.GRAY}Players: ${CC.WHITE}${gameServer.getPlayersCount() ?: "N/A"} ${CC.GRAY}${Constants.THICK_VERTICAL_LINE} ${gameServer.getMaxPlayers() ?: "N/A"}",
+                    "${CC.GRAY}TPS: ${CC.GREEN}${
+                        gameServer.getTPS()?.let { if (it > 20.0) "*20.0" else "%.1f".format(it) } ?: "N/A"
+                    }",
+                    "${CC.GRAY}CPU Usage: ${CC.WHITE}${gameServer.getCpuUsage()?.let { "%.1f%%".format(it) } ?: "N/A"}",
+                    "",
+                    "${CC.GREEN}Whitelist:",
+                    "${CC.GRAY}Status: ${CC.WHITE}${gameServer.getWhitelisted() ?: "Unknown"}",
+                    "${CC.GRAY}List: ${CC.WHITE}${gameServer.getWhitelistedPlayers()?.size ?: "N/A"}",
+                    "",
+                    "${CC.GREEN}Left-Click to connect",
+                    "${CC.YELLOW}Right-Click to view metadata",
+                    "${CC.GOLD}Shift-Click for additional actions"
+                )
+                .toButton { _, type ->
+                    player.closeInventory()
+                    when (type) {
+                        ClickType.LEFT -> VelocityRedirectSystem.redirect(player, gameServer.id)
+//                        ClickType.RIGHT -> ServerMetadataMenu(gameServer).openMenu(player)
+//                        ClickType.SHIFT_LEFT -> ServerActionsMenu(gameServer).openMenu(player)
+                        else -> return@toButton
+                    }
+                }
         }
         return buttons
-    }
-
-    internal class ServerButton(val server: GameServer) : Button() {
-        override fun getButtonItem(player: Player): ItemStack {
-            return ItemBuilder(XMaterial.EMERALD_BLOCK)
-                .name("${CC.GREEN}Server: ${CC.WHITE}${server.id} ")
-                .addToLore(
-                    "${CC.GRAY}Region: ${CC.WHITE}${server.region}",
-                    "${CC.GRAY}Groups: ${CC.WHITE}${server.groups.joinToString(", ")}",
-                    "${CC.GRAY}Players: ${CC.WHITE}${server.getPlayersCount()} | ${server.getMaxPlayers()}",
-                    "${CC.GRAY}TPS: ${CC.WHITE}${server.getTPS()}",
-                    "${CC.GRAY}Whitelisted: ${CC.WHITE}${server.getWhitelisted()}",
-                    "",
-                    "${CC.YELLOW}Right click to connect",
-                    "${CC.YELLOW}Left click to view Metadata"
-                )
-                .build()
-        }
-
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView) {
-            VelocityRedirectSystem.redirect(player, server.id)
-        }
     }
 }
