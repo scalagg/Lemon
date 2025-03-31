@@ -11,6 +11,7 @@ import gg.scala.lemon.menu.server.ServerViewMenu
  */
 @AutoRegister
 object ServersCommand : ScalaCommand() {
+
     @CommandAlias("servers")
         fun onList(sender: ScalaPlayer) {
         ServerViewMenu().openMenu(sender.bukkit())

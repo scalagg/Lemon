@@ -45,7 +45,7 @@ class ServerViewMenu : PaginatedMenu() {
                     "${CC.GRAY}Software: ${CC.WHITE}${gameServer.getSoftware() ?: "Unknown"}",
                     "",
                     "${CC.GREEN}Performance:",
-                    "${CC.GRAY}Players: ${CC.WHITE}${gameServer.getPlayersCount() ?: "N/A"} ${CC.GRAY}${Constants.THICK_VERTICAL_LINE} ${gameServer.getMaxPlayers() ?: "N/A"}",
+                    "${CC.GRAY}Players: ${CC.WHITE}${gameServer.getPlayersCount() ?: "N/A"} ${CC.GRAY}${Constants.THIN_VERTICAL_LINE} ${CC.WHITE}${gameServer.getMaxPlayers() ?: "N/A"}",
                     "${CC.GRAY}TPS: ${CC.GREEN}${
                         gameServer.getTPS()?.let { if (it > 20.0) "*20.0" else "%.1f".format(it) } ?: "N/A"
                     }",
