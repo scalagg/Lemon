@@ -20,7 +20,7 @@ object DefaultNametagProvider : NametagProvider("default", 10)
             .find(toRefresh.uniqueId)
             ?: return null
 
-        val rank = lemonPlayer.disguiseRank() ?: realRank(toRefresh)
+        val rank = lemonPlayer.disguiseRank() ?: QuickAccess.computeRank(toRefresh.uniqueId).join()!!
         val sortMapping = SortedRankCache.teamMappings[rank.uuid]
 
         return createNametag(
