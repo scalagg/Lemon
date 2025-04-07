@@ -1,6 +1,6 @@
 dependencies {
     compileOnly(kotlin("stdlib"))
-    kapt("gg.scala.commons:bukkit:3.4.3")
+    kapt("gg.scala.commons:bukkit:4.0.7")
     api(project(":common"))
 
     compileOnly("com.github.mkotb:ConfigAPI:e1c8df3f13")

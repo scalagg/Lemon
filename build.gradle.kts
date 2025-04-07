@@ -14,7 +14,7 @@ var currentBranch: String = grgit.branch.current().name
 
 allprojects {
     group = "gg.scala.lemon"
-    version = "1.9.7${
+    version = "1.9.8${
         if (currentBranch == "develop") "-dev" else ""
     }"
 
@@ -42,7 +42,7 @@ subprojects {
         compileOnly(kotlin("stdlib"))
         compileOnly(kotlin("reflect"))
 
-        compileOnly("gg.scala.commons:bukkit:3.4.3")
+        compileOnly("gg.scala.commons:bukkit:4.0.7")
         compileOnly("gg.scala.store:spigot:0.1.8")
         compileOnly("gg.scala.spigot:server:1.1.0")
         compileOnly("gg.scala.cloudsync:spigot:1.0.1")
