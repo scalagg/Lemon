@@ -205,7 +205,7 @@ object PunishmentHandler
 
         if (category != PunishmentCategory.BLACKLIST && category != PunishmentCategory.KICK)
         {
-            if (duration > TimeUnit.DAYS.toMillis(90L) && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent"))
+            if (duration > TimeUnit.DAYS.toMillis(7L) && !category.instant && !issuer.hasPermission("lemon.command.${category.name.lowercase()}.permanent"))
             {
                 issuer.sendMessage("${CC.RED}You do not have permission to issue ${category.name.lowercase()} durations greater than 3mo!")
                 return
