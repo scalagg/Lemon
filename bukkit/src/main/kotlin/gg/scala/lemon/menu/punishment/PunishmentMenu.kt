@@ -35,7 +35,7 @@ class PunishmentMenu(
 
     init {
         placeholder = true
-        autoUpdate = true
+        updateAfterClick = true
     }
 
     override fun getTitle(player: Player): String {
@@ -108,7 +108,7 @@ class PunishmentMenu(
         }
         // Show severity sections for the selected category
         var index = 10
-        PunishmentSeverity.values().forEach { severity ->
+        PunishmentSeverity.entries.forEach { severity ->
             // Add severity header
             buttons[index] = ItemBuilder(
                 when (severity) {
