@@ -26,13 +26,15 @@ object DefaultNametagProvider : NametagProvider("default", 10) {
 
         val sortMapping = SortedRankCache.teamMappings[rank.uuid]
 
-        val guildName = GuildService
-            .guildByUser(toRefresh.uniqueId).join()!!.name
-
         val prefix = buildPrefix(rank)
 
-        val suffix = if (!guildName.isNullOrBlank()) {
-            " ${CC.GRAY}[${guildName}]${CC.RESET}"
+        val suffix = if (Lemon.instance.settings.guildTagsInNametags) {
+            val guild = GuildService.guildByUser(toRefresh.uniqueId).join()
+            if (guild != null && !guild.name.isNullOrBlank()) {
+                " ${CC.GRAY}[${guild.name}]${CC.RESET}"
+            } else {
+                ""
+            }
         } else {
             ""
         }

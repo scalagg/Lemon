@@ -109,8 +109,7 @@ object DefaultChatChannel : ChatChannelComposite
         val lemonPlayer =
             PlayerHandler.find(sender)!!
 
-        val guildName = GuildService
-            .guildByUser(sender).join()!!.name
+        val guildName = GuildService.guildByUser(sender).join()?.name
 
         val chatTag = this
             .chatTagProvider
@@ -195,43 +194,46 @@ object DefaultChatChannel : ChatChannelComposite
                 )
             )
             .let {
-                return@let if (plugin.settings.defaultChatGsd)
-                {
-                    it
-                        .hoverEvent(
-                            HoverEvent.showText(
-                                Component
-                                    .text(lemonPlayer.getColoredName(prefixIncluded = true))
-                                    .append(Component.newline())
-                                    .append(
-                                        Component.text(
-                                            "${CC.GRAY}Rank: ${rank.color}${rank.displayName}"
-                                        )
-                                    )
-                                    .append(Component.newline())
-                                    .append(
-                                        Component.text(
-                                            "${CC.GRAY}Tropic Level: ${CC.GOLD}${CorePlayerProfileService.find(bukkitPlayer)!!.level}"
-                                        ))
-                                    .append(Component.newline())
-                                    .append(
-                                        Component.text(
-                                            "${CC.GRAY}Guild: ${if (guildName != null) "${CC.GREEN}$guildName${CC.RESET}" else "${CC.RED}None"
-                                            }"
-                                        ))
-                                    .append(Component.newline())
-                                    .append(Component.newline())
-                                    .append(Component.text("${CC.YELLOW}Click to view ${QuickAccess.coloredName(sender)}${CC.YELLOW}'s profile."))
+                return@let if (plugin.settings.defaultChatGsd) {
+                    val guildName = GuildService.guildByUser(sender).join()?.name
 
-                            )
+                    it.hoverEvent(
+                        HoverEvent.showText(
+                            Component.text(lemonPlayer.getColoredName(prefixIncluded = true))
+                                .append(Component.newline())
+                                .append(
+                                    Component.text(
+                                        "${CC.GRAY}Rank: ${rank.color}${rank.displayName}"
+                                    )
+                                )
+                                .append(Component.newline())
+                                .append(
+                                    Component.text(
+                                        "${CC.GRAY}Tropic Level: ${CC.GOLD}${CorePlayerProfileService.find(bukkitPlayer)!!.level}"
+                                    )
+                                )
+                                .append(Component.newline())
+                                .append(
+                                    Component.text(
+                                        "${CC.GRAY}Guild: ${
+                                            if (guildName != null) "${CC.GREEN}$guildName${CC.RESET}"
+                                            else "${CC.RED}None"
+                                        }"
+                                    )
+                                )
+                                .append(Component.newline())
+                                .append(Component.newline())
+                                .append(
+                                    Component.text(
+                                        "${CC.YELLOW}Click to view ${QuickAccess.coloredName(sender)}${CC.YELLOW}'s profile."
+                                    )
+                                )
                         )
-                        .clickEvent(
-                            ClickEvent.runCommand("/profile ${bukkitPlayer.name}")
-                        )
-                } else
-                {
+                    ).clickEvent(ClickEvent.runCommand("/profile ${bukkitPlayer.name}"))
+                } else {
                     it
                 }
+
             }
     }
 

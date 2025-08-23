@@ -155,6 +155,20 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     }
                     .start(player)
             },
+        23 to ItemBuilder
+            .of(XMaterial.STICK)
+            .name("${CC.YELLOW}Guild Tags in Name Tags: ${CC.WHITE}${
+                if (cachedConfigModel.properties().guildTagsInNametags) "${CC.GREEN}Yes" else "${CC.RED}NO"
+            }")
+            .addToLore("${CC.GRAY}Click to edit...")
+            .toButton { _, _ ->
+                cachedConfigModel.properties().guildTagsInNametags =
+                    !cachedConfigModel.properties().guildTagsInNametags
+                NetworkMetadataDataSync.sync(cachedConfigModel)
+
+                Button.playSuccess(player)
+                NetworkMetadataEditMenu().openMenu(player)
+            },
         14 to ItemBuilder
             .of(XMaterial.CYAN_DYE)
             .name("${CC.YELLOW}Twitter: ${CC.WHITE}${cachedConfigModel.twitter}")

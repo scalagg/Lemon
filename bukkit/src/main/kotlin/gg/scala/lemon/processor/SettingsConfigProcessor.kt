@@ -36,6 +36,10 @@ class SettingsConfigProcessor
         get() = NetworkMetadataDataSync.cached().properties()
             .rankPrefixInNametags
 
+    val guildTagsInNametags: Boolean
+        get() = NetworkMetadataDataSync.cached().properties()
+            .guildTagsInNametags
+
     val blacklistedCommands: List<String>
         get() = NetworkMetadataDataSync.cached().properties()
             .forbiddenCommands
