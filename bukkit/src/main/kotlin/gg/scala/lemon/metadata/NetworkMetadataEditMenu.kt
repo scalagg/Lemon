@@ -95,7 +95,8 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .start(player)
             },
         12 to ItemBuilder
-            .of(XMaterial.BLUE_DYE)
+            .of(XMaterial.PLAYER_HEAD)
+            .owner("Berkcord")
             .name("${CC.YELLOW}Discord: ${CC.WHITE}${cachedConfigModel.discord}")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
