@@ -185,6 +185,17 @@ object QuickAccess
     }
 
     @JvmStatic
+    fun computeFullColoredName(uuid: UUID, name: String): CompletableFuture<String>
+    {
+        return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
+            val prominent = GrantRecalculationUtil.getProminentGrant(it)
+                ?: return@thenApplyAsync RankHandler.getDefaultRank().color + name
+
+            return@thenApplyAsync prominent.getRank().prefix + prominent.getRank().color + name
+        }
+    }
+
+    @JvmStatic
     fun computeRank(uuid: UUID): CompletableFuture<Rank?>
     {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {

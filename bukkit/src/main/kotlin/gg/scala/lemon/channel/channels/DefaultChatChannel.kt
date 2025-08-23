@@ -4,6 +4,8 @@ import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.game.extensions.guilds.GuildService
+import gg.scala.game.extensions.profile.CorePlayerProfileService
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.channel.ChatChannelBuilder
 import gg.scala.lemon.channel.ChatChannelComposite
@@ -13,6 +15,7 @@ import gg.scala.lemon.handler.RankHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
@@ -106,6 +109,10 @@ object DefaultChatChannel : ChatChannelComposite
         val lemonPlayer =
             PlayerHandler.find(sender)!!
 
+        val guildName = GuildService
+            .guildByUser(sender)
+            .thenApplyAsync { it?.name }
+
         val chatTag = this
             .chatTagProvider
             .invoke(bukkitPlayer)
@@ -195,14 +202,28 @@ object DefaultChatChannel : ChatChannelComposite
                         .hoverEvent(
                             HoverEvent.showText(
                                 Component
-                                    .text(bukkitPlayer.name, NamedTextColor.GREEN)
+                                    .text(lemonPlayer.getColoredName(prefixIncluded = true))
                                     .append(Component.newline())
                                     .append(
                                         Component.text(
-                                            "Click to view their profile.",
-                                            NamedTextColor.GRAY
+                                            "${CC.GRAY}Rank: ${rank.color}${rank.displayName}"
                                         )
                                     )
+                                    .append(Component.newline())
+                                    .append(
+                                        Component.text(
+                                            "${CC.GRAY}Tropic Level: ${CC.GOLD}${CorePlayerProfileService.find(bukkitPlayer)!!.level}"
+                                        ))
+                                    .append(Component.newline())
+                                    .append(
+                                        Component.text(
+                                            "${CC.GRAY}Guild: ${CC.GREEN}${if (guildName != null) "${CC.GRAY}$guildName${CC.RESET}" else "None"
+                                            }"
+                                        ))
+                                    .append(Component.newline())
+                                    .append(Component.newline())
+                                    .append(Component.text("${CC.YELLOW}Click to view ${QuickAccess.coloredName(sender)}${CC.YELLOW}'s profile."))
+
                             )
                         )
                         .clickEvent(
