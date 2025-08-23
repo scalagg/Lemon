@@ -110,8 +110,7 @@ object DefaultChatChannel : ChatChannelComposite
             PlayerHandler.find(sender)!!
 
         val guildName = GuildService
-            .guildByUser(sender)
-            .thenApplyAsync { it?.name }
+            .guildByUser(sender).join()!!.name
 
         val chatTag = this
             .chatTagProvider
@@ -217,7 +216,7 @@ object DefaultChatChannel : ChatChannelComposite
                                     .append(Component.newline())
                                     .append(
                                         Component.text(
-                                            "${CC.GRAY}Guild: ${CC.GREEN}${if (guildName != null) "${CC.GRAY}$guildName${CC.RESET}" else "None"
+                                            "${CC.GRAY}Guild: ${if (guildName != null) "${CC.GREEN}$guildName${CC.RESET}" else "${CC.RED}None"
                                             }"
                                         ))
                                     .append(Component.newline())
@@ -227,7 +226,7 @@ object DefaultChatChannel : ChatChannelComposite
                             )
                         )
                         .clickEvent(
-                            ClickEvent.suggestCommand("/profile ${bukkitPlayer.name}")
+                            ClickEvent.runCommand("/profile ${bukkitPlayer.name}")
                         )
                 } else
                 {

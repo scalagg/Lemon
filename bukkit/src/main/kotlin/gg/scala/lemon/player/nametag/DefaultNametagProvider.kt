@@ -6,6 +6,7 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.PlayerHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
+import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.SortedRankCache
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.realRank
@@ -15,12 +16,10 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
-object DefaultNametagProvider : NametagProvider("default", 10)
-{
+object DefaultNametagProvider : NametagProvider("default", 10) {
+
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo? {
-        val lemonPlayer = PlayerHandler
-            .find(toRefresh.uniqueId)
-            ?: return null
+        val lemonPlayer = PlayerHandler.find(toRefresh.uniqueId) ?: return null
 
         val rank = lemonPlayer.disguiseRank()
             ?: QuickAccess.computeRank(toRefresh.uniqueId).join()!!
@@ -28,29 +27,36 @@ object DefaultNametagProvider : NametagProvider("default", 10)
         val sortMapping = SortedRankCache.teamMappings[rank.uuid]
 
         val guildName = GuildService
-            .guildByUser(toRefresh.uniqueId)
-            .thenApplyAsync { it?.name }
+            .guildByUser(toRefresh.uniqueId).join()!!.name
 
-        val prefix = if (Lemon.instance.settings.prefixInNametags) {
-            QuickAccess.replaceEmptyNullable(rank.prefix)
-                ?.let { "$it${rank.color} " }
-                ?: rank.color
+        val prefix = buildPrefix(rank)
+
+        val suffix = if (!guildName.isNullOrBlank()) {
+            " ${CC.GRAY}[${guildName}]${CC.RESET}"
         } else {
-            rank.color
+            ""
         }
 
         val teamSorting = if (Lemon.instance.settings.tablistSortingEnabled) {
-            // Hypixel-style vertical sorting:
-            // Use rank's mapping or fallback to 'z' to push to bottom.
-            sortMapping ?: "z"
+            (sortMapping ?: "z").take(16)
         } else {
             "§z§z§z"
         }
 
         return createNametag(
-            prefix,
-            if (guildName != null) " ${CC.GRAY}[$guildName]${CC.RESET}" else "", // No suffix
-            teamSorting
+            prefix.take(16),
+            suffix.take(16),
+            teamSorting.take(16)
         )
+    }
+
+    private fun buildPrefix(rank: Rank): String {
+        return if (Lemon.instance.settings.prefixInNametags) {
+            QuickAccess.replaceEmptyNullable(rank.prefix)
+                ?.let { "$it${rank.color} " }
+                ?: rank.color
+        } else {
+            rank.color
+        }.take(16)
     }
 }
