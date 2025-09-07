@@ -314,6 +314,7 @@ object PlayerListener : Listener {
 
         VisibilityHandler.updateToAll(event.player)
         NametagHandler.reloadPlayer(event.player)
+        NametagHandler.reloadOthersFor(event.player)
     }
 
     private fun updatePlayerRecord() {

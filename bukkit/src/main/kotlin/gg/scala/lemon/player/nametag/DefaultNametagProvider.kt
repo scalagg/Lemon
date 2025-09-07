@@ -1,5 +1,6 @@
 package gg.scala.lemon.player.nametag
 
+import gg.scala.game.extensions.guilds.Guild
 import gg.scala.game.extensions.guilds.GuildService
 import gg.scala.game.extensions.profile.CorePlayerProfileService
 import gg.scala.lemon.Lemon
@@ -16,7 +17,7 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
-object DefaultNametagProvider : NametagProvider("default", 10) {
+object DefaultNametagProvider : NametagProvider("default", 1) {
 
     override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo? {
         val lemonPlayer = PlayerHandler.find(toRefresh.uniqueId) ?: return null
@@ -25,19 +26,11 @@ object DefaultNametagProvider : NametagProvider("default", 10) {
             ?: QuickAccess.computeRank(toRefresh.uniqueId).join()!!
 
         val sortMapping = SortedRankCache.teamMappings[rank.uuid]
-
         val prefix = buildPrefix(rank)
 
-        val suffix = if (Lemon.instance.settings.guildTagsInNametags) {
-            val guild = GuildService.guildByUser(toRefresh.uniqueId).join()
-            if (guild != null && !guild.name.isNullOrBlank()) {
-                " ${CC.GRAY}[${guild.name}]${CC.RESET}"
-            } else {
-                ""
-            }
-        } else {
-            ""
-        }
+        val guild = GuildService.guildByUser(toRefresh.uniqueId).join()
+
+        val suffix = buildGuildTag(guild)
 
         val teamSorting = if (Lemon.instance.settings.tablistSortingEnabled) {
             (sortMapping ?: "z").take(16)
@@ -60,5 +53,19 @@ object DefaultNametagProvider : NametagProvider("default", 10) {
         } else {
             rank.color
         }.take(16)
+    }
+
+    private fun buildGuildTag(guild: Guild?): String {
+        if (!Lemon.instance.settings.guildTagsInNametags) {
+            return ""
+        }
+
+        val tag = guild?.tag
+
+        return if (tag == null) {
+            ""
+        } else {
+            " ${CC.GRAY}[$tag]${CC.RESET}".take(16)
+        }
     }
 }
