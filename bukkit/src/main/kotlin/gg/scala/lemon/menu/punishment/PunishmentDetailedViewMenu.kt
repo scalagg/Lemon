@@ -26,10 +26,6 @@ import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/27/2021
- */
 class PunishmentDetailedViewMenu(
     private val uuid: UUID,
     private val category: PunishmentCategory,

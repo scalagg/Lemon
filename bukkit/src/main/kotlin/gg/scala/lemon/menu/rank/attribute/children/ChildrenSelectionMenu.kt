@@ -16,13 +16,6 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 
-/**
- * Class created on 1/2/2025
-
- * @author Max C.
- * @project lemon
- * @website https://solo.to/redis
- */
 class ChildrenSelectionMenu(val rank: Rank) : PaginatedMenu()
 {
     init

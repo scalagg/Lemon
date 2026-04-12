@@ -6,10 +6,6 @@ import com.google.gson.LongSerializationPolicy
 import java.net.URL
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/26/2021
- */
 object LegacyRESTMetadataProvider
 {
     @JvmStatic
@@ -17,11 +13,6 @@ object LegacyRESTMetadataProvider
         .setLongSerializationPolicy(LongSerializationPolicy.STRING)
         .create()
 
-    /**
-     * Fetches server design information from our API.
-     *
-     * [id] - The server-specific identifier
-     */
     @JvmStatic
     fun fetchServerData(id: String, https: Boolean, supplier: String): NetworkMetadata?
     {

@@ -22,10 +22,6 @@ import gg.scala.lemon.handler.PunishmentHandler.handleUnPunishmentForTargetPlaye
 import gg.scala.lemon.util.QuickAccess.parseReason
 import java.util.concurrent.CompletableFuture
 
-/**
- * Menu for issuing punishments with offense tracking and severity levels
- * @author Pawful
- */
 class PunishmentMenu(
     private val targetUuid: UUID,
     private val targetName: String,
@@ -44,7 +40,7 @@ class PunishmentMenu(
 
     override fun getButtons(player: Player): Map<Int, Button> {
         val buttons = hashMapOf<Int, Button>()
-        // Glass pane border
+
         val borderSlots = listOf(
             0, 1, 2, 3, 4, 5, 6, 7, 8,
             9, 17,
@@ -57,14 +53,14 @@ class PunishmentMenu(
                 .name(" ")
                 .toButton { _, _ -> }
         }
-        // Player head and reason at top center
+
         buttons[4] = ItemBuilder(XMaterial.PLAYER_HEAD)
             .name("${CC.GREEN}${CC.BOLD}$targetName")
             .addToLore("${CC.YELLOW}Reason: ${CC.WHITE}$reason")
             .toButton { _, _ -> }
-        // Centered category buttons
+
         if (category == null) {
-            // Chat Offense (center left)
+
             buttons[20] = ItemBuilder(XMaterial.WRITABLE_BOOK)
                 .name("${CC.AQUA}${CC.BOLD}Chat Offense")
                 .addToLore(
@@ -74,7 +70,7 @@ class PunishmentMenu(
                 ).toButton { _, _ ->
                     PunishmentMenu(targetUuid = targetUuid, targetName = targetName, reason = reason, category = PunishmentCategory.MUTE).openMenu(player)
                 }
-            // General Offense (center)
+
             buttons[22] = ItemBuilder(XMaterial.HOPPER)
                 .name("${CC.GOLD}${CC.BOLD}General Offense")
                 .addToLore(
@@ -84,7 +80,7 @@ class PunishmentMenu(
                 ).toButton { _, _ ->
                     PunishmentMenu(targetUuid = targetUuid, targetName = targetName, reason = reason, category = PunishmentCategory.BAN).openMenu(player)
                 }
-            // Client Mod (center right)
+
             buttons[24] = ItemBuilder(XMaterial.IRON_SWORD)
                 .name("${CC.LIGHT_PURPLE}${CC.BOLD}Client Mod")
                 .addToLore(
@@ -94,22 +90,22 @@ class PunishmentMenu(
                 ).toButton { _, _ ->
                     PunishmentMenu(targetUuid = targetUuid, targetName = targetName, reason = reason, category = PunishmentCategory.BAN).openMenu(player)
                 }
-            // Back (bottom left)
+
             buttons[36] = ItemBuilder(XMaterial.ARROW)
                 .name("${CC.RED}${CC.BOLD}Back")
                 .addToLore("${CC.YELLOW}Return to previous menu.")
                 .toButton { _, _ -> player.closeInventory() }
-            // Close (bottom right)
+
             buttons[44] = ItemBuilder(XMaterial.BARRIER)
                 .name("${CC.RED}${CC.BOLD}Close")
                 .addToLore("${CC.YELLOW}Click to close this menu.")
                 .toButton { _, _ -> player.closeInventory() }
             return buttons
         }
-        // Show severity sections for the selected category
+
         var index = 10
         PunishmentSeverity.entries.forEach { severity ->
-            // Add severity header
+
             buttons[index] = ItemBuilder(
                 when (severity) {
                     PunishmentSeverity.LOW -> XMaterial.LIME_WOOL
@@ -128,7 +124,6 @@ class PunishmentMenu(
 
             index += 9
 
-            // Add templates for this severity and category
             PunishmentTemplate.getTemplatesForCategory(category)
                 .filter { it.severity == severity }
                 .forEach { template ->
@@ -141,7 +136,6 @@ class PunishmentMenu(
             index += 9 - (index % 9)
         }
 
-        // Custom punishment button
         buttons[40] = ItemBuilder(XMaterial.ANVIL)
             .name("${CC.GREEN}${CC.BOLD}Custom Punishment")
             .addToLore(
@@ -153,7 +147,6 @@ class PunishmentMenu(
                 CustomPunishmentMenu(targetUuid, targetName, category).openMenu(player)
             }
 
-        // Show punishment history if player has mod permissions
         if (player.hasPermission("lemon.mod")) {
             displayPunishmentHistory(buttons, player)
         }
@@ -216,10 +209,10 @@ class PunishmentMenu(
     private fun displayPunishmentHistory(buttons: MutableMap<Int, Button>, player: Player) {
         var historySlot = 45
         val history = PunishmentHandler.fetchAllPunishmentsForTarget(targetUuid).get()
-        
+
         history.forEach { punishment ->
             if (historySlot >= 54) return@forEach
-            
+
             buttons[historySlot] = ItemBuilder(
                 when (punishment.category) {
                     PunishmentCategory.BAN -> XMaterial.BARRIER
@@ -235,12 +228,12 @@ class PunishmentMenu(
                     if (punishment.removedBy != null) "${CC.WHITE}Removed by: ${CC.YELLOW}${punishment.removedBy}" else "",
                     if (punishment.removedOn != null) "${CC.WHITE}Removed on: ${CC.YELLOW}${punishment.removedOn!!}" else ""
                 ).toButton { _, _ -> }
-            
+
             historySlot++
         }
     }
 
     override fun size(buttons: Map<Int, Button>): Int {
-        return 54 // 6 rows
+        return 54 
     }
 } 

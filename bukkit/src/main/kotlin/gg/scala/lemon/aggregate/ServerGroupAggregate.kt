@@ -7,10 +7,6 @@ import gg.scala.lemon.lease.LeaseStrategy
 import gg.scala.lemon.lease.lease
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 7/9/2022
- */
 data class ServerGroupAggregate(
     val groupId: String
 ) : Runnable

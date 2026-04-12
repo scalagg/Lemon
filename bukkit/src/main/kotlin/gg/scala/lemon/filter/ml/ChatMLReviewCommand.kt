@@ -8,10 +8,6 @@ import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 
-/**
- * @author GrowlyX
- * @since 8/23/2024
- */
 @AutoRegister
 object ChatMLReviewCommand : ScalaCommand()
 {

@@ -11,10 +11,6 @@ import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 11/23/2023
- */
 @Model
 data class ChatMLPunishmentAudit(
     @Indexed

@@ -7,10 +7,6 @@ import gg.scala.flavor.service.Service
 import gg.scala.lemon.redirection.PlayerRedirectSystem
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 3/13/2022
- */
 @Service
 @AutoBind
 object VelocityRedirectSystem : PlayerRedirectSystem<Player>(

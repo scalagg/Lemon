@@ -18,10 +18,6 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.InventoryView
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/23/2021
- */
 val woolColors = XMaterial.values()
     .filter { it.name.contains("WOOL") }
 

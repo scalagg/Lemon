@@ -19,10 +19,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/8/2022
- */
 class ScopeSelectionMenu(
     private val uuid: UUID,
     private val name: String,

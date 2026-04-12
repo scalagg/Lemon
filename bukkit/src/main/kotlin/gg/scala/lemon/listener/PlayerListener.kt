@@ -65,8 +65,7 @@ object PlayerListener : Listener {
 
         lemonPlayer.ipAddress = hostAddress
 
-        // We're assuming the data object has
-        // never been saved if there is no metadata attached to it.
+        
         if (lemonPlayer.metadata.isEmpty()) {
             lemonPlayer.completeFirstLogin().join()
             return
@@ -75,36 +74,15 @@ object PlayerListener : Listener {
         lemonPlayer.completePostLoad().join()
     }
 
-    @EventHandler
-    fun onPlayerLogin(
-        event: PlayerLoginEvent
-    ) {
-        val lemonPlayer = PlayerHandler
-            .find(event.player.uniqueId)
-            ?: return
-
-        if (event.result == PlayerLoginEvent.Result.KICK_FULL) {
-            val staffMember = lemonPlayer
-                .hasPermission(
-                    "scstaff.staff-member",
-                    checkType = PermissionCheck.COMPOUNDED
-                )
-
-            if (staffMember) {
-                event.allow()
-            }
-        }
-    }
-
     var defaultChannelProtection = { event: AsyncPlayerChatEvent -> }
     var defaultChannelProtection2 = { event: AsyncPlayerChatEvent -> }
     var defaultChannelProtection3 = { player: Player -> true }
 
-    @EventHandler(
-        priority = EventPriority.MONITOR,
-        ignoreCancelled = true
-    )
-    fun onPlayerChat(event: AsyncPlayerChatEvent) {
+    fun handleChat(event: AsyncPlayerChatEvent) {
+        processChat(event)
+    }
+
+    fun processChat(event: AsyncPlayerChatEvent) {
         val player = event.player
 
         val lemonPlayer = PlayerHandler

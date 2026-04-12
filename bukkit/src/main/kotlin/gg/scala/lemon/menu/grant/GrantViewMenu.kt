@@ -28,10 +28,6 @@ import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/9/2021
- */
 class GrantViewMenu(
     private val uuid: UUID,
     private val viewType: HistoryViewType,

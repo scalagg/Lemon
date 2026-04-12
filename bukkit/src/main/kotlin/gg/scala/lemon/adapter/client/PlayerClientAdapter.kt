@@ -2,10 +2,6 @@ package gg.scala.lemon.adapter.client
 
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 9/27/2021
- */
 interface PlayerClientAdapter
 {
     fun getClientName(): String

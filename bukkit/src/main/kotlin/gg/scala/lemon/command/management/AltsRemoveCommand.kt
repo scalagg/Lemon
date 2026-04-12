@@ -15,10 +15,6 @@ import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 10/30/2021
- */
 @AutoRegister
 object AltsRemoveCommand : ScalaCommand()
 {

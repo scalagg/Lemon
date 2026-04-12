@@ -2,10 +2,6 @@ package gg.scala.lemon.util
 
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/27/2021
- */
 object SplitUtil {
 
     @JvmStatic

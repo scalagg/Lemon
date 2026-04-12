@@ -7,10 +7,6 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 
-/**
- * @author GrowlyX
- * @since 2/10/2025
- */
 @AutoRegister
 @CommandAlias("manageproxy")
 @CommandPermission("lemon.command.manageproxy")

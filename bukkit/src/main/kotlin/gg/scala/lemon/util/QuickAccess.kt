@@ -29,9 +29,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX, puugz
- */
 object QuickAccess
 {
     private val connection = ScalaCommonsSpigot.instance.kvConnection
@@ -168,9 +165,9 @@ object QuickAccess
 
         val playerName = CubedCacheUtil.fetchName(uuid)
         val prominent = GrantRecalculationUtil.getProminentGrant(grants)
-            ?: return RankHandler.getDefaultRank().color + playerName
+            ?: return RankHandler.getDefaultRank().color.formatRichText() + playerName
 
-        return prominent.getRank().color + playerName
+        return prominent.getRank().color.formatRichText() + playerName
     }
 
     @JvmStatic
@@ -178,9 +175,9 @@ object QuickAccess
     {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             val prominent = GrantRecalculationUtil.getProminentGrant(it)
-                ?: return@thenApplyAsync RankHandler.getDefaultRank().color + name
+                ?: return@thenApplyAsync RankHandler.getDefaultRank().color.formatRichText() + name
 
-            return@thenApplyAsync prominent.getRank().color + name
+            return@thenApplyAsync prominent.getRank().color.formatRichText() + name
         }
     }
 
@@ -189,9 +186,9 @@ object QuickAccess
     {
         return GrantHandler.fetchGrantsFor(uuid).thenApplyAsync {
             val prominent = GrantRecalculationUtil.getProminentGrant(it)
-                ?: return@thenApplyAsync RankHandler.getDefaultRank().color + name
+                ?: return@thenApplyAsync RankHandler.getDefaultRank().color.formatRichText() + name
 
-            return@thenApplyAsync prominent.getRank().prefix + prominent.getRank().color + name
+            return@thenApplyAsync prominent.getRank().prefix.formatRichText() + prominent.getRank().color.formatRichText() + name
         }
     }
 
@@ -267,8 +264,6 @@ object QuickAccess
         Bukkit.getPlayer(uuid)?.let {
             PlayerHandler.findPlayer(it)
                 .ifPresent { lemonPlayer ->
-                    it.displayName = lemonPlayer.getColoredName()
-
                     NametagHandler.reloadPlayer(it)
                     VisibilityHandler.update(it)
 
@@ -334,7 +329,7 @@ object QuickAccess
             ServerContainer
                 .allServers<GameServer>()
                 .firstOrNull {
-                    // TODO: implement proper fix in commons
+
                     it.getMetadataValue<List<String>>(
                         "server", "online-list"
                     )!!.contains(
@@ -350,7 +345,7 @@ object QuickAccess
             ServerContainer
                 .allServers<GameServer>()
                 .mapNotNull {
-                    // TODO: implement proper fix in commons
+
                     it.id to it
                         .getMetadataValue<List<String>>(
                             "server", "online-list"
@@ -373,8 +368,8 @@ object QuickAccess
         return CompletableFuture.supplyAsync {
             this.connection.sync()
                 .hexists(
-                    "player:$uniqueId",
-                    "instance"
+                    "symphony:players",
+                    uniqueId.toString()
                 )
         }
     }

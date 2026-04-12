@@ -26,10 +26,6 @@ import java.time.Duration
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 12/29/2021
- */
 @Service
 object ChatMessageFilterHandler
 {
@@ -99,8 +95,8 @@ object ChatMessageFilterHandler
 
         if (filteredPhrasesCount > 0)
         {
-            // We're checking for pre-existing
-            // reports (for display purposes)
+
+            
             if (report.isNotEmpty())
             {
                 report.add("")

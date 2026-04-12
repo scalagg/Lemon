@@ -5,10 +5,6 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/9/2024
- */
 object SessionService
 {
     fun createLocal(player: LemonPlayer): Session

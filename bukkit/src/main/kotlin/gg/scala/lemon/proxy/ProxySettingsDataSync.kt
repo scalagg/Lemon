@@ -7,10 +7,6 @@ import gg.scala.flavor.service.Service
 import net.kyori.adventure.key.Key
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 1/19/2024
- */
 @Service
 object ProxySettingsDataSync : DataSyncService<ProxySettings>()
 {

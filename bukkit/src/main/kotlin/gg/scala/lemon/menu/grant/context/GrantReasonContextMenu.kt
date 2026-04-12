@@ -17,10 +17,6 @@ import net.evilblock.cubed.util.time.Duration
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/23/2021
- */
 class GrantReasonContextMenu(
     private val uuid: UUID,
     private val name: String,

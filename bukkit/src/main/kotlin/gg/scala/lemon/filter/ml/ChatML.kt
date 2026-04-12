@@ -14,10 +14,6 @@ import java.time.Duration
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 8/10/2024
- */
 object ChatMLService : Thread()
 {
     val queue = LinkedBlockingQueue<ChatMLMessage>()

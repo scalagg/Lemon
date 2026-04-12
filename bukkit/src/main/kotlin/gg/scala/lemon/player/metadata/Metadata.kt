@@ -2,7 +2,6 @@ package gg.scala.lemon.player.metadata
 
 import java.util.*
 
-// TODO: 4/6/2022 rewrite in the future
 class Metadata(private var value: Any?)
 {
 

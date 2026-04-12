@@ -1,9 +1,5 @@
 package gg.scala.lemon.filter.ml
 
-/**
- * @author GrowlyX
- * @since 8/21/2024
- */
 data class GeminiResponse(
     val candidates: List<Candidate>,
     val usageMetadata: UsageMetadata

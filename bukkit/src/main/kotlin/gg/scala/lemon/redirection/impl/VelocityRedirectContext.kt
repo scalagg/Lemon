@@ -11,10 +11,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 3/13/2022
- */
 object VelocityRedirectContext : PlayerRedirect<Player>, PlayerRedirectHandler
 {
     override fun redirect(player: Player, server: PlayerRedirectMessage)
@@ -54,12 +50,11 @@ object VelocityRedirectContext : PlayerRedirect<Player>, PlayerRedirectHandler
     ): CompletableFuture<PlayerRedirectionResponse>
     {
         return CompletableFuture.supplyAsync {
-            // only allow players to connect when
-            // the TPS is above 18.50.
 
-            // polling the TPS on this thread won't be
-            // a problem for us since it's not bukkit's
-            // main thread (which at the time would be pretty weird)
+            
+
+            
+
             val ticksPerSecond = Lemon.instance
                 .serverStatisticProvider.ticksPerSecond()
 

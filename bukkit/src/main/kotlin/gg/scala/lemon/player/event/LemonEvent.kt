@@ -5,10 +5,6 @@ import org.bukkit.Bukkit
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 
-/**
- * @author GrowlyX
- * @since 9/21/2021
- */
 abstract class LemonEvent : Event(), Cancellable {
 
     private var cancelled = false

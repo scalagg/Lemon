@@ -17,10 +17,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.CompletableFuture
 
-/**
- * Menu for creating custom punishments with specific durations and reasons
- * @author Pawful
- */
 class CustomPunishmentMenu(
     private val targetUuid: UUID,
     private val targetName: String,
@@ -37,7 +33,7 @@ class CustomPunishmentMenu(
 
     override fun getButtons(player: Player): Map<Int, Button> {
         return hashMapOf<Int, Button>().also { buttons ->
-            // Duration options
+
             buttons[10] = createDurationButton(player, 1, TimeUnit.HOURS)
             buttons[11] = createDurationButton(player, 4, TimeUnit.HOURS)
             buttons[12] = createDurationButton(player, 8, TimeUnit.HOURS)
@@ -46,7 +42,6 @@ class CustomPunishmentMenu(
             buttons[15] = createDurationButton(player, 7, TimeUnit.DAYS)
             buttons[16] = createDurationButton(player, 30, TimeUnit.DAYS)
 
-            // Custom duration button
             buttons[21] = ItemBuilder(XMaterial.CLOCK)
                 .name("${CC.GREEN}${CC.BOLD}Custom Duration")
                 .addToLore(
@@ -58,7 +53,6 @@ class CustomPunishmentMenu(
                     promptCustomDuration(player)
                 }
 
-            // Permanent punishment button
             buttons[23] = ItemBuilder(XMaterial.BARRIER)
                 .name("${CC.RED}${CC.BOLD}Permanent ${category.fancyVersion}")
                 .addToLore(
@@ -72,7 +66,6 @@ class CustomPunishmentMenu(
                     promptReason(player, -1L)
                 }
 
-            // Back button
             buttons[40] = ItemBuilder(XMaterial.ARROW)
                 .name("${CC.RED}${CC.BOLD}Go Back")
                 .addToLore(
@@ -87,8 +80,8 @@ class CustomPunishmentMenu(
 
     private fun createDurationButton(player: Player, amount: Long, unit: TimeUnit): Button {
         val duration = when (unit) {
-            TimeUnit.HOURS -> amount * 60 * 60 * 1000 // Convert to milliseconds
-            TimeUnit.DAYS -> amount * 24 * 60 * 60 * 1000 // Convert to milliseconds
+            TimeUnit.HOURS -> amount * 60 * 60 * 1000 
+            TimeUnit.DAYS -> amount * 24 * 60 * 60 * 1000 
             else -> amount
         }
 
@@ -177,6 +170,6 @@ class CustomPunishmentMenu(
     }
 
     override fun size(buttons: Map<Int, Button>): Int {
-        return 45 // 5 rows
+        return 45 
     }
 } 

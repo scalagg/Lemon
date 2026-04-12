@@ -62,10 +62,6 @@ class Grant(
         return scopes.isNotEmpty()
     }
 
-    /**
-     * Check if this grant has a scope
-     * which matches the current server
-     */
     fun isApplicable(): Boolean
     {
         if (scopes.contains("global"))

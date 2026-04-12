@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.Color
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 
-/**
- * @author GrowlyX
- * @since 10/15/2021
- */
 @Service
 object CooldownHandler
 {

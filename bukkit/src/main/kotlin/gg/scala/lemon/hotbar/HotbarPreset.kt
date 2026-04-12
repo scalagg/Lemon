@@ -6,10 +6,6 @@ import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.entity.Player
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 11/28/2021
- */
 class HotbarPreset
 {
     companion object

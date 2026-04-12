@@ -8,10 +8,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.concurrent.CopyOnWriteArrayList
 
-/**
- * @author GrowlyX
- * @since 3/13/2022
- */
 abstract class ServerAggregateHandler(
     private val redirectSystem: PlayerRedirectSystem<Player>
 ) : Runnable

@@ -19,10 +19,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 10/24/2021
- */
 class PunishmentSpecificViewMenu(
     private val punishment: Punishment,
     private val fallback: String? = null

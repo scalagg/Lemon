@@ -4,10 +4,6 @@ import gg.scala.lemon.player.grant.Grant
 
 object GrantRecalculationUtil {
 
-    /**
-     * Retrieves the prominent grant out
-     * of a mutable list with grants
-     */
     @JvmStatic
     fun getProminentGrant(grants: List<Grant>): Grant? {
         return grants

@@ -5,20 +5,78 @@ import gg.scala.lemon.metadata.language.edit
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.ColorUtil
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import java.util.Locale
 
-/**
- * @author GrowlyX
- * @since 8/21/2024
- */
 class NetworkMetadataEditMenu : Menu("Editing network metadata...")
 {
     private val cachedConfigModel = NetworkMetadataDataSync.cached()
+
+    private fun previewChatColor(input: String): ChatColor
+    {
+        val translated = Color.translate(input)
+        return when {
+            input.startsWith("#") || translated.startsWith("§x") -> nearestChatColor(translated)
+            else -> kotlin.runCatching { ChatColor.valueOf(input.uppercase(Locale.getDefault())) }.getOrElse { ChatColor.WHITE }
+        }
+    }
+
+    private fun previewColorText(input: String): String
+    {
+        val translated = Color.translate(input)
+        val label = when {
+            input.startsWith("#") -> input
+            translated.startsWith("§x") -> hexFromLegacy(translated)
+            else -> input
+        }
+
+        return "$translated■ ${CC.WHITE}$label"
+    }
+
+    private fun hexFromLegacy(input: String): String
+    {
+        val normalized = input.removePrefix("§x").replace("§", "")
+        return if (normalized.length >= 6) "#${normalized.take(6)}" else input
+    }
+
+    private fun nearestChatColor(input: String): ChatColor
+    {
+        val normalized = input.removePrefix("§x").replace("§", "")
+        if (normalized.length < 6) return ChatColor.WHITE
+
+        val red = normalized.substring(0, 2).toInt(16)
+        val green = normalized.substring(2, 4).toInt(16)
+        val blue = normalized.substring(4, 6).toInt(16)
+        val palette = linkedMapOf(
+            ChatColor.DARK_RED to intArrayOf(170, 0, 0),
+            ChatColor.RED to intArrayOf(255, 85, 85),
+            ChatColor.GOLD to intArrayOf(255, 170, 0),
+            ChatColor.YELLOW to intArrayOf(255, 255, 85),
+            ChatColor.GREEN to intArrayOf(85, 255, 85),
+            ChatColor.DARK_GREEN to intArrayOf(0, 170, 0),
+            ChatColor.DARK_AQUA to intArrayOf(0, 170, 170),
+            ChatColor.AQUA to intArrayOf(85, 255, 255),
+            ChatColor.BLUE to intArrayOf(85, 85, 255),
+            ChatColor.DARK_PURPLE to intArrayOf(170, 0, 170),
+            ChatColor.LIGHT_PURPLE to intArrayOf(255, 85, 255),
+            ChatColor.WHITE to intArrayOf(255, 255, 255),
+            ChatColor.GRAY to intArrayOf(170, 170, 170)
+        )
+
+        return palette.minByOrNull { (_, color) ->
+            val redDiff = red - color[0]
+            val greenDiff = green - color[1]
+            val blueDiff = blue - color[2]
+            redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff
+        }?.key ?: ChatColor.WHITE
+    }
+
     init
     {
         placeholder = true
@@ -30,12 +88,12 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             .of(XMaterial.WHITE_WOOL)
             .data(
                 ColorUtil
-                    .toWoolData(ChatColor.valueOf(cachedConfigModel.primary))
+                    .toWoolData(previewChatColor(cachedConfigModel.primary))
                     .toShort()
             )
             .name("${CC.YELLOW}Primary: ${
-                ChatColor.valueOf(cachedConfigModel.primary)
-            }${cachedConfigModel.primary}")
+                previewColorText(cachedConfigModel.primary)
+            }")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
@@ -44,18 +102,12 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                 InputPrompt()
                     .withText("Enter a primary color")
                     .acceptInput { _, primaryColor ->
-                        val primaryChatColor = kotlin
-                            .runCatching { ChatColor.valueOf(primaryColor) }
-                            .getOrNull()
-                            ?: return@acceptInput run {
-                                player.sendMessage("${CC.RED}Invalid color!")
-                            }
-
-                        cachedConfigModel.primary = primaryChatColor.name
+                        val translated = Color.translate(primaryColor)
+                        cachedConfigModel.primary = translated
                         NetworkMetadataDataSync.sync(cachedConfigModel)
 
                         Button.playSuccess(player)
-                        player.sendMessage("${CC.GREEN}Updated Primary Color to $primaryChatColor${primaryChatColor.name}!")
+                        player.sendMessage("${CC.GREEN}Updated Primary Color to ${previewColorText(primaryColor)}${CC.GREEN}!")
                         NetworkMetadataEditMenu().openMenu(player)
                     }
                     .start(player)
@@ -64,12 +116,12 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
             .of(XMaterial.WHITE_WOOL)
             .data(
                 ColorUtil
-                    .toWoolData(ChatColor.valueOf(cachedConfigModel.secondary))
+                    .toWoolData(previewChatColor(cachedConfigModel.secondary))
                     .toShort()
             )
             .name("${CC.YELLOW}Secondary: ${
-                ChatColor.valueOf(cachedConfigModel.secondary)
-            }${cachedConfigModel.secondary}")
+                previewColorText(cachedConfigModel.secondary)
+            }")
             .addToLore("${CC.GRAY}Click to edit...")
             .toButton { _, _ ->
                 player.closeInventory()
@@ -78,18 +130,12 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                 InputPrompt()
                     .withText("Enter a secondary color")
                     .acceptInput { _, secondaryColor ->
-                        val secondaryChatColor = kotlin
-                            .runCatching { ChatColor.valueOf(secondaryColor) }
-                            .getOrNull()
-                            ?: return@acceptInput run {
-                                player.sendMessage("${CC.RED}Invalid color!")
-                            }
-
-                        cachedConfigModel.secondary = secondaryChatColor.name
+                        val translated = Color.translate(secondaryColor)
+                        cachedConfigModel.secondary = translated
                         NetworkMetadataDataSync.sync(cachedConfigModel)
 
                         Button.playSuccess(player)
-                        player.sendMessage("${CC.GREEN}Updated Secondary Color to $secondaryChatColor${secondaryChatColor.name}!")
+                        player.sendMessage("${CC.GREEN}Updated Secondary Color to ${previewColorText(secondaryColor)}${CC.GREEN}!")
                         NetworkMetadataEditMenu().openMenu(player)
                     }
                     .start(player)
@@ -244,7 +290,7 @@ class NetworkMetadataEditMenu : Menu("Editing network metadata...")
                     .map { it }
                     .toSet()
             },
-            Material.WATCH
+            Material.matchMaterial("CLOCK") ?: Material.COMPASS
         ) {
             cachedConfigModel.properties().forbiddenCommands =
                 it.toMutableSet()

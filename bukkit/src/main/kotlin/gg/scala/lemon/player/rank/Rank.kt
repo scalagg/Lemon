@@ -9,6 +9,7 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.metadata.NetworkMetadataDataSync
 import gg.scala.lemon.scope.ServerScope
+import gg.scala.lemon.util.formatRichText
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -44,10 +45,6 @@ data class Rank(
     fun scopes() = serverScopes!!
     fun grantable() = grantable!!
 
-    /**
-     * Validates all [Rank]'s
-     * in the [children] list.
-     */
     private fun crosscheck()
     {
         children.toList().forEach {
@@ -72,13 +69,9 @@ data class Rank(
                 ?: getColoredName(true)
         }
 
-        return color + (displayName ?: name)
+        return color.formatRichText() + (displayName ?: name).formatRichText()
     }
 
-    /**
-     * Returns a list with permissions from
-     * all inherited ranks as well as the current rank
-     */
     fun getCompoundedPermissions(): ArrayList<String>
     {
         val compoundedPermissions = ArrayList<String>()

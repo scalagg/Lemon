@@ -4,10 +4,6 @@ import java.util.concurrent.Executor
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/**
- * @author GrowlyX
- * @since 6/26/2022
- */
 class Lease<T>(
     private val compute: () -> T,
     private val strategy: LeaseStrategy,

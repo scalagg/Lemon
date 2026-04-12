@@ -6,10 +6,6 @@ import gg.scala.store.controller.annotations.Indexed
 import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/10/2024
- */
 @Model
 class MessageAuditLog(
     @Indexed val playerID: UUID,

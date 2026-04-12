@@ -15,10 +15,6 @@ import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/27/2021
- */
 object GrantHandler
 {
     private fun loadGrantsFilteredBy(

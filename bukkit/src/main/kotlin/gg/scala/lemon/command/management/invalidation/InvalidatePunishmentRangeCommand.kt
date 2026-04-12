@@ -16,10 +16,6 @@ import gg.scala.commons.acf.annotation.Syntax
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.ConsoleCommandSender
 
-/**
- * @author GrowlyX
- * @since 9/11/2021
- */
 @AutoRegister
 object InvalidatePunishmentRangeCommand : ScalaCommand()
 {

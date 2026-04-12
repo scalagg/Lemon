@@ -13,10 +13,6 @@ import net.evilblock.cubed.util.time.Duration
 import org.bukkit.command.CommandSender
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 9/13/2021
- */
 @AutoRegister
 object BanCommand : ScalaCommand()
 {

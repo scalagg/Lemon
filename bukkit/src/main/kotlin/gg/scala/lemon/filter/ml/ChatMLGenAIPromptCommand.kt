@@ -9,10 +9,6 @@ import gg.scala.commons.issuer.ScalaPlayer
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.ConsoleCommandSender
 
-/**
- * @author GrowlyX
- * @since 8/21/2024
- */
 @AutoRegister
 @CommandAlias("chatml-genai-prompt")
 @CommandPermission("lemon.command.genai.prompt")

@@ -16,10 +16,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/27/2021
- */
 class PunishmentViewMenu(
     private val uuid: UUID,
     private val viewType: HistoryViewType,

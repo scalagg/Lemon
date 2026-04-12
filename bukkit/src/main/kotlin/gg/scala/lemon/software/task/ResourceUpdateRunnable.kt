@@ -7,10 +7,6 @@ import gg.scala.lemon.util.QuickAccess
 import me.lucko.helper.promise.ThreadContext
 import org.bukkit.Bukkit
 
-/**
- * @author GrowlyX
- * @since 9/8/2021
- */
 @Repeating(20L, context = ThreadContext.ASYNC)
 object ResourceUpdateRunnable : Runnable
 {

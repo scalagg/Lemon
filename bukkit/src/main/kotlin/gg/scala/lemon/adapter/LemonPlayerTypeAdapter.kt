@@ -9,13 +9,6 @@ import java.lang.reflect.Type
 import java.util.*
 import java.util.logging.Level
 
-/**
- * Purely to prevent issues with
- * deserialization of transient fields.
- *
- * @author GrowlyX
- * @since 4/26/2022
- */
 object LemonPlayerTypeAdapter : JsonSerializer<LemonPlayer>, JsonDeserializer<LemonPlayer>
 {
     override fun serialize(

@@ -6,7 +6,7 @@ class ProxyPresenceSettings(
     var whitelistedPresence: String = "cocoaV Lol",
     var whitelistedNotification: String = """
         <red>We're currently whitelisted.
-        
+
         <red>Additional information may be found in:
         <red><bold>discord.gg/asdf
     """.trimIndent(),

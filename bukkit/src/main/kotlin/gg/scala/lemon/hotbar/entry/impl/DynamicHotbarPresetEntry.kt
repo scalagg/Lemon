@@ -7,10 +7,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 11/28/2021
- */
 class DynamicHotbarPresetEntry : HotbarPresetEntry
 {
     companion object

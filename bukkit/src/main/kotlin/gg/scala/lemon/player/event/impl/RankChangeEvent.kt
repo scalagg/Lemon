@@ -5,10 +5,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/21/2021
- */
 class RankChangeEvent(
     val player: Player,
     val oldRank: UUID?,

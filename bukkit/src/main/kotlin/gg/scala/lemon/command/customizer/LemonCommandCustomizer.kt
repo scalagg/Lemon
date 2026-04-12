@@ -21,10 +21,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 4/14/2022
- */
 object LemonCommandCustomizer
 {
     @CommandManagerCustomizer

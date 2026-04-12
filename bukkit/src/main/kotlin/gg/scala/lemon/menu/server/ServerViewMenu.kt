@@ -14,7 +14,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
 /**
- * @author Topu
  * @date 3/31/2025
  */
 class ServerViewMenu : PaginatedMenu() {
@@ -63,8 +62,7 @@ class ServerViewMenu : PaginatedMenu() {
                     player.closeInventory()
                     when (type) {
                         ClickType.LEFT -> VelocityRedirectSystem.redirect(player, gameServer.id)
-//                        ClickType.RIGHT -> ServerMetadataMenu(gameServer).openMenu(player)
-//                        ClickType.SHIFT_LEFT -> ServerActionsMenu(gameServer).openMenu(player)
+
                         else -> return@toButton
                     }
                 }

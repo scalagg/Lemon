@@ -18,13 +18,9 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 
-/**
- * @author GrowlyX
- * @since 9/27/2021
- */
 @Service
 @IgnoreAutoScan
-@SoftDependency("LunarClient-API")
+@SoftDependency(value = "LunarClient-API")
 class LunarClientAPIAdapter : PlayerClientAdapter
 {
     @Inject
@@ -32,9 +28,6 @@ class LunarClientAPIAdapter : PlayerClientAdapter
 
     override fun getClientName() = "Lunar Client"
 
-    /**
-     * Automatically enable legacy combat & competitive mode.
-     */
     @Configure
     fun configure()
     {
@@ -103,8 +96,6 @@ class LunarClientAPIAdapter : PlayerClientAdapter
 
     override fun sendTitle(player: Player, title: String, subtitle: String)
     {
-        // TODO: 3/3/2022 fix lunar client titles
-//        LunarClientAPI.getInstance().sendTitle(player, TitleType.TITLE, title, Duration.ofSeconds(2L))
-//        LunarClientAPI.getInstance().sendTitle(player, TitleType.SUBTITLE, subtitle, Duration.ofSeconds(2L))
+
     }
 }

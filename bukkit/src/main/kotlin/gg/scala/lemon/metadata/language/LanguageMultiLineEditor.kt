@@ -11,10 +11,6 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/27/2024
- */
 fun NetworkMetadata.edit(name: String, supplier: () -> Set<String>, material: Material = Material.BOOK, update: NetworkMetadata.(Set<String>) -> Unit) = ItemBuilder
     .of(material)
     .name("${CC.YELLOW}$name")

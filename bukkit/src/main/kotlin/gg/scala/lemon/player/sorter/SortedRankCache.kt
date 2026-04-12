@@ -6,10 +6,6 @@ import me.lucko.helper.promise.ThreadContext
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author GrowlyX
- * @since 8/31/2022
- */
 @Repeating(5L, context = ThreadContext.ASYNC)
 object SortedRankCache : Runnable
 {
@@ -25,15 +21,6 @@ object SortedRankCache : Runnable
             }
     }
 
-    /**
-     * This is a special method to sort nametags in
-     * the tablist. It takes a priority and converts
-     * it to an alphabetic representation to force a
-     * specific sort.
-     *
-     * @param input the sort priority
-     * @return the team name
-     */
     private fun getNameFromInput(input: Int): String
     {
         if (input < 0) return "Z"

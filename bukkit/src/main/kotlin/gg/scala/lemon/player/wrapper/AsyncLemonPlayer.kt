@@ -25,10 +25,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.locks.Condition
 
-/**
- * @author GrowlyX
- * @since 12/29/2021
- */
 data class AsyncLemonPlayer(
     val uniqueIdCompute: () -> Pair<UUID, Boolean>,
     val future: (Pair<UUID, Boolean>) -> CompletableFuture<List<LemonPlayer>>
@@ -59,7 +55,6 @@ data class AsyncLemonPlayer(
             .thenAcceptAsync {
                 if (it.second.isEmpty())
                 {
-
 
                     val username = CubedCacheUtil
                         .fetchName(it.first.first)
@@ -192,10 +187,9 @@ data class AsyncLemonPlayer(
 
             val actualUniqueId = ctx@{
                 if (uniqueId != null)
-                // fallback to true for faster lookups when searching for alt accounts
+
                     return@ctx uniqueId to true
 
-                // context must not be null at this point, so, poppedFirstArg shouldn't either
                 Lemon.instance.parseUniqueIdFromContext(poppedFirstArg!!)
             }
 

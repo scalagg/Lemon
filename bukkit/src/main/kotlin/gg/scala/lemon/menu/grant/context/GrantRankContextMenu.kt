@@ -9,16 +9,13 @@ import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ColorUtil
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import com.cryptomorin.xseries.XMaterial
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/23/2021
- */
 class GrantRankContextMenu(
     private val uuid: UUID,
     private val name: String,
@@ -47,7 +44,7 @@ class GrantRankContextMenu(
 
                 it[it.size] = ItemBuilder
                     .of(
-                        if (canUseForGrant) Material.WOOL else Material.COAL_BLOCK
+                        if (canUseForGrant) XMaterial.WHITE_WOOL.parseMaterial() ?: Material.PAPER else Material.COAL_BLOCK
                     )
                     .data(
                         (if (canUseForGrant) ColorUtil.CHAT_COLOR_TO_WOOL_DATA[

@@ -7,10 +7,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 12/29/2021
- */
 object RepetitiveMessageFilter : ChatMessageFilter
 {
     @JvmStatic

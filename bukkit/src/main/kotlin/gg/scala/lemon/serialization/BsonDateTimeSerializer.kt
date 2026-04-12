@@ -7,21 +7,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-/**
- * A special serialization policy that handles serialization
- * to and from a Bson date when Gson is being used.
- *
- * Useful where a Bson date field is needed for scenarios like Mongo
- * TTL indexes, but Gson's default serialization policies automatically turn it
- * into a string JsonPrimitive data type.
- *
- * We only handle formatting INTO the Bson date format since the Bson
- * [org.bson.json.JsonReader] automatically converts the date back into a
- * Long format for us on deserialization (don't ask me why).
- *
- * @author GrowlyX
- * @since 1/16/2024
- */
 object BsonDateTimeSerializer : JsonSerializer<BsonDateTime>, JsonDeserializer<BsonDateTime>
 {
     private fun format(dateTime: Long): String = ZonedDateTime

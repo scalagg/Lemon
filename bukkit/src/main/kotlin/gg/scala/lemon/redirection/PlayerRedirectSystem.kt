@@ -20,13 +20,6 @@ import java.io.Closeable
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-/**
- * A re-write of helper's
- * [AbstractRedirectSystem].
- *
- * @author GrowlyX
- * @since 3/13/2022
- */
 open class PlayerRedirectSystem<T>(
     val handler: PlayerRedirectHandler,
     private val assistant: PlayerRedirect<T>
@@ -71,9 +64,8 @@ open class PlayerRedirectSystem<T>(
                         parameters = message.parameters
                     )
 
-                // this is already handled
-                // asynchronously, so we can
-                // join the future
+                
+
                 val processed = handler
                     .process(message)
                     .throwAnyExceptions()
@@ -91,7 +83,9 @@ open class PlayerRedirectSystem<T>(
                         .call {
                             val expectation =
                                 PlayerRedirectExpectationEvent(
-                                    message.uniqueId, message.from
+                                    message.uniqueId,
+                                    message.from,
+                                    message.parameters
                                 )
 
                             Bukkit.getPluginManager().callEvent(expectation)

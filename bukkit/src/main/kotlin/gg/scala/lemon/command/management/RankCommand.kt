@@ -33,10 +33,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.collections.ArrayList
 
-/**
- * @author GrowlyX
- * @since 9/11/2021
- */
 @AutoRegister
 @CommandAlias("rank")
 @CommandPermission("lemon.command.rank")
@@ -410,7 +406,7 @@ object RankCommand : ScalaCommand()
     @Description("Edit a rank's prefix.")
     fun onMetaPrefix(sender: CommandSender, rank: Rank, prefix: String)
     {
-        rank.prefix = Color.translate(prefix)
+        rank.prefix = prefix
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s prefix to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
@@ -423,7 +419,7 @@ object RankCommand : ScalaCommand()
     @Description("Edit a rank's display name.")
     fun onMetaDisplay(sender: CommandSender, rank: Rank, display: String)
     {
-        rank.displayName = Color.translate(display)
+        rank.displayName = display
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s display name to ${CC.WHITE}${rank.prefix}${CC.SEC}.")
@@ -436,9 +432,7 @@ object RankCommand : ScalaCommand()
     @Description("Edit a rank's name.")
     fun onMetaName(sender: CommandSender, rank: Rank, name: String)
     {
-        rank.name = ChatColor.stripColor(
-            Color.translate(name)
-        )
+        rank.name = ChatColor.stripColor(name)
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s name to ${CC.WHITE}${rank.name}${CC.SEC}.")
@@ -451,7 +445,7 @@ object RankCommand : ScalaCommand()
     @Description("Edit a rank's suffix.")
     fun onMetaSuffix(sender: CommandSender, rank: Rank, suffix: String)
     {
-        rank.suffix = Color.translate(suffix)
+        rank.suffix = suffix
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s suffix to ${CC.WHITE}${rank.suffix}${CC.SEC}.")
@@ -464,7 +458,7 @@ object RankCommand : ScalaCommand()
     @Description("Edit a rank's color.")
     fun onMetaColor(sender: CommandSender, rank: Rank, color: String)
     {
-        rank.color = Color.translate(color)
+        rank.color = color
 
         rank.saveAndPushUpdatesGlobally().thenAccept {
             sender.sendMessage("${CC.SEC}You've updated ${CC.PRI}${rank.getColoredName()}${CC.SEC}'s color to ${CC.WHITE}${rank.color}this${CC.SEC}.")

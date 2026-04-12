@@ -11,6 +11,7 @@ import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ColorUtil
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import com.cryptomorin.xseries.XMaterial
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.ChatColor
@@ -21,13 +22,6 @@ import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-/**
- * Class created on 1/1/2025
-
- * @author Max C.
- * @project lemon
- * @website https://solo.to/redis
- */
 class RankManagementMenu : PaginatedMenu()
 {
     init
@@ -91,7 +85,7 @@ class RankManagementMenu : PaginatedMenu()
         {
             return ItemBuilder
                 .of(
-                    Material.WOOL
+                    XMaterial.WHITE_WOOL.parseMaterial() ?: Material.PAPER
                 )
                 .data(
                     (ColorUtil.CHAT_COLOR_TO_WOOL_DATA[

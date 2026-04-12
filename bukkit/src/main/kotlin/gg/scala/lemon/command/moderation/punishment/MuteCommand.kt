@@ -18,10 +18,6 @@ import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 9/13/2021
- */
 @AutoRegister
 object MuteCommand : ScalaCommand()
 {

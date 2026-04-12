@@ -15,10 +15,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/9/2021
- */
 @AutoRegister
 @CommandAlias("channel")
 @CommandPermission("lemon.command.channel")

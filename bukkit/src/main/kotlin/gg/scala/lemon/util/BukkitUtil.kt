@@ -3,10 +3,6 @@ package gg.scala.lemon.util
 import net.evilblock.cubed.util.nms.MinecraftReflection
 import java.lang.reflect.Field
 
-/**
- * @author GrowlyX
- * @since 9/29/2021
- */
 object BukkitUtil {
 
     @JvmStatic
@@ -21,10 +17,6 @@ object BukkitUtil {
     val playerField: Field = PLAYER_LIST.javaClass
         .superclass.getDeclaredField("players")
 
-    /**
-     * Updates the minecraft server player list whilst
-     * giving the user a chance to modify the list before it updates.
-     */
     @JvmStatic
     @JvmOverloads
     @Suppress("UNCHECKED_CAST")

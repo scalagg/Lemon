@@ -10,10 +10,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import java.time.Duration
 
-/**
- * @author GrowlyX
- * @since 8/23/2024
- */
 class ChatMLPunishmentAuditReviewMenu(private val entries: List<ChatMLPunishmentAudit>) : PaginatedMenu()
 {
     override fun getAllPagesButtons(player: Player) = entries

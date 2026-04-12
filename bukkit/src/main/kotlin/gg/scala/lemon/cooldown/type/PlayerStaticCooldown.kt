@@ -7,10 +7,6 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * @author GrowlyX
- * @since 10/15/2021
- */
 abstract class PlayerStaticCooldown(
     id: String, private val duration: Long
 ) : PlayerCooldown(id)

@@ -33,9 +33,9 @@ object PlayerHandler
     @Configure
     fun configure()
     {
-        // We handle names through our UUID cache
-        // programmatically, so we have to create
-        // indexes for it manually
+
+        
+
         DataStoreObjectControllerCache
             .findNotNull<LemonPlayer>()
             .mongo()
@@ -101,7 +101,7 @@ object PlayerHandler
             CompletableFuture.allOf(
                 *it.values
                     .map { player ->
-                        // new username is automatically grabbed
+
                         player.save()
                     }
                     .toTypedArray()
@@ -150,9 +150,28 @@ object PlayerHandler
             .throwAnyExceptions(listOf())
     }
 
-    fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer>
+fun getCorrectedPlayerList(sender: CommandSender): Collection<LemonPlayer>
     {
         val currentList = Bukkit.getOnlinePlayers()
+            .mapNotNull {
+                findPlayer(it.uniqueId).orElse(null)
+            }.sortedBy {
+                -QuickAccess.realRank(it.bukkitPlayer!!).weight
+            }
+
+        if (sender.isOp)
+        {
+            return currentList
+        }
+
+        return currentList.filter {
+            !it.bukkitPlayer!!.hasMetadata("vanished")
+        }
+    }
+
+    fun getCorrectedPlayerList(sender: CommandSender, players: List<Player>): Collection<LemonPlayer>
+    {
+        val currentList = players
             .mapNotNull {
                 findPlayer(it.uniqueId).orElse(null)
             }.sortedBy {

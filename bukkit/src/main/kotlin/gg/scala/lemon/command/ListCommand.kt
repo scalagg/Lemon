@@ -10,10 +10,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 
-/**
- * @author GrowlyX
- * @since 9/11/2021
- */
 @AutoRegister
 object ListCommand : ScalaCommand()
 {
@@ -26,7 +22,7 @@ object ListCommand : ScalaCommand()
         PlayerList(
             maxCount = Bukkit.getMaxPlayers(),
             sortedPlayerEntries = getCorrectedPlayerList(sender)
-                .map(LemonPlayer::getColoredName)
+                .map { it.getColoredName(prefixIncluded = true) }
         )
     }
 

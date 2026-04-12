@@ -2,10 +2,6 @@ package gg.scala.lemon.proxy
 
 import java.util.UUID
 
-/**
- * @author GrowlyX
- * @since 12/15/2021
- */
 class ProxySettings(
     var showPlayerCountWhileWhitelisted: Boolean = false,
     var autoRegisterFromServerSyncDiscovery: Boolean = true,

@@ -3,10 +3,6 @@ package gg.scala.lemon.cooldown
 import net.evilblock.cubed.util.time.TimeUtil
 import org.apache.commons.lang.time.DurationFormatUtils
 
-/**
- * @author GrowlyX
- * @since 10/15/2021
- */
 abstract class Cooldown<T>
 {
     private val expiringTimes = mutableMapOf<T, Long>()

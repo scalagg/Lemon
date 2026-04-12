@@ -8,10 +8,6 @@ import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/9/2024
- */
 @Model
 data class Session(
     override val identifier: UUID = UUID.randomUUID(),

@@ -21,10 +21,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 8/27/2021
- */
 @AutoRegister
 object HistoryCommand : ScalaCommand()
 {

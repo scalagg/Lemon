@@ -16,6 +16,7 @@ import gg.scala.lemon.internal.ExtHookIns
 import gg.scala.lemon.minequest
 import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.formatRichText
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.Color
 import net.kyori.adventure.text.Component
@@ -29,10 +30,6 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 4/6/2022
- */
 @Service
 object DefaultChatChannel : ChatChannelComposite
 {
@@ -90,6 +87,7 @@ object DefaultChatChannel : ChatChannelComposite
         LegacyComponentSerializer
             .legacySection()
             .toBuilder()
+            .useUnusualXRepeatedCharacterHexFormat()
             .extractUrls()
             .build()
 
@@ -140,17 +138,17 @@ object DefaultChatChannel : ChatChannelComposite
 
         val prefix =
             (if (strippedPrefix.isNotEmpty())
-                "${rank.prefix} " else "") + (if (minequest())
+                "${rank.prefix.formatRichText()} " else "") + (if (minequest())
                 serializer.serialize(chatTag).removePrefix(" ") else "")
 
         val suffix = if (strippedSuffix.isNotEmpty())
-            " ${rank.suffix}" else ""
+            " ${rank.suffix.formatRichText()}" else ""
 
         var composed = "$prefix${
             lemonPlayer.getColoredName()
         }$suffix"
 
-        var chatColor = rank.color
+        var chatColor = rank.color.formatRichText()
 
         if (
             minequest() && rank.name == "Platinum"
@@ -250,6 +248,6 @@ object DefaultChatChannel : ChatChannelComposite
             return message
         }
 
-        return Color.translate(message)
+        return message.formatRichText()
     }
 }

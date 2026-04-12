@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.text.TextSplitter
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/21/2024
- */
 class ChatMLEditMenu : Menu("Chat ML")
 {
     private val cachedConfigModel = ChatMLDataSync.cached()

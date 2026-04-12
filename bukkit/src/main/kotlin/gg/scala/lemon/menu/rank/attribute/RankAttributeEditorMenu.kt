@@ -17,13 +17,6 @@ import net.evilblock.cubed.util.math.Numbers
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 
-/**
- * Class created on 1/1/2025
-
- * @author Max C.
- * @project lemon
- * @website https://solo.to/redis
- */
 class RankAttributeEditorMenu(val rank: Rank): Menu()
 {
     init
@@ -62,9 +55,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.name = ChatColor.stripColor(
-                            Color.translate(input)
-                        )
+                        rank.name = ChatColor.stripColor(input)
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
@@ -85,7 +76,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.displayName = Color.translate(input)
+                        rank.displayName = input
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the display name of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
@@ -138,7 +129,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.prefix = Color.translate(input)
+                        rank.prefix = input
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the prefix of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")
@@ -159,7 +150,7 @@ class RankAttributeEditorMenu(val rank: Rank): Menu()
                             return@CallbackInputPrompt
                         }
 
-                        rank.color = Color.translate(input)
+                        rank.color = input
                         rank.saveAndPushUpdatesGlobally()
 
                         player.sendMessage("${CC.GREEN}You have changed the color of ${rank.getColoredName(true)} ${CC.GREEN}to ${CC.WHITE}\"$input\"")

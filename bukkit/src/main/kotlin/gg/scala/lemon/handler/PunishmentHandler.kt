@@ -29,10 +29,6 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 
-/**
- * @author GrowlyX
- * @since 8/26/2021
- */
 object PunishmentHandler
 {
     private fun fetchPunishments(
@@ -181,12 +177,6 @@ object PunishmentHandler
         }
     }
 
-    /**
-     * Handles any type of punishment
-     * other than warnings
-     *
-     * @author GrowlyX
-     */
     @JvmOverloads
     fun handlePunishmentForTargetPlayerGlobally(
         issuer: CommandSender, uuid: UUID,

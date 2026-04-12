@@ -26,10 +26,6 @@ import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 9/9/2022
- */
 @AutoRegister
 @CommandAlias("user|users|u")
 @CommandPermission("lemon.command.user")

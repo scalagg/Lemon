@@ -2,10 +2,6 @@ package gg.scala.common.metadata
 
 import org.bukkit.ChatColor
 
-/**
- * @author GrowlyX
- * @since 8/27/2024
- */
 class NetworkMetadata(
     var serverName: String = "",
     var primary: String = ChatColor.GOLD.name,

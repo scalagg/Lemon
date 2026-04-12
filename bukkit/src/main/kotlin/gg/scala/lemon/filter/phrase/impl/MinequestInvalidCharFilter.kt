@@ -3,10 +3,6 @@ package gg.scala.lemon.filter.phrase.impl
 import gg.scala.lemon.filter.phrase.MessagePhraseFilter
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 12/29/2021
- */
 object MinequestInvalidCharFilter : MessagePhraseFilter
 {
     private val validCharacters =

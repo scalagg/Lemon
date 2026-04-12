@@ -4,10 +4,6 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.scala.lemon.player.rank.Rank
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 8/28/2022
- */
 object ExtHookIns
 {
     var customColorMappingChatColor: (String, LemonPlayer) -> String = { _, _ -> "" }

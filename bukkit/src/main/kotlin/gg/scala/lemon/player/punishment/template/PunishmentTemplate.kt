@@ -3,19 +3,15 @@ package gg.scala.lemon.player.punishment.template
 import gg.scala.lemon.player.punishment.category.PunishmentCategory
 import java.util.concurrent.TimeUnit
 
-/**
- * Represents a punishment template with predefined severity, reason, and duration
- * @author Pawful
- */
 data class PunishmentTemplate(
     val category: PunishmentCategory,
     val severity: PunishmentSeverity,
     val reason: String,
-    val duration: Long, // -1 for permanent
+    val duration: Long, 
     val requiresAppeal: Boolean = false
 ) {
     companion object {
-        // Chat Violations
+
         val CHAT_SPAM = PunishmentTemplate(
             PunishmentCategory.MUTE,
             PunishmentSeverity.LOW,
@@ -55,7 +51,6 @@ data class PunishmentTemplate(
             requiresAppeal = true
         )
 
-        // Gameplay Violations
         val GAMEPLAY_SPAM = PunishmentTemplate(
             PunishmentCategory.MUTE,
             PunishmentSeverity.LOW,
@@ -83,12 +78,11 @@ data class PunishmentTemplate(
             requiresAppeal = true
         )
 
-        // Client Violations
         val CLIENT_HACKS = PunishmentTemplate(
             PunishmentCategory.BAN,
             PunishmentSeverity.EXTREME,
             "Hacking",
-            -1L, // Permanent
+            -1L, 
             requiresAppeal = true
         )
         val CLIENT_XRAY = PunishmentTemplate(
@@ -113,7 +107,6 @@ data class PunishmentTemplate(
             requiresAppeal = true
         )
 
-        // Behavior Violations
         val BEHAVIOR_DISRESPECT = PunishmentTemplate(
             PunishmentCategory.BAN,
             PunishmentSeverity.MEDIUM,
@@ -131,7 +124,7 @@ data class PunishmentTemplate(
             PunishmentCategory.BAN,
             PunishmentSeverity.EXTREME,
             "DDoS Threats",
-            -1L, // Permanent
+            -1L, 
             requiresAppeal = true
         )
         val BEHAVIOR_IMPERSONATION = PunishmentTemplate(
@@ -142,7 +135,6 @@ data class PunishmentTemplate(
             requiresAppeal = true
         )
 
-        // Get all templates for a category
         fun getTemplatesForCategory(category: PunishmentCategory): List<PunishmentTemplate> {
             return listOf(
                 CHAT_SPAM, CHAT_CAPS, CHAT_SWEARING, CHAT_DISRESPECT, 
@@ -154,7 +146,6 @@ data class PunishmentTemplate(
             ).filter { it.category == category }
         }
 
-        // Get all templates for a severity
         fun getTemplatesForSeverity(severity: PunishmentSeverity): List<PunishmentTemplate> {
             return listOf(
                 CHAT_SPAM, CHAT_CAPS, CHAT_SWEARING, CHAT_DISRESPECT, 
@@ -168,9 +159,6 @@ data class PunishmentTemplate(
     }
 }
 
-/**
- * Represents the severity level of a punishment
- */
 enum class PunishmentSeverity(
     val color: String,
     val displayName: String

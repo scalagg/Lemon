@@ -15,10 +15,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 
-/**
- * @author puugz
- * @since 07/11/2021 18:15
- */
 class InspectionMenu(val target: Player) : Menu() {
 
     init {

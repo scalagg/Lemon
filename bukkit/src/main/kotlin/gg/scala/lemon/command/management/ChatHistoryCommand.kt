@@ -18,10 +18,6 @@ import net.md_5.bungee.api.chat.ClickEvent
 import java.time.Duration
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 8/16/2024
- */
 @AutoRegister
 object ChatHistoryCommand : ScalaCommand()
 {

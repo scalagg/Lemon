@@ -7,10 +7,6 @@ import gg.scala.lemon.Lemon
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.entity.Player
 
-/**
- * @author GrowlyX
- * @since 4/6/2022
- */
 @Service
 object ChatChannelService
 {

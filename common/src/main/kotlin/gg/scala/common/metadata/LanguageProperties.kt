@@ -2,10 +2,6 @@ package gg.scala.common.metadata
 
 import net.evilblock.cubed.util.Color
 
-/**
- * @author GrowlyX
- * @since 8/27/2024
- */
 data class LanguageProperties(
     var banMessageTemporary: Set<String> = setOf(
         "&e&l(S)&e You are banned from {serverName} for {duration} &e&l(S)",

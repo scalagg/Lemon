@@ -3,10 +3,6 @@ package gg.scala.lemon.software
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 
-/**
- * @author GrowlyX
- * @since 1/1/2022
- */
 class SoftwareDump(
     val identifier: String
 )

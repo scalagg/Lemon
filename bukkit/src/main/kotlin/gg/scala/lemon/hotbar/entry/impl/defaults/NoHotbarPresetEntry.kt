@@ -5,10 +5,6 @@ import gg.scala.lemon.hotbar.entry.HotbarPresetEntry
 import org.bukkit.entity.Player
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 11/28/2021
- */
 object NoHotbarPresetEntry : HotbarPresetEntry
 {
     @JvmStatic

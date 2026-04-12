@@ -35,6 +35,7 @@ import gg.scala.lemon.util.GrantRecalculationUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.originalRank
 import gg.scala.lemon.util.QuickAccess.realRank
+import gg.scala.lemon.util.formatRichText
 import gg.scala.lemon.util.SplitUtil
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.controller.annotations.Indexed
@@ -284,7 +285,6 @@ class LemonPlayer(
                 .blacklistMessage
                 .localize(*defaultReplacements)
 
-            // already pre-handled
             IP_RELATIVE -> setOf()
         }
     }
@@ -345,8 +345,7 @@ class LemonPlayer(
                     this.activeGrant = GrantRecalculationUtil
                         .getProminentGrant(grants)
 
-                    // This should never happen, so we will
-                    // revert the grant back to the old grant.
+                    
                     if (this.activeGrant == null && oldGrant != null)
                     {
                         this.activeGrant = oldGrant
@@ -656,9 +655,12 @@ class LemonPlayer(
                 )
         }
 
-        return (if (prefixIncluded) if (ChatColor.stripColor(rank.prefix).isEmpty())
-            "" else "${rank.prefix} " else "") + rank.color + (if (customColor) customColor() else "") +
-            if (bukkitPlayer != null) bukkitPlayer.name else name
+        val playerName = if (bukkitPlayer != null) bukkitPlayer.name else name
+        val prefix = if (prefixIncluded) {
+            if (ChatColor.stripColor(rank.prefix).isEmpty()) "" else "${rank.prefix.formatRichText()} "
+        } else ""
+
+        return prefix + rank.color.formatRichText() + (if (customColor) customColor() else "") + playerName
     }
 
     fun getOriginalColoredName(
@@ -680,8 +682,8 @@ class LemonPlayer(
                 )
         }
 
-        return rank.color + customColor() +
-            if (bukkitPlayer != null) bukkitPlayer.name else name
+        val playerName = if (bukkitPlayer != null) bukkitPlayer.name else name
+        return rank.color.formatRichText() + customColor() + playerName
     }
 
     fun customColor() = ""
@@ -867,10 +869,6 @@ class LemonPlayer(
         }
     }
 
-    /**
-     * Validates that the player still has the
-     * permission required to access their current channel.
-     */
     private fun checkChannelPermission(player: Player)
     {
         metadata["channel"]?.let { metadata ->
@@ -891,9 +889,9 @@ class LemonPlayer(
 
     fun completeFirstLogin(): CompletableFuture<Void>
     {
-        // making sure other account entries are up-to-date with their usernames to prevent
-        // an issue similar to my account
-        // (with its name history being wiped & servers having two GrowlyX account profiles for me)
+
+        
+
         this.nameChangeDetected = true
 
         updateOrAddMetadata(

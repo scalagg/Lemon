@@ -16,10 +16,6 @@ import org.bukkit.command.CommandSender
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-/**
- * @author GrowlyX
- * @since 9/10/2021
- */
 @AutoRegister
 object GrantManualCommand : ScalaCommand()
 {

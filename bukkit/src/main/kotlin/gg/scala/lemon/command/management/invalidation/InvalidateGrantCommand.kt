@@ -12,10 +12,6 @@ import net.evilblock.cubed.util.CC
 import org.bukkit.command.ConsoleCommandSender
 import java.util.*
 
-/**
- * @author GrowlyX
- * @since 9/11/2021
- */
 @AutoRegister
 object InvalidateGrantCommand : ScalaCommand()
 {

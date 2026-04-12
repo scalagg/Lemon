@@ -1,9 +1,5 @@
 package gg.scala.lemon.filter.impl.internal
 
-/**
- * @author GrowlyX
- * @since 12/29/2021
- */
 object InternalSimilarityCheck
 {
     fun findSimilarityBetween(

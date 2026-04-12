@@ -7,10 +7,6 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 
-/**
- * @author GrowlyX
- * @since 8/21/2024
- */
 @AutoRegister
 @CommandAlias("networkmetadata|netmeta|netmetadata")
 @CommandPermission("lemon.command.networkmetadata")
