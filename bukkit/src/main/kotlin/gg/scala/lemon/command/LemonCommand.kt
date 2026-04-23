@@ -33,6 +33,10 @@ import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
 
+/**
+ * @author GrowlyX
+ * @since 10/7/2021
+ */
 @AutoRegister
 @CommandAlias("scl")
 @CommandPermission("lemon.command.lemon")
@@ -208,7 +212,7 @@ object LemonCommand : ScalaCommand()
 
                 val fancy = FancyMessage()
                     .withMessage("${CC.GREEN}The content is available at: ")
-                    .withMessage("${CC.WHITE}${"https:
+                    .withMessage("${CC.WHITE}${"https://pastes.dev/$key/"}")
                     .andCommandOf(
                         ClickEvent.Action.OPEN_URL,
                         "https://pastes.dev/$key/"
