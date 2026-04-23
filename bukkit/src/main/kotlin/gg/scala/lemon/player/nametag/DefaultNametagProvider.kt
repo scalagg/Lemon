@@ -11,10 +11,11 @@ import gg.scala.lemon.player.rank.Rank
 import gg.scala.lemon.player.sorter.SortedRankCache
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.realRank
+import gg.scala.lemon.util.formatRichText
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
+import net.evilblock.cubed.util.ServerVersion
 import net.evilblock.cubed.util.CC
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 object DefaultNametagProvider : NametagProvider("default", 1) {
@@ -38,9 +39,11 @@ object DefaultNametagProvider : NametagProvider("default", 1) {
             "§z§z§z"
         }
 
+        val modern = ServerVersion.getVersion().isNewerThan(ServerVersion.v1_12_R1)
+
         return createNametag(
-            prefix.take(16),
-            suffix.take(16),
+            if (modern) prefix else prefix.take(16),
+            if (modern) suffix else suffix.take(16),
             teamSorting.take(16)
         )
     }
@@ -48,11 +51,11 @@ object DefaultNametagProvider : NametagProvider("default", 1) {
     private fun buildPrefix(rank: Rank): String {
         return if (Lemon.instance.settings.prefixInNametags) {
             QuickAccess.replaceEmptyNullable(rank.prefix)
-                ?.let { "$it${rank.color} " }
-                ?: rank.color
+                ?.let { "${it.formatRichText()} ${rank.color.formatRichText()}" }
+                ?: rank.color.formatRichText()
         } else {
-            rank.color
-        }.take(16)
+            rank.color.formatRichText()
+        }
     }
 
     private fun buildGuildTag(guild: Guild?): String {

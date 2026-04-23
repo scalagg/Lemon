@@ -6,7 +6,7 @@ plugins {
     `maven-publish`
     kotlin("jvm") version "2.0.0"
     kotlin("kapt") version "2.0.0"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("org.ajoberstar.grgit") version "4.1.1"
 }
 
@@ -19,6 +19,7 @@ allprojects {
     }"
 
     repositories {
+        mavenLocal()
         mavenCentral()
         configureScalaRepository()
 
@@ -35,7 +36,7 @@ subprojects {
     apply(plugin = "org.ajoberstar.grgit")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.kapt")
-    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "io.github.goooler.shadow")
     apply(plugin = "maven-publish")
 
     dependencies {
@@ -43,13 +44,13 @@ subprojects {
         compileOnly(kotlin("reflect"))
 
         compileOnly("gg.scala.commons:bukkit:4.0.7")
-        compileOnly("gg.scala.store:spigot:0.1.8")
+        compileOnly("gg.scala.store:spigot:1.0.0")
         compileOnly("gg.scala.spigot:server:1.1.0")
-        compileOnly("gg.scala.cloudsync:spigot:1.0.1")
+        compileOnly("gg.scala.cloudsync:spigot:1.0.5")
     }
 
     kotlin {
-        jvmToolchain(jdkVersion = 17)
+        jvmToolchain(jdkVersion = 21)
     }
 
     tasks {
@@ -59,7 +60,7 @@ subprojects {
                 exclude(dependency("org.jetbrains.kotlin:kotlin-reflect"))
             }
 
-            archiveClassifier.set("")
+            archiveClassifier.set("all")
             exclude(
                 "**/*.kotlin_metadata",
                 "**/*.kotlin_builtins",
@@ -71,7 +72,7 @@ subprojects {
 
         withType<KotlinCompile> {
             kotlinOptions.javaParameters = true
-            kotlinOptions.jvmTarget = "17"
+            kotlinOptions.jvmTarget = "21"
         }
 
         withType<JavaCompile> {
@@ -82,23 +83,26 @@ subprojects {
     }
 
     publishing {
-        repositories.configureScalaRepository(
-            dev = version.toString().endsWith("-dev")
-        )
+        repositories {
+            mavenLocal()
+            configureScalaRepository(
+                dev = version.toString().endsWith("-dev")
+            )
+        }
 
         publications {
             register(
                 name = "mavenJava",
-                type = MavenPublication::class,
-                configurationAction = shadow::component
-            )
+                type = MavenPublication::class
+            ) {
+                from(components["java"])
+            }
         }
     }
 
     tasks.getByName("build")
         .dependsOn(
-            "shadowJar",
-            "publishMavenJavaPublicationToScalaRepository"
+            "shadowJar"
         )
 }
 

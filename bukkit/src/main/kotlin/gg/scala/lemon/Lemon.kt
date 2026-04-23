@@ -12,6 +12,7 @@ import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.config.annotations.ContainerConfig
 import gg.scala.commons.core.plugin.Plugin
 import gg.scala.commons.core.plugin.PluginAuthor
+import gg.scala.commons.core.plugin.PluginApiVersion
 import gg.scala.commons.core.plugin.PluginDependency
 import gg.scala.commons.core.plugin.PluginWebsite
 import gg.scala.lemon.adapter.LemonPlayerTypeAdapter
@@ -45,12 +46,12 @@ import java.util.*
 )
 
 @PluginAuthor("Scala")
+@PluginApiVersion("1.21")
 @PluginWebsite("https://scala.gg")
 
 @PluginDependency("scala-commons")
 @PluginDependency("store-spigot")
 
-@PluginDependency("spark", soft = true)
 @PluginDependency("LunarClient-API", soft = true)
 @PluginDependency("cloudsync", soft = true)
 
