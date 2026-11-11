@@ -1,0 +1,91 @@
+Scala Studios Source-Available License
+Version 1.0
+
+Copyright (c) LunarLabs LLC. All rights reserved.
+
+This license governs the software and associated files in this repository
+(the "Software"). The Software is owned by LunarLabs LLC (the "Licensor").
+By using, copying, modifying, or distributing the Software, you accept
+these terms. If you do not accept them, you have no right to the Software.
+
+1. Grant of Rights
+
+Subject to the conditions of this license, the Licensor grants you a
+worldwide, royalty-free, non-exclusive license to:
+
+  (a) use, run, and compile the Software, including to operate a server or
+      service for others;
+  (b) modify the Software and create derivative works of it; and
+  (c) copy and distribute the Software and your derivative works of it, in
+      source or compiled form, provided you do so free of charge.
+
+2. No Sale
+
+You may not sell, resell, rent, lease, or license for a fee the Software or
+any derivative work of it, in whole or in part, in source or compiled form.
+This includes, without limitation, offering it as a paid download, charging
+for a copy of it or for access to a fork of it, and bundling it into a
+product that is sold.
+
+Operating a server or service that runs the Software is not, by itself, a
+sale of the Software.
+
+3. Attribution and Disclosure
+
+If you distribute the Software or a derivative work of it, or otherwise make
+either available to others, you must:
+
+  (a) keep intact all copyright, license, and attribution notices contained
+      in the Software;
+  (b) include a copy of this license;
+  (c) clearly disclose that the work is based on software originally
+      developed by Scala Studios and owned by LunarLabs LLC; and
+  (d) state that you have modified the Software, if you have.
+
+You may not claim the Software as your own original work, or otherwise
+misrepresent its origin.
+
+4. Derivative Works
+
+A derivative work of the Software remains subject to this license to the
+extent that it contains or is derived from the Software. You may not impose
+terms on the Software that conflict with this license.
+
+5. Third-Party Components
+
+Parts of the Software may include, or be derived from, third-party work
+that is made available under its own license. Those parts remain subject to
+their own license terms, and nothing in this license limits the rights
+granted to you under them. Third-party notices contained in the Software
+must be kept intact.
+
+6. Names and Marks
+
+This license does not grant you any right to use the names, logos, or marks
+of Scala Studios or LunarLabs LLC, except as required to give the
+attribution described in section 3. You may not suggest that the Licensor
+endorses you or your work.
+
+7. No Support
+
+The Licensor has no obligation to provide support, maintenance, updates, or
+fixes for the Software.
+
+8. Termination
+
+Your rights under this license end automatically if you breach any of its
+terms. When your rights end, you must stop distributing the Software and
+any derivative work of it.
+
+9. Disclaimer of Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+10. Limitation of Liability
+
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OF OR OTHER
+DEALINGS IN THE SOFTWARE.
